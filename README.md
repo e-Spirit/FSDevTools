@@ -2,18 +2,6 @@
 
 Project to support developer experience (DX) with FirstSpirit template development by offering a connection between a VCS like Git and FirstSpirit.
 
-
-## Versions
-
-Here you can obtain information about versions from several sources.
-
-### Version information from ticket system
-See https://projects.e-spirit.de/browse/DEVEX/?selectedTab=com.atlassian.jira.jira-projects-plugin:versions-panel
-
-### Binary artifacts
-* *Release internal:* https://artifactory.e-spirit.de/artifactory/webapp/#/builds/PM%20-%20Developer%20Experience%20-%20FS%20CLI%20Release%20-%20Deploy%20to%20artifactory
-
-
 ## User Documentation
 ### Perquisites
 Installation prerequisites are documented inside the zip or tar-gz file of the binary distribution.
@@ -100,3 +88,11 @@ can then be placed in the generic `call` method you know from java's `Callable` 
 For help configurations, take a look at existing commands and their annotations. If you really need it, you
 can have dynamic descriptions via a `public static String getDescription()` method in your command class
 (have a look at our ExportCommand class).
+
+
+
+
+FirstSpirit and this project are developed by the e-Spirit AG (http://www.e-spirit.com).
+The head office of the e-Spirit AG is in Dortmund, Germany.
+
+For more information please contact our technical support (helpdesk@e-spirit.com).
