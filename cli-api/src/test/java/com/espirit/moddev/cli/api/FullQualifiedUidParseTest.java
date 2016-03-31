@@ -71,7 +71,7 @@ public class FullQualifiedUidParseTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testParseWithNoneStore() throws Exception {
-        final List<FullQualifiedUid> list = FullQualifiedUid.parse(Arrays.asList("myuid"));
+        FullQualifiedUid.parse(Arrays.asList("myuid"));
     }
 
     @Test
@@ -86,6 +86,6 @@ public class FullQualifiedUidParseTest {
 
     @Test(expected = UnknownRootNodeException.class)
     public void testParseWithNonExistingStore() throws Exception {
-        final List<FullQualifiedUid> list = FullQualifiedUid.parse(Arrays.asList("root:xyz"));
+        FullQualifiedUid.parse(Arrays.asList("root:xyz"));
     }
 }
