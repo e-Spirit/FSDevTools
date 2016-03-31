@@ -26,8 +26,10 @@ import com.espirit.moddev.IntegrationTest;
 import com.espirit.moddev.cli.CliContextImpl;
 import com.espirit.moddev.cli.commands.ImportCommand;
 import com.espirit.moddev.cli.results.ImportResult;
+
 import de.espirit.firstspirit.store.access.nexport.operations.ImportOperation;
-import junit.framework.Assert;
+
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 

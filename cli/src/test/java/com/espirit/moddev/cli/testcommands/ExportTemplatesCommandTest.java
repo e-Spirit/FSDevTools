@@ -23,11 +23,13 @@
 package com.espirit.moddev.cli.testcommands;
 
 import com.espirit.moddev.IntegrationTest;
-import com.espirit.moddev.cli.results.ExportResult;
 import com.espirit.moddev.cli.api.FullQualifiedUid;
 import com.espirit.moddev.cli.commands.export.ExportTemplatesCommand;
+import com.espirit.moddev.cli.results.ExportResult;
+
 import de.espirit.firstspirit.access.store.IDProvider;
-import junit.framework.Assert;
+
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 

@@ -28,8 +28,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import static com.espirit.moddev.IntegrationTest.PROJECT_NAME;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author e-Spirit AG

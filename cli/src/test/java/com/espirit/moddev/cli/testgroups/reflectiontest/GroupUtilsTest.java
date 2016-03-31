@@ -24,7 +24,8 @@ package com.espirit.moddev.cli.testgroups.reflectiontest;
 
 import com.espirit.moddev.cli.reflection.GroupUtils;
 import com.espirit.moddev.cli.reflection.ReflectionUtils;
-import junit.framework.Assert;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Set;
@@ -49,7 +50,7 @@ public class GroupUtilsTest {
         @Test
         public void readsGroupDescriptionFromAnnotatedMethodTest() {
             Assert.assertEquals("Description is expected to be xyz non null from getMyCustomDescription()",
-                    "xyz", ReflectionUtils.getDescriptionFromClass(GroupWithDescriptionAnnotation.class));
+                                "xyz", ReflectionUtils.getDescriptionFromClass(GroupWithDescriptionAnnotation.class));
         }
         @Test
         public void readsGroupDescriptionFromNonAnnotatedMethodWithNamingConventionTest() {

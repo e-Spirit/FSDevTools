@@ -22,10 +22,11 @@
 
 package com.espirit.moddev.cli.testcommands.reflectiontest;
 
+import com.espirit.moddev.cli.api.command.Command;
 import com.espirit.moddev.cli.reflection.CommandUtils;
 import com.espirit.moddev.cli.reflection.ReflectionUtils;
-import com.espirit.moddev.cli.api.command.Command;
-import junit.framework.Assert;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Set;

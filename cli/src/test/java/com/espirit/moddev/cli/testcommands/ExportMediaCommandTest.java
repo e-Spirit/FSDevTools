@@ -23,9 +23,10 @@
 package com.espirit.moddev.cli.testcommands;
 
 import com.espirit.moddev.IntegrationTest;
-import com.espirit.moddev.cli.results.ExportResult;
 import com.espirit.moddev.cli.commands.export.ExportMediaCommand;
-import junit.framework.Assert;
+import com.espirit.moddev.cli.results.ExportResult;
+
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
