@@ -70,7 +70,7 @@ public class HelpCommand implements com.espirit.moddev.cli.api.command.Command<H
         String[] argumentArray = argsCopy.toArray(new String[0]);
         help = (Help) cli.parse(argumentArray);
         try {
-            help.help(help.global, args);
+            Help.help(help.global, args);
             return new HelpResult(help.global);
         } catch (IOException e) {
             LOGGER.debug("Help command execution caused an exception", e);

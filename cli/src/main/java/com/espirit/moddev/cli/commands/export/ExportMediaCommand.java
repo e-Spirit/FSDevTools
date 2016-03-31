@@ -54,6 +54,7 @@ public class ExportMediaCommand extends AbstractExportCommand {
         exportOperation.addElement(storeAgent.getStore(Store.Type.MEDIASTORE));
     }
 
+    @Override
     protected void logReleaseState(final IDProvider idProvider) {
         getContext().logDebug(idProvider.getUid() + " is release state? " + idProvider.getStore().isRelease());
     }
