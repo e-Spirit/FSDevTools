@@ -1,4 +1,0 @@
-https://artifactory.e-spirit.de/artifactory/internal-apps-local/com/espirit/moddev/fs-filesync/
-com/espirit/moddev/fs-filesync/cli/%VERSION%/fs-cli.zip => fs-cli-%VERSION%.zip
-com/espirit/moddev/fs-filesync/cli/%VERSION%/fs-cli.tar.gz => fs-cli-%VERSION%.tar.gz
-
