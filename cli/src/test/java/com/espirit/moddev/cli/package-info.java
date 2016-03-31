@@ -21,6 +21,6 @@
  */
 
 /**
- * Created by zaplatynski on 12.06.2015.
+ * @author e-Spirit AG
  */
 package com.espirit.moddev.cli;

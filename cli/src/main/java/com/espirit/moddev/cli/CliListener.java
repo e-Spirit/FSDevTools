@@ -27,6 +27,8 @@ import com.espirit.moddev.cli.exception.CliErrorEvent;
 
 /**
  * The interface CliListener.
+ *
+ * @author e-Spirit AG
  */
 @FunctionalInterface
 public interface CliListener {

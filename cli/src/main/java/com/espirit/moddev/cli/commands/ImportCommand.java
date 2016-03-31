@@ -33,6 +33,7 @@ import de.espirit.firstspirit.store.access.nexport.operations.ImportOperation;
 /**
  * Command that executes a FirstSpirit ImportOperation. Uses a context.
  *
+ * @author e-Spirit AG
  */
 @com.github.rvesse.airline.annotations.Command(name = "import", description = "Import FirstSpirit project")
 public class ImportCommand extends SimpleCommand<ImportResult> implements ImportConfig {

@@ -32,6 +32,9 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+/**
+ * @author e-Spirit AG
+ */
 @Category(IntegrationTest.class)
 public class ExportCommandTest extends AbstractIntegrationTest {
 

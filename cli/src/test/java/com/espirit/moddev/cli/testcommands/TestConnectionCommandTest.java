@@ -31,6 +31,9 @@ import static com.espirit.moddev.IntegrationTest.PROJECT_NAME;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
+/**
+ * @author e-Spirit AG
+ */
 @Category(com.espirit.moddev.IntegrationTest.class)
 public class TestConnectionCommandTest extends AbstractIntegrationTest {
 

@@ -57,6 +57,9 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * @author e-Spirit AG
+ */
 @RunWith(Theories.class)
 public class CliContextImplTest {
 

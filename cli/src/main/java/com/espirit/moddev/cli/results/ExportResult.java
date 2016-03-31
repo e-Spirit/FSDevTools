@@ -27,6 +27,9 @@ import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 
 import java.util.Set;
 
+/**
+ * @author e-Spirit AG
+ */
 public class ExportResult extends SimpleResult<ExportOperation.Result> {
     public ExportResult(ExportOperation.Result result) {
         super(result);

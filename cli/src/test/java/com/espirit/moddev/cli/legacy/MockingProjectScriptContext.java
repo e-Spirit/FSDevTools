@@ -41,6 +41,8 @@ import static org.mockito.Mockito.when;
 
 /**
  * The type Mocking project script context.
+ *
+ * @author e-Spirit AG
  */
 public class MockingProjectScriptContext extends MockingContext implements ProjectScriptContext {
 

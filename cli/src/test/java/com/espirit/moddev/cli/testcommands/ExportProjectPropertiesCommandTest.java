@@ -29,6 +29,8 @@ import org.junit.Test;
 
 /**
  * The type Project config command test.
+ *
+ * @author e-Spirit AG
  */
 public class ExportProjectPropertiesCommandTest extends AbstractIntegrationTest {
 

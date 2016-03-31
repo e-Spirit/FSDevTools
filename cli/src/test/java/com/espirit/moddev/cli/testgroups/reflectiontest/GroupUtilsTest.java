@@ -29,6 +29,9 @@ import org.junit.Test;
 
 import java.util.Set;
 
+/**
+ * @author e-Spirit AG
+ */
 public class GroupUtilsTest {
 
     public static final String DEFAULT_GROUP_TEST_PACKAGE_NAME = "com.espirit.moddev.cli.testgroups.reflectiontest";
@@ -39,6 +42,9 @@ public class GroupUtilsTest {
         Assert.assertEquals(5, groupClassesInPackage.size());
     }
 
+    /**
+     * @author e-Spirit AG
+     */
     public static class ReflectionTest {
         @Test
         public void readsGroupDescriptionFromAnnotatedMethodTest() {

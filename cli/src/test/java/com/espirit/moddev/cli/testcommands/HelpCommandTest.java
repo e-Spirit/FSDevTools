@@ -35,6 +35,9 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author e-Spirit AG
+ */
 public class HelpCommandTest {
 
     @Test

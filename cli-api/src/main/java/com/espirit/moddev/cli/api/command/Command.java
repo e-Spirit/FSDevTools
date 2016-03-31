@@ -39,6 +39,7 @@ import java.util.concurrent.Callable;
  * state initialization.
  *
  * @param <RESULT_TYPE> the custom result type for this command class
+ * @author e-Spirit AG
  */
 public interface Command<RESULT_TYPE extends Result> extends Callable<RESULT_TYPE> {
 }

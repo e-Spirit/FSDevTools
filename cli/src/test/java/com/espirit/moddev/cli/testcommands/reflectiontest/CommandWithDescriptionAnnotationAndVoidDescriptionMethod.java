@@ -25,6 +25,9 @@ package com.espirit.moddev.cli.testcommands.reflectiontest;
 import com.espirit.moddev.cli.api.command.Command;
 import com.espirit.moddev.cli.api.annotations.Description;
 
+/**
+ * @author e-Spirit AG
+ */
 @com.github.rvesse.airline.annotations.Command(name = "command_with_description_but_void_returntype", description = "description_from_annotation")
 public final class CommandWithDescriptionAnnotationAndVoidDescriptionMethod implements Command {
     @Description

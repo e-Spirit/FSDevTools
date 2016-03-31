@@ -43,6 +43,8 @@ import java.util.regex.Pattern;
 
 /**
  * The type Full qualified uid.
+ *
+ * @author e-Spirit AG
  */
 public class FullQualifiedUid {
     private static final Logger LOGGER = Logger.getLogger(FullQualifiedUid.class);

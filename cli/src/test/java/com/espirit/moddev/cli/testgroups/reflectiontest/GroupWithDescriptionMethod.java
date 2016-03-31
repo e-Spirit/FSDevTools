@@ -24,6 +24,9 @@ package com.espirit.moddev.cli.testgroups.reflectiontest;
 
 import com.github.rvesse.airline.annotations.Group;
 
+/**
+ * @author e-Spirit AG
+ */
 @Group(name = "command_with_description_after_convention")
 public final class GroupWithDescriptionMethod {
     public static String getDescription() {

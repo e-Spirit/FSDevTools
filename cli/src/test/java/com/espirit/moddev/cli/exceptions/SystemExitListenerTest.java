@@ -31,6 +31,9 @@ import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 import static org.junit.Assert.fail;
 
+/**
+ * @author e-Spirit AG
+ */
 public class SystemExitListenerTest {
 
     @Rule

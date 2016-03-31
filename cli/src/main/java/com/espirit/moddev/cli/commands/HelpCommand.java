@@ -41,6 +41,8 @@ import java.util.concurrent.Callable;
  * This command uses airline's builtin help function to retrieve information for all
  * known commands. This implementation uses the default commands and groups via the
  * Cli class.
+ *
+ * @author e-Spirit AG
  */
 @Command(
         name = HelpCommand.COMMAND_NAME,

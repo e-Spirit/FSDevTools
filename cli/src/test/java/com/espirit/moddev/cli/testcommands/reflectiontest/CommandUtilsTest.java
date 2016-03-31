@@ -30,6 +30,9 @@ import org.junit.Test;
 
 import java.util.Set;
 
+/**
+ * @author e-Spirit AG
+ */
 public class CommandUtilsTest {
 
     public static final String DEFAULT_COMMAND_TEST_PACKAGE_NAME = "com.espirit.moddev.cli.testcommands.reflectiontest";
@@ -40,6 +43,9 @@ public class CommandUtilsTest {
         Assert.assertEquals(5, commandClassesInPackage.size());
     }
 
+    /**
+     * @author e-Spirit AG
+     */
     public static class ReflectionTest {
         @Test
         public void readsCommandDescriptionFromAnnotatedMethodTest() {

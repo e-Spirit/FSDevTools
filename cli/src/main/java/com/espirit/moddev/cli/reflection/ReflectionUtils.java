@@ -42,6 +42,8 @@ import java.util.stream.Collectors;
 
 /**
  * Utility class for various reflection-based techniques.
+ *
+ * @author e-Spirit AG
  */
 public class ReflectionUtils {
     private static final Logger LOGGER = Logger.getLogger(ReflectionUtils.class);

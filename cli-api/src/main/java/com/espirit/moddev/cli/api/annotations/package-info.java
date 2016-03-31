@@ -22,5 +22,7 @@
 
 /**
  * This package contains annotations that are used within the cli ecosystem.
+ *
+ * @author e-Spirit AG
  */
 package com.espirit.moddev.cli.api.annotations;

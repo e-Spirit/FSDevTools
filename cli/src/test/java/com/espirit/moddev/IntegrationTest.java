@@ -29,6 +29,8 @@ import org.apache.log4j.Level;
 /**
  * This is a marker class, that can be used to categorize integration
  * tests. Constants and other test helpers could be implemented here.
+ *
+ * @author e-Spirit AG
  */
 public class IntegrationTest {
     public static final String PROJECT_NAME = "fs-cli Project";

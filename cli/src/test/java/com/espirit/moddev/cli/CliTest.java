@@ -41,8 +41,14 @@ import static junit.framework.Assert.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
+/**
+ * @author e-Spirit AG
+ */
 public class CliTest {
 
+    /**
+     * @author e-Spirit AG
+     */
     public static class SimpleExecutions {
         @Rule
         public final ExpectedSystemExit exit = ExpectedSystemExit.none();

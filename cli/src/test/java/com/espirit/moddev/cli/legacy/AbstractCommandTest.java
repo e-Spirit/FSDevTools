@@ -54,6 +54,10 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * @param <C>
+ * @author e-Spirit AG
+ */
 public abstract class AbstractCommandTest<C extends SimpleCommand> {
 
     @ClassRule

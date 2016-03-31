@@ -24,6 +24,7 @@ package com.espirit.moddev.cli.configuration;
 
 /**
  * The enum Vcs connect cli constants.
+ * @author e-Spirit AG
  */
 public enum CliConstants {
 

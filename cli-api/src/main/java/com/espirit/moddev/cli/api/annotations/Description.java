@@ -34,6 +34,8 @@ import java.lang.annotation.Target;
  * descriptions can be static only. The dynamic description
  * can be evaluated by a surrounding execution environment,
  * such as a custom cli tool.
+ *
+ * @author e-Spirit AG
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

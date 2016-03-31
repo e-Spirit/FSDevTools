@@ -31,7 +31,9 @@ import de.espirit.firstspirit.agency.OperationAgent;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 
-
+/**
+ * @author e-Spirit AG
+ */
 @Command(name = "mediastore", groupNames = {"export"},
         description = "Export FirstSpirit mediastore")
 public class ExportMediaCommand extends AbstractExportCommand {

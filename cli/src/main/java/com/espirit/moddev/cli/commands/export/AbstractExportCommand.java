@@ -39,6 +39,8 @@ import java.util.List;
 /**
  * This class gathers shared logic and options for different export commands. It can
  * be extended for custom implementations of uid filtering, or to override configurations.
+ *
+ * @author e-Spirit AG
  */
 public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> {
 

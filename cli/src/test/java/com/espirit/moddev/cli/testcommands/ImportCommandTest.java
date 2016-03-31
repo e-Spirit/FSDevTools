@@ -34,6 +34,9 @@ import org.junit.experimental.categories.Category;
 import java.io.File;
 import java.util.Arrays;
 
+/**
+ * @author e-Spirit AG
+ */
 @Category(IntegrationTest.class)
 public class ImportCommandTest extends AbstractIntegrationTest {
 

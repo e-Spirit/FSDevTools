@@ -50,6 +50,8 @@ import java.util.Map;
 
 /**
  * The type Fs file sync context.
+ *
+ * @author e-Spirit AG
  */
 public class CliContextImpl implements CliContext {
 

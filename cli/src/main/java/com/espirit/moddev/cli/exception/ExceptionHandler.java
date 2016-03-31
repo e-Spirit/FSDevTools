@@ -36,6 +36,8 @@ import java.util.List;
 
 /**
  * The type Exception handler.
+ *
+ * @author e-Spirit AG
  */
 public final class ExceptionHandler implements Thread.UncaughtExceptionHandler, CliListener {
 

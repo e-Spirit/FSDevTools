@@ -32,6 +32,8 @@ import java.util.List;
 
 /**
  * The interface Client config.
+ *
+ * @author e-Spirit AG
  */
 public interface Config {
 

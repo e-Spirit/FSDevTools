@@ -38,6 +38,8 @@ import java.util.stream.Collectors;
 /**
  * This command can be used to export elements from all stores at the same time.
  * It makes use of its command arguments to retrieve elements for the export.
+ *
+ * @author e-Spirit AG
  */
 @Command(name = "all", groupNames = {"export"})
 @Examples(examples =

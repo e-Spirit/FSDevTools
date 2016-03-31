@@ -23,5 +23,7 @@
 /**
  * This package contains classes of exceptions that can occur in the command
  * processing environment and the cli tool.
+ *
+ * @author e-Spirit AG
  */
 package com.espirit.moddev.cli.api.exceptions;

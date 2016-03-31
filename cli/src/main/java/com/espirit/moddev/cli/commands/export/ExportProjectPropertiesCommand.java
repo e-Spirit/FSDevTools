@@ -32,6 +32,8 @@ import org.apache.log4j.Logger;
 
 /**
  * The type Project properties command.
+ *
+ * @author e-Spirit AG
  */
 @Command(name = "projectproperties", groupNames = "export", description = "Exports the project's properties, like resolutions, fonts etc.")
 public class ExportProjectPropertiesCommand extends SimpleCommand<ExportResult> {
