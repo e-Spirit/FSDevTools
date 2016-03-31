@@ -1,0 +1,4 @@
+#  crc32           size  lastModified         mimeType          name
+eb75ec32           1778  02.06.2014_11:09:07  text/plain;UTF-8  .FirstSpirit/Info.txt
+3a526229            158  02.06.2014_11:09:07  text/plain;UTF-8  .FirstSpirit/References.txt
+1f6032f4             79  02.06.2014_11:09:07  text/xml;UTF-8    StoreElement.xml

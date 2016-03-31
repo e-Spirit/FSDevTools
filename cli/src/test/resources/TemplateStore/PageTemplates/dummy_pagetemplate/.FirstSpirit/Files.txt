@@ -1,0 +1,12 @@
+#  crc32           size  lastModified         mimeType          name
+18bb4b51           1768  06.01.2016_14:24:16  text/plain;UTF-8  .FirstSpirit/Info.txt
+3ff7f90e            167  06.01.2016_14:24:16  text/plain;UTF-8  .FirstSpirit/References.txt
+29bedd61             26  06.01.2016_14:24:16  text/html;UTF-8   ChannelSource_HTML_html.html
+29bedd61             26  06.01.2016_14:24:16  application/pdf;UTF-8  ChannelSource_PDF_-_FOP_pdf.pdf
+29bedd61             26  06.01.2016_14:24:16  application/xml;UTF-8  ChannelSource_XML_XML.xml
+fcc48341             65  06.01.2016_14:24:16  text/xml;UTF-8    GomSource.xml
+d2a4590c             55  06.01.2016_14:24:16  text/xml;UTF-8    Ruleset.xml
+00000000              0  06.01.2016_14:24:16  text/plain;UTF-8  SnippetExtract.txt
+00000000              0  06.01.2016_14:24:16  text/plain;UTF-8  SnippetHeader.txt
+00000000              0  06.01.2016_14:24:16  text/plain;UTF-8  SnippetThumb.txt
+0cd87a45            518  06.01.2016_14:24:16  text/xml;UTF-8    StoreElement.xml

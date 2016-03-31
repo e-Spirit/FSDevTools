@@ -1,0 +1,60 @@
+#FirstSpirit element export
+# ServerVersion: 5.1.410.67084
+# ProjectName: videomanagementpro-fsm Project
+# User: Admin (1, Admin)
+# ExportTime: 1452086688095 (Wed Jan 06 14:24:48 CET 2016)
+# IP: 172.17.17.152
+ExportVersion: 2.0
+HierarchicElement: true
+Language_DE: Deutsch
+Language_EN: English
+PresentationChannel_2037: PDF - FOP
+PresentationChannel_2: HTML
+PresentationChannel_3: XML
+ProjectId: 184169
+Resolution_110x73: 110x73
+Resolution_110x73_2x: 220x146
+Resolution_1280x265: 1280x265
+Resolution_1280x265_2x: 2560x530
+Resolution_1280x370: 1280x370
+Resolution_1280x370_2x: 2560x740
+Resolution_1280x450: 1280x450
+Resolution_1280x450_2x: 2560x900
+Resolution_1280x600: 1280x600
+Resolution_1280x600_2x: 2560x1200
+Resolution_220x146: 220x146
+Resolution_220x146_2x: 440x292
+Resolution_300x200: 300x200
+Resolution_300x200_2x: 600x400
+Resolution_340x226: 340x226
+Resolution_340x226_2x: 680x452
+Resolution_460x306: 460x306
+Resolution_460x306_2x: 920x612
+Resolution_47x47: 47x47
+Resolution_47x47_2x: 94x94
+Resolution_570x118: 570x118
+Resolution_570x118_2x: 1140x236
+Resolution_570x165: 570x165
+Resolution_570x165_2x: 1140x330
+Resolution_570x200: 570x200
+Resolution_570x200_2x: 1140x400
+Resolution_570x267: 570x267
+Resolution_570x267_2x: 1140x534
+Resolution_600x450: 600x450
+Resolution_600x450_2x: 1200x900
+Resolution_60x40: 60x40
+Resolution_60x40_2x: 120x80
+Resolution_700x467: 700x467
+Resolution_700x467_2x: 1400x934
+Resolution_760x370: 760x370
+Resolution_760x370_2x: 1520x740
+Resolution_900x600: 900x600
+Resolution_900x600_2x: 1800x1200
+Resolution_ORIGINAL: 0x0
+Resolution_persona: 55x55
+ServerName: localhost
+StoreElementRevision: 47368
+StoreElementRevisionTime: 1452086287982 (Wed Jan 06 14:18:07 CET 2016)
+TemplateSet_184175: html
+TemplateSet_184176: pdf
+TemplateSet_184177: XML

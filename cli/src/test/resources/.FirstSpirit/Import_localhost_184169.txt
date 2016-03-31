@@ -1,0 +1,12 @@
+[186653]
+sourceRevision=47371
+targetRevision=47371
+name=dummy_pagetemplate
+store=TEMPLATESTORE
+root=de.espirit.firstspirit.store.access.templatestore.PageTemplatesImpl
+uidType=TEMPLATESTORE
+gid=ec025ff4-19bc-452e-812a-fd6595e932ea
+targetProjectId=1445
+hash=1CEb/g80IY12A31AuNCfnA==
+server=localhost_184169
+
