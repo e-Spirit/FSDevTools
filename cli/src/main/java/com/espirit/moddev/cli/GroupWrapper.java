@@ -29,6 +29,8 @@ import com.github.rvesse.airline.annotations.Group;
  * over airline's API. The different constructors can be used to
  * wrap a given annotation, or to create a custom group for later
  * usage.
+ *
+ * @author e-Spirit AG
  */
 public class GroupWrapper {
     public final String name;

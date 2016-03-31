@@ -37,12 +37,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static junit.framework.Assert.*;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
+/**
+ * @author e-Spirit AG
+ */
 public class CliTest {
 
+    /**
+     * @author e-Spirit AG
+     */
     public static class SimpleExecutions {
         @Rule
         public final ExpectedSystemExit exit = ExpectedSystemExit.none();

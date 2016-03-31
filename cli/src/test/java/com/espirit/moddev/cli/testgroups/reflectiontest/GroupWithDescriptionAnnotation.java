@@ -25,6 +25,9 @@ package com.espirit.moddev.cli.testgroups.reflectiontest;
 import com.espirit.moddev.cli.api.annotations.Description;
 import com.github.rvesse.airline.annotations.Group;
 
+/**
+ * @author e-Spirit AG
+ */
 @Group(name = "groupwithdescriptionannotation")
 public final class GroupWithDescriptionAnnotation {
     @Description

@@ -36,6 +36,9 @@ import de.espirit.firstspirit.agency.OperationAgent;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 
+/**
+ * @author e-Spirit AG
+ */
 @Command(name = "templatestore", groupNames = {"export"},
         description = "Export FirstSpirit templatestore")
 public class ExportTemplatesCommand extends AbstractExportCommand {

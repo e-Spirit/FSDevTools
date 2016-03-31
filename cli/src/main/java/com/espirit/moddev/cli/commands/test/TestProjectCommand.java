@@ -31,6 +31,8 @@ import com.espirit.moddev.cli.results.SimpleResult;
 
 /**
  * Command for project testing. Requiring a project specific broker leads to a successful or unsuccessful result.
+ *
+ * @author e-Spirit AG
  */
 @com.github.rvesse.airline.annotations.Command(name = "project", groupNames = {"test"}, description = "Testing a FirstSpirit project")
 public class TestProjectCommand extends GlobalConfig implements Command {

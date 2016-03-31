@@ -22,13 +22,16 @@
 
 package com.espirit.moddev.cli.testcommands;
 
-import com.espirit.moddev.cli.results.ExportResult;
 import com.espirit.moddev.cli.commands.export.ExportProjectPropertiesCommand;
-import junit.framework.Assert;
+import com.espirit.moddev.cli.results.ExportResult;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * The type Project config command test.
+ *
+ * @author e-Spirit AG
  */
 public class ExportProjectPropertiesCommandTest extends AbstractIntegrationTest {
 
@@ -39,7 +42,8 @@ public class ExportProjectPropertiesCommandTest extends AbstractIntegrationTest 
         initializeTestSpecificConfiguration(command);
 
         ExportResult result = command.call();
-        Assert.assertTrue("Export folder for project properties not found.", containsSubDirectory(getFirstSpiritFileSyncFolder(testFolder.getRoot()), "Global"));
+        Assert.assertTrue("Export folder for project properties not found.",
+                          containsSubDirectory(getFirstSpiritFileSyncFolder(testFolder.getRoot()), "Global"));
         Assert.assertTrue(result.get().getCreatedFiles().size() > 0);
     }
 

@@ -24,8 +24,10 @@ package com.espirit.moddev.cli.api;
 
 import com.espirit.moddev.cli.api.exceptions.UnknownRootNodeException;
 import com.espirit.moddev.cli.api.exceptions.UnregisteredPrefixException;
+
 import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.base.store.StoreType;
+
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -36,10 +38,12 @@ import org.junit.runner.RunWith;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+/**
+ * @author e-Spirit AG
+ */
 @RunWith(Theories.class)
 public class FullQualifiedUidParseTest {
 

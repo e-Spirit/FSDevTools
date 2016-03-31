@@ -22,5 +22,7 @@
 
 /**
  * This package contains command class related interfaces that are used within the cli ecosystem.
+ *
+ * @author e-Spirit AG
  */
 package com.espirit.moddev.cli.api.command;

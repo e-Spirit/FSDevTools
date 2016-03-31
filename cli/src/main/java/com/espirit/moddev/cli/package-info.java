@@ -23,5 +23,7 @@
 /**
  * This package features our cli implementation. It also hosts some classes
  * like context implementations, group and command helpers or widely used constants.
+ *
+ * @author e-Spirit AG
  */
 package com.espirit.moddev.cli;

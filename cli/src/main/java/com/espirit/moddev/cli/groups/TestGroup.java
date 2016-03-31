@@ -25,6 +25,9 @@ package com.espirit.moddev.cli.groups;
 import com.espirit.moddev.cli.commands.test.TestConnectionCommand;
 import com.github.rvesse.airline.annotations.Group;
 
+/**
+ * @author e-Spirit AG
+ */
 @Group(name = "test", description = "Test connection, projects and more", defaultCommand = TestConnectionCommand.class)
 public class TestGroup {
 }

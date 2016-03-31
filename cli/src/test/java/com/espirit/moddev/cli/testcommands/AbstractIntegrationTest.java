@@ -47,6 +47,8 @@ import static com.espirit.moddev.IntegrationTest.*;
  * Can be used as a base for integration tests that need a connection to a fs server.
  * Uses connection and temporary folder rules to isolate filesync tests from each other
  * as far as possible.
+ *
+ * @author e-Spirit AG
  */
 @Ignore
 @Category(com.espirit.moddev.IntegrationTest.class)

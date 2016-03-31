@@ -24,5 +24,7 @@
  * This package contains configuration related interfaces that are used within the cli ecosystem.
  * Although configurations by themselves don't necessarily need any interfaces, some might become
  * easier to understand or to expand.
+ *
+ * @author e-Spirit AG
  */
 package com.espirit.moddev.cli.api.configuration;

@@ -35,6 +35,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+/**
+ * @author e-Spirit AG
+ */
 public class ExceptionHandlerTest {
 
     @ClassRule

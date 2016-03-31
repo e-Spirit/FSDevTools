@@ -25,7 +25,7 @@ package com.espirit.moddev.cli.api.configuration;
 /**
  * The interface Fs cli client config import.
  *
- * @author witt
+ * @author e-Spirit AG
  */
 public interface ImportConfig extends Config {
 

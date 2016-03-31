@@ -26,6 +26,8 @@ import com.espirit.moddev.cli.api.configuration.Config;
 
 /**
  * The type CliException.
+ *
+ * @author e-Spirit AG
  */
 public class CliException extends RuntimeException {
 

@@ -34,6 +34,8 @@ import static org.mockito.Mockito.when;
 
 /**
  * This utility class provides methods for testing with firstspirit IDProviders.
+ *
+ * @author e-Spirit AG
  */
 public class IDProviderTestUtil {
 

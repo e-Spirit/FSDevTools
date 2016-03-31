@@ -25,6 +25,8 @@ package com.espirit.moddev.cli.exception;
 
 /**
  * The type Fs cli error event.
+ *
+ * @author e-Spirit AG
  */
 public class CliErrorEvent {
 

@@ -35,6 +35,9 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+/**
+ * @author e-Spirit AG
+ */
 @RunWith(Theories.class)
 public class FullQualifiedUidTest {
 

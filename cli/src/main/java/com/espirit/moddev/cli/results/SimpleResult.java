@@ -26,6 +26,10 @@ import com.espirit.moddev.cli.api.result.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @param <CUSTOM_RESULT_TYPE>
+ * @author e-Spirit AG
+ */
 public class SimpleResult<CUSTOM_RESULT_TYPE> implements Result<CUSTOM_RESULT_TYPE> {
 
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());

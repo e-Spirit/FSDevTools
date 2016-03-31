@@ -42,6 +42,9 @@ import java.util.Locale;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * @author e-Spirit AG
+ */
 public class SyncDirectoryFactoryTest {
 
 

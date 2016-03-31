@@ -22,14 +22,18 @@
 
 package com.espirit.moddev.cli.testcommands.reflectiontest;
 
+import com.espirit.moddev.cli.api.command.Command;
 import com.espirit.moddev.cli.reflection.CommandUtils;
 import com.espirit.moddev.cli.reflection.ReflectionUtils;
-import com.espirit.moddev.cli.api.command.Command;
-import junit.framework.Assert;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Set;
 
+/**
+ * @author e-Spirit AG
+ */
 public class CommandUtilsTest {
 
     public static final String DEFAULT_COMMAND_TEST_PACKAGE_NAME = "com.espirit.moddev.cli.testcommands.reflectiontest";
@@ -40,6 +44,9 @@ public class CommandUtilsTest {
         Assert.assertEquals(5, commandClassesInPackage.size());
     }
 
+    /**
+     * @author e-Spirit AG
+     */
     public static class ReflectionTest {
         @Test
         public void readsCommandDescriptionFromAnnotatedMethodTest() {

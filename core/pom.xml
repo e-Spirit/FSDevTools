@@ -27,7 +27,7 @@
     <parent>
         <artifactId>fsdevtools</artifactId>
         <groupId>com.espirit.moddev</groupId>
-        <version>1.0_DEV.123</version>
+        <version>${ci.version}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

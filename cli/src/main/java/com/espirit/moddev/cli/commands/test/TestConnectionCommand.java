@@ -31,6 +31,8 @@ import com.espirit.moddev.cli.results.SimpleResult;
 
 /**
  * Command for connection testing. Creating a connection to FirstSpirit leads to a successful or unsuccessful result.
+ *
+ * @author e-Spirit AG
  */
 @com.github.rvesse.airline.annotations.Command(name = "connection", groupNames = {"test"}, description = "Testing a FirstSpirit connection")
 public class TestConnectionCommand extends GlobalConfig implements Command {

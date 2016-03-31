@@ -22,5 +22,7 @@
 
 /**
  * This package contains an interface for a generic command result.
+ *
+ * @author e-Spirit AG
  */
 package com.espirit.moddev.cli.api.result;

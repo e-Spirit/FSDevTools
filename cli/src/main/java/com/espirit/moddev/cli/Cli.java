@@ -48,6 +48,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * The type Cli is the start point of this application.
+ *
+ * @author e-Spirit AG
  */
 public final class Cli {
     public static final String DEFAULT_GROUP_PACKAGE_NAME = "com.espirit.moddev.cli.groups";

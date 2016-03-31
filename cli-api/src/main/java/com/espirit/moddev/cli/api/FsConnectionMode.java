@@ -26,6 +26,8 @@ import de.espirit.firstspirit.access.ConnectionManager;
 
 /**
  * The enum Fs connection mode.
+ *
+ * @author e-Spirit AG
  */
 public enum FsConnectionMode {
 

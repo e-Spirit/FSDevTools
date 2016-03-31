@@ -24,5 +24,7 @@
  * This package contains commands and subpackages of commands. It is scanned
  * by our cli implementation to find command implementations that should be
  * used by the cli.
+ *
+ * @author e-Spirit AG
  */
 package com.espirit.moddev.cli.commands;

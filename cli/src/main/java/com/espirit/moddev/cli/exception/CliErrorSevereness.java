@@ -25,6 +25,8 @@ package com.espirit.moddev.cli.exception;
 
 /**
  * The enum Fs file sync error severeness.
+ *
+ * @author e-Spirit AG
  */
 public enum CliErrorSevereness {
     /**

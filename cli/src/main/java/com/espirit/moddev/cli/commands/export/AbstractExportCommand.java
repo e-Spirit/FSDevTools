@@ -39,6 +39,8 @@ import java.util.List;
 /**
  * This class gathers shared logic and options for different export commands. It can
  * be extended for custom implementations of uid filtering, or to override configurations.
+ *
+ * @author e-Spirit AG
  */
 public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> {
 
@@ -83,7 +85,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
      * @throws IllegalArgumentException if no IDProvider can be retrieved for a uid
      */
     public List<IDProvider> filterByUIDs(StoreAgent storeAgent){
-        List result = new ArrayList<>();
+        List<IDProvider> result = new ArrayList<>();
         for(FullQualifiedUid uid : getFullQualifiedUids()) {
             if(uid.getUid().equals(FullQualifiedUid.ROOT_NODE_IDENTIFIER)) {
                 result.add(storeAgent.getStore(uid.getUidType().getStoreType()));

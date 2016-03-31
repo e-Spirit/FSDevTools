@@ -25,6 +25,9 @@ package com.espirit.moddev.cli.testgroups.reflectiontest;
 import com.espirit.moddev.cli.api.annotations.Description;
 import com.github.rvesse.airline.annotations.Group;
 
+/**
+ * @author e-Spirit AG
+ */
 @Group(name = "command_with_description_but_void_returntype")
 public final class GroupWithNonStringDescriptionMethod {
     @Description

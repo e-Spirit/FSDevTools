@@ -47,7 +47,7 @@ import java.util.List;
  * Some getters return the value of a corresponding environment variable, if the provided
  * value is empty or no value is provided at all.
  *
- * @author witt
+ * @author e-Spirit AG
  */
 public class GlobalConfig implements Config {
 

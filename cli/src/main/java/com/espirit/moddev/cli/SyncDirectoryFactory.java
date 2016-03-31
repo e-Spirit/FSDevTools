@@ -30,6 +30,8 @@ import java.io.File;
 
 /**
  * The type Sync directory factory.
+ *
+ * @author e-Spirit AG
  */
 public class SyncDirectoryFactory {
 

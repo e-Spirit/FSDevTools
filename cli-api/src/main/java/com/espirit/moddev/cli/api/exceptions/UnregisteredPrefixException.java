@@ -25,6 +25,8 @@ package com.espirit.moddev.cli.api.exceptions;
 /**
  * States, that a given prefix is not within the registered ones. Prefixes
  * are meant to identify FirstSpirit elements in specific namespaces.
+ *
+ * @author e-Spirit AG
  */
 public class UnregisteredPrefixException extends RuntimeException {
     public UnregisteredPrefixException(String message) {

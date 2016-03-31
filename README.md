@@ -3,6 +3,7 @@
 Project to support developer experience (DX) with FirstSpirit template development by offering a connection between a VCS like Git and FirstSpirit.
 
 ## User Documentation
+
 ### Perquisites
 Installation prerequisites are documented inside the zip or tar-gz file of the binary distribution.
 

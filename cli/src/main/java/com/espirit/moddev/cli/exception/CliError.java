@@ -29,6 +29,8 @@ import java.util.ResourceBundle;
 
 /**
  * The enum Fs file sync error.
+ *
+ * @author e-Spirit AG
  */
 public enum CliError {
 

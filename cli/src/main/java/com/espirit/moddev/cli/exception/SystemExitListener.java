@@ -27,6 +27,8 @@ import com.espirit.moddev.cli.CliListener;
 
 /**
  * The type System exit listener.
+ *
+ * @author e-Spirit AG
  */
 public class SystemExitListener implements CliListener {
 

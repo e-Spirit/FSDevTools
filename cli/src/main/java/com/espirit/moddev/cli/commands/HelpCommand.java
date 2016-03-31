@@ -41,6 +41,8 @@ import java.util.concurrent.Callable;
  * This command uses airline's builtin help function to retrieve information for all
  * known commands. This implementation uses the default commands and groups via the
  * Cli class.
+ *
+ * @author e-Spirit AG
  */
 @Command(
         name = HelpCommand.COMMAND_NAME,
@@ -68,7 +70,7 @@ public class HelpCommand implements com.espirit.moddev.cli.api.command.Command<H
         String[] argumentArray = argsCopy.toArray(new String[0]);
         help = (Help) cli.parse(argumentArray);
         try {
-            help.help(help.global, args);
+            Help.help(help.global, args);
             return new HelpResult(help.global);
         } catch (IOException e) {
             LOGGER.debug("Help command execution caused an exception", e);
