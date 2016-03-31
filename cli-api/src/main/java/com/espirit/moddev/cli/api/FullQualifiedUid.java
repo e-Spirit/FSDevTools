@@ -50,7 +50,7 @@ public class FullQualifiedUid {
     public static final String ROOT_NODE_IDENTIFIER = "root";
 
 
-    private static final Map<String, IDProvider.UidType> storePostfixes = new HashMap();
+    private static final Map<String, IDProvider.UidType> storePostfixes = new HashMap<>();
     static {
         storePostfixes.put("templatestore", IDProvider.UidType.TEMPLATESTORE);
         storePostfixes.put("pagestore", IDProvider.UidType.PAGESTORE);
@@ -66,7 +66,7 @@ public class FullQualifiedUid {
      * later usage. It also includes store postfixes,
      * even if those aren't used as prefix.
      */
-    private static final Map<String, IDProvider.UidType> customPrefixUidTypeMappings = new HashMap();
+    private static final Map<String, IDProvider.UidType> customPrefixUidTypeMappings = new HashMap<>();
     static {
         customPrefixUidTypeMappings.put("page", IDProvider.UidType.PAGESTORE);
         customPrefixUidTypeMappings.put("pagetemplate", IDProvider.UidType.TEMPLATESTORE);
