@@ -30,13 +30,25 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * Specialization of {@link com.espirit.moddev.cli.results.SimpleResult} that can be used in conjunction with import commands.
  * @author e-Spirit AG
  */
 public class ImportResult extends SimpleResult<ImportOperation.Result> {
+
+    /**
+     * Creates a new instance using the given command result.
+     *
+     * @param result Result produced by the command
+     */
     public ImportResult(ImportOperation.Result result) {
         super(result);
     }
 
+    /**
+     * Creates a new error result using the given exception.
+     *
+     * @param exception Exception produced by the command
+     */
     public ImportResult(Exception exception) {
         super(exception);
     }
@@ -82,7 +94,7 @@ public class ImportResult extends SimpleResult<ImportOperation.Result> {
     }
 
     /**
-     * log info messages.
+     * Log info messages.
      *
      * @param handle represents the current element that was imported
      * @param state  is used for the log message ("updated", "created" and "deleted" etc.)
