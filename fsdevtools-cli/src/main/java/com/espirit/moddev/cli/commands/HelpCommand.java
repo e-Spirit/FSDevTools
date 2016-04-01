@@ -49,13 +49,14 @@ import java.util.concurrent.Callable;
         description = "Display help information"
 )
 public class HelpCommand implements com.espirit.moddev.cli.api.command.Command<HelpCommand.HelpResult> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HelpCommand.class);
 
     public static final String COMMAND_NAME = "help";
-    final CliBuilder<Callable> builder = com.github.rvesse.airline.Cli.<Callable>builder("fs-cli");
+    private static final Logger LOGGER = LoggerFactory.getLogger(HelpCommand.class);
+
+    protected final CliBuilder<Callable> builder = com.github.rvesse.airline.Cli.<Callable>builder("fs-cli");
 
     @Arguments
-    List<String> args = new ArrayList<>();
+    protected List<String> args = new ArrayList<>();
 
     @Override
     public HelpResult call() {
@@ -78,11 +79,27 @@ public class HelpCommand implements com.espirit.moddev.cli.api.command.Command<H
         }
     }
 
+    /**
+     * Specialization of {@link com.espirit.moddev.cli.results.SimpleResult} that can be used in conjunction with help commands.
+     */
+    public static class HelpResult extends SimpleResult<GlobalMetadata<Object>> {
 
-    public class HelpResult extends SimpleResult<GlobalMetadata<Object>> {
+        /**
+         * Creates a new instance using the given command result.
+         *
+         * @param metadata Result produced by the command
+         * @see com.espirit.moddev.cli.results.SimpleResult#SimpleResult(Object)
+         */
         public HelpResult(GlobalMetadata metadata) {
             super(metadata);
         }
+
+        /**
+         * Creates a new error result using the given exception.
+         *
+         * @param exception Exception produced by the command
+         * @see com.espirit.moddev.cli.results.SimpleResult#SimpleResult(Exception)
+         */
         public HelpResult(Exception exception) {
             super(exception);
         }
