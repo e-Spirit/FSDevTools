@@ -96,4 +96,4 @@ can have dynamic descriptions via a `public static String getDescription()` meth
 FirstSpirit and this project are developed by the e-Spirit AG (http://www.e-spirit.com).
 The head office of the e-Spirit AG is in Dortmund, Germany.
 
-For more information please contact our technical support (helpdesk@e-spirit.com).
+Use this project and provided binaries at your own risk.
