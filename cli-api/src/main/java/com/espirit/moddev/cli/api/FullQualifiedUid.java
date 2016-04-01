@@ -22,7 +22,6 @@
 
 package com.espirit.moddev.cli.api;
 
-
 import com.espirit.moddev.cli.api.exceptions.UnknownRootNodeException;
 import com.espirit.moddev.cli.api.exceptions.UnregisteredPrefixException;
 import de.espirit.firstspirit.access.store.IDProvider;
@@ -42,50 +41,53 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
- * The type Full qualified uid.
+ * FirstSpirit's uids are unique across all stores only in conjunction with their {@link de.espirit.firstspirit.access.store.IDProvider.UidType}.
+ * This class encapsulates a uid and its {@link de.espirit.firstspirit.access.store.IDProvider.UidType} and therewith provides a full qualified representation of the uid.
+ * It also allows to parse an arbitrary number of {@link java.lang.String} representations of combinations of uids and {@link de.espirit.firstspirit.access.store.IDProvider.UidType}s to instances of this class.
  *
  * @author e-Spirit AG
  */
 public class FullQualifiedUid {
-    private static final Logger LOGGER = Logger.getLogger(FullQualifiedUid.class);
 
+    /**
+     * Identifier of FirstSpirit store rood nodes.
+     */
     public static final String ROOT_NODE_IDENTIFIER = "root";
 
+    private static final Logger LOGGER = Logger.getLogger(FullQualifiedUid.class);
+    private static final Map<String, IDProvider.UidType> storePostfixes;
+    private static final Pattern DELIMITER = Pattern.compile("\\s*:\\s*");
 
-    private static final Map<String, IDProvider.UidType> storePostfixes = new HashMap<>();
+    /**
+     * This collection stores a custom mapping from uid prefixes to UidTypes.
+     * The collection can be used to add or override prefixes for later usage.
+     * It also includes store postfixes, even if those aren't used as prefix.
+     */
+    private static final Map<String, IDProvider.UidType> customPrefixUidTypeMappings;
+
     static {
+        storePostfixes = new HashMap<>();
         storePostfixes.put("templatestore", IDProvider.UidType.TEMPLATESTORE);
         storePostfixes.put("pagestore", IDProvider.UidType.PAGESTORE);
         storePostfixes.put("contentstore", IDProvider.UidType.CONTENTSTORE);
         storePostfixes.put("sitestore", IDProvider.UidType.SITESTORE_FOLDER);
         storePostfixes.put("mediastore", IDProvider.UidType.MEDIASTORE_FOLDER);
         storePostfixes.put("globalstore", IDProvider.UidType.GLOBALSTORE);
-    }
-    /**
-     * This collection stores a custom mapping from
-     * uid prefixes to UidTypes. The collection
-     * can be used to add or override prefixes for
-     * later usage. It also includes store postfixes,
-     * even if those aren't used as prefix.
-     */
-    private static final Map<String, IDProvider.UidType> customPrefixUidTypeMappings = new HashMap<>();
-    static {
+
+        customPrefixUidTypeMappings = new HashMap<>();
         customPrefixUidTypeMappings.put("page", IDProvider.UidType.PAGESTORE);
         customPrefixUidTypeMappings.put("pagetemplate", IDProvider.UidType.TEMPLATESTORE);
-
         customPrefixUidTypeMappings.putAll(storePostfixes);
     }
 
-
-    private static final Pattern DELIMITER = Pattern.compile("\\s*:\\s*");
     private final IDProvider.UidType uidType;
     private final String uid;
 
     /**
-     * Instantiates a new Full qualified uid.
+     * Instantiates a new full qualified uid.
      *
-     * @param uidType the uidType
-     * @param uid   the uid
+     * @param uidType {@link de.espirit.firstspirit.access.store.IDProvider.UidType} of the uid
+     * @param uid the uid
      * @throws IllegalArgumentException if uidType or uid is null or blank
      */
     public FullQualifiedUid(final IDProvider.UidType uidType, final String uid) {
@@ -100,14 +102,15 @@ public class FullQualifiedUid {
     }
 
     /**
-     * Parse list of full qualified uid strings.
+     * Parse a list of full qualified uid strings.
+     * The strings must match the following pattern:<br/>
+     * <code>&lt;TYPE_PREFIX&gt;:&lt;UID&gt;</code><br/>
+     * The allowed values for <code>TYPE_PREFIX</code> are defined by {@link #getAllKnownPrefixStrings()}.
      *
-     * @param fullQualifiedUids the full qualified uids
-     * @throws IllegalArgumentException if fullQualifiedUids is null
-     * or if the prefix/postfix structure is corrupt
+     * @param fullQualifiedUids the {@link java.util.List} of full qualified uids following the above pattern
+     * @throws IllegalArgumentException if fullQualifiedUids is null or if a string does not follow the above pattern
      * @throws UnknownRootNodeException if a requested store root does not exist
-     *
-     * @return the list
+     * @return the {@link java.util.List} of objects of this class representing fullQualifiedUids
      */
     public static List<FullQualifiedUid> parse(final List<String> fullQualifiedUids) {
         if (fullQualifiedUids == null) {
@@ -208,6 +211,10 @@ public class FullQualifiedUid {
         return Collections.unmodifiableSet(getAllKnownPrefixes().keySet());
     }
 
+    /**
+     * Get a {@link java.util.List} of all known store postfixes.
+     * @return {@link java.util.List} of all known store postfixes
+     */
     public static Set<String> getAllStorePostfixStrings() {
         return Collections.unmodifiableSet(getAllStorePostfixes().keySet());
     }
@@ -230,16 +237,16 @@ public class FullQualifiedUid {
     }
 
     /**
-     * Gets uidType.
+     * Get the {@link de.espirit.firstspirit.access.store.IDProvider.UidType} of this uid.
      *
-     * @return the uidType
+     * @return the {@link de.espirit.firstspirit.access.store.IDProvider.UidType} of this uid.
      */
     public IDProvider.UidType getUidType() {
         return uidType;
     }
 
     /**
-     * Gets uid.
+     * Get the uid.
      *
      * @return the uid
      */
