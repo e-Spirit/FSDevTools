@@ -156,7 +156,7 @@ public final class Cli {
 
     /**
      * Initialize all available groups and their commands in the given {@link com.github.rvesse.airline.builder.CliBuilder}.
-     * @param builder
+     * @param builder {@link com.github.rvesse.airline.builder.CliBuilder} to add the groups to
      */
     public static void buildCommandGroups(CliBuilder<Command> builder) {
         Map<GroupWrapper, List<Class<Command>>> allGroups =
