@@ -103,8 +103,8 @@ public class FullQualifiedUid {
 
     /**
      * Parse a list of full qualified uid strings.
-     * The strings must match the following pattern:<br/>
-     * <code>&lt;TYPE_PREFIX&gt;:&lt;UID&gt;</code><br/>
+     * The strings must match the following pattern:<br>
+     * <code>&lt;TYPE_PREFIX&gt;:&lt;UID&gt;</code><br>
      * The allowed values for <code>TYPE_PREFIX</code> are defined by {@link #getAllKnownPrefixStrings()}.
      *
      * @param fullQualifiedUids the {@link java.util.List} of full qualified uids following the above pattern

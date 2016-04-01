@@ -27,7 +27,7 @@ package com.espirit.moddev.cli.api.result;
  * distinguish between a successful and non-successful result
  * through exceptions.
  *
- * @param <CUSTOM_RESULT_TYPE>
+ * @param <CUSTOM_RESULT_TYPE> the result type.
  * @author e-Spirit AG
  */
 public interface Result<CUSTOM_RESULT_TYPE> {
@@ -35,6 +35,8 @@ public interface Result<CUSTOM_RESULT_TYPE> {
     /**
      * Indicates whether a result is successful or not. Can tell a
      * surrounding environment that a Exception is available.
+     * 
+     * @return true if an error occured, otherwise false
      */
     boolean isError();
 
