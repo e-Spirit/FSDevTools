@@ -26,7 +26,7 @@ import com.espirit.moddev.cli.api.CliContext;
 import com.espirit.moddev.cli.api.FullQualifiedUid;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.api.configuration.ImportConfig;
-import com.espirit.moddev.test.rules.logging.InitLog4jLoggingRule;
+
 import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.BaseContext;
 import de.espirit.firstspirit.access.Connection;
@@ -36,6 +36,7 @@ import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.agency.BrokerAgent;
 import de.espirit.firstspirit.agency.LanguageAgent;
 import de.espirit.firstspirit.agency.SpecialistsBroker;
+
 import org.apache.log4j.*;
 import org.apache.log4j.spi.ErrorHandler;
 import org.apache.log4j.spi.Filter;
@@ -57,15 +58,15 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
+
+
 /**
  * @author e-Spirit AG
  */
 @RunWith(Theories.class)
 public class CliContextImplTest {
-
-    @ClassRule
-    public static InitLog4jLoggingRule initLog4jLoggingRule = new InitLog4jLoggingRule(Level.DEBUG);
-
+    
+    
     @DataPoints
     public static BaseContext.Env[]
         testcases =

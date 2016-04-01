@@ -22,9 +22,7 @@
 
 package com.espirit.moddev;
 
-import com.espirit.moddev.test.rules.firstspirit.FirstSpiritConnectionRule;
-import com.espirit.moddev.test.rules.logging.InitLog4jLoggingRule;
-import org.apache.log4j.Level;
+
 
 /**
  * This is a marker class, that can be used to categorize integration
@@ -35,7 +33,6 @@ import org.apache.log4j.Level;
 public class IntegrationTest {
     public static final String PROJECT_NAME = "fs-cli Project";
 
-    public static final InitLog4jLoggingRule LOGGING_RULE = new InitLog4jLoggingRule(Level.INFO);
-    public static final FirstSpiritConnectionRule FIRST_SPIRIT_CONNECTION_RULE = new FirstSpiritConnectionRule();
+//    public static final FirstSpiritConnectionRule FIRST_SPIRIT_CONNECTION_RULE = new FirstSpiritConnectionRule();
 
 }

@@ -53,8 +53,8 @@ import static com.espirit.moddev.IntegrationTest.*;
 @Ignore
 @Category(com.espirit.moddev.IntegrationTest.class)
 public abstract class AbstractIntegrationTest {
-    @ClassRule
-    public static final RuleChain CLASS_RULES = RuleChain.outerRule(LOGGING_RULE).around(FIRST_SPIRIT_CONNECTION_RULE);
+//    @ClassRule
+//    public static final RuleChain CLASS_RULES = RuleChain.outerRule(FIRST_SPIRIT_CONNECTION_RULE);
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();

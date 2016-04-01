@@ -326,7 +326,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>com.espirit.moddev.test</groupId>
             <artifactId>rules</artifactId>
             <version>${modevtest.version}</version>
@@ -337,7 +337,7 @@
             <artifactId>tests</artifactId>
             <version>${modevtest.version}</version>
             <scope>test</scope>
-        </dependency>
+        </dependency-->
     </dependencies>
 
     <profiles>

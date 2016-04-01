@@ -25,9 +25,6 @@ package com.espirit.moddev.cli.exceptions;
 import com.espirit.moddev.cli.Cli;
 import com.espirit.moddev.cli.exception.ExceptionHandler;
 import com.espirit.moddev.cli.exception.CliErrorEvent;
-import com.espirit.moddev.test.rules.logging.InitLog4jLoggingRule;
-import com.espirit.moddev.test.rules.logging.LogTestMethodNameRule;
-import org.apache.log4j.Level;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -39,12 +36,6 @@ import static org.junit.Assert.*;
  * @author e-Spirit AG
  */
 public class ExceptionHandlerTest {
-
-    @ClassRule
-    public static InitLog4jLoggingRule loggingRule = new InitLog4jLoggingRule(Level.DEBUG);
-
-    @Rule
-    public LogTestMethodNameRule logTestMethodNameRule = new LogTestMethodNameRule();
 
     private ExceptionHandler testling;
     private Cli app;

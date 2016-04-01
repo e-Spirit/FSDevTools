@@ -51,14 +51,12 @@ public class SyncDirectoryFactoryTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    private MockingProjectScriptContext context;
     private SyncDirectoryFactory testling;
     private File syncDir;
 
     @Before
     public void setUp() throws Exception {
         syncDir = temporaryFolder.newFolder();
-        context = new MockingProjectScriptContext("MyProject", Locale.CANADA_FRENCH, syncDir, BaseContext.Env.HEADLESS);
         testling = new SyncDirectoryFactory(new Config() {
             @Override
             public String getHost() {
@@ -130,7 +128,6 @@ public class SyncDirectoryFactoryTest {
 
         assertFalse("Expect sync dir is missing", syncDir.exists());
 
-        context = new MockingProjectScriptContext("MyProject", Locale.CANADA_FRENCH, syncDir, BaseContext.Env.HEADLESS);
         testling.checkAndCreateSyncDirIfNeeded(syncDir.getAbsolutePath());
 
         assertTrue("Expect sync dir exists", syncDir.exists());
@@ -139,7 +136,6 @@ public class SyncDirectoryFactoryTest {
     @Test(expected = IllegalArgumentException.class)
     public void testCheckAndCreateSyncDirIfNeededException() throws Exception {
         syncDir = temporaryFolder.newFile();
-        context = new MockingProjectScriptContext("MyProject", Locale.CANADA_FRENCH, syncDir, BaseContext.Env.HEADLESS);
 
         testling.checkAndCreateSyncDirIfNeeded(syncDir.getAbsolutePath());
     }
