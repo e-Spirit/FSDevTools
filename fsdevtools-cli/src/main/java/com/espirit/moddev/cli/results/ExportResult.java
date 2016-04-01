@@ -37,6 +37,7 @@ public class ExportResult extends SimpleResult<ExportOperation.Result> {
      * Creates a new instance using the given command result.
      *
      * @param result Result produced by the command
+     * @see com.espirit.moddev.cli.results.SimpleResult#SimpleResult(Object)
      */
     public ExportResult(ExportOperation.Result result) {
         super(result);
@@ -45,6 +46,7 @@ public class ExportResult extends SimpleResult<ExportOperation.Result> {
     /**
      * Creates a new error result using the given exception.
      * @param exception Exception produced by the command
+     * @see com.espirit.moddev.cli.results.SimpleResult#SimpleResult(Exception)
      */
     public ExportResult(Exception exception) {
         super(exception);
