@@ -25,25 +25,32 @@ package com.espirit.moddev.cli.exception;
 import com.espirit.moddev.cli.api.configuration.Config;
 
 /**
- * The type CliException.
+ * General runtime exception that can be thrown in the cli application.
  *
  * @author e-Spirit AG
  */
 public class CliException extends RuntimeException {
 
     /**
-     * Instantiates a new Fs file sync exception.
+     * Instantiates a new instance.
      *
-     * @param error  the error
-     * @param config the config
-     * @param cause  the cause
+     * @param error the error that occurred
+     * @param config the configuration values of the cli application
+     * @param cause the cause of the error
      */
     public CliException(CliError error, Config config, Throwable cause) {
         super(error.getMessage(config), cause);
     }
+
+    /**
+     * Instantiates a new instance.
+     *
+     * @param cause the cause of the error
+     */
     public CliException(Throwable cause) {
         super(cause.getMessage(), cause);
     }
+
     @Override
     public String toString() {
         return getMessage();
