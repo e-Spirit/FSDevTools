@@ -28,30 +28,33 @@ import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 /**
- * The enum Fs file sync error.
+ * Errors that can occur in the cli application.
  *
  * @author e-Spirit AG
  */
 public enum CliError {
 
     /**
-     * The SESSIONS.
+     * Indicates that the maximum number of sessions has been exceeded.
+     * This error has a {@link com.espirit.moddev.cli.exception.CliErrorSevereness#MINOR} severity.
      */
     SESSIONS(CliErrorSevereness.MINOR),
 
     /**
-     * The AUTHENTICATION.
+     * Indicates that the authentication failed.
+     * This error has a {@link com.espirit.moddev.cli.exception.CliErrorSevereness#MAJOR} severity.
      */
     AUTHENTICATION(CliErrorSevereness.MAJOR),
 
     /**
-     * The GENERAL_IO.
+     * Indicates a general I/O error.
+     * This error has a {@link com.espirit.moddev.cli.exception.CliErrorSevereness#MINOR} severity.
      */
-    GENERAL_IO(
-        CliErrorSevereness.MINOR),
+    GENERAL_IO(CliErrorSevereness.MINOR),
 
     /**
-     * The UNEXPECTED.
+     * Indicates an unexpected error.
+     *This error has a {@link com.espirit.moddev.cli.exception.CliErrorSevereness#FATAL} severity.
      */
     UNEXPECTED(CliErrorSevereness.FATAL);
 
@@ -64,10 +67,10 @@ public enum CliError {
     }
 
     /**
-     * Gets message.
+     * Get the error message.
      *
-     * @param config the config
-     * @return the message
+     * @param config the configuration values to be contained in the error message
+     * @return the error message
      */
     public String getMessage(Config config) {
         final String bundleString = bundle.getString(name());
@@ -80,7 +83,7 @@ public enum CliError {
     }
 
     /**
-     * Gets error code.
+     * Get the error code.
      *
      * @return the error code
      */
