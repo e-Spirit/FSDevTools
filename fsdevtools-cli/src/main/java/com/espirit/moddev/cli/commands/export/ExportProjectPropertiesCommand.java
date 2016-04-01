@@ -29,9 +29,8 @@ import de.espirit.firstspirit.agency.OperationAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 import org.apache.log4j.Logger;
 
-
 /**
- * The type Project properties command.
+ * {@link com.github.rvesse.airline.annotations.Command} to export FirstSpirit project properties like resolutions, fonts etc.
  *
  * @author e-Spirit AG
  */
