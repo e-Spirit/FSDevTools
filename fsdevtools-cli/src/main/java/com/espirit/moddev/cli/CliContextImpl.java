@@ -49,7 +49,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The type Fs file sync context.
+ * Default implementation of {@link com.espirit.moddev.cli.api.CliContext}.
  *
  * @author e-Spirit AG
  */
@@ -63,9 +63,10 @@ public class CliContextImpl implements CliContext {
     private SpecialistsBroker projectBroker;
 
     /**
-     * Instantiates a new Vcs connect context.
+     * Create a new instance that uses the given {@link com.espirit.moddev.cli.api.configuration.Config}.
      *
-     * @param clientConfig the client config
+     * @param clientConfig the configuration to be used
+     * @throws java.lang.IllegalArgumentException if clientConfig is null
      */
     public CliContextImpl(final Config clientConfig) {
         if (clientConfig == null) {
@@ -101,6 +102,11 @@ public class CliContextImpl implements CliContext {
         }
     }
 
+    /**
+     * Connect to the FirstSpirit server using the configuration of this instance.
+     *
+     * @return a connection to a FirstSpirit server
+     */
     protected Connection obtainConnection() {
         return ConnectionManager
             .getConnection(clientConfig.getHost(), clientConfig.getPort(), clientConfig.getConnectionMode().getCode(), clientConfig.getUser(),
