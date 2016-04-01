@@ -22,22 +22,21 @@
 
 package com.espirit.moddev.cli;
 
-
 import com.espirit.moddev.cli.exception.CliErrorEvent;
 
 /**
- * The interface CliListener.
+ * Interface that defines means to receive events from the cli application.
  *
+ * @see com.espirit.moddev.cli.Cli#addListener(CliListener)
  * @author e-Spirit AG
  */
 @FunctionalInterface
 public interface CliListener {
 
     /**
-     * Error occurred.
+     * Notify this listener about an error event.
      *
-     * @param e the e
+     * @param e the error event
      */
     void errorOccurred(final CliErrorEvent e);
-
 }
