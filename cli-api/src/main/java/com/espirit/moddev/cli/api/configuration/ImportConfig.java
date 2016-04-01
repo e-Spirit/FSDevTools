@@ -23,30 +23,32 @@
 package com.espirit.moddev.cli.api.configuration;
 
 /**
- * The interface Fs cli client config import.
+ * {@link com.espirit.moddev.cli.api.configuration.Config} specialization that defines additional means to access the configuration for an import operation.
  *
  * @author e-Spirit AG
  */
 public interface ImportConfig extends Config {
 
     /**
-     * Not creating project if missing.
+     * Indicates if the project specified by {@link #getProject()} should be created if it does not exist.
      *
-     * @return the boolean
+     * @return a boolean value that indicates if the synchronized project should be created if it does not exist.
      */
     boolean isCreatingProjectIfMissing();
 
     /**
-     * Create entities.
+     * Indicates if entities should be created during the import operation.
      *
-     * @return the boolean
+     * @see de.espirit.firstspirit.store.access.nexport.operations.ImportOperation#setCreateEntities(boolean)
+     * @return a boolean value that indicates if entities should be created during the import operation
      */
     boolean isCreateEntities();
 
     /**
-     * Gets import comment.
+     * Get the revision comment used for the revision created by the import operation.
      *
-     * @return the import comment
+     * @see de.espirit.firstspirit.store.access.nexport.operations.ImportOperation#setRevisionComment(String)
+     * @return the revision comment used for the revision created by the import operation
      */
     String getImportComment();
 }
