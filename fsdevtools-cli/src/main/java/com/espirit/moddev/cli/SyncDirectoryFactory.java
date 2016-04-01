@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 
 /**
- * The type Sync directory factory.
+ * Helper class to create the synchronization directory if needed.
  *
  * @author e-Spirit AG
  */
@@ -40,9 +40,9 @@ public class SyncDirectoryFactory {
     private final Config config;
 
     /**
-     * Instantiates a new Sync directory factory.
+     * Creates a new instance.
      *
-     * @param config the config
+     * @param config the configuration values to use
      */
     public SyncDirectoryFactory(Config config) {
         this.config = config;
@@ -51,7 +51,8 @@ public class SyncDirectoryFactory {
     /**
      * Check and create sync dir if needed.
      *
-     * @param syncDirStr the sync dir str
+     * @param syncDirStr the sync dir path
+     * @throws java.lang.IllegalArgumentException if the sync dir ist not a directory or if the sync dir can not be read.
      */
     public void checkAndCreateSyncDirIfNeeded(String syncDirStr) {
         LOGGER.debug("Check sync dir: " + syncDirStr);
