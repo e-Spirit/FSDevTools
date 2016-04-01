@@ -266,7 +266,7 @@
 						<version>${firstspiritserver.plugin.version}</version>
 						<configuration>
 							<projectfile>${project.basedir}/target/test-classes/pm-demo-without-db.tar.gz</projectfile>
-							<projectname>${project.artifactId} Project</projectname>
+							<projectname>fs-cli Project</projectname>
 							<projectdescription>fs-cli Project</projectdescription>
 							<databases>
 								<old_schema_name>new_schema</old_schema_name>

@@ -58,7 +58,7 @@ public class ImportCommandTest extends AbstractIntegrationTest {
         ImportResult result = command.call();
         ImportOperation.Result importResult = result.get();
 
-        Assert.assertTrue(importResult.getCreatedElements().size() > 0);
+        Assert.assertTrue(importResult.getProblems().size() == 0);
     }
 
 }
