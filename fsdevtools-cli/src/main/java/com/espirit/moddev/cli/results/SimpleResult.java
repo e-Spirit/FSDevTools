@@ -27,22 +27,47 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @param <CUSTOM_RESULT_TYPE> Type of the result
+ * General {@link com.espirit.moddev.cli.api.result.Result} implementation
+ * @param <CUSTOM_RESULT_TYPE> Type of the result produced by the command
  * @author e-Spirit AG
  */
 public class SimpleResult<CUSTOM_RESULT_TYPE> implements Result<CUSTOM_RESULT_TYPE> {
 
+    /**
+     * {@link org.slf4j.Logger} used by this class.
+     */
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * Result produced by the command.
+     */
     protected final CUSTOM_RESULT_TYPE result;
+
+    /**
+     * Exception produced by the command.
+     */
     protected Exception exception = null;
 
+    /**
+     * Creates a new instance using an empty command result.
+     */
     public SimpleResult() {
         this((CUSTOM_RESULT_TYPE) null);
     }
+
+    /**
+     * Creates a new instance using the given command result.
+     *
+     * @param result Result produced by the command
+     */
     public SimpleResult(CUSTOM_RESULT_TYPE result) {
         this.result = result;
     }
+
+    /**
+     * Creates a new error result using the given exception.
+     * @param exception Exception produced by the command
+     */
     public SimpleResult(Exception exception) {
         this.result = null;
         this.exception = exception;
