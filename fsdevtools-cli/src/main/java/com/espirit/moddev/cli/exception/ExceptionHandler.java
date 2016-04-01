@@ -25,6 +25,7 @@ package com.espirit.moddev.cli.exception;
 import com.espirit.moddev.cli.Cli;
 import com.espirit.moddev.cli.CliListener;
 import com.espirit.moddev.cli.configuration.CliConstants;
+
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,9 +110,6 @@ public final class ExceptionHandler implements Thread.UncaughtExceptionHandler, 
      * @return the boolean
      */
     public boolean argumentsContains(String key) {
-        if (arguments.isEmpty()) {
-            return false;
-        }
         return arguments.contains(key);
     }
 }
