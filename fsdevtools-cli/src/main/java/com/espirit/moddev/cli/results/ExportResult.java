@@ -28,13 +28,24 @@ import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 import java.util.Set;
 
 /**
+ * Specialization of {@link com.espirit.moddev.cli.results.SimpleResult} that can be used in conjunction with export commands.
  * @author e-Spirit AG
  */
 public class ExportResult extends SimpleResult<ExportOperation.Result> {
+
+    /**
+     * Creates a new instance using the given command result.
+     *
+     * @param result Result produced by the command
+     */
     public ExportResult(ExportOperation.Result result) {
         super(result);
     }
 
+    /**
+     * Creates a new error result using the given exception.
+     * @param exception Exception produced by the command
+     */
     public ExportResult(Exception exception) {
         super(exception);
     }
@@ -61,7 +72,7 @@ public class ExportResult extends SimpleResult<ExportOperation.Result> {
     }
 
     /**
-     * log info messages.
+     * Log info messages.
      *
      * @param handle represents the current element that was exported
      * @param state  is used for the log message ("updated", "created" and "deleted")
