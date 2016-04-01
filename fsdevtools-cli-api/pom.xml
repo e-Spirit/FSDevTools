@@ -25,12 +25,23 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>fsdevtools</artifactId>
-        <groupId>com.espirit.moddev</groupId>
+        <artifactId>fsdevtools-parent</artifactId>
+        <groupId>com.espirit.moddev.fsdevtools</groupId>
         <version>${ci.version}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>core</artifactId>
+    <artifactId>fsdevtools-cli-api</artifactId>
+    <name>Command Line Interface API</name>
 
+    <dependencies>
+        <!-- Logging -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+            <!--<scope>provided</scope>-->
+        </dependency>
+    </dependencies>
 </project>
