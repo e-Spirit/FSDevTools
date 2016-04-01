@@ -24,7 +24,7 @@ package com.espirit.moddev.cli.exception;
 
 
 /**
- * The type Fs cli error event.
+ * Event used in the cli application to notify about an error.
  *
  * @author e-Spirit AG
  */
@@ -34,10 +34,10 @@ public class CliErrorEvent {
     private final Throwable error;
 
     /**
-     * Instantiates a new Fs cli error event.
+     * Instantiates a new instance.
      *
-     * @param source the source
-     * @param error  the error
+     * @param source the source of the event
+     * @param error the error that occurred
      */
     public CliErrorEvent(Object source, Throwable error) {
         this.source = source;
@@ -45,7 +45,7 @@ public class CliErrorEvent {
     }
 
     /**
-     * Gets source.
+     * Get source of the event.
      *
      * @return the source
      */
@@ -54,7 +54,7 @@ public class CliErrorEvent {
     }
 
     /**
-     * Gets error.
+     * Get error that occurred.
      *
      * @return the error
      */
