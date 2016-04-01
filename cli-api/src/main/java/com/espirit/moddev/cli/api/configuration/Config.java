@@ -31,64 +31,66 @@ import de.espirit.firstspirit.io.FileSystem;
 import java.util.List;
 
 /**
- * The interface Client config.
+ * Interface that defines means to access the configuration values.
  *
  * @author e-Spirit AG
  */
 public interface Config {
 
     /**
-     * Gets host.
+     * Get the FirstSpirit server host.
      *
-     * @return the host
+     * @return the FirstSpirit server host
      */
     String getHost();
 
     /**
-     * Gets port.
+     * Get the FirstSpirit server port.
      *
-     * @return the port
+     * @return the FirstSpirit server port
      */
     Integer getPort();
 
     /**
-     * Gets connection mode.
+     * Get the connection mode used to connect to the FirstSpirit server.
      *
-     * @return the connection mode
+     * @return a {@link com.espirit.moddev.cli.api.FsConnectionMode} object that specifies the connection mode used to connect to the FirstSpirit server
      */
     FsConnectionMode getConnectionMode();
 
     /**
-     * Gets user.
+     * Get the username used to authenticate against the FirstSpirit server.
      *
-     * @return the user
+     * @return the username used to authenticate against the FirstSpirit server
      */
     String getUser();
 
     /**
-     * Gets password.
+     * Get the password used to authenticate against the FirstSpirit server.
      *
-     * @return the password
+     * @return the password used to authenticate against the FirstSpirit server.
      */
     String getPassword();
 
     /**
-     * Gets project.
+     * Get the name of the project that will be synchronized.
      *
-     * @return the project
+     * @return the name of the project that will be synchronized
      */
     String getProject();
 
     /**
-     * Gets the synchronization directory as a String identifier. Can be used to retrieve
-     * an actual file handle to a directory.
+     * Gets the synchronization directory as a {@link java.lang.String} identifier.
+     * Can be used to retrieve an actual file handle to a directory.
      *
-     * @return the sync dir
+     * @return the synchronization directory
      */
     String getSynchronizationDirectoryString();
 
     /**
      * Indicates whether or not a directory for file synchronization should be created if absent.
+     * The default value is true.
+     *
      * @return true if a directory should be created if absent, false if not
      */
     default boolean createSynchronizationDirectoryIfMissing() { return true; }
@@ -102,32 +104,34 @@ public interface Config {
     <F extends FileHandle> FileSystem<F> getSynchronizationDirectory();
 
     /**
-     * Indicates if this type of configuration needs a context to be initialized. An execution
-     * environment can evaluate this information to properly initialize commands, for example.
+     * Indicates if this type of configuration needs a context to be initialized.
+     * An execution environment can evaluate this information to properly initialize commands, for example.
+     * The default value is true.
      *
      * @return a boolean value that indicates whether or not a context is required for this config.
      */
     default boolean needsContext() { return true; }
 
     /**
-     * Setter for a context. Since not all configurations need a context, the default
-     * implementation is empty.
+     * Set the context used by this configuration.
+     * Since not all configurations need a context, the default implementation is empty.
      *
-     * @param context the context this command should use
+     * @param context the context this configuration should use
      */
     default void setContext(ProjectScriptContext context) {}
 
     /**
-     * Activate project if deactivated. Default is true.
+     * Indicates if the synchronized project specified by {@link #getProject()} should be activated if it is currently deactivated.
+     * The default value is true.
      *
-     * @return the boolean
+     * @return a boolean value indicating if the synchronized project should be activated if it is currently deactivated
      */
     default boolean isActivateProjectIfDeactivated() { return true; }
 
     /**
-     * Retrieves a list of FullQualifiedUids
+     * Get a list of {@link com.espirit.moddev.cli.api.FullQualifiedUid}s that specify the elements that should be synchronized.
      *
-     * @return a list of FullQualifiedUids
+     * @return a {@link java.util.List} of {@link com.espirit.moddev.cli.api.FullQualifiedUid}s that specify the elements that should be synchronized
      */
     List<FullQualifiedUid> getFullQualifiedUids();
 }
