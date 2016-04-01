@@ -22,11 +22,10 @@
 
 package com.espirit.moddev.cli.exception;
 
-
 import com.espirit.moddev.cli.CliListener;
 
 /**
- * The type System exit listener.
+ * Listener that will exit the cli application if an error occurs.
  *
  * @author e-Spirit AG
  */
