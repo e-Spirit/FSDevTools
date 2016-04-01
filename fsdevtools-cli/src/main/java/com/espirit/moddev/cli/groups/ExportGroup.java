@@ -22,17 +22,15 @@
 
 package com.espirit.moddev.cli.groups;
 
-import com.espirit.moddev.cli.api.annotations.Description;
 import com.espirit.moddev.cli.commands.export.ExportCommand;
 import com.github.rvesse.airline.annotations.Group;
 
 /**
+ * {@link com.github.rvesse.airline.annotations.Group} that contains export commands.
+ *
  * @author e-Spirit AG
  */
 @Group(name = "export", description = "Export templates, configurations and other media", defaultCommand = ExportCommand.class)
 public class ExportGroup {
-    @Description
-    public static String getDescription() {
-        return "Export templates, configurations and other media";
-    }
+
 }
