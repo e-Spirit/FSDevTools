@@ -36,7 +36,7 @@ import java.util.List;
 
 
 /**
- * The type Exception handler.
+ * Helper class to handle exceptions.
  *
  * @author e-Spirit AG
  */
@@ -47,9 +47,9 @@ public final class ExceptionHandler implements Thread.UncaughtExceptionHandler, 
     private final Cli app;
 
     /**
-     * Instantiates a new Exception handler.
+     * Instantiates a new instance.
      *
-     * @param app  the commandline app
+     * @param app the commandline app
      * @param args the commandline arguments
      */
     public ExceptionHandler(Cli app, String[] args) {
@@ -80,9 +80,10 @@ public final class ExceptionHandler implements Thread.UncaughtExceptionHandler, 
     }
 
     /**
-     * Log exception.
+     * Log the given {@link java.lang.Throwable}.
+     * If the -e switch is set, the full stack trace will be logged. See {@link com.espirit.moddev.cli.configuration.GlobalConfig#isError()}.
      *
-     * @param error the error
+     * @param error the error to be logged
      */
     private void logException(Throwable error) {
         if (argumentsContains("-e")) {
@@ -106,8 +107,8 @@ public final class ExceptionHandler implements Thread.UncaughtExceptionHandler, 
     /**
      * Checks if arguments contains a certain element.
      *
-     * @param key the key
-     * @return the boolean
+     * @param key the argument to be checked
+     * @return the true if the arguments contain the given element
      */
     public boolean argumentsContains(String key) {
         return arguments.contains(key);
