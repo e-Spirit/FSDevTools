@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @param <CUSTOM_RESULT_TYPE>
+ * @param <CUSTOM_RESULT_TYPE> Type of the result
  * @author e-Spirit AG
  */
 public class SimpleResult<CUSTOM_RESULT_TYPE> implements Result<CUSTOM_RESULT_TYPE> {
