@@ -37,6 +37,7 @@ import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 
 /**
+ * {@link com.github.rvesse.airline.annotations.Command} to export elements from the FirstSpirit template store.
  * @author e-Spirit AG
  */
 @Command(name = "templatestore", groupNames = {"export"},
