@@ -267,7 +267,7 @@
 						<configuration>
 							<projectfile>${project.basedir}/target/test-classes/pm-demo-without-db.tar.gz</projectfile>
 							<projectname>${project.artifactId} Project</projectname>
-							<projectdescription>${project.artifactId} Project</projectdescription>
+							<projectdescription>fs-cli Project</projectdescription>
 							<databases>
 								<old_schema_name>new_schema</old_schema_name>
 							</databases>
@@ -293,11 +293,25 @@
 						<artifactId>maven-failsafe-plugin</artifactId>
 						<version>2.11</version>
 						<configuration>
-							<goals>
-								<goal>integration-test</goal>
-							</goals>
 							<groups>com.espirit.moddev.IntegrationTest</groups>
+							<includes>
+								<include>**/*Test.java</include>
+							</includes>
 						</configuration>
+						<executions>
+							<execution>
+								<id>integration-test</id>
+								<goals>
+									<goal>integration-test</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>verify</id>
+								<goals>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
 
 				</plugins>
