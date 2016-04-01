@@ -4,7 +4,7 @@ Project to support developer experience (DX) with FirstSpirit template developme
 
 ## User Documentation
 
-### Perquisites
+### Prequisites
 Installation prerequisites are documented inside the zip or tar-gz file of the binary distribution.
 
 In short, a correct `JAVA_HOME` environment variable must be set which points to a **Java 8** installation.

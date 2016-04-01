@@ -101,7 +101,6 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.5.5</version>
                 <configuration>
-                    <!--<finalName>${project.artifactId}</finalName>-->
                     <appendAssemblyId>false</appendAssemblyId>
                     <descriptor>src/main/assemblies/jar-without-firstspirit.xml</descriptor>
                     <archive>
@@ -110,7 +109,6 @@
                         </manifest>
                         <manifestEntries>
                             <Class-Path>fs-access.jar</Class-Path>
-                            <!--Class-Path>log4j.properties</Class-Path-->
                             <Implementation-Title>${project.name}</Implementation-Title>
                             <Implementation-Version>${project.version}</Implementation-Version>
                             <Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
