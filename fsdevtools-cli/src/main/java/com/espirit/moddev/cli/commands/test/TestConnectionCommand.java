@@ -46,20 +46,38 @@ public class TestConnectionCommand extends GlobalConfig implements Command {
         }
     }
 
+    /**
+     * Specialization of {@link com.espirit.moddev.cli.results.SimpleResult} that can be used in conjunction with test connection commands.
+     *
+     * @author e-Spirit AG
+     */
     public class TestResult extends SimpleResult {
 
-        private final GlobalConfig command;
+        private final GlobalConfig config;
 
-        public TestResult(GlobalConfig command, Exception e) {
+        /**
+         * Creates a new instance using the given config and exception.
+         *
+         * @param config Config that was used for command execution
+         * @param e      Optional exception that was produced by the command
+         * @throws java.lang.IllegalArgumentException if config is null
+         */
+        public TestResult(GlobalConfig config, Exception e) {
             super(e);
-            validateCommand(command);
-            this.command = command;
+            validateConfig(config);
+            this.config = config;
         }
 
-        public TestResult(GlobalConfig command) {
+        /**
+         * Creates a new instance using the given config and exception.
+         *
+         * @param config Config that was used for config execution
+         * @throws java.lang.IllegalArgumentException if config is null
+         */
+        public TestResult(GlobalConfig config) {
             super();
-            validateCommand(command);
-            this.command = command;
+            validateConfig(config);
+            this.config = config;
         }
 
         @Override
@@ -68,26 +86,25 @@ public class TestConnectionCommand extends GlobalConfig implements Command {
             if(isError()) {
                 LOGGER.info("Test was not successful");
                 LOGGER.error(exception.getMessage());
-                if(command.isError()) {
+                if (config.isError()) {
                     LOGGER.error("", exception);
                 }
             } else {
                 LOGGER.info("Test was successful");
             }
             LOGGER.info("#########");
-            LOGGER.info("User: " + command.getUser());
-            LOGGER.info("Password: " + command.getPassword());
-            LOGGER.info("Host: " + command.getHost());
-            LOGGER.info("Port: " + command.getPort());
-            LOGGER.info("Connection Mode: " + command.getConnectionMode());
+            LOGGER.info("User: " + config.getUser());
+            LOGGER.info("Password: " + config.getPassword());
+            LOGGER.info("Host: " + config.getHost());
+            LOGGER.info("Port: " + config.getPort());
+            LOGGER.info("Connection Mode: " + config.getConnectionMode());
         }
 
 
-        private void validateCommand(GlobalConfig command) {
-            if(command == null) {
+        private void validateConfig(GlobalConfig config) {
+            if (config == null) {
                 throw new IllegalArgumentException("Command shouldn't be null");
             }
         }
-
     }
 }
