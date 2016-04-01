@@ -25,24 +25,26 @@ package com.espirit.moddev.cli.api;
 import de.espirit.firstspirit.access.ConnectionManager;
 
 /**
- * The enum Fs connection mode.
+ * Connection modes that can be used to access a FirstSpirit server.
  *
  * @author e-Spirit AG
  */
 public enum FsConnectionMode {
 
     /**
-     * The HTTP.
+     * Http connection mode.
+     * Uses {@link com.espirit.moddev.cli.api.FsConnectionMode.Constants#HTTP_PORT} as default port.
      */
     HTTP(ConnectionManager.HTTP_MODE, Constants.HTTP_PORT),
 
     /**
-     * The SOCKET.
+     * Socket connection mode.
+     * Uses {@link com.espirit.moddev.cli.api.FsConnectionMode.Constants#SOCKET_PORT} as default port.
      */
     SOCKET(ConnectionManager.SOCKET_MODE, Constants.SOCKET_PORT);
 
     private final int code;
-    private final Integer defaultPort;
+    private final int defaultPort;
 
     FsConnectionMode(int code, int defaultPort) {
         this.code = code;
@@ -50,31 +52,31 @@ public enum FsConnectionMode {
     }
 
     /**
-     * Gets code.
+     * Get the code that identifies this connection mode.
      *
-     * @return the code
+     * @return the code that identifies this connection mode
      */
     public int getCode() {
         return code;
     }
 
     /**
-     * Gets default port.
+     * Get the default port used by this connection mode.
      *
-     * @return the default port
+     * @return the default port used by this connection mode
      */
-    public Integer getDefaultPort() {
+    public int getDefaultPort() {
         return defaultPort;
     }
 
     /**
-     * Is default port.
+     * Indicates if the given port number matches the default port used by this connection mode.
      *
-     * @param port the port
-     * @return the boolean
+     * @param port port number that should be checked
+     * @return a boolean value that indicates if the given port number matches the default port used by this connection mode
      */
-    public boolean isDefaultPort(Integer port) {
-        return defaultPort.equals(port);
+    public boolean isDefaultPort(int port) {
+        return defaultPort == port;
     }
 
     @Override
@@ -85,11 +87,12 @@ public enum FsConnectionMode {
     private static final class Constants {
 
         /**
-         * The constant HTTP_PORT.
+         * Default FirstSpirit http port (8000).
          */
         public static final int HTTP_PORT = 8000;
+
         /**
-         * The constant SOCKET_PORT.
+         * Default FirstSpirit socket port (1088).
          */
         public static final int SOCKET_PORT = 1088;
 
