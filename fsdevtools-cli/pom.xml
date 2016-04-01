@@ -155,6 +155,19 @@
                             <goal>single</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <configuration>
+                            <finalName>fs-cli-without-access-jar</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptorSourceDirectory>src/main/assemblies/distribution-without-access-jar</descriptorSourceDirectory>
+                            <tarLongFileMode>posix</tarLongFileMode>
+                        </configuration>
+                        <id>assemble-all-without-access-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
 
