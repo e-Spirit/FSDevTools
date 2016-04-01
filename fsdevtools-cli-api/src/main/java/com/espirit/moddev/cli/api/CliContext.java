@@ -24,9 +24,8 @@ package com.espirit.moddev.cli.api;
 
 import de.espirit.firstspirit.access.project.ProjectScriptContext;
 
-
 /**
- * The interface CliContext. Exists to create a closeable project script context.
+ * Exists to create a closeable project script context.
  *
  * @author e-Spirit AG
  */
