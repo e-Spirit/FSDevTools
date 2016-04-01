@@ -51,6 +51,17 @@ import java.util.List;
  */
 public class GlobalConfig implements Config {
 
+    /**
+     * {@link de.espirit.firstspirit.access.project.ProjectScriptContext} used by this configuration.
+     */
+    protected ProjectScriptContext context;
+
+    /**
+     * Boolean flag that indicates if the synchronization directory should be created if it does not exist.
+     */
+    @Option(type = OptionType.GLOBAL, name = {"--dont-create-sync-dir"}, description = "Do not create synchronisation directory if it is missing")
+    protected boolean dontCreateSynchronizationDirexctoryIfMissing;
+
     private final Environment environment = new Environment();
 
     @Option(type = OptionType.GLOBAL, name = "-e", description = "Error mode. Shows error stacktraces.")
@@ -82,13 +93,9 @@ public class GlobalConfig implements Config {
     @Option(type = OptionType.GLOBAL, name = {"-sd", "--syncDir"}, description = "The synchronization directory that is used for im- and export. Default is current directory")
     private String synchronizationDirectory = ".";
 
-    @Option(type = OptionType.GLOBAL, name = {"--dont-create-sync-dir"}, description = "Do not create synchronisation directory if it is missing")
-    protected boolean dontCreateSynchronizationDirexctoryIfMissing;
-
     @Arguments(title = "arguments", description = "An arbitrary number of arguments. Each command can have its own, special arguments.")
     private List<String> args = new LinkedList<>();
 
-    protected ProjectScriptContext context;
     @Override
     public final void setContext(ProjectScriptContext context) {
         if(context == null) {
@@ -97,23 +104,29 @@ public class GlobalConfig implements Config {
         this.context = context;
     }
 
+    /**
+     * Get the {@link de.espirit.firstspirit.access.project.ProjectScriptContext} used by this configuration.
+     *
+     * @return the context used by this configuration
+     */
     public ProjectScriptContext getContext() {
         return context;
     }
 
     /**
-     * Shows if it is in error mode.
+     * Indicates if the error mode is enabled.
+     * If in error mode, the cli application will log the full stack trace of an error.
      *
-     * @return the boolean
+     * @return true if error mode is enabled, otherwise false
      */
     public boolean isError() {
         return error;
     }
 
     /**
-     * Gets environment. Needs to be protected so it can be accessed in tests.
+     * Get the {@link com.espirit.moddev.cli.Environment} used by this instance.
      *
-     * @return the environment
+     * @return the {@link com.espirit.moddev.cli.Environment} used by this instance
      */
     public Environment getEnvironment() {
         return environment;
@@ -225,49 +238,99 @@ public class GlobalConfig implements Config {
         return Collections.emptyList();
     }
 
+    /**
+     * Enable or disable the error mode.
+     * If the error mode is enabled, the full stack trace of errors will be logged.
+     * @param error boolean value indicating if the error code should be enabled or not
+     */
     public void setError(boolean error) {
         this.error = error;
     }
 
+    /**
+     * Set the FirstSpirit server host that the cli application will connect to.
+     * @param host FirstSpirit server host
+     */
     public void setHost(String host) {
         this.host = host;
     }
 
+    /**
+     * Get the {@link com.espirit.moddev.cli.api.FsConnectionMode} used to connect to FirstSpirit.
+     * @return the {@link com.espirit.moddev.cli.api.FsConnectionMode} used to connect to FirstSpirit
+     */
     public FsConnectionMode getFsMode() {
         return fsMode;
     }
 
+    /**
+     * Set the {@link com.espirit.moddev.cli.api.FsConnectionMode} used to connect to FirstSpirit.
+     * @param fsMode the {@link com.espirit.moddev.cli.api.FsConnectionMode} used to connect to FirstSpirit
+     */
     public void setFsMode(FsConnectionMode fsMode) {
         this.fsMode = fsMode;
     }
 
+    /**
+     * Set the FirstSpirit server port that the cli application will connect to.
+     * @param port FirstSpirit server port
+     */
     public void setPort(Integer port) {
         this.port = port;
     }
 
+    /**
+     * Set the user used to authenticate against FirstSpirit.
+     * @param user the username used to authenticate against FirstSpirit
+     */
     public void setUser(String user) {
         this.user = user;
     }
 
+    /**
+     * Set the password used to authenticate against FirstSpirit.
+     * @param password the password used to authenticate against FirstSpirit
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
+    /**
+     * Set the name of the project that will be synchronized.
+     * @param project the name of the project that will be synchronized
+     */
     public void setProject(String project) {
         this.project = project;
     }
 
+    /**
+     * Enable or disable the automatic activation of the synchronized project.
+     * @param activateProjectIfDeactivated a boolean value indicating if the automatic activation of the synchronized project should be enabled or not
+     */
     public void setActivateProjectIfDeactivated(boolean activateProjectIfDeactivated) {
         this.activateProjectIfDeactivated = activateProjectIfDeactivated;
     }
 
+    /**
+     * Set the synchronization directory.
+     * @param synchronizationDirectory Path to the synchronization directory
+     */
     public void setSynchronizationDirectory(String synchronizationDirectory) {
         this.synchronizationDirectory = synchronizationDirectory;
     }
+
+    /**
+     * Get the command arguments.
+     * @return the command arguments
+     */
     public List<String> getArgs() {
         return args; //NOSONAR
     }
 
+    /**
+     * Set the command arguments.
+     * @param args the command arguments
+     */
     public void setArgs(List<String> args) {
         this.args = args; //NOSONAR
     }
