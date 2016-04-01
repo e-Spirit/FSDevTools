@@ -22,6 +22,8 @@
 
 package com.espirit.moddev.cli;
 
+import com.google.common.base.Stopwatch;
+
 import com.espirit.moddev.cli.api.command.Command;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.api.result.Result;
@@ -36,40 +38,52 @@ import com.espirit.moddev.cli.reflection.ReflectionUtils;
 import com.github.rvesse.airline.annotations.Group;
 import com.github.rvesse.airline.builder.CliBuilder;
 import com.github.rvesse.airline.builder.GroupBuilder;
-import com.google.common.base.Stopwatch;
+
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 
 /**
- * The type Cli is the start point of this application.
+ * Start point of the cli application.
  *
  * @author e-Spirit AG
  */
 public final class Cli {
+
+    /**
+     * Default package for classes that define cli command groups.
+     */
     public static final String DEFAULT_GROUP_PACKAGE_NAME = "com.espirit.moddev.cli.groups";
+
+    /**
+     * Default package for classes that define cli commands.
+     */
     public static final String DEFAULT_COMMAND_PACKAGE_NAME = "com.espirit.moddev.cli.commands";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Cli.class);
-
+    private static Set<Class<? extends Command>> commandClasses = CommandUtils.scanForCommandClasses(DEFAULT_COMMAND_PACKAGE_NAME);
     private final List<CliListener> listeners = new LinkedList<>();
 
     /**
-     * The entry point of application.
+     * The entry point of the cli application.
      *
      * @param args the input arguments
      */
-
     public static void main(final String[] args) {
         new Cli().execute(args);
     }
-
-    private static Set<Class<? extends Command>> commandClasses = CommandUtils.scanForCommandClasses(DEFAULT_COMMAND_PACKAGE_NAME);
 
     /**
      * A getter for command classes from the package specified by {@link #DEFAULT_COMMAND_PACKAGE_NAME}
@@ -82,6 +96,11 @@ public final class Cli {
 
     private static Set<Class<?>> groupClasses;
 
+    /**
+     * Look up all class that define command classes in the package specified by {@link #DEFAULT_GROUP_PACKAGE_NAME}.
+     *
+     * @return {@link java.util.Set} of all class that define command classes in the package specified by {@link #DEFAULT_GROUP_PACKAGE_NAME}
+     */
     public static Set<Class<?>> getGroupClasses() {
         if(groupClasses == null) {
             groupClasses = GroupUtils.scanForGroupClasses(DEFAULT_GROUP_PACKAGE_NAME);
@@ -90,9 +109,9 @@ public final class Cli {
     }
 
     /**
-     * Start application.
+     * Start the cli application.
      *
-     * @param args the args
+     * @param args the input arguments
      */
     public void execute(final String[] args) {
         migrateEnvironmentVariableToSystemProperties();
@@ -118,6 +137,11 @@ public final class Cli {
         }
     }
 
+    /**
+     * Get the default {@link com.github.rvesse.airline.builder.CliBuilder} for this cli application.
+     * The {@link com.github.rvesse.airline.builder.CliBuilder} will be initialized with all available commands and groups.
+     * @return the default {@link com.github.rvesse.airline.builder.CliBuilder} for this cli application.
+     */
     @NotNull
     public static CliBuilder<Command> getDefaultCliBuilder() {
         final CliBuilder<Command> builder = com.github.rvesse.airline.Cli.<Command>builder(CliConstants.FS_CLI.value());
@@ -130,10 +154,14 @@ public final class Cli {
         buildCommandGroups(builder);
     }
 
+    /**
+     * Initialize all available groups and their commands in the given {@link com.github.rvesse.airline.builder.CliBuilder}.
+     * @param builder
+     */
     public static void buildCommandGroups(CliBuilder<Command> builder) {
         Map<GroupWrapper, List<Class<Command>>> allGroups =
                 gatherGroupsFromCommandClasses(getCommandClasses(),
-                                                getGroupClasses());
+                                               getGroupClasses());
 
         for(Map.Entry<GroupWrapper, List<Class<Command>>> entry : allGroups.entrySet()) {
             if(entry.getKey().equals(GroupWrapper.NO_GROUP)) {
@@ -173,7 +201,7 @@ public final class Cli {
 
     /**
      * Adds all available commands (annotated with {@link Command}) as callables.
-     * The HelpCommand is not included, since it clashes with the builtin help command
+     * The {@link HelpCommand} is not included, since it clashes with the builtin help command
      * from airline.
      *
      * @param builder the cli builder to add all commands to
@@ -265,7 +293,6 @@ public final class Cli {
         return groupMappings;
     }
 
-
     private static void migrateEnvironmentVariableToSystemProperties() {
         final String logDir = System.getProperty(CliConstants.USER_HOME.value()) + CliConstants.FS_CLI_DIR;
         System.setProperty(CliConstants.FS_CLI_LOG_DIR.value(), logDir);
@@ -322,9 +349,9 @@ public final class Cli {
 
 
     /**
-     * Fire error occurred event.
+     * Notify all registered listeners of the error event.
      *
-     * @param e the e
+     * @param e the error event
      */
     public void fireErrorOccurredEvent(CliErrorEvent e) {
         for (CliListener listener : listeners) {
@@ -336,7 +363,7 @@ public final class Cli {
      * Add a listener to this Cli.
      *
      * @param listener the listener to add
-     * @return the boolean
+     * @return true if the listener was added (see {@link java.util.List#add(Object)})
      */
     public boolean addListener(CliListener listener) {
         return listeners.add(listener);
