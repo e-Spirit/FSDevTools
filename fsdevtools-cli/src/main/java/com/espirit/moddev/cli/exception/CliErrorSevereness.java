@@ -22,32 +22,32 @@
 
 package com.espirit.moddev.cli.exception;
 
-
 /**
- * The enum Fs file sync error severeness.
+ * Error severities used in the cli application.
  *
  * @author e-Spirit AG
  */
 public enum CliErrorSevereness {
+
     /**
-     * The MINOR.
+     * Minor severity.
      */
     MINOR,
 
     /**
-     * The MAJOR.
+     * Major severity.
      */
     MAJOR,
 
     /**
-     * The FATAL.
+     * Fatal severity.
      */
     FATAL;
 
     private static final int BASE_LINE = 100;
 
     /**
-     * Gets error code.
+     * Get the error code.
      *
      * @return the error code
      */
