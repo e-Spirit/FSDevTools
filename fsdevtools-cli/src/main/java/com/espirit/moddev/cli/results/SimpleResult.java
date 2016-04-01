@@ -89,9 +89,9 @@ public class SimpleResult<CUSTOM_RESULT_TYPE> implements Result<CUSTOM_RESULT_TY
             LOGGER.error("Exception occurred while executing command", exception);
         } else {
             if(result != null) {
-                LOGGER.info("Result available: " +  result.getClass());
+                LOGGER.trace("Result available: " +  result.getClass());
             } else {
-                LOGGER.info("Result available");
+                LOGGER.trace("Result available");
             }
         }
     }
