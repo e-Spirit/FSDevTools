@@ -25,13 +25,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.espirit.moddev</groupId>
-    <artifactId>fsdevtools</artifactId>
+    <artifactId>fsdevtools-parent</artifactId>
+    <groupId>com.espirit.moddev.fsdevtools</groupId>
     <version>${ci.version}</version>
     <modules>
-        <module>cli-api</module>
-        <module>cli</module>
-        <module>core</module>
+        <module>fsdevtools-cli-api</module>
+        <module>fsdevtools-cli</module>
+        <module>fsdevtools-core</module>
     </modules>
     <packaging>pom</packaging>
     <name>FirstSpirit Development Tools</name>
