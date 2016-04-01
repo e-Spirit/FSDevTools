@@ -33,15 +33,58 @@ import com.github.rvesse.airline.annotations.Group;
  * @author e-Spirit AG
  */
 public class GroupWrapper {
+
+    /**
+     * Group name for commands that do not belong to a group.
+     */
+    public static final String NO_GROUP_GROUPNAME = "NO_GROUP";
+
+    /**
+     * Since airline doesn't provide proper handling of groupless commands, a dummy group has to be used to add commands comfortably. This group can
+     * be treated as a special container for those commands.
+     */
+    public static final GroupWrapper NO_GROUP = new GroupWrapper(NO_GROUP_GROUPNAME);
+
+    /**
+     * The group's name.
+     */
     public final String name;
+
+    /**
+     * The group's description.
+     */
     public final String description;
+
+    /**
+     * The classes of the commands contained by the group.
+     */
     public final Class<?>[] commands;
+
+    /**
+     * Class of the group's default command.
+     */
     public final Class<?> defaultCommand;
+
+    /**
+     * Indicates if the group is hidden or not.
+     */
     public final boolean hidden;
 
+    /**
+     * Create a new instance using the given name. All other public properties will be empty.
+     *
+     * @param name the group's name
+     */
     public GroupWrapper(String name) {
         this(name, "");
     }
+
+    /**
+     * Create a new instance using the given name and description. All other public properties will be empty.
+     *
+     * @param name        the group's name
+     * @param description the group's description
+     */
     public GroupWrapper(String name, String description) {
         this.name = name.toLowerCase();
         this.description = description;
@@ -50,6 +93,10 @@ public class GroupWrapper {
         hidden = false;
     }
 
+    /**
+     * Creates a new instance using the values of the given {@link com.github.rvesse.airline.annotations.Group}.
+     * @param groupAnnotation {@link com.github.rvesse.airline.annotations.Group} used to initializes the public properties
+     */
     public GroupWrapper(Group groupAnnotation) {
         name = groupAnnotation.name().toLowerCase();
         description = groupAnnotation.description();
@@ -80,12 +127,4 @@ public class GroupWrapper {
     public int hashCode() {
         return name.hashCode();
     }
-
-    public static final String NO_GROUP_GROUPNAME = "NO_GROUP";
-    /**
-     * Since airline doesn't provide proper handling of groupless commands,
-     * a dummy group has to be used to add commands comfortably. This group
-     * can be treated as a special container for those commands.
-     */
-    public static final GroupWrapper NO_GROUP = new GroupWrapper(NO_GROUP_GROUPNAME);
 }
