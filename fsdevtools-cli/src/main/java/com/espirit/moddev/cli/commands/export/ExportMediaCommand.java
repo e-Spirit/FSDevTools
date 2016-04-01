@@ -32,6 +32,7 @@ import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 
 /**
+ * {@link com.github.rvesse.airline.annotations.Command} to export elements from the FirstSpirit mediastore.
  * @author e-Spirit AG
  */
 @Command(name = "mediastore", groupNames = {"export"},
@@ -78,5 +79,4 @@ public class ExportMediaCommand extends AbstractExportCommand {
             return new ExportResult(e);
         }
     }
-
 }
