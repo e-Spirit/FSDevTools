@@ -39,7 +39,6 @@ import com.github.rvesse.airline.annotations.Group;
 import com.github.rvesse.airline.builder.CliBuilder;
 import com.github.rvesse.airline.builder.GroupBuilder;
 
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
