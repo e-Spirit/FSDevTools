@@ -232,10 +232,7 @@ public class GlobalConfig implements Config {
 
     @Override
     public List<FullQualifiedUid> getFullQualifiedUids() {
-        if (args.size() > 0) {
-            return FullQualifiedUid.parse(args);
-        }
-        return Collections.emptyList();
+        return args.isEmpty() ? Collections.emptyList() : FullQualifiedUid.parse(args);
     }
 
     /**
