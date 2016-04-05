@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * General {@link com.espirit.moddev.cli.api.result.Result} implementation
+ * General {@link com.espirit.moddev.cli.api.result.Result} implementation.
  * @param <CUSTOM_RESULT_TYPE> Type of the result produced by the command
  * @author e-Spirit AG
  */

@@ -75,7 +75,7 @@ public class Environment {
     }
 
     /**
-     * Clears all environment variables of this instance
+     * Clears all environment variables of this instance.
      */
     public void clear() {
         environmentVariables.clear();
