@@ -86,8 +86,9 @@ public final class Cli {
     }
 
     /**
-     * A getter for command classes from the package specified by {@link #DEFAULT_COMMAND_PACKAGE_NAME}
-     * only. The classes are loaded at class-load time only once.
+     * A getter for command classes from the package specified by {@link #DEFAULT_COMMAND_PACKAGE_NAME} only. The classes are loaded at class-load
+     * time only once.
+     *
      * @return a reference to the actual list of loaded commands
      */
     public static Set<Class<? extends Command>> getCommandClasses() {
@@ -102,7 +103,7 @@ public final class Cli {
      * @return {@link java.util.Set} of all class that define command classes in the package specified by {@link #DEFAULT_GROUP_PACKAGE_NAME}
      */
     public static Set<Class<?>> getGroupClasses() {
-        if(groupClasses == null) {
+        if (groupClasses == null) {
             groupClasses = GroupUtils.scanForGroupClasses(DEFAULT_GROUP_PACKAGE_NAME);
         }
         return Collections.unmodifiableSet(groupClasses);
@@ -138,11 +139,11 @@ public final class Cli {
     }
 
     /**
-     * Get the default {@link com.github.rvesse.airline.builder.CliBuilder} for this cli application.
-     * The {@link com.github.rvesse.airline.builder.CliBuilder} will be initialized with all available commands and groups.
+     * Get the default {@link com.github.rvesse.airline.builder.CliBuilder} for this cli application. The {@link
+     * com.github.rvesse.airline.builder.CliBuilder} will be initialized with all available commands and groups.
+     *
      * @return the default {@link com.github.rvesse.airline.builder.CliBuilder} for this cli application.
      */
-    @NotNull
     public static CliBuilder<Command> getDefaultCliBuilder() {
         final CliBuilder<Command> builder = com.github.rvesse.airline.Cli.<Command>builder(CliConstants.FS_CLI.value());
         initializeAllCommandsAndGroups(builder);
@@ -156,15 +157,16 @@ public final class Cli {
 
     /**
      * Initialize all available groups and their commands in the given {@link com.github.rvesse.airline.builder.CliBuilder}.
+     *
      * @param builder {@link com.github.rvesse.airline.builder.CliBuilder} to add the groups to
      */
     public static void buildCommandGroups(CliBuilder<Command> builder) {
         Map<GroupWrapper, List<Class<Command>>> allGroups =
-                gatherGroupsFromCommandClasses(getCommandClasses(),
-                                               getGroupClasses());
+            gatherGroupsFromCommandClasses(getCommandClasses(),
+                                           getGroupClasses());
 
-        for(Map.Entry<GroupWrapper, List<Class<Command>>> entry : allGroups.entrySet()) {
-            if(entry.getKey().equals(GroupWrapper.NO_GROUP)) {
+        for (Map.Entry<GroupWrapper, List<Class<Command>>> entry : allGroups.entrySet()) {
+            if (entry.getKey().equals(GroupWrapper.NO_GROUP)) {
                 List<Class<Command>> commandsInGroup = entry.getValue();
                 for (Class<Command> command : commandsInGroup) {
                     replaceDescriptionFromAnnotation(command);
@@ -194,32 +196,31 @@ public final class Cli {
     private static void replaceDescriptionFromAnnotation(Class<Command> command) {
         com.github.rvesse.airline.annotations.Command annotation = command.getAnnotation(com.github.rvesse.airline.annotations.Command.class);
         String description = ReflectionUtils.getDescriptionFromClass(command);
-        if(!description.isEmpty()) {
+        if (!description.isEmpty()) {
             ReflectionUtils.changeAnnotationValue(annotation, "description", description);
         }
     }
 
     /**
-     * Adds all available commands (annotated with {@link Command}) as callables.
-     * The {@link HelpCommand} is not included, since it clashes with the builtin help command
-     * from airline.
+     * Adds all available commands (annotated with {@link Command}) as callables. The {@link HelpCommand} is not included, since it clashes with the
+     * builtin help command from airline.
      *
      * @param builder the cli builder to add all commands to
      */
     public static void buildCallableCommandGroups(CliBuilder<Callable> builder) {
         Map<GroupWrapper, List<Class<Command>>> allGroupsAsCommands =
-                gatherGroupsFromCommandClasses(getCommandClasses(),
-                        getGroupClasses());
+            gatherGroupsFromCommandClasses(getCommandClasses(),
+                                           getGroupClasses());
 
         allGroupsAsCommands.remove(new GroupWrapper(HelpCommand.COMMAND_NAME));
         List<Class<Command>> noGroupCommands = allGroupsAsCommands.get(GroupWrapper.NO_GROUP);
         int indexOfHelp = noGroupCommands.indexOf(HelpCommand.class);
-        if(indexOfHelp > -1) {
+        if (indexOfHelp > -1) {
             noGroupCommands.remove(indexOfHelp);
         }
 
         Map<GroupWrapper, List<Class<Command>>> allGroups = new HashMap<>();
-        for(Map.Entry<GroupWrapper, List<Class<Command>>> entry : allGroupsAsCommands.entrySet()) {
+        for (Map.Entry<GroupWrapper, List<Class<Command>>> entry : allGroupsAsCommands.entrySet()) {
             allGroups.put(entry.getKey(), entry.getValue());
         }
 
@@ -227,7 +228,7 @@ public final class Cli {
     }
 
     private static void addCommandsAndGroupsToBuilder(CliBuilder<Callable> builder, Map<GroupWrapper, List<Class<Command>>> allGroups) {
-        for(Map.Entry<GroupWrapper, List<Class<Command>>> entry : allGroups.entrySet()) {
+        for (Map.Entry<GroupWrapper, List<Class<Command>>> entry : allGroups.entrySet()) {
             if (entry.getKey().equals(GroupWrapper.NO_GROUP)) {
                 List<Class<Command>> commandsInGroup = entry.getValue();
                 for (Class<Command> command : commandsInGroup) {
@@ -257,32 +258,34 @@ public final class Cli {
                                                                                           Set<Class<?>> groupClasses) {
         Map<GroupWrapper, List<Class<Command>>> groupMappings = new HashMap<>();
 
-        for(Class groupClass : groupClasses) {
+        for (Class groupClass : groupClasses) {
             Group annotation = (Group) groupClass.getAnnotation(Group.class);
-            if(annotation != null) {
+            if (annotation != null) {
                 groupMappings.put(new GroupWrapper(annotation), new ArrayList<>());
             }
         }
 
-        for(Class<? extends Command> commandClass : commandClasses) {
-            com.github.rvesse.airline.annotations.Command annotation = commandClass.getAnnotation(com.github.rvesse.airline.annotations.Command.class);
+        for (Class<? extends Command> commandClass : commandClasses) {
+            com.github.rvesse.airline.annotations.Command
+                annotation =
+                commandClass.getAnnotation(com.github.rvesse.airline.annotations.Command.class);
 
-            if(annotation != null) {
+            if (annotation != null) {
                 List<String> groupNames;
                 String[] groupNamesFromAnnotation = annotation.groupNames();
                 boolean annotationHasGroupNames = groupNamesFromAnnotation.length > 0;
-                if(annotationHasGroupNames) {
+                if (annotationHasGroupNames) {
                     groupNames = new ArrayList<>(Arrays.asList(groupNamesFromAnnotation));
                 } else {
                     groupNames = new ArrayList<>();
                 }
-                if(groupNames.isEmpty()) {
+                if (groupNames.isEmpty()) {
                     groupNames.add(GroupWrapper.NO_GROUP_GROUPNAME);
                 }
-                for(String groupName : groupNames) {
+                for (String groupName : groupNames) {
                     String description = annotation.description();
                     GroupWrapper key = new GroupWrapper(groupName, description);
-                    if(!groupMappings.containsKey(key)) {
+                    if (!groupMappings.containsKey(key)) {
                         groupMappings.put(key, new ArrayList<>());
                     }
                     groupMappings.get(key).add((Class) commandClass);
@@ -305,14 +308,14 @@ public final class Cli {
     private void executeCommand(ExceptionHandler exceptionHandler, Command<Result> command) {
         LOGGER.info("Executing command");
         try {
-            if(command instanceof Config) {
+            if (command instanceof Config) {
                 Config commandAsConfig = (Config) command;
-                if(commandAsConfig.needsContext()) {
+                if (commandAsConfig.needsContext()) {
                     commandAsConfig.setContext(new CliContextImpl(commandAsConfig));
                 }
             }
             Result result = command.call();
-            if(result != null) {
+            if (result != null) {
                 result.log();
             } else {
                 LOGGER.warn("Command returned a null result, which should be avoided");
@@ -329,6 +332,7 @@ public final class Cli {
 
     /**
      * Parses an array of arguments with the default cli builder.
+     *
      * @param args the arguments that should be parsed as a command line input
      * @return a generic command
      */
@@ -338,7 +342,8 @@ public final class Cli {
 
     /**
      * Parses an array of arguments with a given cli builder.
-     * @param args the arguments that should be parsed as a command line input
+     *
+     * @param args    the arguments that should be parsed as a command line input
      * @param builder the builder that is used to retrieve a parser for parsing
      * @return the parsed command
      */

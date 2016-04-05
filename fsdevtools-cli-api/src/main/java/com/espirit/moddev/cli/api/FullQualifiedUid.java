@@ -24,11 +24,12 @@ package com.espirit.moddev.cli.api;
 
 import com.espirit.moddev.cli.api.exceptions.UnknownRootNodeException;
 import com.espirit.moddev.cli.api.exceptions.UnregisteredPrefixException;
+
 import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.access.store.ReferenceType;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -140,7 +141,6 @@ public class FullQualifiedUid {
         return list;
     }
 
-    @NotNull
     private static FullQualifiedUid getFullQualifiedUid(String firstPart, String secondPart) {
         FullQualifiedUid fqUid;
         if (firstPart.equals(ROOT_NODE_IDENTIFIER)) {
