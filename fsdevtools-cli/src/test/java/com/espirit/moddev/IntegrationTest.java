@@ -23,16 +23,12 @@
 package com.espirit.moddev;
 
 
-
 /**
- * This is a marker class, that can be used to categorize integration
- * tests. Constants and other test helpers could be implemented here.
+ * This is a marker class, that can be used to categorize integration tests. Constants and other test helpers could be implemented here.
  *
  * @author e-Spirit AG
  */
 public class IntegrationTest {
+
     public static final String PROJECT_NAME = "fs-cli Project";
-
-//    public static final FirstSpiritConnectionRule FIRST_SPIRIT_CONNECTION_RULE = new FirstSpiritConnectionRule();
-
 }
