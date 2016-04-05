@@ -46,7 +46,7 @@ public class SimpleResult<CUSTOM_RESULT_TYPE> implements Result<CUSTOM_RESULT_TY
     /**
      * Exception produced by the command.
      */
-    protected Exception exception = null;
+    protected Exception exception;
 
     /**
      * Creates a new instance using an empty command result.
