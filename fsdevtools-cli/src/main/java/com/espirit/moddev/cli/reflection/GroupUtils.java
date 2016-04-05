@@ -23,6 +23,7 @@
 package com.espirit.moddev.cli.reflection;
 
 import com.github.rvesse.airline.annotations.Group;
+
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 
@@ -30,17 +31,21 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * This class is a utility class for group extraction. It offers some convenience
- * methods that use reflection to scan packages, read classes and annotations etc.
+ * This class is a utility class for group extraction. It offers some convenience methods that use reflection to scan packages, read classes and
+ * annotations etc.
  *
  * @author e-Spirit AG
  */
-public class GroupUtils {
+public final class GroupUtils {
+
     private static final Logger LOGGER = Logger.getLogger(GroupUtils.class);
 
+    private GroupUtils() {
+        // Not used
+    }
+
     /**
-     * Scans the given package for classes that are annotated with airline's
-     * {@link Group} annotation.
+     * Scans the given package for classes that are annotated with airline's {@link Group} annotation.
      *
      * @param packageToScan the package, that should be scanned recursively
      * @return a set of matching classes
@@ -51,8 +56,8 @@ public class GroupUtils {
         Set<Class<?>> groupClasses = reflections.getTypesAnnotatedWith(Group.class);
 
         String commaSeparatedGroups = groupClasses.stream()
-                .map(groupClass -> groupClass.getSimpleName().toString())
-                .collect(Collectors.joining(", "));
+            .map(groupClass -> groupClass.getSimpleName().toString())
+            .collect(Collectors.joining(", "));
         LOGGER.debug("Found " + groupClasses.size() + " groups. " + commaSeparatedGroups);
 
         return groupClasses;

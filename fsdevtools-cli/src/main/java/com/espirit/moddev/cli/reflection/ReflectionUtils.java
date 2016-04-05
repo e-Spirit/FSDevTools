@@ -24,6 +24,7 @@ package com.espirit.moddev.cli.reflection;
 
 import com.espirit.moddev.cli.api.annotations.Description;
 import com.espirit.moddev.cli.api.command.Command;
+
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 import org.reflections.Reflections;
@@ -45,24 +46,28 @@ import java.util.stream.Collectors;
  *
  * @author e-Spirit AG
  */
-public class ReflectionUtils {
+public final class ReflectionUtils {
+
     private static final Logger LOGGER = Logger.getLogger(ReflectionUtils.class);
 
+    private ReflectionUtils() {
+        // Not used
+    }
+
     /**
-     * Changes the value attribute of a corresponding key for the given annotation.
-     * Note, that the value is replaced in place, so the state of the annotation is manipualted.
+     * Changes the value attribute of a corresponding key for the given annotation. Note, that the value is replaced in place, so the state of the
+     * annotation is manipualted.
      *
      * @param annotation the annotation the new value should be set
-     * @param key the attribute's name, for which the new value should be set
-     * @param newValue the new value that should be set for the given key
+     * @param key        the attribute's name, for which the new value should be set
+     * @param newValue   the new value that should be set for the given key
      * @return the old value of the annotation's field
-     * @throws IllegalStateException if the memberValues field can not be accessed
-     * @throws IllegalArgumentException if the attribute isn't defined or the new value
-     * has a wrong type
+     * @throws IllegalStateException    if the memberValues field can not be accessed
+     * @throws IllegalArgumentException if the attribute isn't defined or the new value has a wrong type
      */
     @SuppressWarnings("unchecked")
-    public static Object changeAnnotationValue(Annotation annotation, String key, Object newValue){
-        if(annotation == null) {
+    public static Object changeAnnotationValue(Annotation annotation, String key, Object newValue) {
+        if (annotation == null) {
             LOGGER.debug("changeAnnotationValue called with null annotation, not changing anything");
             return null;
         }
@@ -84,19 +89,18 @@ public class ReflectionUtils {
         if (oldValue == null || oldValue.getClass() != newValue.getClass()) {
             throw new IllegalArgumentException();
         }
-        memberValues.put(key,newValue);
+        memberValues.put(key, newValue);
         return oldValue;
     }
 
     /**
-     * A helper method that tries to retrieve potentially dynamic description information
-     * for {@code commandClass}. The description is not retrieved from the airline annotation's
-     * description attribute, but instead from methods annotated with {@link Description}, or
-     * static methods that follow the naming convention "getDescription()" and return a String value.
+     * A helper method that tries to retrieve potentially dynamic description information for {@code commandClass}. The description is not retrieved
+     * from the airline annotation's description attribute, but instead from methods annotated with {@link Description}, or static methods that follow
+     * the naming convention "getDescription()" and return a String value.
      *
      * @param commandClass the class the description should be retrieved for
-     * @return the description if it is retrievable somehow, or an empty String, if no description
-     * can be found via a {@link Description} or a getDescription method - both with a String return value.
+     * @return the description if it is retrievable somehow, or an empty String, if no description can be found via a {@link Description} or a
+     * getDescription method - both with a String return value.
      */
     public static String getDescriptionFromClass(Class commandClass) {
         String description = "";
@@ -104,20 +108,23 @@ public class ReflectionUtils {
             Method staticDescriptionMethod;
             staticDescriptionMethod = ReflectionUtils.getStaticDescriptionMethod(commandClass);
 
-            if(staticDescriptionMethod != null) {
-                if(!staticDescriptionMethod.isAccessible()) {
+            if (staticDescriptionMethod != null) {
+                if (!staticDescriptionMethod.isAccessible()) {
                     staticDescriptionMethod.setAccessible(true);
                 }
                 String potentiallyNullDescription = null;
                 try {
                     potentiallyNullDescription = (String) staticDescriptionMethod.invoke(null);
                 } catch (ClassCastException e) {
-                    LOGGER.debug("Dynamic description found for " + commandClass + ", but the return value of the annotated method is not String. Change it.", e);
+                    LOGGER.debug(
+                        "Dynamic description found for " + commandClass + ", but the return value of the annotated method is not String. Change it.",
+                        e);
                 }
-                if(potentiallyNullDescription != null) {
+                if (potentiallyNullDescription != null) {
                     description = potentiallyNullDescription;
                 } else {
-                    LOGGER.debug("Dynamic description found for " + commandClass + ", but the return value of the annotated method is void or null. Change it.");
+                    LOGGER.debug("Dynamic description found for " + commandClass
+                                 + ", but the return value of the annotated method is void or null. Change it.");
                 }
             }
         } catch (InvocationTargetException | IllegalAccessException e) {
@@ -128,8 +135,8 @@ public class ReflectionUtils {
     }
 
     /**
-     * Retrieves a static method with a String return value that is either annotated with {@link Description}, or
-     * using the naming convention getDescription().
+     * Retrieves a static method with a String return value that is either annotated with {@link Description}, or using the naming convention
+     * getDescription().
      *
      * @param commandClass the class to retrieve the method from
      * @return the description method, or null if none is found
@@ -137,16 +144,16 @@ public class ReflectionUtils {
     @Nullable
     static Method getStaticDescriptionMethod(Class<? extends Command> commandClass) {
         Reflections reflections = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forClass(commandClass))
-                .setScanners(new MethodAnnotationsScanner())
+                                                      .setUrls(ClasspathHelper.forClass(commandClass))
+                                                      .setScanners(new MethodAnnotationsScanner())
         );
 
         Set<Method> methodsWithDescriptionAnnotation = reflections.getMethodsAnnotatedWith(Description.class).stream()
-                .filter(x -> x.getDeclaringClass().getCanonicalName().equals(commandClass.getCanonicalName()))
-                .collect(Collectors.toSet());
+            .filter(x -> x.getDeclaringClass().getCanonicalName().equals(commandClass.getCanonicalName()))
+            .collect(Collectors.toSet());
 
         Method staticDescriptionMethod = null;
-        if(!methodsWithDescriptionAnnotation.isEmpty()) {
+        if (!methodsWithDescriptionAnnotation.isEmpty()) {
             LOGGER.debug("Found annotated method for description for " + commandClass);
             staticDescriptionMethod = methodsWithDescriptionAnnotation.iterator().next();
         } else {
@@ -159,7 +166,7 @@ public class ReflectionUtils {
             }
         }
 
-        if(staticDescriptionMethod != null) {
+        if (staticDescriptionMethod != null) {
             LOGGER.debug("Dynamic description found and used for " + commandClass);
         }
         return staticDescriptionMethod;

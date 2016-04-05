@@ -23,6 +23,7 @@
 package com.espirit.moddev.cli.reflection;
 
 import com.espirit.moddev.cli.api.command.Command;
+
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 
@@ -32,17 +33,21 @@ import java.util.stream.Collectors;
 
 
 /**
- * This class is a utility class for command extraction. It offers some convenience
- * methods that use reflection to scan packages, read classes and annotations etc.
+ * This class is a utility class for command extraction. It offers some convenience methods that use reflection to scan packages, read classes and
+ * annotations etc.
  *
  * @author e-Spirit AG
  */
-public abstract class CommandUtils {
+public final class CommandUtils {
+
     private static final Logger LOGGER = Logger.getLogger(CommandUtils.class);
 
+    private CommandUtils() {
+        // Not used
+    }
+
     /**
-     * Scans the given package for classes that implement the {@link Command} interface.
-     * Ignores abstract classes.
+     * Scans the given package for classes that implement the {@link Command} interface. Ignores abstract classes.
      *
      * @param packageToScan the package, that should be scanned recursively
      * @return a set of matching classes
@@ -53,13 +58,13 @@ public abstract class CommandUtils {
         Reflections reflections = new Reflections(packageToScanForCommands);
         Set<Class<? extends Command>> commandClasses = reflections.getSubTypesOf(Command.class);
         commandClasses = commandClasses
-                .stream()
-                .filter(commandClass -> !Modifier.isAbstract(commandClass.getModifiers()))
-                .collect(Collectors.toSet());
+            .stream()
+            .filter(commandClass -> !Modifier.isAbstract(commandClass.getModifiers()))
+            .collect(Collectors.toSet());
 
         String commaSeparatedCommands = commandClasses.stream()
-                .map(commandClass -> commandClass.getSimpleName().toString())
-                .collect(Collectors.joining(", "));
+            .map(commandClass -> commandClass.getSimpleName().toString())
+            .collect(Collectors.joining(", "));
         LOGGER.debug("Found " + commandClasses.size() + " commands. " + commaSeparatedCommands);
 
         return commandClasses;
