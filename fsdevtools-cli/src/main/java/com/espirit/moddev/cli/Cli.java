@@ -73,6 +73,7 @@ public final class Cli {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Cli.class);
     private static Set<Class<? extends Command>> commandClasses = CommandUtils.scanForCommandClasses(DEFAULT_COMMAND_PACKAGE_NAME);
+    private static Set<Class<?>> groupClasses;
     private final List<CliListener> listeners = new LinkedList<>();
 
     /**
@@ -93,8 +94,6 @@ public final class Cli {
     public static Set<Class<? extends Command>> getCommandClasses() {
         return Collections.unmodifiableSet(commandClasses);
     }
-
-    private static Set<Class<?>> groupClasses;
 
     /**
      * Look up all class that define command classes in the package specified by {@link #DEFAULT_GROUP_PACKAGE_NAME}.
