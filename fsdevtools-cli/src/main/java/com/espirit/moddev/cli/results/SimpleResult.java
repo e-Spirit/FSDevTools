@@ -36,7 +36,7 @@ public class SimpleResult<CUSTOM_RESULT_TYPE> implements Result<CUSTOM_RESULT_TY
     /**
      * {@link org.slf4j.Logger} used by this class.
      */
-    protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    protected static final Logger LOGGER = LoggerFactory.getLogger(SimpleResult.class);
 
     /**
      * Result produced by the command.
