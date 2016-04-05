@@ -25,9 +25,9 @@ package com.espirit.moddev.cli.commands.export;
 import com.espirit.moddev.cli.results.ExportResult;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
+
 import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.access.store.Store;
-import de.espirit.firstspirit.agency.OperationAgent;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 
@@ -63,20 +63,6 @@ public class ExportMediaCommand extends AbstractExportCommand {
     @Override
     public ExportResult call() {
         this.getContext().logInfo("Exporting...");
-        try {
-            final ExportOperation exportOperation = this.getContext().requireSpecialist(OperationAgent.TYPE).getOperation(ExportOperation.TYPE);
-            exportOperation.setDeleteObsoleteFiles(getDeleteObsoleteFiles());
-            exportOperation.setExportChildElements(getExportChildElements());
-            exportOperation.setExportParentElements(getExportParentElements());
-            exportOperation.setExportReleaseEntities(getExportReleaseEntities());
-
-            addExportElements(getContext().requireSpecialist(StoreAgent.TYPE), exportOperation);
-
-            final ExportOperation.Result result = exportOperation.perform(getSynchronizationDirectory());
-
-            return new ExportResult(result);
-        } catch (Exception e) { //NOSONAR
-            return new ExportResult(e);
-        }
+        return exportStoreElements();
     }
 }

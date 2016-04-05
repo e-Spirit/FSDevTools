@@ -22,12 +22,14 @@
 
 package com.espirit.moddev.cli.commands.export;
 
-import com.espirit.moddev.cli.commands.SimpleCommand;
 import com.espirit.moddev.cli.api.FullQualifiedUid;
+import com.espirit.moddev.cli.commands.SimpleCommand;
 import com.espirit.moddev.cli.results.ExportResult;
 import com.github.rvesse.airline.annotations.Option;
+
 import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.access.store.Store;
+import de.espirit.firstspirit.agency.OperationAgent;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 import de.espirit.firstspirit.transport.PropertiesTransportOptions;
@@ -178,5 +180,29 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     }
     public boolean isWithProjectProperties() {
         return withProjectProperties;
+    }
+
+    /**
+     * Creates an {@link de.espirit.firstspirit.store.access.nexport.operations.ExportOperation} based on the current configuration and exports the
+     * elements to the file system.
+     *
+     * @return the export result
+     */
+    protected ExportResult exportStoreElements() {
+        try {
+            final ExportOperation exportOperation = this.getContext().requireSpecialist(OperationAgent.TYPE).getOperation(ExportOperation.TYPE);
+            exportOperation.setDeleteObsoleteFiles(getDeleteObsoleteFiles());
+            exportOperation.setExportChildElements(getExportChildElements());
+            exportOperation.setExportParentElements(getExportParentElements());
+            exportOperation.setExportReleaseEntities(getExportReleaseEntities());
+
+            addExportElements(getContext().requireSpecialist(StoreAgent.TYPE), exportOperation);
+
+            final ExportOperation.Result result = exportOperation.perform(getSynchronizationDirectory());
+
+            return new ExportResult(result);
+        } catch (Exception e) {
+            return new ExportResult(e); // NOSONAR
+        }
     }
 }
