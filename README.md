@@ -54,12 +54,12 @@ log4j.appender.logfile.layout.ConversionPattern=%d %5p %C{1} - %m%n
 log4j.appender.logfile.Threshold=DEBUG
 ```
 
-### Developer Documentation
+## Developer Documentation
 
-## Dependencies
+### Dependencies
 Only compiles with FirstSpirit 5.2.102 or newer.
 
-## Compile with Maven
+### Compile with Maven
 Simply type on command line at project root:
 
 ```
@@ -72,20 +72,27 @@ If you need to provide a specific version and FirstSpirit version please type:
 mvn clean package -Dci.version=VERSION -Dfirstspirit.version=FS_VERSION
 ```
 
-## Project structure
+### Extending
 This tool should be easily expandable with further commands, while the 'execution framework' should rarely
-needed to be touched at all. For your convenience, you can add commands and groups. Our cli assumes, that
-you place your commands in the existing command package and your new groups in the existing group package
-in the cli module. Since those packages are configured to be scanned, there's no need to further register
-commands or anything. Since our tool relies on the airline library (https://github.com/airlift/airline), you
-have to annotate your class with a `@Command` annotation and implement our `Command` interface. By default,
-our commands use a connection to a FirstSpirit server. A global configuration for commands, as well as a
+needed to be touched at all. 
+
+For your convenience, you can add commands and groups. Our cli assumes, that you place your commands in the 
+existing command package(**com.espirit.moddev.cli.commands**) and your new groups in the existing group 
+package(**com.espirit.moddev.cli.groups**) in the cli module. Since those packages are configured to be 
+scanned, there's no need to further register commands or anything. 
+Since our tool relies on the airline library (https://github.com/airlift/airline), you have to annotate 
+your class with a `@Command` annotation and implement our `Command` interface. 
+
+By default, our commands use a connection to a FirstSpirit server. A global configuration for commands, as well as a
 context, is made available through the `Config` interface. A general implementation is provided by our
 `GlobalConfig` class. If you implement a configuration, our execution environment uses the command itself
 for the connection configuration and initializes the connection for you right before the command
-execution. For your convenience, we provided the `SimpleCommand` class that can be extended
-to prevent you from specifying standard connection logic for each command. The pure logic you want to program
-can then be placed in the generic `call` method you know from java's `Callable` interface and you are all done.
+execution. 
+
+For your convenience, we provided the `SimpleCommand` class that can be extended to prevent you from specifying 
+standard connection logic for each command. The pure logic you want to program can then be placed in the 
+generic `call` method you know from java's `Callable` interface and you are all done.
+
 For help configurations, take a look at existing commands and their annotations. If you really need it, you
 can have dynamic descriptions via a `public static String getDescription()` method in your command class
 (have a look at our ExportCommand class).
