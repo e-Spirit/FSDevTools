@@ -27,8 +27,8 @@ import com.espirit.moddev.cli.api.command.Command;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Modifier;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
