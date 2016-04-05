@@ -112,19 +112,17 @@ public final class ReflectionUtils {
                 if (!staticDescriptionMethod.isAccessible()) {
                     staticDescriptionMethod.setAccessible(true);
                 }
-                String potentiallyNullDescription = null;
-                try {
-                    potentiallyNullDescription = (String) staticDescriptionMethod.invoke(null);
-                } catch (ClassCastException e) {
-                    LOGGER.debug(
-                        "Dynamic description found for " + commandClass + ", but the return value of the annotated method is not String. Change it.",
-                        e);
-                }
-                if (potentiallyNullDescription != null) {
-                    description = potentiallyNullDescription;
-                } else {
+
+                Object result = staticDescriptionMethod.invoke(null);
+
+                if (result == null) {
                     LOGGER.debug("Dynamic description found for " + commandClass
                                  + ", but the return value of the annotated method is void or null. Change it.");
+                } else if (result instanceof String) {
+                    description = (String) result;
+                } else {
+                    LOGGER.debug(
+                        "Dynamic description found for " + commandClass + ", but the return value of the annotated method is not String. Change it.");
                 }
             }
         } catch (InvocationTargetException | IllegalAccessException e) {
