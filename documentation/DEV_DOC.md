@@ -6,15 +6,20 @@ The FS DevTools compiles only with **Java 8** and **FirstSpirit 5.2R3** (version
 ### Use FirstSpirit Access API as maven dependency
 
 To enable the amended source code to be compiled successfully, the fs-access.jar file of the FirstSpirit Server used must be installed in the local Maven repository first. The **fs-access.jar** file is located in the directory:
+
 ```
 <FirstSpirit Server directory>/data/fslib
 ```
+
 It is installed by entering the following command into the command line:
-```console
+
+```
 mvn install:install-file -Dfile=<path-to-acces.jar> -DgroupId=de.espirit.firstspirit -DartifactId=fs-access -Dversion=<fs version e.g. '5.0.0'> -Dpackaging=jar
 ```
+
 Within this command, the parameters for the path to the **fs-access.jar** file and the FirstSpirit version used must be substituted accordingly.
-```console
+
+```
 mvn install:install-file -Dfile=C:\fs-access.jar -DgroupId=de.espirit.firstspirit -DartifactId=fs-access -Dversion=5.1.2 -Dpackaging=jar
 ```
 
@@ -27,7 +32,7 @@ During installation, the local Maven repository has been automatically created i
 ## Compile with Maven
 Simply type on command line at project root:
 
-```console
+```
 mvn clean package
 ```
 
