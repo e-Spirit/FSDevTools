@@ -22,10 +22,10 @@ The online help is devided in three main sections with optional fourth example s
 
 ### Syntax
 
-In the *SYNOPSIS* section the commands syntax is explained. While surroundings by
+In the *SYNOPSIS* section the command syntax is explained. While surroundings by
 - *square brackets* like **[ ... ]** indicate **optional** command elements,
 - *curly braces and pipes* like **{ ... | ... }** list **alternative** command elements
-- `plain text` are **required** command elements which must be provided the order of the specified syntax.
+- `plain text` are **required** command elements which must be provided in the order of the specified syntax.
 
 In general, the command line interface offers a set of sub commands, that can be grouped. A command can be configured with options and
 additional global options. The global options have to be stated first and before the command, while the

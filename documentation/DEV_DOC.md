@@ -48,7 +48,7 @@ mvn clean package -Dci.version=VERSION
 
 This tool should be easily expandable with further commands, while the *execution framework* should rarely needed to be touched at all. 
 
-For your convenience, you can add commands and groups. Our cli assumes, that you place your commands in the existing command package(**com.espirit.moddev.cli.commands**) and your new groups in the existing group package(**com.espirit.moddev.cli.groups**) in the cli module. Since those packages are configured to be scanned, there's no need to further register commands or anything. 
+For your convenience, you can add commands and groups. Our cli assumes, that you place your commands in the existing command package (**com.espirit.moddev.cli.commands**) and your new groups in the existing group package (**com.espirit.moddev.cli.groups**) in the cli module. Since those packages are configured to be scanned, there's no need to further register commands or anything. 
 Since our tool relies on the airline library (https://github.com/airlift/airline), you have to annotate your class with a `@Command` annotation and implement our `Command` interface. 
 
 By default, our commands use a connection to a FirstSpirit server. A global configuration for commands, as well as a context, is made available through the `Config` interface. A general implementation is provided by our `GlobalConfig` class. If you implement a configuration, our execution environment uses the command itself for the connection configuration and initializes the connection for you right before the command execution. 
