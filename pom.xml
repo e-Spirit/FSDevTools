@@ -46,7 +46,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <artifactoryUrl>http://artifactory.e-spirit.de/artifactory/modules-release-local</artifactoryUrl>
-        <sonar.projectName>${project.name}</sonar.projectName>
+        <sonar.projectName>${name}</sonar.projectName>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <coverage.reports.dir>${basedir}/target/coverage-reports</coverage.reports.dir>
