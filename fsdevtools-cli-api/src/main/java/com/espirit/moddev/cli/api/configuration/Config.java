@@ -23,12 +23,10 @@
 package com.espirit.moddev.cli.api.configuration;
 
 import com.espirit.moddev.cli.api.FsConnectionMode;
-import com.espirit.moddev.cli.api.FullQualifiedUid;
+
 import de.espirit.firstspirit.access.project.ProjectScriptContext;
 import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.io.FileSystem;
-
-import java.util.List;
 
 /**
  * Interface that defines means to access the configuration values.
@@ -128,10 +126,4 @@ public interface Config {
      */
     default boolean isActivateProjectIfDeactivated() { return true; }
 
-    /**
-     * Get a list of {@link com.espirit.moddev.cli.api.FullQualifiedUid}s that specify the elements that should be synchronized.
-     *
-     * @return a {@link java.util.List} of {@link com.espirit.moddev.cli.api.FullQualifiedUid}s that specify the elements that should be synchronized
-     */
-    List<FullQualifiedUid> getFullQualifiedUids();
 }

@@ -54,7 +54,7 @@ public class ExportTemplatesCommandTest extends AbstractIntegrationTest {
     public void singleParameterCommandCreatesFiles() {
         ExportTemplatesCommand command = new ExportTemplatesCommand();
 
-        command.getArgs().add("page:homepage");
+        command.addUid("page:homepage");
         initializeTestSpecificConfiguration(command);
         Assert.assertTrue(command.getFullQualifiedUids().contains(new FullQualifiedUid(IDProvider.UidType.PAGESTORE, "homepage")));
 

@@ -25,6 +25,7 @@ package com.espirit.moddev.cli.commands.export;
 import com.espirit.moddev.cli.api.FullQualifiedUid;
 import com.espirit.moddev.cli.commands.SimpleCommand;
 import com.espirit.moddev.cli.results.ExportResult;
+import com.github.rvesse.airline.annotations.Arguments;
 import com.github.rvesse.airline.annotations.Option;
 
 import de.espirit.firstspirit.access.store.IDProvider;
@@ -35,7 +36,9 @@ import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 import de.espirit.firstspirit.transport.PropertiesTransportOptions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -60,6 +63,20 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
 
     @Option(name = "--withProjectProperties", description = "export with project properties like resolutions or fonts")
     private boolean withProjectProperties;
+
+    @Arguments(title = "uids", description = "A list of unique identifiers, in the form of 'pagetemplate:default'")
+    private List<String> fullQualifiedUidsAsStrings = new LinkedList<>();
+
+    /**
+     * Retrieves a possibly empty list of string based unique identifiers, that can
+     * be passed to instances of this command class as arguments.
+     *
+     * @return a list of uids.
+     */
+    private List<String> getFullQualifiedUidsAsStrings() {
+        return fullQualifiedUidsAsStrings;
+    }
+
 
 
     public boolean getDeleteObsoleteFiles() {
@@ -120,7 +137,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
 
     /**
      * Adds elements to the given export operation. Uses {@link #filterByUIDs(StoreAgent)} to retrieve
-     * IDProviders matching the {@code uids} parameter.
+     * IDProviders matching the {@code fullQualifiedUidsAsStrings} parameter.
      *
      * @param storeAgent the StoreAgent to retrieve IDProviders with
      * @param uids the identifiers of elements that should be added to the ExportOperation
@@ -152,6 +169,15 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
         if(isWithProjectProperties()) {
             addProjectProperties(exportOperation);
         }
+    }
+
+    /**
+     * Get a list of {@link com.espirit.moddev.cli.api.FullQualifiedUid}s that specify the elements that should be synchronized.
+     *
+     * @return a {@link java.util.List} of {@link com.espirit.moddev.cli.api.FullQualifiedUid}s that specify the elements that should be synchronized
+     */
+    public List<FullQualifiedUid> getFullQualifiedUids() {
+        return fullQualifiedUidsAsStrings.isEmpty() ? Collections.emptyList() : FullQualifiedUid.parse(fullQualifiedUidsAsStrings);
     }
 
     public static void addProjectProperties(ExportOperation exportOperation) {
@@ -204,5 +230,16 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
         } catch (Exception e) {
             return new ExportResult(e); // NOSONAR
         }
+    }
+
+    /**
+     * Adds the given string based FullQualifiedUid to this command's argument list.
+     * This method doesn't validate the input at all.
+     *
+     * @param fullQualifiedUid the string based FullQualifiedUid that should be added to
+     *                         this command's argument list
+     */
+    public void addUid(String fullQualifiedUid) {
+        getFullQualifiedUidsAsStrings().add(fullQualifiedUid);
     }
 }

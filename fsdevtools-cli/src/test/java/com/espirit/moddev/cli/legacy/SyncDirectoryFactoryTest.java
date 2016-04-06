@@ -98,18 +98,9 @@ public class SyncDirectoryFactoryTest {
                 return null;
             }
 
-            public String getCommands() {
-                return "templates";
-            }
-
             @Override
             public boolean isActivateProjectIfDeactivated() {
                 return false;
-            }
-
-            @Override
-            public List<FullQualifiedUid> getFullQualifiedUids() {
-                return null;
             }
 
         });

@@ -52,7 +52,7 @@ public class ImportCommandTest extends AbstractIntegrationTest {
         boolean isSyncDirectory = Arrays.asList(syncDirectory.listFiles()).stream().anyMatch(o -> o.getName().equals(".FirstSpirit"));
         Assert.assertTrue(isSyncDirectory);
 
-        command.getArgs().add(syncDirectory.getPath());
+        command.setSynchronizationDirectory(syncDirectory.getPath());
         command.setContext(new CliContextImpl(command));
 
         ImportResult result = command.call();

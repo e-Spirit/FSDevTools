@@ -60,7 +60,7 @@ public class GlobalConfig implements Config {
      * Boolean flag that indicates if the synchronization directory should be created if it does not exist.
      */
     @Option(type = OptionType.GLOBAL, name = {"--dont-create-sync-dir"}, description = "Do not create synchronisation directory if it is missing")
-    protected boolean dontCreateSynchronizationDirexctoryIfMissing;
+    protected boolean dontCreateSynchronizationDirectoryIfMissing;
 
     private final Environment environment = new Environment();
 
@@ -92,9 +92,6 @@ public class GlobalConfig implements Config {
 
     @Option(type = OptionType.GLOBAL, name = {"-sd", "--syncDir"}, description = "The synchronization directory that is used for im- and export. Default is current directory")
     private String synchronizationDirectory = ".";
-
-    @Arguments(title = "arguments", description = "An arbitrary number of arguments. Each command can have its own, special arguments.")
-    private List<String> args = new LinkedList<>();
 
     @Override
     public final void setContext(ProjectScriptContext context) {
@@ -227,12 +224,7 @@ public class GlobalConfig implements Config {
 
     @Override
     public boolean createSynchronizationDirectoryIfMissing() {
-        return !dontCreateSynchronizationDirexctoryIfMissing;
-    }
-
-    @Override
-    public List<FullQualifiedUid> getFullQualifiedUids() {
-        return args.isEmpty() ? Collections.emptyList() : FullQualifiedUid.parse(args);
+        return !dontCreateSynchronizationDirectoryIfMissing;
     }
 
     /**
@@ -316,19 +308,4 @@ public class GlobalConfig implements Config {
         this.synchronizationDirectory = synchronizationDirectory;
     }
 
-    /**
-     * Get the command arguments.
-     * @return the command arguments
-     */
-    public List<String> getArgs() {
-        return args; //NOSONAR
-    }
-
-    /**
-     * Set the command arguments.
-     * @param args the command arguments
-     */
-    public void setArgs(List<String> args) {
-        this.args = args; //NOSONAR
-    }
 }

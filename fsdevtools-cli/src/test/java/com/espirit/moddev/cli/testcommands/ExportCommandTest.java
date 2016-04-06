@@ -60,8 +60,8 @@ public class ExportCommandTest extends AbstractIntegrationTest {
     public void multipleParameterCommandCreatesFiles() throws Exception {
         ExportCommand command = new ExportCommand();
 
-        command.getArgs().add("pagetemplate:default");
-        command.getArgs().add("page:homepage");
+        command.addUid("pagetemplate:default");
+        command.addUid("page:homepage");
         initializeTestSpecificConfiguration(command);
         Assert.assertEquals(2, command.getFullQualifiedUids().size());
         Assert.assertTrue(command.getFullQualifiedUids().contains(new FullQualifiedUid(IDProvider.UidType.TEMPLATESTORE, "default")));
@@ -78,7 +78,7 @@ public class ExportCommandTest extends AbstractIntegrationTest {
         ExportCommand command = new ExportCommand();
 
         initializeTestSpecificConfiguration(command);
-        command.getArgs().add("root:templatestore");
+        command.addUid("root:templatestore");
         Assert.assertEquals(1, command.getFullQualifiedUids().size());
         Assert.assertTrue(command.getFullQualifiedUids().contains(new FullQualifiedUid(IDProvider.UidType.TEMPLATESTORE, "root")));
 
@@ -91,7 +91,7 @@ public class ExportCommandTest extends AbstractIntegrationTest {
     public void singleParameterCommandWithProjectPropertiesCreatesFiles() throws Exception {
         ExportCommand command = new ExportCommand();
 
-        command.getArgs().add("pagetemplate:default");
+        command.addUid("pagetemplate:default");
         initializeTestSpecificConfiguration(command);
         command.setWithProjectProperties(true);
 
