@@ -30,7 +30,7 @@
         <version>${ci.version}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
+    <name>FirstSpirit Development Tools Core</name>
     <artifactId>fsdevtools-core</artifactId>
 
 </project>
