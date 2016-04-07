@@ -54,9 +54,9 @@ public interface Result<CUSTOM_RESULT_TYPE> {
     default void log() {}
 
     /**
-     * Getter for the custom result type.
+     * Getter for the custom result.
      *
      * @return an instance of the custom result type or null
      */
-    CUSTOM_RESULT_TYPE getType();
+    CUSTOM_RESULT_TYPE get();
 }

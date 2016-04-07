@@ -23,6 +23,7 @@
 package com.espirit.moddev.cli.results;
 
 import com.espirit.moddev.cli.api.result.Result;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,7 @@ public class SimpleResult<CUSTOM_RESULT_TYPE> implements Result<CUSTOM_RESULT_TY
     /**
      * Exception produced by the command.
      */
-    protected Exception exception;
+    protected final Exception exception;
 
     /**
      * Creates a new instance using an empty command result.
@@ -60,15 +61,16 @@ public class SimpleResult<CUSTOM_RESULT_TYPE> implements Result<CUSTOM_RESULT_TY
      *
      * @param result Result produced by the command
      */
-    public SimpleResult(CUSTOM_RESULT_TYPE result) {
+    public SimpleResult(final CUSTOM_RESULT_TYPE result) {
         this.result = result;
+        this.exception = null;
     }
 
     /**
      * Creates a new error result using the given exception.
      * @param exception Exception produced by the command
      */
-    public SimpleResult(Exception exception) {
+    public SimpleResult(final Exception exception) {
         this.result = null;
         this.exception = exception;
     }
@@ -97,7 +99,7 @@ public class SimpleResult<CUSTOM_RESULT_TYPE> implements Result<CUSTOM_RESULT_TY
     }
 
     @Override
-    public CUSTOM_RESULT_TYPE getType() {
+    public CUSTOM_RESULT_TYPE get() {
         return result;
     }
 }

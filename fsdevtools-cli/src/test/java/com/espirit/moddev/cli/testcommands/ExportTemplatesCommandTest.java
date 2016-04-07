@@ -47,7 +47,7 @@ public class ExportTemplatesCommandTest extends AbstractIntegrationTest {
         ExportResult result = command.call();
 
         // This value depends on the used test project
-        Assert.assertTrue(result.getType().getCreatedFiles().size() > 100);
+        Assert.assertTrue(result.get().getCreatedFiles().size() > 100);
     }
 
     @Test
@@ -59,6 +59,6 @@ public class ExportTemplatesCommandTest extends AbstractIntegrationTest {
         Assert.assertTrue(command.getFullQualifiedUids().contains(new FullQualifiedUid(IDProvider.UidType.PAGESTORE, "homepage")));
 
         ExportResult result = command.call();
-        Assert.assertTrue(result.getType().getCreatedFiles().size() > 0);
+        Assert.assertTrue(result.get().getCreatedFiles().size() > 0);
     }
 }
