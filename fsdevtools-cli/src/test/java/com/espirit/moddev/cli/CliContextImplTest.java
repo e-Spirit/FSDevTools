@@ -37,13 +37,15 @@ import de.espirit.firstspirit.agency.BrokerAgent;
 import de.espirit.firstspirit.agency.LanguageAgent;
 import de.espirit.firstspirit.agency.SpecialistsBroker;
 
-import org.apache.log4j.*;
+import org.apache.log4j.Appender;
+import org.apache.log4j.Category;
+import org.apache.log4j.Layout;
+import org.apache.log4j.Logger;
 import org.apache.log4j.spi.ErrorHandler;
 import org.apache.log4j.spi.Filter;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.varia.FallbackErrorHandler;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -53,11 +55,15 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
-
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 /**
@@ -65,8 +71,8 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(Theories.class)
 public class CliContextImplTest {
-    
-    
+
+
     @DataPoints
     public static BaseContext.Env[]
         testcases =
@@ -86,37 +92,35 @@ public class CliContextImplTest {
         when(clientConfig.getUser()).thenReturn("horst");
         when(clientConfig.getProject()).thenReturn("myProject");
         when(clientConfig.getSynchronizationDirectoryString()).thenReturn("dir");
-        List<FullQualifiedUid> uidList = new ArrayList<>();
+        final List<FullQualifiedUid> uidList = new ArrayList<>();
         uidList.add(new FullQualifiedUid(IDProvider.UidType.PAGESTORE, "yourUID"));
         uidList.add(new FullQualifiedUid(IDProvider.UidType.PAGESTORE, "yourSecondUID"));
         when(clientConfig.isCreatingProjectIfMissing()).thenReturn(true);
         /**when(clientConfig.isDeleteObsoleteFiles()).thenReturn(true);
-        when(clientConfig.isExportChildElements()).thenReturn(true);*/
+         when(clientConfig.isExportChildElements()).thenReturn(true);*/
 
         connection = mock(Connection.class);
         specialistsBroker = mock(SpecialistsBroker.class);
         when(connection.getBroker()).thenReturn(specialistsBroker);
 
-
-        AdminService adminService = mock(AdminService.class);
+        final AdminService adminService = mock(AdminService.class);
         when(connection.getService(AdminService.class)).thenReturn(adminService);
         final ProjectStorage projectStorage = mock(ProjectStorage.class);
         when(adminService.getProjectStorage()).thenReturn(projectStorage);
 
-        Project project = mock(Project.class);
+        final Project project = mock(Project.class);
         final String projectName = clientConfig.getProject();
         when(connection.getProjectByName(projectName)).thenReturn(project);
         when(project.getName()).thenReturn(projectName);
         when(projectStorage.createProject(projectName, projectName + " created by fs-filesync")).thenReturn(project);
 
-        BrokerAgent brokerAgent = mock(BrokerAgent.class);
+        final BrokerAgent brokerAgent = mock(BrokerAgent.class);
         when(specialistsBroker.requireSpecialist(BrokerAgent.TYPE)).thenReturn(brokerAgent);
         when(brokerAgent.getBrokerByProjectName(any())).thenReturn(specialistsBroker);
 
         final LanguageAgent agent = mock(LanguageAgent.class);
         when(specialistsBroker.requireSpecialist(LanguageAgent.TYPE)).thenReturn(agent);
         when(specialistsBroker.requestSpecialist(LanguageAgent.TYPE)).thenReturn(agent);
-
 
         testling = new TestContext(clientConfig);
 
@@ -140,7 +144,7 @@ public class CliContextImplTest {
     }
 
     @Theory
-    public void testIsRest(BaseContext.Env environment) throws Exception {
+    public void testIsRest(final BaseContext.Env environment) throws Exception {
         assertThat("Expected false", testling.is(environment), is(Boolean.FALSE));
     }
 
@@ -213,7 +217,7 @@ public class CliContextImplTest {
         }
 
         @Override
-        public void addFilter(Filter filter) {
+        public void addFilter(final Filter filter) {
 
         }
 
@@ -233,7 +237,7 @@ public class CliContextImplTest {
         }
 
         @Override
-        public void doAppend(LoggingEvent loggingEvent) {
+        public void doAppend(final LoggingEvent loggingEvent) {
             if (loggingEvent.getLogger() == Category.getInstance(CliContextImpl.class)) {
                 message.append(loggingEvent.getMessage().toString());
             }
@@ -245,7 +249,7 @@ public class CliContextImplTest {
         }
 
         @Override
-        public void setErrorHandler(ErrorHandler errorHandler) {
+        public void setErrorHandler(final ErrorHandler errorHandler) {
 
         }
 
@@ -255,7 +259,7 @@ public class CliContextImplTest {
         }
 
         @Override
-        public void setLayout(Layout layout) {
+        public void setLayout(final Layout layout) {
 
         }
 
@@ -265,7 +269,7 @@ public class CliContextImplTest {
         }
 
         @Override
-        public void setName(String s) {
+        public void setName(final String s) {
 
         }
 
@@ -282,7 +286,7 @@ public class CliContextImplTest {
          *
          * @param clientConfig the client config
          */
-        public TestContext(Config clientConfig) {
+        public TestContext(final Config clientConfig) {
             super(clientConfig);
         }
 

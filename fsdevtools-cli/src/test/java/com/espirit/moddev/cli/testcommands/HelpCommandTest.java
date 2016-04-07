@@ -80,7 +80,7 @@ public class HelpCommandTest {
             HelpResult helpResult = (HelpResult) result;
             List<String> commands = new ArrayList<>();
 
-            GlobalMetadata globalMetadata = helpResult.get();
+            GlobalMetadata globalMetadata = helpResult.getType();
             for(Object group : globalMetadata.getCommandGroups()) {
                 CommandGroupMetadata groupMetadata = (CommandGroupMetadata) group;
                 for(CommandMetadata data : groupMetadata.getCommands()) {

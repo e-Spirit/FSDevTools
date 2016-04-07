@@ -44,7 +44,7 @@ public class ExportProjectPropertiesCommandTest extends AbstractIntegrationTest 
         ExportResult result = command.call();
         Assert.assertTrue("Export folder for project properties not found.",
                           containsSubDirectory(getFirstSpiritFileSyncFolder(testFolder.getRoot()), "Global"));
-        Assert.assertTrue(result.get().getCreatedFiles().size() > 0);
+        Assert.assertTrue(result.getType().getCreatedFiles().size() > 0);
     }
 
 }

@@ -60,7 +60,7 @@ public class FullQualifiedUidParseTest {
     public void testParse(List<String> uids) throws Exception {
         final List<FullQualifiedUid> list = FullQualifiedUid.parse(uids);
 
-        assertThat("Expected PAGE but got: " + uids, list.get(0).getUidType(), Matchers.is(IDProvider.UidType.PAGESTORE));
+        assertThat("Expected PAGE but got: " + uids, list.get(0).getUidType(), is(IDProvider.UidType.PAGESTORE));
         assertThat("Expected 'myuid' but got: " + uids, list.get(0).getUid(), is("myuid"));
     }
 

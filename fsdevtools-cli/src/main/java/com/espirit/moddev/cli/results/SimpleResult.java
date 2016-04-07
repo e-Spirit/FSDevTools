@@ -97,7 +97,7 @@ public class SimpleResult<CUSTOM_RESULT_TYPE> implements Result<CUSTOM_RESULT_TY
     }
 
     @Override
-    public CUSTOM_RESULT_TYPE get() {
+    public CUSTOM_RESULT_TYPE getType() {
         return result;
     }
 }

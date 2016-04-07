@@ -60,17 +60,17 @@ public class ImportResult extends SimpleResult<ImportOperation.Result> {
         } else {
             LOGGER.info("Import operation successful");
 
-            logUpdateElements(get().getUpdatedElements(), "updated elements");
-            logUpdateElements(get().getCreatedElements(), "created elements");
-            logUpdateElements(get().getDeletedElements(), "deleted elements");
-            logUpdateElements(get().getMovedElements(), "moved elements");
-            logCreatedElements(get().getCreatedEntities(), "created entities");
-            logUpdateElements(get().getLostAndFoundElements(), "lost and found elements");
-            logProblems(get().getProblems(), "problems");
+            logUpdateElements(getType().getUpdatedElements(), "updated elements");
+            logUpdateElements(getType().getCreatedElements(), "created elements");
+            logUpdateElements(getType().getDeletedElements(), "deleted elements");
+            logUpdateElements(getType().getMovedElements(), "moved elements");
+            logCreatedElements(getType().getCreatedEntities(), "created entities");
+            logUpdateElements(getType().getLostAndFoundElements(), "lost and found elements");
+            logProblems(getType().getProblems(), "problems");
 
-            Object[] args = {Integer.valueOf(get().getUpdatedElements().size()),
-                    Integer.valueOf(get().getCreatedElements().size()),
-                    Integer.valueOf(get().getDeletedElements().size())};
+            Object[] args = {Integer.valueOf(getType().getUpdatedElements().size()),
+                    Integer.valueOf(getType().getCreatedElements().size()),
+                    Integer.valueOf(getType().getDeletedElements().size())};
 
             LOGGER.info("Import done.\n\t"
                     + "updated elements: {}\n\t"

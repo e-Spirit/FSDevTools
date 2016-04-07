@@ -48,7 +48,7 @@ public class ExportCommandTest extends AbstractIntegrationTest {
         ExportResult result = command.call();
 
         // This value depends on the used test project
-        Assert.assertTrue(result.get().getCreatedFiles().size() > 0);
+        Assert.assertTrue(result.getType().getCreatedFiles().size() > 0);
         Assert.assertTrue("Export folder TemplateStore not found.", containsSubDirectory(getFirstSpiritFileSyncFolder(testFolder.getRoot()), "TemplateStore"));
         Assert.assertTrue("Export folder PageStore not found.", containsSubDirectory(getFirstSpiritFileSyncFolder(testFolder.getRoot()), "PageStore"));
         Assert.assertTrue("Export folder MediaStore not found.", containsSubDirectory(getFirstSpiritFileSyncFolder(testFolder.getRoot()), "MediaStore"));
@@ -68,7 +68,7 @@ public class ExportCommandTest extends AbstractIntegrationTest {
         Assert.assertTrue(command.getFullQualifiedUids().contains(new FullQualifiedUid(UidType.PAGESTORE, "homepage")));
 
         ExportResult result = command.call();
-        Assert.assertTrue(result.get().getCreatedFiles().size() > 0);
+        Assert.assertTrue(result.getType().getCreatedFiles().size() > 0);
         Assert.assertTrue("Export folder for templates properties not found.", containsSubDirectory(getFirstSpiritFileSyncFolder(testFolder.getRoot()), "TemplateStore"));
         Assert.assertTrue("Export folder for pages properties not found.", containsSubDirectory(getFirstSpiritFileSyncFolder(testFolder.getRoot()), "PageStore"));
     }
@@ -83,7 +83,7 @@ public class ExportCommandTest extends AbstractIntegrationTest {
         Assert.assertTrue(command.getFullQualifiedUids().contains(new FullQualifiedUid(IDProvider.UidType.TEMPLATESTORE, "root")));
 
         ExportResult result = command.call();
-        Assert.assertTrue(result.get().getCreatedFiles().size() > 0);
+        Assert.assertTrue(result.getType().getCreatedFiles().size() > 0);
         Assert.assertTrue("Export folder for templates properties not found.", containsSubDirectory(getFirstSpiritFileSyncFolder(testFolder.getRoot()), "TemplateStore"));
     }
 
@@ -97,6 +97,6 @@ public class ExportCommandTest extends AbstractIntegrationTest {
 
         ExportResult result = command.call();
         Assert.assertTrue("Export folder for project properties not found.", containsSubDirectory(getFirstSpiritFileSyncFolder(testFolder.getRoot()), "Global"));
-        Assert.assertTrue(result.get().getCreatedFiles().size() > 0);
+        Assert.assertTrue(result.getType().getCreatedFiles().size() > 0);
     }
 }

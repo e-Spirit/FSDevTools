@@ -58,5 +58,5 @@ public interface Result<CUSTOM_RESULT_TYPE> {
      *
      * @return an instance of the custom result type or null
      */
-    CUSTOM_RESULT_TYPE get();
+    CUSTOM_RESULT_TYPE getType();
 }

@@ -59,12 +59,12 @@ public class ExportResult extends SimpleResult<ExportOperation.Result> {
         } else {
             LOGGER.info("Export operation successful");
 
-                logUpdateFiles(get().getUpdatedFiles(), "updated files");
-                logUpdateFiles(get().getCreatedFiles(), "created files");
-                logUpdateFiles(get().getDeletedFiles(), "deleted files");
-                Object[] args = {Integer.valueOf(get().getUpdatedFiles().size()),
-                        Integer.valueOf(get().getCreatedFiles().size()),
-                        Integer.valueOf(get().getDeletedFiles().size())};
+                logUpdateFiles(getType().getUpdatedFiles(), "updated files");
+                logUpdateFiles(getType().getCreatedFiles(), "created files");
+                logUpdateFiles(getType().getDeletedFiles(), "deleted files");
+                Object[] args = {Integer.valueOf(getType().getUpdatedFiles().size()),
+                        Integer.valueOf(getType().getCreatedFiles().size()),
+                        Integer.valueOf(getType().getDeletedFiles().size())};
 
                 LOGGER.info("Export done.\n\t"
                         + "updated files: {}\n\t"

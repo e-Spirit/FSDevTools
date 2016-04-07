@@ -62,11 +62,12 @@ public class ImportCommandIT extends AbstractIntegrationTest {
         command.setContext(new CliContextImpl(command));
 
         final ImportResult result = command.call();
-        final ImportOperation.Result importResult = result.get();
+        final ImportOperation.Result importResult = result.getType();
 
-        assertThat("Expected 0 problems: " + importResult.getProblems().size() + " -> " + importResult.getProblems().stream().map(
-                       a -> a.getNodeId() + "@" + a.getMessage()).reduce((t, u) -> t + ", " + u).get(),
-                   importResult.getProblems(), hasSize(0));
+        final String reason = "Expected 0 problems: " + importResult.getProblems().size() + " -> " + importResult.getProblems().stream().map(
+            a -> a.getNodeId() + "@" + a.getMessage()).reduce((t, u) -> t + ", " + u).get();
+
+        assertThat(reason, importResult.getProblems(), hasSize(0));
     }
 
 }
