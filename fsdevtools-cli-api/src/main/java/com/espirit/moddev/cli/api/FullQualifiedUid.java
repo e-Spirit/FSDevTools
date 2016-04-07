@@ -141,6 +141,14 @@ public class FullQualifiedUid {
         return list;
     }
 
+    /**
+     * Creates an instance of FullQualifiedUid for the given String elements.
+     * @param firstPart the type prefix, that identifies the corresponding FirstSpirit namespace, or the root identifier (see @link{#parse})
+     * @param secondPart the uid of an object or a store root identifier (see @link{#parse})
+     * @throws UnknownRootNodeException if the first part is the root node identifier and the second part is an unknown store root identifier
+     * @throws UnregisteredPrefixException if the first part is not a root node identifier and an unknown prefix
+     * @return an instance of FullQualifiedUid that represents the input parameters
+     */
     private static FullQualifiedUid getFullQualifiedUid(String firstPart, String secondPart) {
         FullQualifiedUid fqUid;
         if (firstPart.equals(ROOT_NODE_IDENTIFIER)) {
