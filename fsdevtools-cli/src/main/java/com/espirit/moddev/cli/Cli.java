@@ -26,10 +26,10 @@ import com.google.common.base.Stopwatch;
 
 import com.espirit.moddev.cli.api.command.Command;
 import com.espirit.moddev.cli.api.configuration.Config;
+import com.espirit.moddev.cli.api.event.CliListener;
 import com.espirit.moddev.cli.api.result.Result;
 import com.espirit.moddev.cli.commands.HelpCommand;
-import com.espirit.moddev.cli.CliConstants;
-import com.espirit.moddev.cli.exception.CliErrorEvent;
+import com.espirit.moddev.cli.api.event.CliErrorEvent;
 import com.espirit.moddev.cli.exception.ExceptionHandler;
 import com.espirit.moddev.cli.exception.SystemExitListener;
 import com.espirit.moddev.cli.reflection.CommandUtils;

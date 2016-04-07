@@ -24,10 +24,8 @@ package com.espirit.moddev.cli.exceptions;
 
 import com.espirit.moddev.cli.Cli;
 import com.espirit.moddev.cli.exception.ExceptionHandler;
-import com.espirit.moddev.cli.exception.CliErrorEvent;
+import com.espirit.moddev.cli.api.event.CliErrorEvent;
 import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

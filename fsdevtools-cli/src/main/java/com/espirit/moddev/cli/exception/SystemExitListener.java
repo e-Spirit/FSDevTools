@@ -22,7 +22,8 @@
 
 package com.espirit.moddev.cli.exception;
 
-import com.espirit.moddev.cli.CliListener;
+import com.espirit.moddev.cli.api.event.CliErrorEvent;
+import com.espirit.moddev.cli.api.event.CliListener;
 
 /**
  * Listener that will exit the cli application if an error occurs.

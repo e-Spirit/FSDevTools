@@ -23,7 +23,8 @@
 package com.espirit.moddev.cli.exception;
 
 import com.espirit.moddev.cli.Cli;
-import com.espirit.moddev.cli.CliListener;
+import com.espirit.moddev.cli.api.event.CliErrorEvent;
+import com.espirit.moddev.cli.api.event.CliListener;
 import com.espirit.moddev.cli.CliConstants;
 
 import org.apache.commons.lang.exception.ExceptionUtils;

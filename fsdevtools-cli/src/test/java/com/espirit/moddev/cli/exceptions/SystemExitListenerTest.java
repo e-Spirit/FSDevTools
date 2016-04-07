@@ -22,7 +22,7 @@
 
 package com.espirit.moddev.cli.exceptions;
 
-import com.espirit.moddev.cli.exception.CliErrorEvent;
+import com.espirit.moddev.cli.api.event.CliErrorEvent;
 import com.espirit.moddev.cli.exception.SystemExitListener;
 import org.junit.Before;
 import org.junit.Rule;

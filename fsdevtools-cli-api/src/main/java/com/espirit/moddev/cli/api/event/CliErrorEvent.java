@@ -20,7 +20,7 @@
  *
  */
 
-package com.espirit.moddev.cli.exception;
+package com.espirit.moddev.cli.api.event;
 
 
 /**

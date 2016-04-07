@@ -20,14 +20,11 @@
  *
  */
 
-package com.espirit.moddev.cli;
-
-import com.espirit.moddev.cli.exception.CliErrorEvent;
+package com.espirit.moddev.cli.api.event;
 
 /**
  * Interface that defines means to receive events from the cli application.
  *
- * @see com.espirit.moddev.cli.Cli#addListener(CliListener)
  * @author e-Spirit AG
  */
 @FunctionalInterface
