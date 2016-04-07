@@ -77,8 +77,8 @@ public class TestResult extends SimpleResult {
     }
 
 
-    private void validateConfig(GlobalConfig command) {
-        if (command == null) {
+    private void validateConfig(GlobalConfig config) {
+        if (config == null) {
             throw new IllegalArgumentException("Command shouldn't be null");
         }
     }
