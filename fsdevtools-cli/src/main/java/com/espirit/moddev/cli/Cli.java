@@ -112,7 +112,7 @@ public final class Cli {
     public void execute(final String[] args) {
         migrateEnvironmentVariableToSystemProperties();
 
-        final ExceptionHandler exceptionHandler = new ExceptionHandler(this, args);
+        final ExceptionHandler exceptionHandler = new ExceptionHandler(this, CliConstants.FS_CLI.value(), args);
 
         //Order of listeners registered is important!
         listeners.add(exceptionHandler);

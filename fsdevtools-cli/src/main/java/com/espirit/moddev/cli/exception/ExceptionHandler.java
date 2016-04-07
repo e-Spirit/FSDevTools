@@ -25,7 +25,6 @@ package com.espirit.moddev.cli.exception;
 import com.espirit.moddev.cli.Cli;
 import com.espirit.moddev.cli.api.event.CliErrorEvent;
 import com.espirit.moddev.cli.api.event.CliListener;
-import com.espirit.moddev.cli.CliConstants;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -46,15 +45,17 @@ public final class ExceptionHandler implements Thread.UncaughtExceptionHandler, 
     private static final Logger LOGGER = LoggerFactory.getLogger(Cli.class);
     private final List<String> arguments;
     private final Cli app;
+    private final String appName;
 
     /**
      * Instantiates a new instance.
-     *
      * @param app the commandline app
+     * @param appName
      * @param args the commandline arguments
      */
-    public ExceptionHandler(Cli app, String[] args) {
+    public ExceptionHandler(final Cli app, final String appName, final String[] args) {
         this.app = app;
+        this.appName = appName;
         if (args != null) {
             arguments = Arrays.asList(args);
         } else {
@@ -63,20 +64,20 @@ public final class ExceptionHandler implements Thread.UncaughtExceptionHandler, 
     }
 
     @Override
-    public void uncaughtException(Thread t, Throwable e) {
+    public void uncaughtException(final Thread t, final Throwable e) {
         logException(e);
         //If we are called from a thread then we need to inform about a abnormal exit
         app.fireErrorOccurredEvent(new CliErrorEvent(this, e));
     }
 
     @Override
-    public void errorOccurred(CliErrorEvent e) {
+    public void errorOccurred(final CliErrorEvent e) {
         if (sourceOfEventNotThisInstance(e)) {
             logException(e.getError());
         }
     }
 
-    private boolean sourceOfEventNotThisInstance(CliErrorEvent e) {
+    private boolean sourceOfEventNotThisInstance(final CliErrorEvent e) {
         return !this.equals(e.getSource());
     }
 
@@ -86,7 +87,7 @@ public final class ExceptionHandler implements Thread.UncaughtExceptionHandler, 
      *
      * @param error the error to be logged
      */
-    private void logException(Throwable error) {
+    private void logException(final Throwable error) {
         if (argumentsContains("-e")) {
             LOGGER.error(error.toString(), error);
         } else {
@@ -97,7 +98,7 @@ public final class ExceptionHandler implements Thread.UncaughtExceptionHandler, 
                 LOGGER.error("{}", error.getMessage());
             }
             if (!arguments.isEmpty()) {
-                LOGGER.info("See '" + CliConstants.FS_CLI + " help {}' for more information on a specific command.",
+                LOGGER.info("See '" + appName + " help {}' for more information on a specific command.",
                             arguments.stream()
                                 .filter(s -> ("import".equals(s) || "export".equals(s) || s.indexOf("store") != -1) && !"help".equals(s))
                                 .reduce("", (s1, s2) -> s1 + " " + s2));
@@ -111,7 +112,7 @@ public final class ExceptionHandler implements Thread.UncaughtExceptionHandler, 
      * @param key the argument to be checked
      * @return the true if the arguments contain the given element
      */
-    public boolean argumentsContains(String key) {
+    public boolean argumentsContains(final String key) {
         return arguments.contains(key);
     }
 }

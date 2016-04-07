@@ -26,7 +26,7 @@ public class SimpleExecutionsTest {
     @Before
     public void setUp() throws Exception {
         testling = new Cli();
-        testling.addListener(new ExceptionHandler(testling, null));
+        testling.addListener(new ExceptionHandler(testling, CliConstants.FS_CLI.value(), null));
         testling.addListener(e -> error = e.getError());
         error = null;
     }
