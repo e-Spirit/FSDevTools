@@ -27,7 +27,7 @@ import java.util.Map;
 
 
 /**
- * The type Environment encapsulates the System environment variables to make them testable.
+ * The type Environment encapsulates the system environment variables to make them testable.
  *
  * @author e-Spirit AG
  */
@@ -44,33 +44,33 @@ public class Environment {
     }
 
     /**
-     * Contains key.
+     * Checks if a value exists for a key.
      *
      * @param key the key
      * @return the boolean
      */
-    public boolean containsKey(Object key) {
+    public boolean containsKey(final Object key) {
         return environmentVariables.containsKey(key);
     }
 
     /**
-     * Get string.
+     * Get value for key.
      *
      * @param key the key
      * @return the string
      */
-    public String get(Object key) {
+    public String get(final Object key) {
         return environmentVariables.get(key);
     }
 
     /**
-     * Put string.
+     * Add key value pair.
      *
      * @param key   the key
      * @param value the value
      * @return the string
      */
-    public String put(String key, String value) {
+    public String put(final String key, final String value) {
         return environmentVariables.put(key, value);
     }
 

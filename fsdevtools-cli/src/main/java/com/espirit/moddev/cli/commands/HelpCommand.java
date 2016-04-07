@@ -23,12 +23,11 @@
 package com.espirit.moddev.cli.commands;
 
 import com.espirit.moddev.cli.Cli;
-import com.espirit.moddev.cli.results.SimpleResult;
 import com.github.rvesse.airline.annotations.Arguments;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.builder.CliBuilder;
 import com.github.rvesse.airline.help.Help;
-import com.github.rvesse.airline.model.GlobalMetadata;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +47,7 @@ import java.util.concurrent.Callable;
         name = HelpCommand.COMMAND_NAME,
         description = "Display help information"
 )
-public class HelpCommand implements com.espirit.moddev.cli.api.command.Command<HelpCommand.HelpResult> {
+public class HelpCommand implements com.espirit.moddev.cli.api.command.Command<HelpResult> {
 
     public static final String COMMAND_NAME = "help";
     private static final Logger LOGGER = LoggerFactory.getLogger(HelpCommand.class);
@@ -79,29 +78,4 @@ public class HelpCommand implements com.espirit.moddev.cli.api.command.Command<H
         }
     }
 
-    /**
-     * Specialization of {@link com.espirit.moddev.cli.results.SimpleResult} that can be used in conjunction with help commands.
-     */
-    public static class HelpResult extends SimpleResult<GlobalMetadata<Object>> {
-
-        /**
-         * Creates a new instance using the given command result.
-         *
-         * @param metadata Result produced by the command
-         * @see com.espirit.moddev.cli.results.SimpleResult#SimpleResult(Object)
-         */
-        public HelpResult(GlobalMetadata metadata) {
-            super(metadata);
-        }
-
-        /**
-         * Creates a new error result using the given exception.
-         *
-         * @param exception Exception produced by the command
-         * @see com.espirit.moddev.cli.results.SimpleResult#SimpleResult(Exception)
-         */
-        public HelpResult(Exception exception) {
-            super(exception);
-        }
-    }
 }

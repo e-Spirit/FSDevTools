@@ -42,74 +42,81 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * This class gathers shared logic and options for different export commands. It can
- * be extended for custom implementations of uid filtering, or to override configurations.
+ * This class gathers shared logic and options for different export commands. It can be extended for custom implementations of uid filtering, or to
+ * override configurations.
  *
- * @author e-Spirit AG
+ * @author e -Spirit AG
  */
 public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> {
 
-    @Option(name = "--withoutDeleteObsoleteFiles", description = "delete without obsolete files")
-    protected boolean withoutDeleteObsoleteFiles;
+    @Option(name = "--keepObsoleteFiles", description = "delete without obsolete files")
+    private boolean keepObsoleteFiles;
 
-    @Option(name = "--withoutChildElements", description = "export without child elements")
-    protected boolean withoutExportChildElements;
+    @Option(name = "--excludeChildElements", description = "export without child elements")
+    private boolean excludeChildElements;
 
-    @Option(name = "--withoutParentElements", description = "export without parent elements")
-    protected boolean withoutExportParentElements;
+    @Option(name = "--excludeParentElements", description = "export without parent elements")
+    private boolean excludeParentElements;
 
-    @Option(name = "--withoutReleaseEntities", description = "export without release entities")
-    private boolean withoutExportReleaseEntities;
+    @Option(name = "--excludeReleaseEntities", description = "export without release entities")
+    private boolean excludeReleaseEntities;
 
-    @Option(name = "--withProjectProperties", description = "export with project properties like resolutions or fonts")
-    private boolean withProjectProperties;
+    @Option(name = "--includeProjectProperties", description = "export with project properties like resolutions or fonts")
+    private boolean includeProjectProperties;
 
     @Arguments(title = "uids", description = "A list of unique identifiers, in the form of 'pagetemplate:default'")
     private List<String> fullQualifiedUidsAsStrings = new LinkedList<>();
 
     /**
-     * Retrieves a possibly empty list of string based unique identifiers, that can
-     * be passed to instances of this command class as arguments.
+     * Gets delete obsolete files.
      *
-     * @return a list of uids.
+     * @return the delete obsolete files
      */
-    private List<String> getFullQualifiedUidsAsStrings() {
-        return fullQualifiedUidsAsStrings;
-    }
-
-
-
-    public boolean getDeleteObsoleteFiles() {
-        return !withoutDeleteObsoleteFiles;
-    }
-
-    public boolean getExportChildElements() {
-        return !withoutExportChildElements;
-    }
-
-    public boolean getExportParentElements() {
-        return !withoutExportParentElements;
-    }
-
-    public boolean getExportReleaseEntities() {
-        return !withoutExportReleaseEntities;
+    public boolean isDeleteObsoleteFiles() {
+        return !keepObsoleteFiles;
     }
 
     /**
-     * Retrieves IDProviders via the StoreAgent instance. Uses the result of {@link #getFullQualifiedUids()}
-     * to query all stores.
+     * Gets export child elements.
+     *
+     * @return the export child elements
+     */
+    public boolean isExportChildElements() {
+        return !excludeChildElements;
+    }
+
+    /**
+     * Gets export parent elements.
+     *
+     * @return the export parent elements
+     */
+    public boolean isExportParentElements() {
+        return !excludeParentElements;
+    }
+
+    /**
+     * Gets export release entities.
+     *
+     * @return the export release entities
+     */
+    public boolean isExportReleaseEntities() {
+        return !excludeReleaseEntities;
+    }
+
+    /**
+     * Retrieves IDProviders via the StoreAgent instance. Uses the result of {@link #getFullQualifiedUids()} to query all stores.
      *
      * @param storeAgent that is used to search IDProviders
      * @return a list of IDProviders that match the uid parameters
      * @throws IllegalArgumentException if no IDProvider can be retrieved for a uid
      */
-    public List<IDProvider> filterByUIDs(StoreAgent storeAgent){
-        List<IDProvider> result = new ArrayList<>();
-        for(FullQualifiedUid uid : getFullQualifiedUids()) {
+    public List<IDProvider> filterByUIDs(final StoreAgent storeAgent) {
+        final List<IDProvider> result = new ArrayList<>();
+        for (final FullQualifiedUid uid : getFullQualifiedUids()) {
             if(uid.getUid().equals(FullQualifiedUid.ROOT_NODE_IDENTIFIER)) {
                 result.add(storeAgent.getStore(uid.getUidType().getStoreType()));
             } else {
-                IDProvider storeElement = storeAgent.getStore(uid.getUidType().getStoreType()).getStoreElement(uid.getUid(), uid.getUidType());
+                final IDProvider storeElement = storeAgent.getStore(uid.getUidType().getStoreType()).getStoreElement(uid.getUid(), uid.getUidType());
                 if(storeElement != null) {
                     result.add(storeElement);
                 } else {
@@ -120,15 +127,20 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
         return result;
     }
 
+    /**
+     * Log release state.
+     *
+     * @param idProvider the id provider
+     */
     protected void logReleaseState(final IDProvider idProvider) {
         getContext().logDebug(idProvider.getUid() + " is release state? " + idProvider.getStore().isRelease());
     }
 
     /**
-     * Adds elements to the given ExportOperation. Calls {@link #addExportElements(StoreAgent, List, ExportOperation)}
-     * with the command's uid arguments.
+     * Adds elements to the given ExportOperation. Calls {@link #addExportElements(StoreAgent, List, ExportOperation)} with the command's uid
+     * arguments.
      *
-     * @param storeAgent the StoreAgent to retrieve IDProviders with
+     * @param storeAgent      the StoreAgent to retrieve IDProviders with
      * @param exportOperation the ExportOperation to add the elements to
      */
     public void addExportElements(final StoreAgent storeAgent, final ExportOperation exportOperation) {
@@ -136,14 +148,14 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     }
 
     /**
-     * Adds elements to the given export operation. Uses {@link #filterByUIDs(StoreAgent)} to retrieve
-     * IDProviders matching the {@code fullQualifiedUidsAsStrings} parameter.
+     * Adds elements to the given export operation. Uses {@link #filterByUIDs(StoreAgent)} to retrieve IDProviders matching the {@code
+     * fullQualifiedUidsAsStrings} parameter.
      *
-     * @param storeAgent the StoreAgent to retrieve IDProviders with
-     * @param uids the identifiers of elements that should be added to the ExportOperation
+     * @param storeAgent      the StoreAgent to retrieve IDProviders with
+     * @param uids            the identifiers of elements that should be added to the ExportOperation
      * @param exportOperation the ExportOperation to add the elements to
      * @throws IllegalArgumentException if the ExportOperation is null
-     * @throws IllegalStateException if no IDProviders exist for the given parameters
+     * @throws IllegalStateException    if no IDProviders exist for the given parameters
      */
     public void addExportElements(final StoreAgent storeAgent, final List<FullQualifiedUid> uids, final ExportOperation exportOperation) {
         if(exportOperation == null) {
@@ -156,17 +168,17 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
             addStoreRoots(storeAgent, exportOperation);
         } else {
             getContext().logDebug("addExportedElements - UIDs " + uids);
-            List<IDProvider> elements = filterByUIDs(storeAgent);
+            final List<IDProvider> elements = filterByUIDs(storeAgent);
             if(elements.isEmpty()) {
                 throw new IllegalStateException("No IDProviders can be retrieved for the given arguments");
             }
-            for (IDProvider element : elements) {
+            for (final IDProvider element : elements) {
                 getContext().logDebug("Adding store element: " + element);
                 exportOperation.addElement(element);
             }
         }
 
-        if(isWithProjectProperties()) {
+        if (isIncludeProjectProperties()) {
             addProjectProperties(exportOperation);
         }
     }
@@ -180,7 +192,12 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
         return fullQualifiedUidsAsStrings.isEmpty() ? Collections.emptyList() : FullQualifiedUid.parse(fullQualifiedUidsAsStrings);
     }
 
-    public static void addProjectProperties(ExportOperation exportOperation) {
+    /**
+     * Add project properties.
+     *
+     * @param exportOperation the export operation
+     */
+    public static void addProjectProperties(final ExportOperation exportOperation) {
         final PropertiesTransportOptions options = exportOperation.configurePropertiesExport();
         final EnumSet<PropertiesTransportOptions.ProjectPropertyType>
                 propertiesToTransport = EnumSet.allOf(PropertiesTransportOptions.ProjectPropertyType.class);
@@ -188,24 +205,34 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     }
 
     /**
-     * Adds store root nodes to the given export operation directly. This operation is
-     * different from adding a store root node's children individually. This method
-     * can be overridden to add a subset of store roots only.
+     * Adds store root nodes to the given export operation directly. This operation is different from adding a store root node's children
+     * individually. This method can be overridden to add a subset of store roots only.
      *
-     * @param storeAgent the StoreAgent to retrieve store roots from
+     * @param storeAgent      the StoreAgent to retrieve store roots from
      * @param exportOperation the ExportOperation to add the store roots to
      */
-    protected void addStoreRoots(StoreAgent storeAgent, ExportOperation exportOperation) {
-        for(Store.Type storeType : Store.Type.values()) {
+    protected void addStoreRoots(final StoreAgent storeAgent, final ExportOperation exportOperation) {
+        for (final Store.Type storeType : Store.Type.values()) {
             exportOperation.addElement(storeAgent.getStore(storeType));
         }
     }
 
-    public void setWithProjectProperties(boolean withProjectProperties) {
-        this.withProjectProperties = withProjectProperties;
+    /**
+     * Sets include project properties.
+     *
+     * @param includeProjectProperties the with project properties
+     */
+    public void setIncludeProjectProperties(final boolean includeProjectProperties) {
+        this.includeProjectProperties = includeProjectProperties;
     }
-    public boolean isWithProjectProperties() {
-        return withProjectProperties;
+
+    /**
+     * Include project properties.
+     *
+     * @return the boolean
+     */
+    public boolean isIncludeProjectProperties() {
+        return includeProjectProperties;
     }
 
     /**
@@ -217,29 +244,27 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     protected ExportResult exportStoreElements() {
         try {
             final ExportOperation exportOperation = this.getContext().requireSpecialist(OperationAgent.TYPE).getOperation(ExportOperation.TYPE);
-            exportOperation.setDeleteObsoleteFiles(getDeleteObsoleteFiles());
-            exportOperation.setExportChildElements(getExportChildElements());
-            exportOperation.setExportParentElements(getExportParentElements());
-            exportOperation.setExportReleaseEntities(getExportReleaseEntities());
+            exportOperation.setDeleteObsoleteFiles(isDeleteObsoleteFiles());
+            exportOperation.setExportChildElements(isExportChildElements());
+            exportOperation.setExportParentElements(isExportParentElements());
+            exportOperation.setExportReleaseEntities(isExportReleaseEntities());
 
             addExportElements(getContext().requireSpecialist(StoreAgent.TYPE), exportOperation);
 
             final ExportOperation.Result result = exportOperation.perform(getSynchronizationDirectory());
 
             return new ExportResult(result);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return new ExportResult(e); // NOSONAR
         }
     }
 
     /**
-     * Adds the given string based FullQualifiedUid to this command's argument list.
-     * This method doesn't validate the input at all.
+     * Adds the given string based FullQualifiedUid to this command's argument list. This method doesn't validate the input at all.
      *
-     * @param fullQualifiedUid the string based FullQualifiedUid that should be added to
-     *                         this command's argument list
+     * @param fullQualifiedUid the string based FullQualifiedUid that should be added to this command's argument list
      */
-    public void addUid(String fullQualifiedUid) {
-        getFullQualifiedUidsAsStrings().add(fullQualifiedUid);
+    public void addUid(final String fullQualifiedUid) {
+        fullQualifiedUidsAsStrings.add(fullQualifiedUid);
     }
 }

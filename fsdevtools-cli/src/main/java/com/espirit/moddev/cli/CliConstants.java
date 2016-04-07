@@ -28,45 +28,75 @@ package com.espirit.moddev.cli;
  * @author e-Spirit AG
  */
 public enum CliConstants {
+
     /**
-     * The SYNC_DIR.
+     * Sync dir cli constant.
      */
     SYNC_DIR("syncDir"),
 
     /**
-     * The COMMANDS.
+     * Commands cli constant.
      */
     COMMANDS("commands"),
 
     /**
-     * The CREATE_SYNC_DIR_IF_MISSING.
+     * Create sync dir if missing cli constant.
      */
     CREATE_SYNC_DIR_IF_MISSING("create_sync_dir"),
 
     /**
-     * The IMPORT_COMMAND_ERROR_MESSAGE.
+     * The import command error message constant.
      */
     IMPORT_COMMAND_ERROR_MESSAGE("ImportCommand does not handle export!"),
 
+    /**
+     * Import comment cli constant.
+     */
     IMPORT_COMMENT("import_comment"),
 
+    /**
+     * Import create entities cli constant.
+     */
     IMPORT_CREATE_ENTITIES("import_create_entities"),
 
+    /**
+     * Delete obsolete files cli constant.
+     */
     DELETE_OBSOLETE_FILES("delete_obsolete_files"),
 
+    /**
+     * Export child elements cli constant.
+     */
     EXPORT_CHILD_ELEMENTS("export_child_elements"),
 
+    /**
+     * Export parent elements cli constant.
+     */
     EXPORT_PARENT_ELEMENTS("export_parent_elements"),
 
+    /**
+     * Export release entities cli constant.
+     */
     EXPORT_RELEASE_ENTITIES("export_release_entities"),
 
+    /**
+     * Export full templatestore cli constant.
+     */
     EXPORT_FULL_TEMPLATESTORE("export_full_templatestore"),
 
+    /**
+     * True cli constant.
+     */
     TRUE("true");
 
     private final String configValue;
 
-    CliConstants(String configValue) {
+    /**
+     * Instantiates a new Cli constants.
+     *
+     * @param configValue the config value
+     */
+    CliConstants(final String configValue) {
         this.configValue = configValue;
     }
 
@@ -90,7 +120,7 @@ public enum CliConstants {
      * @param value the value
      * @return the boolean
      */
-    public boolean equalsValue(Object value) {
+    public boolean equalsValue(final Object value) {
         return configValue.equals(value);
     }
 }

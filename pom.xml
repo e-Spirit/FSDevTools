@@ -386,7 +386,6 @@
             </activation>
             <properties>
                 <ci.version>1.0_DEV.123</ci.version>
-                <ci.release.version>1.0_DEV.123</ci.release.version>
             </properties>
         </profile>
     </profiles>

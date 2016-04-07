@@ -22,16 +22,17 @@
 
 package com.espirit.moddev.cli.commands;
 
-import com.espirit.moddev.cli.configuration.CliConstants;
 import com.espirit.moddev.cli.api.configuration.ImportConfig;
+import com.espirit.moddev.cli.configuration.CliConstants;
 import com.espirit.moddev.cli.results.ImportResult;
 import com.github.rvesse.airline.annotations.Option;
+
 import de.espirit.firstspirit.agency.OperationAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ImportOperation;
 
 
 /**
- * Command that executes a FirstSpirit ImportOperation. Uses a context.
+ * Command that executes a FirstSpirit ImportOperation. Uses a FirstSpirit context.
  *
  * @author e-Spirit AG
  */
@@ -42,19 +43,19 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
     private String importComment;
 
     @Option(name = {"--dont-create-project"}, description = "Do not create project in FirstSpirit if it is missing")
-    private boolean notCreatingProjectIfMissing;
+    private boolean dontCreateProjectIfMissing;
 
-    @Option(name = {"--create-entities"}, description = "create entities")
-    private boolean createEntities;
+    @Option(name = {"--dont-create-entities"}, description = "Don not create entities when importing")
+    private boolean dontCreateEntities;
 
     @Override
     public boolean isCreateEntities() {
-        return createEntities;
+        return !dontCreateEntities;
     }
 
     @Override
     public boolean isCreatingProjectIfMissing() {
-        return notCreatingProjectIfMissing;
+        return !dontCreateProjectIfMissing;
     }
 
     @Override
@@ -75,7 +76,7 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
             //TODO: add importOperation setDatabaseLayerMapper()
             final ImportOperation.Result result = importOperation.perform(getSynchronizationDirectory());
             return new ImportResult(result);
-        } catch (Exception e) { //NOSONAR
+        } catch (final Exception e) { //NOSONAR
             return new ImportResult(e);
         }
     }

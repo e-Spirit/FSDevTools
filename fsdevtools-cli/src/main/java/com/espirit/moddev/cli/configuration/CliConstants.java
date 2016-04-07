@@ -23,38 +23,120 @@
 package com.espirit.moddev.cli.configuration;
 
 /**
- * The enum Vcs connect cli constants.
- * @author e-Spirit AG
+ * The enum cli constants.
+ *
+ * @author e -Spirit AG
  */
 public enum CliConstants {
 
+    /**
+     * Default user cli constant.
+     */
     DEFAULT_USER("Admin"),
+
+    /**
+     * The Default project constant.
+     */
     DEFAULT_PROJECT("Mithras Energy"),
+
+    /**
+     * Default host cli constant.
+     */
     DEFAULT_HOST("localhost"),
+
+    /**
+     * Default connection mode cli constant.
+     */
     DEFAULT_CONNECTION_MODE("HTTP"),
 
+    /**
+     * Key fs host cli constant.
+     */
     KEY_FS_HOST("fshost"),
+
+    /**
+     * Key fs port cli constant.
+     */
     KEY_FS_PORT("fsport"),
+
+    /**
+     * Key fs mode cli constant.
+     */
     KEY_FS_MODE("fsmode"),
+
+    /**
+     * Key fs user cli constant.
+     */
     KEY_FS_USER("fsuser"),
+
+    /**
+     * Key fs password cli constant.
+     */
     KEY_FS_PASSWORD("fspwd"),
+
+    /**
+     * Key fs project cli constant.
+     */
     KEY_FS_PROJECT("fsproject"),
+
+    /**
+     * Key fs import comment cli constant.
+     */
     KEY_FS_IMPORT_COMMENT("import_comment"),
 
+    /**
+     * Fs cli cli constant.
+     */
     FS_CLI("fs-cli"),
+
+    /**
+     * Help cli constant.
+     */
     HELP("help"),
+
+    /**
+     * Log 4 j debug cli constant.
+     */
     LOG4J_DEBUG("log4j.debug"),
+
+    /**
+     * Fs cli log dir cli constant.
+     */
     FS_CLI_LOG_DIR("FS_CLI_LOG_DIR"),
+
+    /**
+     * User home cli constant.
+     */
     USER_HOME("user.home"),
+
+    /**
+     * Fs cli dir cli constant.
+     */
     FS_CLI_DIR("/.fs-cli/"),
+
+    /**
+     * One second in millis cli constant.
+     */
     ONE_SECOND_IN_MILLIS("1000"),
 
+    /**
+     * Stdout appender cli constant.
+     */
     STDOUT_APPENDER("stdout"),
+
+    /**
+     * Stderr appender cli constant.
+     */
     STDERR_APPENDER("stderr");
 
     private final String configValue;
 
-    CliConstants(String configValue) {
+    /**
+     * Instantiates a new cli constant.
+     *
+     * @param configValue the config value
+     */
+    CliConstants(final String configValue) {
         this.configValue = configValue;
     }
 
@@ -64,12 +146,12 @@ public enum CliConstants {
      * @param value the value
      * @return the boolean
      */
-    public boolean isDefault(String value) {
+    public boolean isDefault(final String value) {
         return configValue.equals(value);
     }
 
     /**
-     * Value string.
+     * Access value as String.
      *
      * @return the string
      */
@@ -78,7 +160,7 @@ public enum CliConstants {
     }
 
     /**
-     * Value as integer.
+     * Access value as integer.
      *
      * @return the integer
      */

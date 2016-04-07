@@ -26,6 +26,7 @@ import com.espirit.moddev.cli.Cli;
 import com.espirit.moddev.cli.api.command.Command;
 import com.espirit.moddev.cli.api.result.Result;
 import com.espirit.moddev.cli.commands.HelpCommand;
+import com.espirit.moddev.cli.commands.HelpResult;
 import com.github.rvesse.airline.model.CommandGroupMetadata;
 import com.github.rvesse.airline.model.CommandMetadata;
 import com.github.rvesse.airline.model.GlobalMetadata;
@@ -75,8 +76,8 @@ public class HelpCommandTest {
 
         Result result = command.call();
 
-        if(result instanceof HelpCommand.HelpResult) {
-            HelpCommand.HelpResult helpResult = (HelpCommand.HelpResult) result;
+        if(result instanceof HelpResult) {
+            HelpResult helpResult = (HelpResult) result;
             List<String> commands = new ArrayList<>();
 
             GlobalMetadata globalMetadata = helpResult.get();

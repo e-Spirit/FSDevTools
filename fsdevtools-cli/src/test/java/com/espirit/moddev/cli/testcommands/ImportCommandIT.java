@@ -29,36 +29,44 @@ import com.espirit.moddev.cli.results.ImportResult;
 
 import de.espirit.firstspirit.store.access.nexport.operations.ImportOperation;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.util.Arrays;
 
+import static com.espirit.moddev.IntegrationTest.PROJECT_NAME;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
 /**
  * @author e-Spirit AG
  */
 @Category(IntegrationTest.class)
-public class ImportCommandTest extends AbstractIntegrationTest {
+public class ImportCommandIT extends AbstractIntegrationTest {
 
     @Test
     public void parameterLessCommandCreatesElements() {
-        ImportCommand command = new ImportCommand();
+        final ImportCommand command = new ImportCommand();
 
         initializeTestSpecificConfiguration(command);
-        File syncDirectory = new File("./src/test/resources");
-        Assert.assertTrue(syncDirectory.isDirectory());
-        boolean isSyncDirectory = Arrays.asList(syncDirectory.listFiles()).stream().anyMatch(o -> o.getName().equals(".FirstSpirit"));
-        Assert.assertTrue(isSyncDirectory);
+        command.setProject(PROJECT_NAME + "123");
+        final File syncDirectory = new File("./src/test/resources");
+        assertTrue("syncDirectory is not a directory", syncDirectory.isDirectory());
+
+        final boolean isSyncDirectory = Arrays.asList(syncDirectory.listFiles()).stream().anyMatch(o -> o.getName().equals(".FirstSpirit"));
+        assertTrue("syncDirectory is not a FirstSpirit directory", isSyncDirectory);
 
         command.setSynchronizationDirectory(syncDirectory.getPath());
         command.setContext(new CliContextImpl(command));
 
-        ImportResult result = command.call();
-        ImportOperation.Result importResult = result.get();
+        final ImportResult result = command.call();
+        final ImportOperation.Result importResult = result.get();
 
-        Assert.assertTrue(importResult.getProblems().size() == 0);
+        assertThat("Expected 0 problems: " + importResult.getProblems().size() + " -> " + importResult.getProblems().stream().map(
+                       a -> a.getNodeId() + "@" + a.getMessage()).reduce((t, u) -> t + ", " + u).get(),
+                   importResult.getProblems(), hasSize(0));
     }
 
 }

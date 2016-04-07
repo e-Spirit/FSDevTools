@@ -43,29 +43,4 @@ public class GroupUtilsTest {
         Assert.assertEquals(5, groupClassesInPackage.size());
     }
 
-    /**
-     * @author e-Spirit AG
-     */
-    public static class ReflectionTest {
-        @Test
-        public void readsGroupDescriptionFromAnnotatedMethodTest() {
-            Assert.assertEquals("Description is expected to be xyz non null from getMyCustomDescription()",
-                                "xyz", ReflectionUtils.getDescriptionFromClass(GroupWithDescriptionAnnotation.class));
-        }
-        @Test
-        public void readsGroupDescriptionFromNonAnnotatedMethodWithNamingConventionTest() {
-            Assert.assertEquals("Description is expected to be abc non null from getDescription()",
-                    "abc", ReflectionUtils.getDescriptionFromClass(GroupWithDescriptionMethod.class));
-        }
-        @Test
-        public void readsGroupDescriptionAsEmptyFromDescriptionMethodReturnsVoidTest() {
-            Assert.assertTrue("Description is expected to be empty from getDescription()",
-                    ReflectionUtils.getDescriptionFromClass(GroupWithVoidDescriptionMethod.class).isEmpty());
-        }
-        @Test
-        public void readsGroupDescriptionAsEmptyFromDescriptionMethodReturnsNonStringTest() {
-            Assert.assertTrue("Description is expected to be empty from getDescription()",
-                    ReflectionUtils.getDescriptionFromClass(GroupWithNonStringDescriptionMethod.class).isEmpty());
-        }
-    }
 }

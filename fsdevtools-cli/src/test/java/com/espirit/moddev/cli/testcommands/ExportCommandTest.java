@@ -93,7 +93,7 @@ public class ExportCommandTest extends AbstractIntegrationTest {
 
         command.addUid("pagetemplate:default");
         initializeTestSpecificConfiguration(command);
-        command.setWithProjectProperties(true);
+        command.setIncludeProjectProperties(true);
 
         ExportResult result = command.call();
         Assert.assertTrue("Export folder for project properties not found.", containsSubDirectory(getFirstSpiritFileSyncFolder(testFolder.getRoot()), "Global"));

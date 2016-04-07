@@ -58,10 +58,10 @@ public class ExportCommand extends AbstractExportCommand {
         List<FullQualifiedUid> uids = getFullQualifiedUids();
 
         final ExportOperation exportOperation = this.getContext().requireSpecialist(OperationAgent.TYPE).getOperation(ExportOperation.TYPE);
-        exportOperation.setDeleteObsoleteFiles(getDeleteObsoleteFiles());
-        exportOperation.setExportChildElements(getExportChildElements());
-        exportOperation.setExportParentElements(getExportParentElements());
-        exportOperation.setExportReleaseEntities(getExportReleaseEntities());
+        exportOperation.setDeleteObsoleteFiles(isDeleteObsoleteFiles());
+        exportOperation.setExportChildElements(isExportChildElements());
+        exportOperation.setExportParentElements(isExportParentElements());
+        exportOperation.setExportReleaseEntities(isExportReleaseEntities());
 
         addExportElements(this.getContext().requireSpecialist(StoreAgent.TYPE), uids, exportOperation);
 
