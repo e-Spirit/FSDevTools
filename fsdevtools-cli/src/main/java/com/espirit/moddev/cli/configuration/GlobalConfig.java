@@ -22,25 +22,21 @@
 
 package com.espirit.moddev.cli.configuration;
 
+import com.espirit.moddev.cli.CliConstants;
 import com.espirit.moddev.cli.Environment;
 import com.espirit.moddev.cli.SyncDirectoryFactory;
 import com.espirit.moddev.cli.api.FsConnectionMode;
-import com.espirit.moddev.cli.api.FullQualifiedUid;
 import com.espirit.moddev.cli.api.configuration.Config;
-import com.github.rvesse.airline.annotations.Arguments;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;
 import com.github.rvesse.airline.annotations.restrictions.AllowedRawValues;
 import com.github.rvesse.airline.annotations.restrictions.Port;
 import com.github.rvesse.airline.annotations.restrictions.PortType;
+
 import de.espirit.firstspirit.access.project.ProjectScriptContext;
 import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.io.FileSystem;
 import de.espirit.firstspirit.io.FileSystemsAgent;
-
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * A configuration class for a common configuration in a FirstSpirit environment.

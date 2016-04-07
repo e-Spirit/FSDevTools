@@ -22,6 +22,8 @@
 
 package com.espirit.moddev.cli.configuration;
 
+import com.espirit.moddev.cli.CliConstants;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -32,7 +34,7 @@ public class GlobalConfigTest {
 
     @Test
     public void userIsNotFetchedFromEnvironmentIfConfigured() {
-        GlobalConfig config = new GlobalConfig();
+        final GlobalConfig config = new GlobalConfig();
         config.setUser("abc");
         config.getEnvironment().clear();
         config.getEnvironment().put(CliConstants.KEY_FS_USER.value(), "xyz");
@@ -41,7 +43,7 @@ public class GlobalConfigTest {
     }
     @Test
     public void userIsFetchedFromEnvironmentIfNotConfigured() {
-        GlobalConfig config = new GlobalConfig();
+        final GlobalConfig config = new GlobalConfig();
         config.getEnvironment().clear();
         config.getEnvironment().put(CliConstants.KEY_FS_USER.value(), "xyz");
 
@@ -49,7 +51,7 @@ public class GlobalConfigTest {
     }
     @Test
     public void defaultUserIsReturnedIfNoUserIsConfigured() {
-        GlobalConfig config = new GlobalConfig();
+        final GlobalConfig config = new GlobalConfig();
         config.getEnvironment().clear();
 
         Assert.assertEquals(CliConstants.DEFAULT_USER.value(), config.getUser());

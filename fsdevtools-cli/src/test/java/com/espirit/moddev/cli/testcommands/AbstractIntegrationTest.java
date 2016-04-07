@@ -22,9 +22,9 @@
 
 package com.espirit.moddev.cli.testcommands;
 
+import com.espirit.moddev.cli.CliConstants;
 import com.espirit.moddev.cli.CliContextImpl;
 import com.espirit.moddev.cli.commands.SimpleCommand;
-import com.espirit.moddev.cli.configuration.CliConstants;
 import com.espirit.moddev.cli.configuration.GlobalConfig;
 
 import org.apache.commons.io.FileUtils;

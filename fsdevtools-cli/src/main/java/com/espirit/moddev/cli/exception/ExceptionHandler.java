@@ -24,7 +24,7 @@ package com.espirit.moddev.cli.exception;
 
 import com.espirit.moddev.cli.Cli;
 import com.espirit.moddev.cli.CliListener;
-import com.espirit.moddev.cli.configuration.CliConstants;
+import com.espirit.moddev.cli.CliConstants;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;

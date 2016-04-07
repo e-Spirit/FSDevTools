@@ -30,64 +30,114 @@ package com.espirit.moddev.cli;
 public enum CliConstants {
 
     /**
-     * Sync dir cli constant.
-     */
-    SYNC_DIR("syncDir"),
-
-    /**
-     * Commands cli constant.
-     */
-    COMMANDS("commands"),
-
-    /**
      * Create sync dir if missing cli constant.
      */
     CREATE_SYNC_DIR_IF_MISSING("create_sync_dir"),
 
     /**
-     * The import command error message constant.
-     */
-    IMPORT_COMMAND_ERROR_MESSAGE("ImportCommand does not handle export!"),
-
-    /**
-     * Import comment cli constant.
-     */
-    IMPORT_COMMENT("import_comment"),
-
-    /**
-     * Import create entities cli constant.
-     */
-    IMPORT_CREATE_ENTITIES("import_create_entities"),
-
-    /**
-     * Delete obsolete files cli constant.
-     */
-    DELETE_OBSOLETE_FILES("delete_obsolete_files"),
-
-    /**
-     * Export child elements cli constant.
-     */
-    EXPORT_CHILD_ELEMENTS("export_child_elements"),
-
-    /**
-     * Export parent elements cli constant.
-     */
-    EXPORT_PARENT_ELEMENTS("export_parent_elements"),
-
-    /**
-     * Export release entities cli constant.
-     */
-    EXPORT_RELEASE_ENTITIES("export_release_entities"),
-
-    /**
-     * Export full templatestore cli constant.
-     */
-    EXPORT_FULL_TEMPLATESTORE("export_full_templatestore"),
-
-    /**
      * True cli constant.
      */
-    TRUE("true");
+    TRUE("true"),
+
+    /**
+     * Default user cli constant.
+     */
+    DEFAULT_USER("Admin"),
+
+    /**
+     * The Default project constant.
+     */
+    DEFAULT_PROJECT("Mithras Energy"),
+
+    /**
+     * Default host cli constant.
+     */
+    DEFAULT_HOST("localhost"),
+
+    /**
+     * Default connection mode cli constant.
+     */
+    DEFAULT_CONNECTION_MODE("HTTP"),
+
+    /**
+     * Key fs host cli constant.
+     */
+    KEY_FS_HOST("fshost"),
+
+    /**
+     * Key fs port cli constant.
+     */
+    KEY_FS_PORT("fsport"),
+
+    /**
+     * Key fs mode cli constant.
+     */
+    KEY_FS_MODE("fsmode"),
+
+    /**
+     * Key fs user cli constant.
+     */
+    KEY_FS_USER("fsuser"),
+
+    /**
+     * Key fs password cli constant.
+     */
+    KEY_FS_PASSWORD("fspwd"),
+
+    /**
+     * Key fs project cli constant.
+     */
+    KEY_FS_PROJECT("fsproject"),
+
+    /**
+     * Key fs import comment cli constant.
+     */
+    KEY_FS_IMPORT_COMMENT("import_comment"),
+
+    /**
+     * Fs cli cli constant.
+     */
+    FS_CLI("fs-cli"),
+
+    /**
+     * Help cli constant.
+     */
+    HELP("help"),
+
+    /**
+     * Log 4 j debug cli constant.
+     */
+    LOG4J_DEBUG("log4j.debug"),
+
+    /**
+     * Fs cli log dir cli constant.
+     */
+    FS_CLI_LOG_DIR("FS_CLI_LOG_DIR"),
+
+    /**
+     * User home cli constant.
+     */
+    USER_HOME("user.home"),
+
+    /**
+     * Fs cli dir cli constant.
+     */
+    FS_CLI_DIR("/.fs-cli/"),
+
+    /**
+     * One second in millis cli constant.
+     */
+    ONE_SECOND_IN_MILLIS("1000"),
+
+    /**
+     * Stdout appender cli constant.
+     */
+    STDOUT_APPENDER("stdout"),
+
+    /**
+     * Stderr appender cli constant.
+     */
+    STDERR_APPENDER("stderr");
 
     private final String configValue;
 
@@ -101,20 +151,6 @@ public enum CliConstants {
     }
 
     /**
-     * Value string.
-     *
-     * @return the string
-     */
-    public String value() {
-        return configValue;
-    }
-
-    @Override
-    public String toString() {
-        return configValue;
-    }
-
-    /**
      * Equals value.
      *
      * @param value the value
@@ -122,5 +158,38 @@ public enum CliConstants {
      */
     public boolean equalsValue(final Object value) {
         return configValue.equals(value);
+    }
+
+    /**
+     * Checks if a value is the default value.
+     *
+     * @param value the value
+     * @return the boolean
+     */
+    public boolean isDefault(final String value) {
+        return configValue.equals(value);
+    }
+
+    /**
+     * Access value as String.
+     *
+     * @return the string
+     */
+    public String value() {
+        return configValue;
+    }
+
+    /**
+     * Access value as integer.
+     *
+     * @return the integer
+     */
+    public Integer valueAsInt() {
+        return Integer.valueOf(configValue);
+    }
+
+    @Override
+    public String toString() {
+        return configValue;
     }
 }
