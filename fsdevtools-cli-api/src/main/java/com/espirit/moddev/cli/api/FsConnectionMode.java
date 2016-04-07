@@ -69,16 +69,6 @@ public enum FsConnectionMode {
         return defaultPort;
     }
 
-    /**
-     * Indicates if the given port number matches the default port used by this connection mode.
-     *
-     * @param port port number that should be checked
-     * @return a boolean value that indicates if the given port number matches the default port used by this connection mode
-     */
-    public boolean isDefaultPort(int port) {
-        return defaultPort == port;
-    }
-
     @Override
     public String toString() {
         return name();
