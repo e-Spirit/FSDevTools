@@ -49,22 +49,23 @@ import java.util.List;
  */
 public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> {
 
-    @Option(name = "--keepObsoleteFiles", description = "delete without obsolete files")
+    @Option(name = "--keepObsoleteFiles", description = "keep obsolete files in sync dir which are deleted in project")
     private boolean keepObsoleteFiles;
 
-    @Option(name = "--excludeChildElements", description = "export without child elements")
+    @Option(name = "--excludeChildElements", description = "exclude child store elements")
     private boolean excludeChildElements;
 
-    @Option(name = "--excludeParentElements", description = "export without parent elements")
+    @Option(name = "--excludeParentElements", description = "exclude parent store elements")
     private boolean excludeParentElements;
 
-    @Option(name = "--excludeReleaseEntities", description = "export without release entities")
-    private boolean excludeReleaseEntities;
+    @Option(name = "--useReleaseState",
+            description = "use only the release state of store elements; default is use release and current state of store elements")
+    private boolean excludeCurrentState;
 
     @Option(name = "--includeProjectProperties", description = "export with project properties like resolutions or fonts")
     private boolean includeProjectProperties;
 
-    @Arguments(title = "uids", description = "A list of unique identifiers, in the form of 'pagetemplate:default'")
+    @Arguments(title = "uids", description = "A list of unique identifiers, in the form of 'pagetemplate:default' (<uid type>:<uid>)")
     private List<String> fullQualifiedUidsAsStrings = new LinkedList<>();
 
     /**
@@ -95,12 +96,12 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     }
 
     /**
-     * Gets export release entities.
+     * Gets release state.
      *
-     * @return the export release entities
+     * @return true: operate on release state or false: on the current state.
      */
-    public boolean isExportReleaseEntities() {
-        return !excludeReleaseEntities;
+    public boolean isExportingReleaseState() {
+        return !excludeCurrentState;
     }
 
     /**
@@ -247,7 +248,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
             exportOperation.setDeleteObsoleteFiles(isDeleteObsoleteFiles());
             exportOperation.setExportChildElements(isExportChildElements());
             exportOperation.setExportParentElements(isExportParentElements());
-            exportOperation.setExportReleaseEntities(isExportReleaseEntities());
+            exportOperation.setExportReleaseEntities(isExportingReleaseState());
 
             addExportElements(getContext().requireSpecialist(StoreAgent.TYPE), exportOperation);
 

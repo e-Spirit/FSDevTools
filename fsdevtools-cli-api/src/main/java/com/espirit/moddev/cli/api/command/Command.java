@@ -25,6 +25,7 @@ package com.espirit.moddev.cli.api.command;
 
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.api.result.Result;
+
 import de.espirit.firstspirit.access.project.ProjectScriptContext;
 
 import java.util.concurrent.Callable;
@@ -35,8 +36,9 @@ import java.util.concurrent.Callable;
  * Since commands are normally executed in a FirstSpirit client-server environment, support
  * for initialization is given through the implementation of
  * {@link Config#setContext(ProjectScriptContext)}.
- * The execution environment can then decide how to use this indicator for
- * state initialization.
+ * The execution environment can then decide how to use the marker interface {@link Config} as indicator for
+ * state initialization. With no implementation of the {@link Config} interface there is no FirstSpirit
+ * connection available to the command.
  *
  * @param <RESULT_TYPE> the custom result type for this command class
  * @author e-Spirit AG
