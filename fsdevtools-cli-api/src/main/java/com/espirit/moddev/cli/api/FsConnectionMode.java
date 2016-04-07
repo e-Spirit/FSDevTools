@@ -33,15 +33,15 @@ public enum FsConnectionMode {
 
     /**
      * Http connection mode.
-     * Uses {@link com.espirit.moddev.cli.api.FsConnectionMode.Constants#HTTP_PORT} as default port.
+     * Uses {@link com.espirit.moddev.cli.api.FsConnectionMode.Constants#DEFAULT_HTTP_PORT} as default port.
      */
-    HTTP(ConnectionManager.HTTP_MODE, Constants.HTTP_PORT),
+    HTTP(ConnectionManager.HTTP_MODE, Constants.DEFAULT_HTTP_PORT),
 
     /**
      * Socket connection mode.
-     * Uses {@link com.espirit.moddev.cli.api.FsConnectionMode.Constants#SOCKET_PORT} as default port.
+     * Uses {@link com.espirit.moddev.cli.api.FsConnectionMode.Constants#DEFAULT_SOCKET_PORT} as default port.
      */
-    SOCKET(ConnectionManager.SOCKET_MODE, Constants.SOCKET_PORT);
+    SOCKET(ConnectionManager.SOCKET_MODE, Constants.DEFAULT_SOCKET_PORT);
 
     private final int code;
     private final int defaultPort;
@@ -79,12 +79,12 @@ public enum FsConnectionMode {
         /**
          * Default FirstSpirit http port (8000).
          */
-        public static final int HTTP_PORT = 8000;
+        public static final int DEFAULT_HTTP_PORT = 8000;
 
         /**
          * Default FirstSpirit socket port (1088).
          */
-        public static final int SOCKET_PORT = 1088;
+        public static final int DEFAULT_SOCKET_PORT = 1088;
 
         private Constants() {
         }
