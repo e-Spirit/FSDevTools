@@ -73,7 +73,7 @@ public final class Cli {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Cli.class);
     private static Set<Class<? extends Command>> commandClasses = CommandUtils.scanForCommandClasses(DEFAULT_COMMAND_PACKAGE_NAME);
-    private static Set<Class<?>> groupClasses;
+    private static Set<Class<?>> groupClasses = GroupUtils.scanForGroupClasses(DEFAULT_GROUP_PACKAGE_NAME);
     private final List<CliListener> listeners = new LinkedList<>();
 
     /**
@@ -101,9 +101,6 @@ public final class Cli {
      * @return {@link java.util.Set} of all class that define command classes in the package specified by {@link #DEFAULT_GROUP_PACKAGE_NAME}
      */
     public static Set<Class<?>> getGroupClasses() {
-        if (groupClasses == null) {
-            groupClasses = GroupUtils.scanForGroupClasses(DEFAULT_GROUP_PACKAGE_NAME);
-        }
         return Collections.unmodifiableSet(groupClasses);
     }
 
