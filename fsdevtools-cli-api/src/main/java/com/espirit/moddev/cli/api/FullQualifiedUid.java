@@ -56,7 +56,7 @@ public class FullQualifiedUid {
     public static final String ROOT_NODE_IDENTIFIER = "root";
 
     private static final Logger LOGGER = Logger.getLogger(FullQualifiedUid.class);
-    private static final Map<String, IDProvider.UidType> storePostfixes;
+    private static final Map<String, IDProvider.UidType> STORE_POSTFIXES;
     private static final Pattern DELIMITER = Pattern.compile("\\s*:\\s*");
 
     /**
@@ -64,22 +64,28 @@ public class FullQualifiedUid {
      * The collection can be used to add or override prefixes for later usage.
      * It also includes store postfixes, even if those aren't used as prefix.
      */
-    private static final Map<String, IDProvider.UidType> customPrefixUidTypeMappings;
+    private static final Map<String, IDProvider.UidType> CUSTOM_PREFIX_UIDTYPE_MAPPINGS;
 
+    /**
+     * This block initializes custom mappings between prefixes or postfixes and UidTypes.
+     * They are used for cases, where FirstSpirit doesn't provide a default mapping.
+     */
     static {
-        storePostfixes = new HashMap<>();
-        storePostfixes.put("templatestore", IDProvider.UidType.TEMPLATESTORE);
-        storePostfixes.put("pagestore", IDProvider.UidType.PAGESTORE);
-        storePostfixes.put("contentstore", IDProvider.UidType.CONTENTSTORE);
-        storePostfixes.put("sitestore", IDProvider.UidType.SITESTORE_FOLDER);
-        storePostfixes.put("mediastore", IDProvider.UidType.MEDIASTORE_FOLDER);
-        storePostfixes.put("globalstore", IDProvider.UidType.GLOBALSTORE);
+        STORE_POSTFIXES = new HashMap<>();
+        STORE_POSTFIXES.put("templatestore", IDProvider.UidType.TEMPLATESTORE);
+        STORE_POSTFIXES.put("pagestore", IDProvider.UidType.PAGESTORE);
+        STORE_POSTFIXES.put("contentstore", IDProvider.UidType.CONTENTSTORE);
+        STORE_POSTFIXES.put("sitestore", IDProvider.UidType.SITESTORE_FOLDER);
+        STORE_POSTFIXES.put("mediastore", IDProvider.UidType.MEDIASTORE_FOLDER);
+        STORE_POSTFIXES.put("globalstore", IDProvider.UidType.GLOBALSTORE);
 
-        customPrefixUidTypeMappings = new HashMap<>();
-        customPrefixUidTypeMappings.put("page", IDProvider.UidType.PAGESTORE);
-        customPrefixUidTypeMappings.put("pagetemplate", IDProvider.UidType.TEMPLATESTORE);
-        customPrefixUidTypeMappings.putAll(storePostfixes);
+        CUSTOM_PREFIX_UIDTYPE_MAPPINGS = new HashMap<>();
+        CUSTOM_PREFIX_UIDTYPE_MAPPINGS.put("page", IDProvider.UidType.PAGESTORE);
+        CUSTOM_PREFIX_UIDTYPE_MAPPINGS.put("pagetemplate", IDProvider.UidType.TEMPLATESTORE);
+        CUSTOM_PREFIX_UIDTYPE_MAPPINGS.putAll(STORE_POSTFIXES);
     }
+
+    public static final Map<String, IDProvider.UidType> KNOWN_PREFIXES = calculateKnownPrefixes();
 
     private final IDProvider.UidType uidType;
     private final String uid;
@@ -177,28 +183,26 @@ public class FullQualifiedUid {
             throw new IllegalArgumentException("A prefix must be provided for every uid");
         }
 
-        Map<String, IDProvider.UidType> knownPrefixes = getAllKnownPrefixes();
-
-        if(knownPrefixes.containsKey(prefix)) {
-            return knownPrefixes.get(prefix);
+        if(KNOWN_PREFIXES.containsKey(prefix)) {
+            return KNOWN_PREFIXES.get(prefix);
         }
 
         throw new UnregisteredPrefixException("No UidType registered for prefix \"" + prefix + "\""
-                                                    + ". Available prefixes are " + knownPrefixes.keySet());
+                                              + ". Available prefixes are " + KNOWN_PREFIXES.keySet());
     }
 
     /**
      * Retrieves all known full qualified uid prefixes and their corresponding UidType.
      * @return a collection of prefixes and UidTypes
      */
-    private static Map<String, IDProvider.UidType> getAllKnownPrefixes() {
+    private static Map<String, IDProvider.UidType> calculateKnownPrefixes() {
         Map<String, IDProvider.UidType> result = new HashMap<>();
 
         for(ReferenceType referenceType : Arrays.asList(ReferenceType.values())) {
             result.put(referenceType.type(), referenceType.getUidType());
         }
 
-        for(Map.Entry<String, IDProvider.UidType> customPrefixUidTypeMapping : customPrefixUidTypeMappings.entrySet()) {
+        for(Map.Entry<String, IDProvider.UidType> customPrefixUidTypeMapping : CUSTOM_PREFIX_UIDTYPE_MAPPINGS.entrySet()) {
             if(!result.containsKey(customPrefixUidTypeMapping.getKey())) {
                 result.put(customPrefixUidTypeMapping.getKey(), customPrefixUidTypeMapping.getValue());
             }
@@ -212,11 +216,11 @@ public class FullQualifiedUid {
      * @return a collection of postfixes and UidTypes
      */
     private static Map<String, IDProvider.UidType> getAllStorePostfixes() {
-        return Collections.unmodifiableMap(storePostfixes);
+        return Collections.unmodifiableMap(STORE_POSTFIXES);
     }
 
     public static Set<String> getAllKnownPrefixStrings() {
-        return Collections.unmodifiableSet(getAllKnownPrefixes().keySet());
+        return Collections.unmodifiableSet(KNOWN_PREFIXES.keySet());
     }
 
     /**
@@ -234,14 +238,14 @@ public class FullQualifiedUid {
      * @throws IllegalArgumentException if no prefix is registered for the given UidType
      */
     private static String getPrefixForUidType(IDProvider.UidType uidType) {
-        Map<String, IDProvider.UidType> knownPrefixes = getAllKnownPrefixes();
+        Map<String, IDProvider.UidType> knownPrefixes = calculateKnownPrefixes();
         for(Map.Entry<String, IDProvider.UidType> entry : knownPrefixes.entrySet()) {
             if(entry.getValue().equals(uidType)) {
                 String prefix = entry.getKey();
                 return prefix;
             }
         }
-        throw new IllegalArgumentException("No prefix registered for UidType " + uidType.name() + ". Known prefixes are " + getAllKnownPrefixes());
+        throw new IllegalArgumentException("No prefix registered for UidType " + uidType.name() + ". Known prefixes are " + KNOWN_PREFIXES);
     }
 
     /**
