@@ -27,12 +27,14 @@ import com.espirit.moddev.cli.results.ExportResult;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 /**
  * The type Project config command test.
  *
  * @author e-Spirit AG
  */
+@Category(com.espirit.moddev.IntegrationTest.class)
 public class ExportProjectPropertiesCommandTest extends AbstractIntegrationTest {
 
     @Test

@@ -31,9 +31,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.junit.Ignore;
 import org.junit.Rule;
-import org.junit.experimental.categories.Category;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
@@ -43,14 +41,11 @@ import java.util.Collection;
 import static com.espirit.moddev.IntegrationTest.PROJECT_NAME;
 
 /**
- * Can be used as a base for integration tests that need a connection to a fs server.
- * Uses connection and temporary folder rules to isolate filesync tests from each other
- * as far as possible.
+ * Can be used as a base for integration tests that need a connection to a fs server. Uses connection and temporary folder rules to isolate filesync
+ * tests from each other as far as possible.
  *
  * @author e-Spirit AG
  */
-@Ignore
-@Category(com.espirit.moddev.IntegrationTest.class)
 public abstract class AbstractIntegrationTest {
 
     @Rule
@@ -88,7 +83,7 @@ public abstract class AbstractIntegrationTest {
             directories =
             FileUtils.listFilesAndDirs(testFolder.getRoot(), new NotFileFilter(TrueFileFilter.INSTANCE), DirectoryFileFilter.DIRECTORY);
         for (final File candidate : directories) {
-            if(candidate.getName().equals(".FirstSpirit")) {
+            if (candidate.getName().equals(".FirstSpirit")) {
                 return candidate;
             }
         }
@@ -101,7 +96,7 @@ public abstract class AbstractIntegrationTest {
             directories =
             FileUtils.listFilesAndDirs(testFolder.getRoot(), new NotFileFilter(TrueFileFilter.INSTANCE), DirectoryFileFilter.DIRECTORY);
         for (final File candidate : directories) {
-            if(candidate.getName().equals(subDirectoryName)) {
+            if (candidate.getName().equals(subDirectoryName)) {
                 return true;
             }
         }
@@ -109,8 +104,8 @@ public abstract class AbstractIntegrationTest {
     }
 
     protected void checkIsDirectory(final File directory) {
-        if(!directory.isDirectory()) {
-            throw new IllegalArgumentException("Can only search for .FirstSpirit folder in a directory! Given: " +directory.getAbsolutePath());
+        if (!directory.isDirectory()) {
+            throw new IllegalArgumentException("Can only search for .FirstSpirit folder in a directory! Given: " + directory.getAbsolutePath());
         }
     }
 }

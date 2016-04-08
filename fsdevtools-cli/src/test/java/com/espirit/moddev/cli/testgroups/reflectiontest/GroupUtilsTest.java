@@ -23,7 +23,6 @@
 package com.espirit.moddev.cli.testgroups.reflectiontest;
 
 import com.espirit.moddev.cli.reflection.GroupUtils;
-import com.espirit.moddev.cli.reflection.ReflectionUtils;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,8 +38,8 @@ public class GroupUtilsTest {
 
     @Test
     public void packageScanRetrievesCorrectCommandClassCount() {
-        Set<Class<?>> groupClassesInPackage = GroupUtils.scanForGroupClasses(DEFAULT_GROUP_TEST_PACKAGE_NAME);
-        Assert.assertEquals(5, groupClassesInPackage.size());
+        final Set<Class<?>> groupClassesInPackage = GroupUtils.scanForGroupClasses(DEFAULT_GROUP_TEST_PACKAGE_NAME);
+        Assert.assertEquals(4, groupClassesInPackage.size());
     }
 
 }
