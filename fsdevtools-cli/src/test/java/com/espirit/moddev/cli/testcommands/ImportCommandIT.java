@@ -34,6 +34,7 @@ import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Optional;
 
 import static com.espirit.moddev.IntegrationTest.PROJECT_NAME;
 import static org.hamcrest.Matchers.hasSize;
@@ -64,8 +65,8 @@ public class ImportCommandIT extends AbstractIntegrationTest {
         final ImportResult result = command.call();
         final ImportOperation.Result importResult = result.get();
 
-        final String reason = "Expected 0 problems: " + importResult.getProblems().size() + " -> " + importResult.getProblems().stream().map(
-            a -> a.getNodeId() + "@" + a.getMessage()).reduce((t, u) -> t + ", " + u).get();
+        final Optional<String> optionalReason = importResult.getProblems().stream().map(problem -> problem.getNodeId() + "@" + problem.getMessage()).reduce((t, u) -> t + ", " + u);
+        final String reason =  "Expected 0 problems: " + importResult.getProblems().size() + " -> " + (optionalReason.isPresent() ? optionalReason.get() : "Got 0 problems");
 
         assertThat(reason, importResult.getProblems(), hasSize(0));
     }
