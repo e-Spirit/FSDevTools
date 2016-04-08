@@ -41,7 +41,7 @@ public class CommandUtilsTest {
     @Test
     public void packageScanRetrievesCorrectCommandClassCount() {
         Set<Class<? extends Command>> commandClassesInPackage = CommandUtils.scanForCommandClasses(DEFAULT_COMMAND_TEST_PACKAGE_NAME);
-        Assert.assertEquals(5, commandClassesInPackage.size());
+        Assert.assertEquals(4, commandClassesInPackage.size());
     }
 
     /**
@@ -66,7 +66,7 @@ public class CommandUtilsTest {
         @Test
         public void readsCommandDescriptionAsEmptyFromDescriptionMethodReturnsNonStringTest() {
             Assert.assertTrue("Description is expected to be empty from getDescription()",
-                    ReflectionUtils.getDescriptionFromClass(CommandWithNonStringDescriptionMethod.class).isEmpty());
+                              ReflectionUtils.getDescriptionFromClass(CommandWithNonStringDescriptionMethod.class).isEmpty());
         }
     }
 }
