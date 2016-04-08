@@ -22,9 +22,10 @@
 
 package com.espirit.moddev.cli.exceptions;
 
-import com.espirit.moddev.cli.exception.CliError;
 import com.espirit.moddev.cli.api.configuration.Config;
+import com.espirit.moddev.cli.exception.CliError;
 import com.espirit.moddev.cli.exception.CliException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,6 +46,7 @@ import static org.mockito.Mockito.when;
 public class CliExceptionTest {
 
     private Config config;
+    private Exception cause;
 
     @Parameterized.Parameters
     public static Collection<CliError> provideErrors() {
@@ -55,7 +57,7 @@ public class CliExceptionTest {
     private CliException testling;
     private CliError error;
 
-    public CliExceptionTest(CliError error) {
+    public CliExceptionTest(final CliError error) {
         this.error = error;
     }
 
@@ -65,12 +67,18 @@ public class CliExceptionTest {
         when(config.getUser()).thenReturn("Admin");
         when(config.getHost()).thenReturn("localhost");
         when(config.getPort()).thenReturn(8000);
-        Throwable cause = new Exception("JUnit");
+        cause = new Exception("JUnit");
         testling = new CliException(error, config, cause);
     }
 
     @Test
     public void testToString() throws Exception {
         assertThat("Expected a specific value", testling.toString(), is(error.getMessage(config)));
+    }
+
+    @Test
+    public void testToStringWithException() throws Exception {
+        testling = new CliException(cause);
+        assertThat("Expected a specific value", testling.toString(), is("JUnit"));
     }
 }

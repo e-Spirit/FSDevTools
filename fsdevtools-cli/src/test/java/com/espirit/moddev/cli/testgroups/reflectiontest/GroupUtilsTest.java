@@ -39,7 +39,7 @@ public class GroupUtilsTest {
     @Test
     public void packageScanRetrievesCorrectCommandClassCount() {
         final Set<Class<?>> groupClassesInPackage = GroupUtils.scanForGroupClasses(DEFAULT_GROUP_TEST_PACKAGE_NAME);
-        Assert.assertEquals(4, groupClassesInPackage.size());
+        Assert.assertEquals(5, groupClassesInPackage.size());
     }
 
 }

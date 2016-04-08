@@ -85,7 +85,7 @@ public class FullQualifiedUid {
         CUSTOM_PREFIX_UIDTYPE_MAPPINGS.putAll(STORE_POSTFIXES);
     }
 
-    public static final Map<String, IDProvider.UidType> KNOWN_PREFIXES = calculateKnownPrefixes();
+    protected static final Map<String, IDProvider.UidType> KNOWN_PREFIXES = calculateKnownPrefixes();
 
     private final IDProvider.UidType uidType;
     private final String uid;
@@ -127,15 +127,15 @@ public class FullQualifiedUid {
             return Collections.emptyList();
         }
 
-        List<FullQualifiedUid> list = new ArrayList<>(fullQualifiedUids.size());
-        for (String fullQualifiedUid : fullQualifiedUids) {
+        final List<FullQualifiedUid> list = new ArrayList<>(fullQualifiedUids.size());
+        for (final String fullQualifiedUid : fullQualifiedUids) {
             try(Scanner uidScanner = new Scanner(fullQualifiedUid)) {
                 uidScanner.useDelimiter(DELIMITER);
                 if (uidScanner.hasNext()) {
-                    String firstPart = uidScanner.next();
+                    final String firstPart = uidScanner.next();
                     if (uidScanner.hasNext()) {
-                        String secondPart = uidScanner.next();
-                        FullQualifiedUid fqUid;
+                        final String secondPart = uidScanner.next();
+                        final FullQualifiedUid fqUid;
                         fqUid = getFullQualifiedUid(firstPart, secondPart);
                         list.add(fqUid);
                     } else {
@@ -155,12 +155,12 @@ public class FullQualifiedUid {
      * @throws UnregisteredPrefixException if the first part is not a root node identifier and an unknown prefix
      * @return an instance of FullQualifiedUid that represents the input parameters
      */
-    private static FullQualifiedUid getFullQualifiedUid(String firstPart, String secondPart) {
-        FullQualifiedUid fqUid;
+    private static FullQualifiedUid getFullQualifiedUid(final String firstPart, final String secondPart) {
+        final FullQualifiedUid fqUid;
         if (firstPart.equals(ROOT_NODE_IDENTIFIER)) {
             try {
                 fqUid = new FullQualifiedUid(getUidTypeForPrefix(secondPart.toLowerCase()), ROOT_NODE_IDENTIFIER);
-            } catch (UnregisteredPrefixException e) {
+            } catch (final UnregisteredPrefixException e) {
                 LOGGER.trace(e);
                 throw new UnknownRootNodeException("Store root node not known: " + secondPart.toLowerCase());
             }
@@ -178,7 +178,7 @@ public class FullQualifiedUid {
      * @throws IllegalArgumentException if the given prefix is null or empty
      * @return the UidType for the prefix
      */
-    private static IDProvider.UidType getUidTypeForPrefix(String prefix) {
+    private static IDProvider.UidType getUidTypeForPrefix(final String prefix) {
         if(prefix == null || prefix.isEmpty()) {
             throw new IllegalArgumentException("A prefix must be provided for every uid");
         }
@@ -196,13 +196,13 @@ public class FullQualifiedUid {
      * @return a collection of prefixes and UidTypes
      */
     private static Map<String, IDProvider.UidType> calculateKnownPrefixes() {
-        Map<String, IDProvider.UidType> result = new HashMap<>();
+        final Map<String, IDProvider.UidType> result = new HashMap<>();
 
-        for(ReferenceType referenceType : Arrays.asList(ReferenceType.values())) {
+        for (final ReferenceType referenceType : Arrays.asList(ReferenceType.values())) {
             result.put(referenceType.type(), referenceType.getUidType());
         }
 
-        for(Map.Entry<String, IDProvider.UidType> customPrefixUidTypeMapping : CUSTOM_PREFIX_UIDTYPE_MAPPINGS.entrySet()) {
+        for (final Map.Entry<String, IDProvider.UidType> customPrefixUidTypeMapping : CUSTOM_PREFIX_UIDTYPE_MAPPINGS.entrySet()) {
             if(!result.containsKey(customPrefixUidTypeMapping.getKey())) {
                 result.put(customPrefixUidTypeMapping.getKey(), customPrefixUidTypeMapping.getValue());
             }
@@ -237,11 +237,11 @@ public class FullQualifiedUid {
      * @return the corresponding prefix
      * @throws IllegalArgumentException if no prefix is registered for the given UidType
      */
-    private static String getPrefixForUidType(IDProvider.UidType uidType) {
-        Map<String, IDProvider.UidType> knownPrefixes = calculateKnownPrefixes();
-        for(Map.Entry<String, IDProvider.UidType> entry : knownPrefixes.entrySet()) {
+    private static String getPrefixForUidType(final IDProvider.UidType uidType) {
+        final Map<String, IDProvider.UidType> knownPrefixes = calculateKnownPrefixes();
+        for (final Map.Entry<String, IDProvider.UidType> entry : knownPrefixes.entrySet()) {
             if(entry.getValue().equals(uidType)) {
-                String prefix = entry.getKey();
+                final String prefix = entry.getKey();
                 return prefix;
             }
         }
@@ -273,7 +273,7 @@ public class FullQualifiedUid {
         } else if (this == o) {
             return true;
         } else {
-            FullQualifiedUid that = (FullQualifiedUid) o;
+            final FullQualifiedUid that = (FullQualifiedUid) o;
             return uidType.equals(that.uidType) && uid.equals(that.uid);
         }
     }
