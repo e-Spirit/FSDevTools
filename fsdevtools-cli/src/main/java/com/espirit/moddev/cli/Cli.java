@@ -121,7 +121,7 @@ public final class Cli {
             double milliseconds = stopwatch.elapsedTime(TimeUnit.MILLISECONDS);
             LOGGER.info("Time: " + (milliseconds / CliConstants.ONE_SECOND_IN_MILLIS.valueAsInt()) + "s");
         } catch (Exception e) { //NOSONAR
-            fireErrorOccurredEvent(new CliErrorEvent(new Cli(), e));
+            fireErrorOccurredEvent(new CliErrorEvent(this, e));
         }
     }
 
