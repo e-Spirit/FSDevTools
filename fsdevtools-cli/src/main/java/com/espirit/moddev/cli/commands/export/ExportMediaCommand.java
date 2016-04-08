@@ -58,12 +58,12 @@ public class ExportMediaCommand extends AbstractExportCommand {
 
     @Override
     protected void logReleaseState(final IDProvider idProvider) {
-        getContext().logDebug(idProvider.getUid() + " is release state? " + idProvider.getStore().isRelease());
+        LOGGER.debug(idProvider.getUid() + " is release state? " + idProvider.getStore().isRelease());
     }
 
     @Override
     public ExportResult call() {
-        this.getContext().logInfo("Exporting...");
+        LOGGER.info("Exporting...");
         return exportStoreElements();
     }
 }

@@ -57,7 +57,7 @@ public class ExportTemplatesCommand extends AbstractExportCommand {
 
     @Override
     public ExportResult call() {
-        this.getContext().logInfo("Exporting...");
+        LOGGER.info("Exporting...");
         return exportStoreElements();
     }
 
@@ -71,18 +71,30 @@ public class ExportTemplatesCommand extends AbstractExportCommand {
     }
 
     private void addTableDefinitions(ExportOperation exportOperation, TemplateStoreRoot store) {
-        context.logDebug("Adding schemes...");
+        LOGGER.debug("Adding schemes...");
         for (final StoreElement storeElement : store.getSchemes().getChildren()) {
             exportOperation.addSchema((Schema) storeElement);
         }
     }
 
     private void addDataSourceDefinitions(ExportOperation exportOperation) {
-        //add all datasource definitions
-        getContext().logDebug("Adding datasource definitions...");
+        LOGGER.debug("Adding datasource definitions...");
         final Listable<StoreElement> contentStoreChildren =
             getContext().requireSpecialist(StoreAgent.TYPE).getStore(Store.Type.CONTENTSTORE, false).getChildren();
         addChildren(exportOperation, contentStoreChildren);
+    }
+
+    /**
+     * Calls the super implementation and adds datasource definitions, when {@link #exportFullTemplateStore} is true.
+     * @param storeAgent      the StoreAgent to retrieve IDProviders with
+     * @param exportOperation the ExportOperation to add the elements to
+     */
+    @Override
+    public void addExportElements(final StoreAgent storeAgent, final ExportOperation exportOperation) {
+        super.addExportElements(storeAgent, getFullQualifiedUids(), exportOperation);
+        if(exportFullTemplateStore()) {
+            addDatabaseDefinitions(exportOperation, (TemplateStoreRoot) storeAgent.getStore(Store.Type.TEMPLATESTORE).getStore());
+        }
     }
 
     @Override

@@ -30,6 +30,11 @@ import com.github.rvesse.airline.annotations.Option;
 import de.espirit.firstspirit.agency.OperationAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ImportOperation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
+
 
 /**
  * Command that executes a FirstSpirit ImportOperation. Uses a FirstSpirit context.
@@ -38,6 +43,8 @@ import de.espirit.firstspirit.store.access.nexport.operations.ImportOperation;
  */
 @com.github.rvesse.airline.annotations.Command(name = "import", description = "Import FirstSpirit project")
 public class ImportCommand extends SimpleCommand<ImportResult> implements ImportConfig {
+
+    protected static final Logger LOGGER = LoggerFactory.getLogger(ImportCommand.class);
 
     @Option(name = {"-i", "--import-comment"}, description = "Import comment for FirstSpirit revision")
     private String importComment;
@@ -72,7 +79,7 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
 
     @Override
     public ImportResult call() {
-        getContext().logInfo("Importing...");
+        LOGGER.info("Importing...");
         try {
             final ImportOperation importOperation = getContext().requireSpecialist(OperationAgent.TYPE).getOperation(ImportOperation.TYPE);
             importOperation.setCreateEntities(isCreateEntities());
