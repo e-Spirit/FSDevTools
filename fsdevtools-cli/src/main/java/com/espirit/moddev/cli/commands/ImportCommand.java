@@ -60,8 +60,12 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
 
     @Override
     public String getImportComment() {
-        if (getEnvironment().containsKey(CliConstants.KEY_FS_IMPORT_COMMENT.value())) {
-            return getEnvironment().get(CliConstants.KEY_FS_IMPORT_COMMENT.value()).trim();
+        if(importComment == null || importComment.isEmpty()) {
+            boolean environmentContainsImportComment = getEnvironment().containsKey(CliConstants.KEY_FS_IMPORT_COMMENT.value());
+            if (environmentContainsImportComment) {
+                return getEnvironment().get(CliConstants.KEY_FS_IMPORT_COMMENT.value()).trim();
+            }
+            return CliConstants.DEFAULT_IMPORT_COMMENT.value();
         }
         return importComment;
     }

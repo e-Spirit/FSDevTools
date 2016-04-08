@@ -60,6 +60,11 @@ public enum CliConstants {
     DEFAULT_CONNECTION_MODE("HTTP"),
 
     /**
+     * Default import comment.
+     */
+    DEFAULT_IMPORT_COMMENT("Imported by cli"),
+
+    /**
      * Key fs host cli constant.
      */
     KEY_FS_HOST("fshost"),
