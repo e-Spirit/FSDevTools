@@ -29,6 +29,7 @@ import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.base.store.StoreType;
 
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -38,6 +39,7 @@ import org.junit.runner.RunWith;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -76,12 +78,12 @@ public class FullQualifiedUidParseTest {
 
     @Test
     public void testParseWithTemplateStoreRoot() throws Exception {
-        final List<FullQualifiedUid> list = FullQualifiedUid.parse(Arrays.asList("root:templatestore"));
+        FullQualifiedUid.parse(Arrays.asList("root:templatestore"));
     }
     @Test
     public void testParseStoreRootRequestWithExistingStore() throws Exception {
         final List<FullQualifiedUid> list = FullQualifiedUid.parse(Arrays.asList("root:templatestore"));
-        list.contains(StoreType.TEMPLATE);
+        Assert.assertThat(list.contains(new FullQualifiedUid(IDProvider.UidType.TEMPLATESTORE, "root")), equalTo(true));
     }
 
     @Test(expected = UnknownRootNodeException.class)
