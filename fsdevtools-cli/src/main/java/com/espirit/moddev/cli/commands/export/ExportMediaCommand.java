@@ -39,8 +39,9 @@ import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
         description = "Export FirstSpirit mediastore")
 public class ExportMediaCommand extends AbstractExportCommand {
 
-    @Option(name = "--withProjectProperties", override = true, hidden = true, description = "export with project properties like resolutions or fonts")
-    private boolean withProjectProperties;
+    // This field is not used here, but the annotation overrides the visibility of the option
+    @Option(name = "--includeProjectProperties", override = true, hidden = true, description = "export with project properties like resolutions or fonts")
+    private boolean includeProjectProperties;
 
     /**
      * Overrides the default behaviour of {@link #addStoreRoots(StoreAgent, ExportOperation)},

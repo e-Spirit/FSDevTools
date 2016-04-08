@@ -47,11 +47,13 @@ public class ExportTemplatesCommand extends AbstractExportCommand {
     @Option(name = "--withoutFullTemplateStore", description = "export without full templatestore")
     private boolean withoutExportFullTemplateStore;
 
-    @Option(name = "--withProjectProperties", override = true, hidden = true, description = "export with project properties like resolutions or fonts")
-    private boolean withProjectProperties;
+    // This field is not used here, but the annotation overrides the visibility of the option
+    @Option(name = "--includeProjectProperties", override = true, hidden = true, description = "export with project properties like resolutions or fonts")
+    private boolean includeProjectProperties;
 
-    @Option(name = "--withoutReleaseEntities", override = true, hidden = true, description = "export without release entities")
-    private boolean withoutExportReleaseEntities;
+    // This field is not used here, but the annotation overrides the visibility of the option
+    @Option(name = "--excludeCurrentState", override = true, hidden = true, description = "export without release entities")
+    private boolean excludeCurrentState;
 
     @Override
     public ExportResult call() {
