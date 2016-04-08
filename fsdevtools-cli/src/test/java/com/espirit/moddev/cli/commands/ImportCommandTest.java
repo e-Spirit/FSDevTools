@@ -28,6 +28,6 @@ public class ImportCommandTest {
 
     @Test
     public void testGetImportComment() throws Exception {
-        assertThat("Expect null value", testling.getImportComment(), is(nullValue()));
+        assertThat("Expect null value", testling.getImportComment(), is("Imported by cli"));
     }
 }

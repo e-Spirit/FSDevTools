@@ -23,6 +23,7 @@
 package com.espirit.moddev.cli.commands.export;
 
 import com.espirit.moddev.cli.api.FullQualifiedUid;
+import com.espirit.moddev.cli.api.exceptions.IDProviderNotFoundException;
 import com.espirit.moddev.cli.commands.SimpleCommand;
 import com.espirit.moddev.cli.results.ExportResult;
 import com.github.rvesse.airline.annotations.Arguments;
@@ -35,6 +36,10 @@ import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 import de.espirit.firstspirit.transport.PropertiesTransportOptions;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -48,6 +53,8 @@ import java.util.List;
  * @author e -Spirit AG
  */
 public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Option(name = "--keepObsoleteFiles", description = "keep obsolete files in sync dir which are deleted in project")
     private boolean keepObsoleteFiles;
@@ -107,13 +114,24 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     /**
      * Retrieves IDProviders via the StoreAgent instance. Uses the result of {@link #getFullQualifiedUids()} to query all stores.
      *
-     * @param storeAgent that is used to search IDProviders
+     * @param storeAgent that is used to search for IDProviders
      * @return a list of IDProviders that match the uid parameters
-     * @throws IllegalArgumentException if no IDProvider can be retrieved for a uid
+     * @throws IDProviderNotFoundException if no IDProvider can be retrieved for a given uid
      */
-    public List<IDProvider> filterByUIDs(final StoreAgent storeAgent) {
+    protected List<IDProvider> getIDProvidersForFullQualifiedUids(final StoreAgent storeAgent) {
+        return getIDProvidersForFullQualifiedUids(storeAgent, getFullQualifiedUids());
+    }
+    /**
+     * Retrieves IDProviders via the StoreAgent instance. Queries all stores for objects corresponding to fullQualifiedUids.
+     *
+     * @param storeAgent that is used to search for IDProviders
+     * @param fullQualifiedUids the uids used to query the store
+     * @return a list of IDProviders that match the uid parameters
+     * @throws IDProviderNotFoundException if no IDProvider can be retrieved for a given uid
+     */
+    protected List<IDProvider> getIDProvidersForFullQualifiedUids(final StoreAgent storeAgent, List<FullQualifiedUid> fullQualifiedUids) {
         final List<IDProvider> result = new ArrayList<>();
-        for (final FullQualifiedUid uid : getFullQualifiedUids()) {
+        for (final FullQualifiedUid uid : fullQualifiedUids) {
             if(uid.getUid().equals(FullQualifiedUid.ROOT_NODE_IDENTIFIER)) {
                 result.add(storeAgent.getStore(uid.getUidType().getStoreType()));
             } else {
@@ -121,7 +139,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
                 if(storeElement != null) {
                     result.add(storeElement);
                 } else {
-                    throw new IllegalArgumentException("IDProvider cannot be retrieved for " + uid);
+                    throw new IDProviderNotFoundException("IDProvider cannot be retrieved for " + uid);
                 }
             }
         }
@@ -134,7 +152,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
      * @param idProvider the id provider
      */
     protected void logReleaseState(final IDProvider idProvider) {
-        getContext().logDebug(idProvider.getUid() + " is release state? " + idProvider.getStore().isRelease());
+        LOGGER.debug(idProvider.getUid() + " is release state? " + idProvider.getStore().isRelease());
     }
 
     /**
@@ -149,33 +167,35 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     }
 
     /**
-     * Adds elements to the given export operation. Uses {@link #filterByUIDs(StoreAgent)} to retrieve IDProviders matching the {@code
-     * fullQualifiedUidsAsStrings} parameter.
+     * Adds elements to the given export operation. Uses {@link #getIDProvidersForFullQualifiedUids(StoreAgent)} to retrieve IDProviders matching the {@code
+     * fullQualifiedUidsAsStrings} parameter. {@link IDProviderNotFoundException} from #getIDProvidersForFullQualifiedUids(StoreAgent) is handled by aborting
+     * the whole operation.
      *
      * @param storeAgent      the StoreAgent to retrieve IDProviders with
      * @param uids            the identifiers of elements that should be added to the ExportOperation
      * @param exportOperation the ExportOperation to add the elements to
      * @throws IllegalArgumentException if the ExportOperation is null
-     * @throws IllegalStateException    if no IDProviders exist for the given parameters
      */
     public void addExportElements(final StoreAgent storeAgent, final List<FullQualifiedUid> uids, final ExportOperation exportOperation) {
         if(exportOperation == null) {
             throw new IllegalArgumentException("No null ExportOperation allowed");
         }
 
-        getContext().logDebug("Adding export elements...");
+        LOGGER.debug("Adding export elements...");
         if (uids.isEmpty()) {
-            getContext().logDebug("Adding store roots...");
+            LOGGER.debug("Adding store roots...");
             addStoreRoots(storeAgent, exportOperation);
         } else {
-            getContext().logDebug("addExportedElements - UIDs " + uids);
-            final List<IDProvider> elements = filterByUIDs(storeAgent);
-            if(elements.isEmpty()) {
-                throw new IllegalStateException("No IDProviders can be retrieved for the given arguments");
-            }
-            for (final IDProvider element : elements) {
-                getContext().logDebug("Adding store element: " + element);
-                exportOperation.addElement(element);
+            LOGGER.debug("addExportedElements - UIDs " + uids);
+            try {
+                final List<IDProvider> elements = getIDProvidersForFullQualifiedUids(storeAgent, uids);
+                for (final IDProvider element : elements) {
+                    LOGGER.debug("Adding store element: " + element);
+                    exportOperation.addElement(element);
+                }
+                LOGGER.debug("Added " + elements.size() + " elements");
+            } catch (IDProviderNotFoundException e) {
+                LOGGER.error("Cannot retrieve IDProvider for one or more given uids. No elements added to the export operation.", e);
             }
         }
 
