@@ -34,20 +34,15 @@ import com.espirit.moddev.cli.exception.ExceptionHandler;
 import com.espirit.moddev.cli.exception.SystemExitListener;
 import com.espirit.moddev.cli.reflection.CommandUtils;
 import com.espirit.moddev.cli.reflection.GroupUtils;
-import com.espirit.moddev.cli.reflection.ReflectionUtils;
 import com.github.rvesse.airline.builder.CliBuilder;
-import com.github.rvesse.airline.builder.GroupBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 
@@ -107,7 +102,7 @@ public final class Cli {
      * @param args the input arguments
      */
     public void execute(final String[] args) {
-        migrateEnvironmentVariableToSystemProperties();
+        setLoggingSystemProperties();
 
         final ExceptionHandler exceptionHandler = new ExceptionHandler(this, CliConstants.FS_CLI.value(), args);
 
@@ -147,7 +142,7 @@ public final class Cli {
         CliBuilderHelper.buildCommandGroups(builder);
     }
 
-    private static void migrateEnvironmentVariableToSystemProperties() {
+    private static void setLoggingSystemProperties() {
         final String logDir = System.getProperty(CliConstants.USER_HOME.value()) + CliConstants.FS_CLI_DIR;
         System.setProperty(CliConstants.FS_CLI_LOG_DIR.value(), logDir);
 
