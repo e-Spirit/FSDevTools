@@ -35,15 +35,12 @@ import com.espirit.moddev.cli.exception.SystemExitListener;
 import com.espirit.moddev.cli.reflection.CommandUtils;
 import com.espirit.moddev.cli.reflection.GroupUtils;
 import com.espirit.moddev.cli.reflection.ReflectionUtils;
-import com.github.rvesse.airline.annotations.Group;
 import com.github.rvesse.airline.builder.CliBuilder;
 import com.github.rvesse.airline.builder.GroupBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -147,148 +144,7 @@ public final class Cli {
 
     private static void initializeAllCommandsAndGroups(CliBuilder<Command> builder) {
         addHelpCommand(builder);
-        buildCommandGroups(builder);
-    }
-
-    /**
-     * Initialize all available groups and their commands in the given {@link com.github.rvesse.airline.builder.CliBuilder}.
-     *
-     * @param builder {@link com.github.rvesse.airline.builder.CliBuilder} to add the groups to
-     */
-    public static void buildCommandGroups(CliBuilder<Command> builder) {
-        Map<GroupWrapper, List<Class<Command>>> allGroups =
-            gatherGroupsFromCommandClasses(getCommandClasses(),
-                                           getGroupClasses());
-
-        for (Map.Entry<GroupWrapper, List<Class<Command>>> entry : allGroups.entrySet()) {
-            if (entry.getKey().equals(GroupWrapper.NO_GROUP)) {
-                List<Class<Command>> commandsInGroup = entry.getValue();
-                for (Class<Command> command : commandsInGroup) {
-                    replaceDescriptionFromAnnotation(command);
-                    builder.withCommand(command);
-                }
-
-            } else {
-                GroupBuilder<Command> group = builder.withGroup(entry.getKey().name);
-                if (!entry.getKey().description.isEmpty()) {
-                    group.withDescription(entry.getKey().description);
-                }
-                if (entry.getKey().defaultCommand != null) {
-                    group.withDefaultCommand((Class<? extends Command>) entry.getKey().defaultCommand);
-                }
-                List<Class<Command>> commandsInGroup = entry.getValue();
-                for (Class<Command> command : commandsInGroup) {
-                    replaceDescriptionFromAnnotation(command);
-                    group.withCommand(command);
-                }
-                if (!commandsInGroup.isEmpty() && !entry.getKey().hasDefaultCommand()) {
-                    group.withDefaultCommand(commandsInGroup.get(0));
-                }
-            }
-        }
-    }
-
-    private static void replaceDescriptionFromAnnotation(Class<Command> command) {
-        com.github.rvesse.airline.annotations.Command annotation = command.getAnnotation(com.github.rvesse.airline.annotations.Command.class);
-        String description = ReflectionUtils.getDescriptionFromClass(command);
-        if (!description.isEmpty()) {
-            ReflectionUtils.changeAnnotationValue(annotation, "description", description);
-        }
-    }
-
-    /**
-     * Adds all available commands (annotated with {@link Command}) as callables. The {@link HelpCommand} is not included, since it clashes with the
-     * builtin help command from airline.
-     *
-     * @param builder the cli builder to add all commands to
-     */
-    public static void buildCallableCommandGroups(CliBuilder<Callable> builder) {
-        Map<GroupWrapper, List<Class<Command>>> allGroupsAsCommands =
-            gatherGroupsFromCommandClasses(getCommandClasses(),
-                                           getGroupClasses());
-
-        allGroupsAsCommands.remove(new GroupWrapper(HelpCommand.COMMAND_NAME));
-        List<Class<Command>> noGroupCommands = allGroupsAsCommands.get(GroupWrapper.NO_GROUP);
-        int indexOfHelp = noGroupCommands.indexOf(HelpCommand.class);
-        if (indexOfHelp > -1) {
-            noGroupCommands.remove(indexOfHelp);
-        }
-
-        Map<GroupWrapper, List<Class<Command>>> allGroups = new HashMap<>();
-        for (Map.Entry<GroupWrapper, List<Class<Command>>> entry : allGroupsAsCommands.entrySet()) {
-            allGroups.put(entry.getKey(), entry.getValue());
-        }
-
-        addCommandsAndGroupsToBuilder(builder, allGroups);
-    }
-
-    private static void addCommandsAndGroupsToBuilder(CliBuilder<Callable> builder, Map<GroupWrapper, List<Class<Command>>> allGroups) {
-        for (Map.Entry<GroupWrapper, List<Class<Command>>> entry : allGroups.entrySet()) {
-            if (entry.getKey().equals(GroupWrapper.NO_GROUP)) {
-                List<Class<Command>> commandsInGroup = entry.getValue();
-                for (Class<Command> command : commandsInGroup) {
-                    builder.withCommand(command);
-                }
-            } else {
-                GroupBuilder<Callable> group = builder.withGroup(entry.getKey().name);
-                if (!entry.getKey().description.isEmpty()) {
-                    group.withDescription(entry.getKey().description);
-                }
-                if (entry.getKey().defaultCommand != null) {
-                    group.withDefaultCommand((Class<? extends Callable>) entry.getKey().defaultCommand);
-                }
-                List<Class<Command>> commandsInGroup = entry.getValue();
-                for (Class<Command> command : commandsInGroup) {
-                    group.withCommand(command);
-                }
-                if (!commandsInGroup.isEmpty() && !entry.getKey().hasDefaultCommand()) {
-                    group.withDefaultCommand(commandsInGroup.get(0));
-                }
-            }
-        }
-    }
-
-    //TODO: Test these methods
-    private static Map<GroupWrapper, List<Class<Command>>> gatherGroupsFromCommandClasses(Set<Class<? extends Command>> commandClasses,
-                                                                                          Set<Class<?>> groupClasses) {
-        Map<GroupWrapper, List<Class<Command>>> groupMappings = new HashMap<>();
-
-        for (Class groupClass : groupClasses) {
-            Group annotation = (Group) groupClass.getAnnotation(Group.class);
-            if (annotation != null) {
-                groupMappings.put(new GroupWrapper(annotation), new ArrayList<>());
-            }
-        }
-
-        for (Class<? extends Command> commandClass : commandClasses) {
-            com.github.rvesse.airline.annotations.Command
-                annotation =
-                commandClass.getAnnotation(com.github.rvesse.airline.annotations.Command.class);
-
-            if (annotation != null) {
-                List<String> groupNames;
-                String[] groupNamesFromAnnotation = annotation.groupNames();
-                boolean annotationHasGroupNames = groupNamesFromAnnotation.length > 0;
-                if (annotationHasGroupNames) {
-                    groupNames = new ArrayList<>(Arrays.asList(groupNamesFromAnnotation));
-                } else {
-                    groupNames = new ArrayList<>();
-                }
-                if (groupNames.isEmpty()) {
-                    groupNames.add(GroupWrapper.NO_GROUP_GROUPNAME);
-                }
-                for (String groupName : groupNames) {
-                    String description = annotation.description();
-                    GroupWrapper key = new GroupWrapper(groupName, description);
-                    if (!groupMappings.containsKey(key)) {
-                        groupMappings.put(key, new ArrayList<>());
-                    }
-                    groupMappings.get(key).add((Class) commandClass);
-                }
-            }
-        }
-
-        return groupMappings;
+        CliBuilderHelper.buildCommandGroups(builder);
     }
 
     private static void migrateEnvironmentVariableToSystemProperties() {

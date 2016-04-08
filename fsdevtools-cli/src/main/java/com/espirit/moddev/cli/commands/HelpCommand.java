@@ -22,7 +22,7 @@
 
 package com.espirit.moddev.cli.commands;
 
-import com.espirit.moddev.cli.Cli;
+import com.espirit.moddev.cli.CliBuilderHelper;
 import com.github.rvesse.airline.annotations.Arguments;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.builder.CliBuilder;
@@ -61,7 +61,7 @@ public class HelpCommand implements com.espirit.moddev.cli.api.command.Command<H
     public HelpResult call() {
         Help help;
         builder.withDefaultCommand(Help.class);
-        Cli.buildCallableCommandGroups(builder);
+        CliBuilderHelper.buildCallableCommandGroups(builder);
         com.github.rvesse.airline.Cli<Callable> cli = builder.build();
 
         ArrayList<String> argsCopy = new ArrayList<>();
