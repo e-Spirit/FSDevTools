@@ -59,9 +59,9 @@ public class ExportResult extends SimpleResult<ExportOperation.Result> {
         } else {
             LOGGER.info("Export operation successful");
 
-                logUpdateFiles(get().getUpdatedFiles(), "updated files");
-                logUpdateFiles(get().getCreatedFiles(), "created files");
-                logUpdateFiles(get().getDeletedFiles(), "deleted files");
+                logFileChanges(get().getUpdatedFiles(), "updated files");
+                logFileChanges(get().getCreatedFiles(), "created files");
+                logFileChanges(get().getDeletedFiles(), "deleted files");
                 Object[] args = {Integer.valueOf(get().getUpdatedFiles().size()),
                         Integer.valueOf(get().getCreatedFiles().size()),
                         Integer.valueOf(get().getDeletedFiles().size())};
@@ -79,7 +79,7 @@ public class ExportResult extends SimpleResult<ExportOperation.Result> {
      * @param handle represents the current element that was exported
      * @param state  is used for the log message ("updated", "created" and "deleted")
      */
-    public void logUpdateFiles(final Set<FileHandle> handle, final String state) {
+    private void logFileChanges(final Set<FileHandle> handle, final String state) {
         LOGGER.info(state + ": " + handle.size());
         for (FileHandle _handle : handle) {
             LOGGER.debug("fileName: " + _handle.getName() + " filePath: " + _handle.getPath());

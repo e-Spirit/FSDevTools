@@ -60,12 +60,12 @@ public class ImportResult extends SimpleResult<ImportOperation.Result> {
         } else {
             LOGGER.info("Import operation successful");
 
-            logUpdateElements(get().getUpdatedElements(), "updated elements");
-            logUpdateElements(get().getCreatedElements(), "created elements");
-            logUpdateElements(get().getDeletedElements(), "deleted elements");
-            logUpdateElements(get().getMovedElements(), "moved elements");
-            logCreatedElements(get().getCreatedEntities(), "created entities");
-            logUpdateElements(get().getLostAndFoundElements(), "lost and found elements");
+            logElementChanges(get().getUpdatedElements(), "updated elements");
+            logElementChanges(get().getCreatedElements(), "created elements");
+            logElementChanges(get().getDeletedElements(), "deleted elements");
+            logElementChanges(get().getMovedElements(), "moved elements");
+            logEntityChanges(get().getCreatedEntities(), "created entities");
+            logElementChanges(get().getLostAndFoundElements(), "lost and found elements");
             logProblems(get().getProblems(), "problems");
 
             Object[] args = {Integer.valueOf(get().getUpdatedElements().size()),
@@ -86,7 +86,7 @@ public class ImportResult extends SimpleResult<ImportOperation.Result> {
         }
     }
 
-    private void logCreatedElements(Set<BasicEntityInfo> createdEntities, String state) {
+    private void logEntityChanges(Set<BasicEntityInfo> createdEntities, String state) {
         LOGGER.info(state + ": " + createdEntities.size());
         for (BasicEntityInfo info : createdEntities) {
             LOGGER.debug("Gid: " + info.getGid() + " EntityType: " + info.getEntityType());
@@ -99,7 +99,7 @@ public class ImportResult extends SimpleResult<ImportOperation.Result> {
      * @param handle represents the current element that was imported
      * @param state  is used for the log message ("updated", "created" and "deleted" etc.)
      */
-    public void logUpdateElements(final Set<BasicElementInfo> handle, final String state) {
+    private void logElementChanges(final Set<BasicElementInfo> handle, final String state) {
         LOGGER.info(state + ": " + handle.size());
         for (BasicElementInfo _handle : handle) {
             LOGGER.debug("Uid: " + _handle.getUid() + " NodeId: " + _handle.getNodeId());
