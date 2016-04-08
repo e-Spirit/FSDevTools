@@ -30,13 +30,6 @@ package com.espirit.moddev.cli.api.configuration;
 public interface ImportConfig extends Config {
 
     /**
-     * Indicates if the project specified by {@link #getProject()} should be created if it does not exist.
-     *
-     * @return a boolean value that indicates if the synchronized project should be created if it does not exist.
-     */
-    boolean isCreatingProjectIfMissing();
-
-    /**
      * Indicates if entities should be created during the import operation.
      *
      * @see de.espirit.firstspirit.store.access.nexport.operations.ImportOperation#setCreateEntities(boolean)
@@ -51,4 +44,14 @@ public interface ImportConfig extends Config {
      * @return the revision comment used for the revision created by the import operation
      */
     String getImportComment();
+
+    /**
+     * Overrides the default implementation given through {@link Config#isCreatingProjectIfMissing()} and
+     * returns true, because project import often imports a complete project as a new one.
+     *
+     * @return true
+     */
+    @Override
+    default boolean isCreatingProjectIfMissing() { return true; }
+
 }

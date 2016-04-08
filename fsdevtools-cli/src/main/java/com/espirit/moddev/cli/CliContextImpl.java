@@ -143,23 +143,39 @@ public class CliContextImpl implements CliContext {
     @Override
     public Project getProject() {
         final String projectName = clientConfig.getProject();
-        Project projectByName = connection.getProjectByName(projectName);
-        if (projectByName == null && clientConfig instanceof ImportConfig && ((ImportConfig) clientConfig)
-            .isCreatingProjectIfMissing()) {
-            LOGGER.info("Creating missing project '{}' on server...", projectName);
-            AdminService ac = connection.getService(AdminService.class);
-            final ProjectStorage projectStorage = ac.getProjectStorage();
-            projectByName = projectStorage.createProject(projectName, projectName + " created by fs-cli");
+        Project project = connection.getProjectByName(projectName);
+        if (project == null && clientConfig.isCreatingProjectIfMissing()) {
+            project = createProject(projectName);
         }
         LOGGER.debug("activate project if deactivated: " + clientConfig.isActivateProjectIfDeactivated(), projectName);
-        if (clientConfig.isActivateProjectIfDeactivated() && projectByName != null && !projectByName.isActive()) {
-            LOGGER.warn("Project '{}' is not active! Try to activate...", projectName);
-            UserService userService = projectByName.getUserService();
-            AdminService adminService = userService.getConnection().getService(AdminService.class);
-            adminService.getProjectStorage().activateProject(projectByName);
+        if (clientConfig.isActivateProjectIfDeactivated()) {
+            activateProject(projectName, project);
         }
-        LOGGER.debug("project '{}'", projectByName);
-        return projectByName;
+        LOGGER.debug("project is '{}'", project);
+        return project;
+    }
+
+    private void activateProject(String projectName, Project project) {
+        if(project != null) {
+            throw new IllegalArgumentException("Project for activation is null");
+        }
+        if(!project.isActive()) {
+            LOGGER.warn("Project '{}' is not active! Try to activate...", projectName);
+            UserService userService = project.getUserService();
+            AdminService adminService = userService.getConnection().getService(AdminService.class);
+            adminService.getProjectStorage().activateProject(project);
+        } else {
+            LOGGER.debug("Project '{}' is already active! No need to activate...", projectName);
+        }
+    }
+
+    private Project createProject(String projectName) {
+        Project project;
+        LOGGER.info("Creating missing project '{}' on server...", projectName);
+        AdminService ac = connection.getService(AdminService.class);
+        final ProjectStorage projectStorage = ac.getProjectStorage();
+        project = projectStorage.createProject(projectName, projectName + " created by fs-cli");
+        return project;
     }
 
     @Override
