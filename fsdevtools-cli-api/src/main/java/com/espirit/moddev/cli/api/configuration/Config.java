@@ -126,4 +126,12 @@ public interface Config {
      */
     default boolean isActivateProjectIfDeactivated() { return true; }
 
+    /**
+     * Indicates if the project specified by {@link #getProject()} should be created if it does not exist. This
+     * default implementation returns false, because otherwise it would be difficult to detect possible errors
+     * due to missing projects.
+     *
+     * @return a boolean value that indicates if the synchronized project should be created if it does not exist.
+     */
+    default boolean isCreatingProjectIfMissing() { return false; }
 }
