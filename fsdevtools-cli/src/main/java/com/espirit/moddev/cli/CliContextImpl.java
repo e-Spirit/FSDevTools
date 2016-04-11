@@ -156,7 +156,7 @@ public class CliContextImpl implements CliContext {
     }
 
     private void activateProject(String projectName, Project project) {
-        if(project != null) {
+        if(project == null) {
             throw new IllegalArgumentException("Project for activation is null");
         }
         if(!project.isActive()) {
