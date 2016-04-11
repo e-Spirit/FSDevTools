@@ -42,6 +42,8 @@ import java.util.concurrent.Callable;
  */
 public class CliBuilderHelper {
 
+    private CliBuilderHelper() {}
+
     //TODO: Test these methods
     static Map<GroupWrapper, List<Class<Command>>> gatherGroupsFromCommandClasses(Set<Class<? extends Command>> commandClasses,
                                                                                   Set<Class<?>> groupClasses) {
