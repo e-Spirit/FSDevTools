@@ -137,7 +137,7 @@
 					</execution>
 					<execution>
 						<configuration>
-							<finalName>fs-cli</finalName>
+							<finalName>fs-cli-${project.version}</finalName>
 							<appendAssemblyId>false</appendAssemblyId>
 							<descriptorSourceDirectory>src/main/assemblies/distribution</descriptorSourceDirectory>
 							<tarLongFileMode>posix</tarLongFileMode>
