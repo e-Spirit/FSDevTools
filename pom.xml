@@ -374,7 +374,7 @@
                 </property>
             </activation>
             <properties>
-                <firstspirit.version>5.2.212</firstspirit.version>
+                <firstspirit.version>5.2.514</firstspirit.version>
             </properties>
         </profile>
         <profile>
