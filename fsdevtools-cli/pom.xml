@@ -43,6 +43,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.espirit.moddev.fsdevtools</groupId>
+			<artifactId>fsdevtools-core</artifactId>
+			<version>${ci.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
@@ -271,7 +277,7 @@
 									<goal>copy-dependencies</goal>
 								</goals>
 								<configuration>
-									<includeArtifactIds>pm-demo-without-db</includeArtifactIds>
+									<includeArtifactIds>pm-demo-with-db,pm-demo-without-db</includeArtifactIds>
 									<outputDirectory>${project.basedir}/target/test-classes</outputDirectory>
 									<overWriteIfNewer>true</overWriteIfNewer>
 									<stripVersion>true</stripVersion>
@@ -285,28 +291,67 @@
 						<groupId>com.espirit.moddev</groupId>
 						<artifactId>maven-firstspiritproject-plugin</artifactId>
 						<version>${firstspiritserver.plugin.version}</version>
-						<configuration>
-							<projectfile>${project.basedir}/target/test-classes/pm-demo-without-db.tar.gz</projectfile>
-							<projectname>fs-cli Project</projectname>
-							<projectdescription>fs-cli Project</projectdescription>
-							<databases>
-								<old_schema_name>new_schema</old_schema_name>
-							</databases>
-						</configuration>
 						<executions>
 							<execution>
-								<id>remove-project</id>
+								<id>remove-project0</id>
 								<phase>prepare-package</phase>
 								<goals>
 									<goal>remove</goal>
 								</goals>
+								<configuration>
+									<projectfile>${project.basedir}/target/test-classes/pm-demo-without-db.tar.gz</projectfile>
+									<projectname>fs-cli Project</projectname>
+									<projectdescription>fs-cli Project</projectdescription>
+									<databases>
+										<old_schema_name>new_schema</old_schema_name>
+									</databases>
+								</configuration>
 							</execution>
 							<execution>
-								<id>import-project</id>
+								<id>import-project0</id>
 								<phase>package</phase>
 								<goals>
 									<goal>import</goal>
 								</goals>
+								<configuration>
+									<projectfile>${project.basedir}/target/test-classes/pm-demo-without-db.tar.gz</projectfile>
+									<projectname>fs-cli Project</projectname>
+									<projectdescription>fs-cli Project</projectdescription>
+									<databases>
+										<old_schema_name>new_schema</old_schema_name>
+									</databases>
+								</configuration>
+							</execution>
+
+							<execution>
+								<id>remove-project1</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>remove</goal>
+								</goals>
+								<configuration>
+									<projectfile>${project.basedir}/target/test-classes/pm-demo-with-db.tar.gz</projectfile>
+									<projectname>fs-cli Project with db</projectname>
+									<projectdescription>fs-cli Project with db</projectdescription>
+									<databases>
+										<old_schema_name>new_schema</old_schema_name>
+									</databases>
+								</configuration>
+							</execution>
+							<execution>
+								<id>import-project1</id>
+								<phase>package</phase>
+								<goals>
+									<goal>import</goal>
+								</goals>
+								<configuration>
+									<projectfile>${project.basedir}/target/test-classes/pm-demo-with-db.tar.gz</projectfile>
+									<projectname>fs-cli Project with db</projectname>
+									<projectdescription>fs-cli Project with db</projectdescription>
+									<databases>
+										<old_schema_name>new_schema</old_schema_name>
+									</databases>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>
@@ -315,9 +360,12 @@
 						<version>2.11</version>
 						<configuration>
 							<groups>com.espirit.moddev.IntegrationTest</groups>
-							<includes>
-								<include>**/*Test.java</include>
-							</includes>
+							<!--<includes>-->
+								<!--<include>**/*Test.java</include>-->
+							<!--</includes>-->
+							<excludes>
+								<exclude>**/*Test.java</exclude>
+							</excludes>
 						</configuration>
 						<executions>
 							<execution>
@@ -341,6 +389,13 @@
 				<dependency>
 					<groupId>com.espirit.moddev</groupId>
 					<artifactId>pm-demo-without-db</artifactId>
+					<version>1.0</version>
+					<type>tar.gz</type>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>com.espirit.moddev</groupId>
+					<artifactId>pm-demo-with-db</artifactId>
 					<version>1.0</version>
 					<type>tar.gz</type>
 					<scope>test</scope>

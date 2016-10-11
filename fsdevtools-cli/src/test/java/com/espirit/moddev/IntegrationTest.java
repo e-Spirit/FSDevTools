@@ -31,4 +31,5 @@ package com.espirit.moddev;
 public class IntegrationTest {
 
     public static final String PROJECT_NAME = "fs-cli Project";
+    public static final String PROJECT_NAME_WITH_DB = "fs-cli Project with db";
 }
