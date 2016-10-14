@@ -32,7 +32,9 @@ import com.espirit.moddev.cli.results.ImportResult;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.store.access.nexport.operations.ImportOperation;
 
+import org.apache.log4j.BasicConfigurator;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
@@ -47,7 +49,6 @@ import java.util.Optional;
 import static com.espirit.moddev.IntegrationTest.PROJECT_NAME_WITH_DB;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -58,10 +59,14 @@ import static org.junit.Assert.assertTrue;
 @Category(IntegrationTest.class)
 public class LayerMappingImportIT extends AbstractIntegrationTest {
 
+    @Before
+    public void setUp() throws Exception {
+        BasicConfigurator.configure();
+    }
     private static final Logger LOGGER = LoggerFactory.getLogger(LayerMappingImportIT.class);
 
     @Test
-    public void testImportNameBasedLayerMapping() {
+    public void testImportNameBasedLayerMapping() throws Exception {
         String sourceProjectName = PROJECT_NAME_WITH_DB;
         long timeSuffix = System.currentTimeMillis();
         String targetProjectName = PROJECT_NAME_WITH_DB + timeSuffix;
@@ -86,7 +91,12 @@ public class LayerMappingImportIT extends AbstractIntegrationTest {
 
         final ImportResult result = importCommand.call();
         final ImportOperation.Result importResult = result.get();
+
+        if (result.isError()) {
+            LOGGER.error("Import failed with exception: " + result.getError().getMessage(), result.getError());
+        }
         assertNotNull("Import failed with exception: " + result.getError().getMessage(), importResult);
+
         Project importedProject = importCommand.getContext().getProject();
 
         final Optional<String> optionalReason = importResult.getProblems().stream().map(problem -> problem.getNodeId() + "@" + problem.getMessage()).reduce((t, u) -> t + ", " + u);
@@ -97,8 +107,9 @@ public class LayerMappingImportIT extends AbstractIntegrationTest {
         assertThat("Expected specified layer name in imported projects layers", importedProject.getLayers(), is(expectedTargetLayerNames));
     }
 
+
     private ImportCommand getImportCommandForJustExportedProject(String targetProjectName, File importSyncDirectory,
-                                                                 StringPropertiesMap layerMapping) {
+            StringPropertiesMap layerMapping) {
         final ImportCommand importCommand = new ImportCommand();
         initializeTestSpecificConfiguration(importCommand);
         CliContextImpl importCommandContext = new CliContextImpl(importCommand);
