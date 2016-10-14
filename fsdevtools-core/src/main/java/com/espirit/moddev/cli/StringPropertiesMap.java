@@ -26,34 +26,60 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
+/**
+ * The Class StringPropertiesMap.
+ */
 public class StringPropertiesMap extends HashMap<String, String> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(StringPropertiesMap.class);
 
+    private static final long serialVersionUID = 3456922922496131342L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(StringPropertiesMap.class);
+    private static Pattern separatorRegEx = Pattern.compile("\\s*,\\s*");
+
+    /**
+     * Instantiates a new string properties map.
+     */
     public StringPropertiesMap() {
-        super();
+        super(); // das muss hier sein
     }
 
+    /**
+     * Instantiates a new string properties map.
+     *
+     * @param source the source
+     */
     public StringPropertiesMap(String source) {
         this();
-        String propertiesFormat = source.replaceAll(",", "\n");
-        Properties properties = new Properties();
-        try {
-            properties.load(new StringReader(propertiesFormat));
-        } catch (IOException e) {
-            String errorString = "Error converting string '" + source + "' to map!"
-                                 + " Please pass options like this: \"key=value,abc=123\"";
-            LOGGER.error(errorString, e);
+        if (source != null && !source.trim().isEmpty()) {
+            Properties properties = parseSource(source);
+            store(properties);
         }
+    }
 
+    private void store(Properties properties) {
         for (String key : properties.stringPropertyNames()) {
             String value = properties.getProperty(key);
-            put(key, String.valueOf(value));
+            put(key, String.valueOf(value.trim()));
         }
+    }
 
+    private static Properties parseSource(String source) {
+        // Aus Performance-Gründen nie String.replaceAll() machen!
+        String propertiesFormat = separatorRegEx.matcher(source).replaceAll(System.lineSeparator());
+        Properties properties = new Properties();
+        try (Reader reader = new StringReader(propertiesFormat)) {
+            properties.load(reader);
+        } catch (IOException e) {
+            String errorString = "Error converting string '" + source + "' to map!"
+                    + " Please pass options like this: \"key=value,abc=123\"";
+            LOGGER.error(errorString, e);
+        }
+        return properties;
     }
 
 }
