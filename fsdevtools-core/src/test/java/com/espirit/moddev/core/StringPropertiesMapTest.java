@@ -13,7 +13,9 @@
  *
  */
 
-package com.espirit.moddev.cli;
+package com.espirit.moddev.core;
+
+import com.espirit.moddev.core.StringPropertiesMap;
 
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;

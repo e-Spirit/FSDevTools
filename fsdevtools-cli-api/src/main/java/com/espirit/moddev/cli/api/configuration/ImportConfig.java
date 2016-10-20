@@ -30,14 +30,6 @@ package com.espirit.moddev.cli.api.configuration;
 public interface ImportConfig extends Config {
 
     /**
-     * Indicates if entities should be created during the import operation.
-     *
-     * @see de.espirit.firstspirit.store.access.nexport.operations.ImportOperation#setCreateEntities(boolean)
-     * @return a boolean value that indicates if entities should be created during the import operation
-     */
-    boolean isCreateEntities();
-
-    /**
      * Get the revision comment used for the revision created by the import operation.
      *
      * @see de.espirit.firstspirit.store.access.nexport.operations.ImportOperation#setRevisionComment(String)

@@ -23,11 +23,14 @@
 package com.espirit.moddev.cli.commands;
 
 import com.espirit.moddev.cli.CliConstants;
-import com.espirit.moddev.cli.StringPropertiesMap;
 import com.espirit.moddev.cli.api.configuration.ImportConfig;
 import com.espirit.moddev.cli.results.ImportResult;
+import com.espirit.moddev.core.SchemaUidToNameBasedLayerMapper;
+import com.espirit.moddev.core.StringPropertiesMap;
+import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;
+import com.github.rvesse.airline.annotations.help.Examples;
 
 import de.espirit.firstspirit.agency.OperationAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ImportOperation;
@@ -42,7 +45,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author e-Spirit AG
  */
-@com.github.rvesse.airline.annotations.Command(name = "import", description = "Import FirstSpirit project")
+@Command(name = "import", description = "Imports a FirstSpirit project with optional schema to target layer mapping")
+@Examples(
+        examples = {"fs-cli import -lm *:CREATE_NEW", "fs-cli import -lm my_schema:CREATE_NEW", "fs-cli import -lm *:derby_project14747_0",
+        "fs-cli import -lm schema_a:derby_project14747_0,schema_b:derby_project14747_1"},
+        descriptions = {"Import project and create for every unknown source schema a new target layer (use if uncertain)",
+                "Import project and create for source schema 'my_schema' a new layer",
+                "Import project and redirect every unknown source schema in one target layer (use with caution)",
+                "Import project and use specified mapping for source schemas and target layers"})
 public class ImportCommand extends SimpleCommand<ImportResult> implements ImportConfig {
 
     /** The Constant LOGGER. */
@@ -61,33 +71,20 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
     private boolean dontCreateEntities;
 
     /** The layer mapping. */
-    // This has to be a class with a string-argument-constructor
-    @Option(name = {"-lm", "--layerMapping"}, description = "Defines how layers should be mapped, comma-separated key-value pairs", type = OptionType.COMMAND)
-    private StringPropertiesMap layerMapping = new StringPropertiesMap("");
-
-
-    /** The layer mapping type. */
-    @Option(name = {"-lmt", "--layerMappingType"}, description = "Configures if layer name based or schema uid based mapping should be used. Default is layer name based.", type = OptionType.COMMAND)
-    private LayerMappingType layerMappingType = LayerMappingType.LAYER_NAME_BASED;
-
-
-
-    @Override
-    public boolean isCreateEntities() {
-        return !dontCreateEntities;
-    }
-
+    @Option(name = {"-lm", "--layerMapping"},
+            description = "Defines how unknown layers should be mapped in the target; comma-separated key-value pairs by : or =; key is source schema UID; value is target layer name; see EXAMPLES for more information",
+            type = OptionType.COMMAND)
+    private String layerMapping;
 
     @Override
     public boolean isCreatingProjectIfMissing() {
         return !dontCreateProjectIfMissing;
     }
 
-
     @Override
     public String getImportComment() {
         if(importComment == null || importComment.isEmpty()) {
-            boolean environmentContainsImportComment = getEnvironment().containsKey(CliConstants.KEY_FS_IMPORT_COMMENT.value());
+            final boolean environmentContainsImportComment = getEnvironment().containsKey(CliConstants.KEY_FS_IMPORT_COMMENT.value());
             if (environmentContainsImportComment) {
                 return getEnvironment().get(CliConstants.KEY_FS_IMPORT_COMMENT.value()).trim();
             }
@@ -96,16 +93,15 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
         return importComment;
     }
 
-
     @Override
     public ImportResult call() {
         LOGGER.info("Importing...");
         try {
-            final ImportOperation importOperation = getContext().requireSpecialist(OperationAgent.TYPE).getOperation(ImportOperation.TYPE);
-            importOperation.setCreateEntities(isCreateEntities());
+            final OperationAgent opertionAgent = getContext().requireSpecialist(OperationAgent.TYPE);
+            final ImportOperation importOperation = opertionAgent.getOperation(ImportOperation.TYPE);
+            importOperation.setIgnoreEntities(dontCreateEntities);
             importOperation.setRevisionComment(getImportComment());
             importOperation.setLayerMapper(configureLayerMapper());
-
             final ImportOperation.Result result = importOperation.perform(getSynchronizationDirectory());
             return new ImportResult(result);
         } catch (final Exception e) { //NOSONAR
@@ -115,11 +111,14 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
 
 
     private LayerMapper configureLayerMapper() {
-        LayerMapper layerMapper = LayerMapper.CREATE_NEW_DEFAULT_LAYER_MAPPER;
-        if (!layerMapping.isEmpty()) {
-            LOGGER.info("Found layermapping...");
-            LOGGER.info("Using layermapping type " + layerMappingType);
-            layerMapper = layerMappingType.getLayerMapper(layerMapping);
+        final LayerMapper layerMapper;
+        if (layerMapping == null || layerMapping.trim().isEmpty()) {
+            LOGGER.debug("Layer mapping is empty!");
+            layerMapper = SchemaUidToNameBasedLayerMapper.empty();
+        } else {
+            LOGGER.debug("Layer mapping: " + layerMapping);
+            final StringPropertiesMap mappingParser = new StringPropertiesMap(layerMapping);
+            layerMapper = SchemaUidToNameBasedLayerMapper.from(mappingParser);
         }
         return layerMapper;
     }
@@ -129,7 +128,7 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
      *
      * @param layerMapping the new layer mapping
      */
-    public void setLayerMapping(StringPropertiesMap layerMapping) {
+    public void setLayerMapping(final String layerMapping) {
         this.layerMapping = layerMapping;
     }
 
@@ -138,7 +137,7 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
      *
      * @param createProjectIfMissing the new creates the project if missing
      */
-    public void setCreateProjectIfMissing(boolean createProjectIfMissing) {
+    public void setCreateProjectIfMissing(final boolean createProjectIfMissing) {
         this.dontCreateProjectIfMissing = !createProjectIfMissing;
     }
 }
