@@ -20,7 +20,7 @@
  *
  */
 
-package com.espirit.moddev.cli;
+package com.espirit.moddev.core;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

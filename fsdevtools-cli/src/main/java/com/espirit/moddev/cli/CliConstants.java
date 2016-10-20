@@ -62,7 +62,7 @@ public enum CliConstants {
     /**
      * Default import comment.
      */
-    DEFAULT_IMPORT_COMMENT("Imported by cli"),
+    DEFAULT_IMPORT_COMMENT("Imported by fs-cli"),
 
     /**
      * Key fs host cli constant.
