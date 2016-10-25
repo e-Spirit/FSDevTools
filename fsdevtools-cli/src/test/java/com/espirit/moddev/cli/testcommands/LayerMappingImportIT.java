@@ -74,6 +74,12 @@ public class LayerMappingImportIT extends AbstractIntegrationTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LayerMappingImportIT.class);
 
+    /**
+     * Test as theory (mass test) if the import of name based layer mapping works.
+     *
+     * @param projectName the project name
+     * @throws Exception the exception
+     */
     @Theory
     public void testImportNameBasedLayerMapping(final String projectName) throws Exception {
 
