@@ -49,10 +49,11 @@ import org.slf4j.LoggerFactory;
 @Examples(
         examples = {"fs-cli import -lm *:CREATE_NEW", "fs-cli import -lm my_schema:CREATE_NEW", "fs-cli import -lm *:derby_project14747_0",
         "fs-cli import -lm schema_a:derby_project14747_0,schema_b:derby_project14747_1"},
-        descriptions = {"Import project and create for every unknown source schema a new target layer (use if uncertain)",
+        descriptions = 
+                {"Import project and create for every unknown source schema a new target layer (use if uncertain)",
                 "Import project and create for source schema 'my_schema' a new layer",
-                "Import project and redirect every unknown source schema in one target layer (use with caution)",
-                "Import project and use specified mapping for source schemas and target layers"})
+                "Import project and redirect every unknown source schema into given target layer. The target layer must be attached to the project! (use with caution)",
+                "Import project and use specified mapping for source schemas and existing target layers. The target layers must be attached to the project! (use with caution)"})
 public class ImportCommand extends SimpleCommand<ImportResult> implements ImportConfig {
 
     /** The Constant LOGGER. */
