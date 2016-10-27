@@ -71,7 +71,6 @@ public class GlobalConfig implements Config {
     private FsConnectionMode fsMode;
 
     @Option(type = OptionType.GLOBAL, name = {"-port"}, description = "FirstSpirit host's port. Default is 8000.")
-    @Port(acceptablePorts = {PortType.SYSTEM, PortType.USER})
     private Integer port;
 
     @Option(type = OptionType.GLOBAL, name = {"-u", "--user"}, description = "FirstSpirit user. Default is Admin.")
