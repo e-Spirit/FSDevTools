@@ -22,8 +22,7 @@
 
 package com.espirit.moddev.cli.testcommands;
 
-import com.espirit.moddev.IntegrationTest;
-import com.espirit.moddev.cli.commands.export.ExportMediaCommand;
+import com.espirit.moddev.cli.commands.export.ExportProjectPropertiesCommand;
 import com.espirit.moddev.cli.results.ExportResult;
 
 import org.junit.Assert;
@@ -31,20 +30,23 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 /**
+ * The type Project config command test.
+ *
  * @author e-Spirit AG
  */
-@Category(IntegrationTest.class)
-public class ExportMediaCommandTest extends AbstractIntegrationTest {
+@Category(com.espirit.moddev.IntegrationTest.class)
+public class ExportProjectPropertiesCommandIT extends AbstractIntegrationTest {
 
     @Test
-    public void parameterLessCommandCreatesFiles() {
-        ExportMediaCommand command = new ExportMediaCommand();
+    public void noParameterCommandWithProjectPropertiesCreatesFiles() throws Exception {
+        ExportProjectPropertiesCommand command = new ExportProjectPropertiesCommand();
 
-        initializeTestSpecificConfiguration(command);
+        initContextWithDefaultConfiguration(command);
 
         ExportResult result = command.call();
-        // This value depends on the used test project
-        Assert.assertTrue(result.get().getCreatedFiles().size() > 100);
+        Assert.assertTrue("Export folder for project properties not found.",
+                          containsSubDirectory(getFirstSpiritFileSyncFolder(testFolder.getRoot()), "Global"));
+        Assert.assertTrue(result.get().getCreatedFiles().size() > 0);
     }
 
 }

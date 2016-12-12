@@ -51,7 +51,12 @@ public abstract class AbstractIntegrationTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
-    protected void initializeTestSpecificConfiguration(final SimpleCommand command) {
+    protected void initContextWithDefaultConfiguration(final SimpleCommand command) {
+        initDefaultConfiguration(command);
+        initContext(command);
+    }
+
+    public void initDefaultConfiguration(GlobalConfig command) {
         command.setProject(PROJECT_NAME);
         command.setHost(CliConstants.DEFAULT_HOST.value());
         command.setUser(CliConstants.DEFAULT_USER.value());
@@ -59,28 +64,15 @@ public abstract class AbstractIntegrationTest {
         command.setPort(command.getConnectionMode().getDefaultPort());
 
         command.setSynchronizationDirectory(testFolder.getRoot().getAbsolutePath());
-
-        initializeContext(command);
     }
 
-    protected void initializeTestSpecificConfiguration(final GlobalConfig config) {
-        config.setProject(PROJECT_NAME);
-        config.setHost(CliConstants.DEFAULT_HOST.value());
-        config.setUser(CliConstants.DEFAULT_USER.value());
-        config.setPassword(CliConstants.DEFAULT_USER.value());
-        config.setPort(config.getConnectionMode().getDefaultPort());
-
-        config.setSynchronizationDirectory(testFolder.getRoot().getAbsolutePath());
-    }
-
-    public void initializeContext(final SimpleCommand command) {
+    public void initContext(final SimpleCommand command) {
         command.setContext(new CliContextImpl(command));
     }
 
     protected File getFirstSpiritFileSyncFolder(final File directory) throws FileNotFoundException {
         checkIsDirectory(directory);
-        final Collection<File>
-            directories =
+        final Collection<File> directories =
             FileUtils.listFilesAndDirs(testFolder.getRoot(), new NotFileFilter(TrueFileFilter.INSTANCE), DirectoryFileFilter.DIRECTORY);
         for (final File candidate : directories) {
             if (candidate.getName().equals(".FirstSpirit")) {
@@ -92,8 +84,7 @@ public abstract class AbstractIntegrationTest {
 
     protected boolean containsSubDirectory(final File directory, final String subDirectoryName) {
         checkIsDirectory(directory);
-        final Collection<File>
-            directories =
+        final Collection<File> directories =
             FileUtils.listFilesAndDirs(testFolder.getRoot(), new NotFileFilter(TrueFileFilter.INSTANCE), DirectoryFileFilter.DIRECTORY);
         for (final File candidate : directories) {
             if (candidate.getName().equals(subDirectoryName)) {

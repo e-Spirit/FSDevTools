@@ -136,7 +136,7 @@ public class LayerMappingImportIT extends AbstractIntegrationTest {
     private ImportCommand getImportCommandForJustExportedProject(final String targetProjectName, final File importSyncDirectory,
             final String layerMapping) {
         final ImportCommand importCommand = new ImportCommand();
-        initializeTestSpecificConfiguration(importCommand);
+        initContextWithDefaultConfiguration(importCommand);
         importCommand.setProject(targetProjectName);
         // Don't create context before calling setProject!!!
         final ProjectScriptContext context = new CliContextImpl(importCommand);
@@ -157,7 +157,7 @@ public class LayerMappingImportIT extends AbstractIntegrationTest {
         LOGGER.info("Export project '" + sourceProjectName + "' to " + exportSyncDirectory.getPath());
 
         final ExportCommand exportCommand = new ExportCommand();
-        initializeTestSpecificConfiguration(exportCommand);
+        initContextWithDefaultConfiguration(exportCommand);
         exportCommand.setProject(sourceProjectName);
         // Don't create context before calling setProject!!!
         final ProjectScriptContext context = new CliContextImpl(exportCommand);
