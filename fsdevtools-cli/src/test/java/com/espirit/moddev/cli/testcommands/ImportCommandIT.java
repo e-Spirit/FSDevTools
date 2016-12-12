@@ -51,7 +51,7 @@ public class ImportCommandIT extends AbstractIntegrationTest {
     public void parameterLessCommandCreatesElements() {
         final ImportCommand command = new ImportCommand();
 
-        initializeTestSpecificConfiguration(command);
+        initContextWithDefaultConfiguration(command);
         command.setProject(PROJECT_NAME + "123");
         final File syncDirectory = new File("./src/test/resources");
         assertTrue("syncDirectory is not a directory", syncDirectory.isDirectory());

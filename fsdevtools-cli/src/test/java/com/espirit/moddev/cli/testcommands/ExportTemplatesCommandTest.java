@@ -42,7 +42,7 @@ public class ExportTemplatesCommandTest extends AbstractIntegrationTest {
     @Test
     public void parameterLessCommandCreatesFiles() {
         ExportTemplatesCommand command = new ExportTemplatesCommand();
-        initializeTestSpecificConfiguration(command);
+        initContextWithDefaultConfiguration(command);
 
         ExportResult result = command.call();
 
@@ -55,7 +55,7 @@ public class ExportTemplatesCommandTest extends AbstractIntegrationTest {
         ExportTemplatesCommand command = new ExportTemplatesCommand();
 
         command.addUid("page:homepage");
-        initializeTestSpecificConfiguration(command);
+        initContextWithDefaultConfiguration(command);
         Assert.assertTrue(command.getFullQualifiedUids().contains(new FullQualifiedUid(IDProvider.UidType.PAGESTORE, "homepage")));
 
         ExportResult result = command.call();

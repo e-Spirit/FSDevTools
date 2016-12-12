@@ -35,12 +35,13 @@ import static org.junit.Assert.assertTrue;
  * @author e-Spirit AG
  */
 @Category(com.espirit.moddev.IntegrationTest.class)
-public class TestConnectionCommandTest extends AbstractIntegrationTest {
+public class TestConnectionCommandIT extends AbstractIntegrationTest {
 
     @Test
     public void connectionCanBeEstablished() {
         TestConnectionCommand command = new TestConnectionCommand();
-        initializeTestSpecificConfiguration(command);
+
+        initDefaultConfiguration(command);
 
         Result result = command.call();
         assertFalse("The connection should be established correctly", result.isError());

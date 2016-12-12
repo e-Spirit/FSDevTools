@@ -75,6 +75,9 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     @Arguments(title = "uids", description = "A list of unique identifiers, in the form of 'pagetemplate:default' (<uid type>:<uid>)")
     private List<String> fullQualifiedUidsAsStrings = new LinkedList<>();
 
+    @Option(name = "--exportAllEntities", description = "export all entities from all schemas")
+    private boolean exportAllEntities;
+
     /**
      * Gets delete obsolete files.
      *
@@ -287,5 +290,13 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
      */
     public void addUid(final String fullQualifiedUid) {
         fullQualifiedUidsAsStrings.add(fullQualifiedUid);
+    }
+
+    public boolean isExportAllEntities() {
+        return exportAllEntities;
+    }
+
+    public void setExportAllEntities(boolean exportAllEntities) {
+        this.exportAllEntities = exportAllEntities;
     }
 }

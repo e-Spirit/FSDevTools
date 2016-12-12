@@ -30,20 +30,25 @@ import com.espirit.moddev.cli.results.ExportResult;
 import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.access.store.IDProvider.UidType;
 
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.io.File;
+
+import static com.espirit.moddev.IntegrationTest.PROJECT_NAME_WITH_DB;
 
 /**
  * @author e-Spirit AG
  */
 @Category(IntegrationTest.class)
-public class ExportCommandTest extends AbstractIntegrationTest {
+public class ExportCommandIT extends AbstractIntegrationTest {
 
     @Test
     public void parameterLessCommandCreatesFiles() throws Exception {
         ExportCommand command = new ExportCommand();
-        initializeTestSpecificConfiguration(command);
+        initContextWithDefaultConfiguration(command);
 
         ExportResult result = command.call();
 
@@ -62,7 +67,7 @@ public class ExportCommandTest extends AbstractIntegrationTest {
 
         command.addUid("pagetemplate:default");
         command.addUid("page:homepage");
-        initializeTestSpecificConfiguration(command);
+        initContextWithDefaultConfiguration(command);
         Assert.assertEquals(2, command.getFullQualifiedUids().size());
         Assert.assertTrue(command.getFullQualifiedUids().contains(new FullQualifiedUid(IDProvider.UidType.TEMPLATESTORE, "default")));
         Assert.assertTrue(command.getFullQualifiedUids().contains(new FullQualifiedUid(UidType.PAGESTORE, "homepage")));
@@ -77,7 +82,7 @@ public class ExportCommandTest extends AbstractIntegrationTest {
     public void templatestoreRootParameterCommandCreatesFiles() throws Exception {
         ExportCommand command = new ExportCommand();
 
-        initializeTestSpecificConfiguration(command);
+        initContextWithDefaultConfiguration(command);
         command.addUid("root:templatestore");
         Assert.assertEquals(1, command.getFullQualifiedUids().size());
         Assert.assertTrue(command.getFullQualifiedUids().contains(new FullQualifiedUid(IDProvider.UidType.TEMPLATESTORE, "root")));
@@ -92,11 +97,31 @@ public class ExportCommandTest extends AbstractIntegrationTest {
         ExportCommand command = new ExportCommand();
 
         command.addUid("pagetemplate:default");
-        initializeTestSpecificConfiguration(command);
+        initContextWithDefaultConfiguration(command);
+        command.setProject(PROJECT_NAME_WITH_DB);
         command.setIncludeProjectProperties(true);
 
         ExportResult result = command.call();
         Assert.assertTrue("Export folder for project properties not found.", containsSubDirectory(getFirstSpiritFileSyncFolder(testFolder.getRoot()), "Global"));
+        Assert.assertTrue(result.get().getCreatedFiles().size() > 0);
+    }
+
+    @Test
+    public void exportAllEntities() throws Exception {
+        ExportCommand command = new ExportCommand();
+        command.setExportAllEntities(true);
+
+        initDefaultConfiguration(command);
+        command.setProject(PROJECT_NAME_WITH_DB);
+        initContext(command);
+
+        ExportResult result = command.call();
+        File firstSpiritFileSyncFolder = getFirstSpiritFileSyncFolder(testFolder.getRoot());
+        Assert.assertTrue("Export folder for entities not found.", containsSubDirectory(firstSpiritFileSyncFolder, "Entities"));
+        String mithrasPath = testFolder.getRoot().getPath() + "/Entities/mithras";
+        File mithrasFolder = new File(mithrasPath);
+        Assert.assertTrue("Export folder for products not found.", containsSubDirectory(mithrasFolder, "Products"));
+        Assert.assertThat("Entities.xml should have a serious size in bytes, because it contains datasets.", new File(mithrasPath + "/Products/Entities.xml").length(), Matchers.greaterThan(10000L));
         Assert.assertTrue(result.get().getCreatedFiles().size() > 0);
     }
 }
