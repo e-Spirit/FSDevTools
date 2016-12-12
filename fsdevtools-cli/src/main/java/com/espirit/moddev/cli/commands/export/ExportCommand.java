@@ -22,18 +22,12 @@
 
 package com.espirit.moddev.cli.commands.export;
 
-import com.espirit.moddev.cli.results.ExportResult;
 import com.espirit.moddev.cli.api.FullQualifiedUid;
 import com.espirit.moddev.cli.api.annotations.Description;
+import com.espirit.moddev.cli.results.ExportResult;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.help.Examples;
 
-import de.espirit.firstspirit.access.store.Store;
-import de.espirit.firstspirit.access.store.StoreElement;
-import de.espirit.firstspirit.access.store.contentstore.ContentStoreRoot;
-import de.espirit.firstspirit.access.store.templatestore.Schema;
-import de.espirit.firstspirit.access.store.templatestore.Schemes;
-import de.espirit.firstspirit.access.store.templatestore.TemplateStoreRoot;
 import de.espirit.firstspirit.agency.OperationAgent;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
@@ -52,11 +46,13 @@ import java.util.stream.Collectors;
 @Examples(examples =
             {
                 "export all -- pagetemplate:default page:homepage",
-                "export all -- root:templatestore page:homepage"
+                "export all -- root:templatestore page:homepage",
+                "export all --exportAllEntities"
             },
             descriptions = {
                 "Exports a pagetemplate and a page",
-                "Exports the templatestore and a page"
+                "Exports the templatestore and a page",
+                "Exports all stores and all entities"
             })
 public class ExportCommand extends AbstractExportCommand {
 
@@ -71,15 +67,6 @@ public class ExportCommand extends AbstractExportCommand {
         exportOperation.setExportReleaseEntities(isExportingReleaseState());
 
         addExportElements(this.getContext().requireSpecialist(StoreAgent.TYPE), uids, exportOperation);
-
-        if(isExportAllEntities()) {
-            TemplateStoreRoot templateStoreRoot = (TemplateStoreRoot) context.requireSpecialist(StoreAgent.TYPE).getStore(Store.Type.TEMPLATESTORE);
-            Schemes schemes = templateStoreRoot.getSchemes();
-            for(StoreElement schema : schemes.getChildren().toList()) {
-                ExportOperation.SchemaOptions options = exportOperation.addSchema((Schema) schema);
-                options.setExportAllEntities(true);
-            }
-        }
 
         final ExportOperation.Result result;
         try {
