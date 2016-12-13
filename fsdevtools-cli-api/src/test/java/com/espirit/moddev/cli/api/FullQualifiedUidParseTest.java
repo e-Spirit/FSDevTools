@@ -86,6 +86,13 @@ public class FullQualifiedUidParseTest {
         Assert.assertThat(list.contains(new FullQualifiedUid(IDProvider.UidType.TEMPLATESTORE, "root")), equalTo(true));
     }
 
+    @Test
+    public void testParseMultipleElements() throws Exception {
+        final List<FullQualifiedUid> list = FullQualifiedUid.parse(Arrays.asList("root:templatestore", "mediastore:layout"));
+        Assert.assertThat(list.contains(new FullQualifiedUid(IDProvider.UidType.TEMPLATESTORE, "root")), equalTo(true));
+        Assert.assertThat(list.contains(new FullQualifiedUid(IDProvider.UidType.MEDIASTORE_FOLDER, "layout")), equalTo(true));
+    }
+
     @Test(expected = UnknownRootNodeException.class)
     public void testParseWithNonExistingStore() throws Exception {
         FullQualifiedUid.parse(Arrays.asList("root:xyz"));
