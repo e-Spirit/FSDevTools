@@ -105,23 +105,4 @@ public class ExportCommandIT extends AbstractIntegrationTest {
         Assert.assertTrue("Export folder for project properties not found.", containsSubDirectory(getFirstSpiritFileSyncFolder(testFolder.getRoot()), "Global"));
         Assert.assertTrue(result.get().getCreatedFiles().size() > 0);
     }
-
-    @Test
-    public void exportAllEntities() throws Exception {
-        ExportCommand command = new ExportCommand();
-        command.setExportAllEntities(true);
-
-        initDefaultConfiguration(command);
-        command.setProject(PROJECT_NAME_WITH_DB);
-        initContext(command);
-
-        ExportResult result = command.call();
-        File firstSpiritFileSyncFolder = getFirstSpiritFileSyncFolder(testFolder.getRoot());
-        Assert.assertTrue("Export folder for entities not found.", containsSubDirectory(firstSpiritFileSyncFolder, "Entities"));
-        String mithrasPath = testFolder.getRoot().getPath() + "/Entities/mithras";
-        File mithrasFolder = new File(mithrasPath);
-        Assert.assertTrue("Export folder for products not found.", containsSubDirectory(mithrasFolder, "Products"));
-        Assert.assertThat("Entities.xml should have a serious size in bytes, because it contains datasets.", new File(mithrasPath + "/Products/Entities.xml").length(), Matchers.greaterThan(10000L));
-        Assert.assertTrue(result.get().getCreatedFiles().size() > 0);
-    }
 }

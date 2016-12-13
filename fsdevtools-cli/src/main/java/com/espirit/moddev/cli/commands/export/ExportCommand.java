@@ -46,13 +46,11 @@ import java.util.stream.Collectors;
 @Examples(examples =
             {
                 "export all -- pagetemplate:default page:homepage",
-                "export all -- root:templatestore page:homepage",
-                "export all --exportAllEntities"
+                "export all -- root:templatestore page:homepage"
             },
             descriptions = {
                 "Exports a pagetemplate and a page",
-                "Exports the templatestore and a page",
-                "Exports all stores and all entities"
+                "Exports the templatestore and a page"
             })
 public class ExportCommand extends AbstractExportCommand {
 
