@@ -22,6 +22,8 @@
 
 package com.espirit.moddev.cli;
 
+import com.google.common.base.Strings;
+
 import com.espirit.moddev.cli.exception.CliError;
 import com.espirit.moddev.cli.exception.CliException;
 import com.espirit.moddev.cli.api.configuration.Config;
@@ -82,7 +84,7 @@ public class CliContextImpl implements CliContext {
         requireProjectSpecificBroker();
     }
 
-    private void openConnection() {
+    protected void openConnection() {
         try {
             connection = obtainConnection();
             Object[] args = {clientConfig.getHost(), clientConfig.getPort(), clientConfig.getUser()};
@@ -114,7 +116,11 @@ public class CliContextImpl implements CliContext {
     }
 
     private void requireProjectSpecificBroker() {
-        LOGGER.debug("Require project specific specialist broker for project '{}'...", clientConfig.getProject());
+        String projectNameFromConfig = clientConfig.getProject();
+        if(StringUtils.isBlank(projectNameFromConfig)) {
+            throw new IllegalStateException("Cannot requireProjectSpecificBroker when project name from config is null or empty!");
+        }
+        LOGGER.debug("Require project specific specialist broker for project '{}'...", projectNameFromConfig);
 
         String name;
         try {
@@ -122,7 +128,7 @@ public class CliContextImpl implements CliContext {
             name = project != null ? project.getName() : null;
         } catch (Exception e) { //NOSONAR
             throw new IllegalStateException(
-                "Project '" + clientConfig.getProject() + "' not found on server. Correct project name or omit --dont-create-project option.", e);
+                "Project '" + projectNameFromConfig + "' not found on server. Correct project name or omit --dont-create-project option.", e);
         }
 
         if (StringUtils.isNotBlank(name)) {
@@ -143,6 +149,9 @@ public class CliContextImpl implements CliContext {
     @Override
     public Project getProject() {
         final String projectName = clientConfig.getProject();
+        if(StringUtils.isBlank(projectName)) {
+            return null;
+        }
         Project project = connection.getProjectByName(projectName);
         if (project == null && clientConfig.isCreatingProjectIfMissing()) {
             project = createProject(projectName);

@@ -45,11 +45,6 @@ public enum CliConstants {
     DEFAULT_USER("Admin"),
 
     /**
-     * The Default project constant.
-     */
-    DEFAULT_PROJECT("Mithras Energy"),
-
-    /**
      * Default host cli constant.
      */
     DEFAULT_HOST("localhost"),

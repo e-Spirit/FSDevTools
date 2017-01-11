@@ -56,5 +56,12 @@ public class GlobalConfigTest {
 
         Assert.assertEquals(CliConstants.DEFAULT_USER.value(), config.getUser());
     }
+    @Test
+    public void nullProjectIsReturnedIfNoProjectIsConfigured() {
+        final GlobalConfig config = new GlobalConfig();
+
+        config.getEnvironment().clear();
+        Assert.assertNull(config.getProject());
+    }
 
 }

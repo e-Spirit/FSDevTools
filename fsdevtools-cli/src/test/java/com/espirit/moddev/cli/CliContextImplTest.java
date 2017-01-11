@@ -23,9 +23,11 @@
 package com.espirit.moddev.cli;
 
 import com.espirit.moddev.cli.api.CliContext;
+import com.espirit.moddev.cli.api.FsConnectionMode;
 import com.espirit.moddev.cli.api.FullQualifiedUid;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.api.configuration.ImportConfig;
+import com.espirit.moddev.cli.exception.CliException;
 
 import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.BaseContext;
@@ -45,6 +47,7 @@ import org.apache.log4j.spi.ErrorHandler;
 import org.apache.log4j.spi.Filter;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.varia.FallbackErrorHandler;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -92,6 +95,7 @@ public class CliContextImplTest {
         when(clientConfig.getUser()).thenReturn("horst");
         when(clientConfig.getProject()).thenReturn("myProject");
         when(clientConfig.getSynchronizationDirectoryString()).thenReturn("dir");
+        when(clientConfig.getConnectionMode()).thenReturn(FsConnectionMode.HTTP);
         final List<FullQualifiedUid> uidList = new ArrayList<>();
         uidList.add(new FullQualifiedUid(IDProvider.UidType.PAGESTORE, "yourUID"));
         uidList.add(new FullQualifiedUid(IDProvider.UidType.PAGESTORE, "yourSecondUID"));
@@ -130,6 +134,15 @@ public class CliContextImplTest {
     @Test(expected = IllegalArgumentException.class)
     public void testConstructor() throws Exception {
         new CliContextImpl(null);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testObtainConnectionExceptionOnEmptyProject() throws Exception {
+        when(clientConfig.getProject()).thenReturn(null);
+        when(clientConfig.getHost()).thenReturn("localhost");
+        new CliContextImpl(clientConfig) {
+            @Override protected void openConnection() {}
+        };
     }
 
     @Test
