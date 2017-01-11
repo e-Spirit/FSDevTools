@@ -191,7 +191,6 @@ public class GlobalConfig implements Config {
             if(environmentContainsProject) {
                 return getEnvironment().get(CliConstants.KEY_FS_PROJECT.value()).trim();
             }
-            return CliConstants.DEFAULT_PROJECT.value();
         }
         return project;
     }
