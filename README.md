@@ -20,6 +20,10 @@ The following values are read from your environment with the corresponding key.
 - **fspwd** - The FirstSpirit user's password.
 - **fsproject** - The FirstSpirit project name.
 
+Additionally the properties host, port, connection mode, user and password have default values, that are used if neither an environment
+variable nor an option is given. The project property doesn't have a default value, so it has to be configured somehow to avoid exceptions
+with project context specific operations.
+
 ### Usage
 Most of the information you need in order to use the command line tool can be found via the integrated help command.
 See `fs-cli help` for more information on how to use the help command.
