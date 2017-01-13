@@ -62,7 +62,7 @@ public class ExportCommand extends AbstractExportCommand {
         exportOperation.setDeleteObsoleteFiles(isDeleteObsoleteFiles());
         exportOperation.setExportChildElements(isExportChildElements());
         exportOperation.setExportParentElements(isExportParentElements());
-        exportOperation.setExportReleaseEntities(isExportingReleaseState());
+        exportOperation.setExportRelease(isExportReleaseState());
 
         addExportElements(this.getContext().requireSpecialist(StoreAgent.TYPE), uids, exportOperation);
 

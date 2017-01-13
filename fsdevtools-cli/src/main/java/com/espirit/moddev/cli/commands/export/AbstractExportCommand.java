@@ -66,8 +66,8 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     private boolean excludeParentElements;
 
     @Option(name = "--useReleaseState",
-            description = "use only the release state of store elements; default is use release and current state of store elements")
-    private boolean excludeCurrentState;
+            description = "export only the release state of store elements; default is false (export of current state)")
+    private boolean exportReleaseState;
 
     @Option(name = "--includeProjectProperties", description = "export with project properties like resolutions or fonts")
     private boolean includeProjectProperties;
@@ -103,12 +103,23 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     }
 
     /**
-     * Gets release state.
+     * Indicates whether the release state should be used for belonging ExportOperation.
      *
-     * @return true: operate on release state or false: on the current state.
+     * @return true: operate on release state or false (default): on the current state.
      */
-    public boolean isExportingReleaseState() {
-        return !excludeCurrentState;
+    public boolean isExportReleaseState() {
+        return exportReleaseState;
+    }
+
+
+    /**
+     * Defines whether this command should export the release state or not (default)
+     *
+     * @param exportReleaseState use {@code true} to export release state, {@code false} otherwise (default)
+     * @see #isExportReleaseState()
+     */
+    public void setExportReleaseState(boolean exportReleaseState) {
+        this.exportReleaseState = exportReleaseState;
     }
 
     /**
@@ -268,7 +279,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
             exportOperation.setDeleteObsoleteFiles(isDeleteObsoleteFiles());
             exportOperation.setExportChildElements(isExportChildElements());
             exportOperation.setExportParentElements(isExportParentElements());
-            exportOperation.setExportReleaseEntities(isExportingReleaseState());
+            exportOperation.setExportRelease(isExportReleaseState());
 
             addExportElements(getContext().requireSpecialist(StoreAgent.TYPE), exportOperation);
 
