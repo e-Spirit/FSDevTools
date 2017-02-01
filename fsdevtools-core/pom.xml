@@ -33,6 +33,13 @@
     <name>FirstSpirit Development Tools Core</name>
     <artifactId>fsdevtools-core</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>de.espirit.firstspirit</groupId>
+            <artifactId>fs-access</artifactId>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -55,4 +62,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

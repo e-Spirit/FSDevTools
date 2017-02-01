@@ -29,7 +29,6 @@ import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.access.store.ReferenceType;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,7 +54,6 @@ public class FullQualifiedUid {
      */
     public static final String ROOT_NODE_IDENTIFIER = "root";
 
-    private static final Logger LOGGER = Logger.getLogger(FullQualifiedUid.class);
     private static final Map<String, IDProvider.UidType> STORE_POSTFIXES;
     private static final Pattern DELIMITER = Pattern.compile("\\s*:\\s*");
 
@@ -161,8 +159,7 @@ public class FullQualifiedUid {
             try {
                 fqUid = new FullQualifiedUid(getUidTypeForPrefix(secondPart.toLowerCase()), ROOT_NODE_IDENTIFIER);
             } catch (final UnregisteredPrefixException e) {
-                LOGGER.trace(e);
-                throw new UnknownRootNodeException("Store root node not known: " + secondPart.toLowerCase());
+                throw new UnknownRootNodeException("Store root node not known: " + secondPart.toLowerCase() + " ("+ e.toString()+")");
             }
         } else {
             fqUid = new FullQualifiedUid(getUidTypeForPrefix(firstPart.toLowerCase()), secondPart);
@@ -241,8 +238,7 @@ public class FullQualifiedUid {
         final Map<String, IDProvider.UidType> knownPrefixes = calculateKnownPrefixes();
         for (final Map.Entry<String, IDProvider.UidType> entry : knownPrefixes.entrySet()) {
             if(entry.getValue().equals(uidType)) {
-                final String prefix = entry.getKey();
-                return prefix;
+                return entry.getKey();
             }
         }
         throw new IllegalArgumentException("No prefix registered for UidType " + uidType.name() + ". Known prefixes are " + KNOWN_PREFIXES);

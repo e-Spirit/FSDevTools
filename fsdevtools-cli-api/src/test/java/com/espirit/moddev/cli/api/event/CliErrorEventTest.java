@@ -21,13 +21,13 @@ public class CliErrorEventTest {
 
     @Test
     public void testGetSource() throws Exception {
-        assertThat(testling.getSource(), is(notNullValue()));
-        assertThat(testlingWithNullValues.getSource(), is(nullValue()));
+        assertThat("Expect non null value", testling.getSource(), is(notNullValue()));
+        assertThat("Expect null value", testlingWithNullValues.getSource(), is(nullValue()));
     }
 
     @Test
     public void testGetError() throws Exception {
-        assertThat(testling.getError(), is(notNullValue()));
-        assertThat(testlingWithNullValues.getError(), is(nullValue()));
+        assertThat("Expect non null value", testling.getError(), is(notNullValue()));
+        assertThat("Expect null value", testlingWithNullValues.getError(), is(nullValue()));
     }
 }

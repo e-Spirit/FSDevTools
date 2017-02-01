@@ -22,8 +22,6 @@
 
 package com.espirit.moddev.cli;
 
-import com.google.common.base.Strings;
-
 import com.espirit.moddev.cli.exception.CliError;
 import com.espirit.moddev.cli.exception.CliException;
 import com.espirit.moddev.cli.api.configuration.Config;
@@ -36,6 +34,7 @@ import de.espirit.firstspirit.access.UserService;
 import de.espirit.firstspirit.access.admin.ProjectStorage;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.agency.BrokerAgent;
+import de.espirit.firstspirit.agency.ServerInformationAgent;
 import de.espirit.firstspirit.agency.SpecialistType;
 import de.espirit.firstspirit.agency.SpecialistsBroker;
 import de.espirit.firstspirit.common.IOError;
@@ -84,13 +83,18 @@ public class CliContextImpl implements CliContext {
         requireProjectSpecificBroker();
     }
 
-    protected void openConnection() {
+    private void openConnection() {
         try {
             connection = obtainConnection();
             Object[] args = {clientConfig.getHost(), clientConfig.getPort(), clientConfig.getUser()};
-            LOGGER
-                .debug("Connect to fs-server '{}:{}' with user '{}'...", args);
+            LOGGER.debug("Connect to FirstSpirit server '{}:{}' with user '{}'...", args);
             connection.connect();
+            final ServerInformationAgent serverInformationAgent = connection.getBroker().requestSpecialist(ServerInformationAgent.TYPE);
+            if (serverInformationAgent != null) {
+                final ServerInformationAgent.VersionInfo serverVersion = serverInformationAgent.getServerVersion();
+                LOGGER.info("Connected to FirstSpirit server at {} of version {}",
+                            new Object[]{clientConfig.getHost(), serverVersion.getFullVersionString()});
+            }
         } catch (MaximumNumberOfSessionsExceededException e) {
             throw new CliException(CliError.SESSIONS, clientConfig, e);
         } catch (AuthenticationException e) {
@@ -116,11 +120,7 @@ public class CliContextImpl implements CliContext {
     }
 
     private void requireProjectSpecificBroker() {
-        String projectNameFromConfig = clientConfig.getProject();
-        if(StringUtils.isBlank(projectNameFromConfig)) {
-            throw new IllegalStateException("Cannot requireProjectSpecificBroker when project name from config is null or empty!");
-        }
-        LOGGER.debug("Require project specific specialist broker for project '{}'...", projectNameFromConfig);
+        LOGGER.debug("Require project specific specialist broker for project '{}'...", clientConfig.getProject());
 
         String name;
         try {
@@ -128,7 +128,7 @@ public class CliContextImpl implements CliContext {
             name = project != null ? project.getName() : null;
         } catch (Exception e) { //NOSONAR
             throw new IllegalStateException(
-                "Project '" + projectNameFromConfig + "' not found on server. Correct project name or omit --dont-create-project option.", e);
+                "Project '" + clientConfig.getProject() + "' not found on server. Correct project name or omit --dont-create-project option.", e);
         }
 
         if (StringUtils.isNotBlank(name)) {
@@ -136,7 +136,7 @@ public class CliContextImpl implements CliContext {
             final BrokerAgent brokerAgent = broker.requireSpecialist(BrokerAgent.TYPE);
             projectBroker = brokerAgent.getBrokerByProjectName(name);
         }
-        if(projectBroker == null) {
+        if (projectBroker == null) {
             throw new IllegalStateException("ProjectBroker cannot be retrieved for project " + name);
         }
     }
@@ -165,10 +165,10 @@ public class CliContextImpl implements CliContext {
     }
 
     private void activateProject(String projectName, Project project) {
-        if(project == null) {
+        if (project == null) {
             throw new IllegalArgumentException("Project for activation is null");
         }
-        if(!project.isActive()) {
+        if (!project.isActive()) {
             LOGGER.warn("Project '{}' is not active! Try to activate...", projectName);
             UserService userService = project.getUserService();
             AdminService adminService = userService.getConnection().getService(AdminService.class);

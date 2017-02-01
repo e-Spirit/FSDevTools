@@ -26,6 +26,7 @@
     <id>distribution-windows</id>
     <formats>
         <format>zip</format>
+        <format>dir</format>
     </formats>
     <baseDirectory>/fs-cli</baseDirectory>
     <files>
