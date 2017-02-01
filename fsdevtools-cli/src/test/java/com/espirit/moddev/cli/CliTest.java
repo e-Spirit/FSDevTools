@@ -25,30 +25,30 @@ package com.espirit.moddev.cli;
 import com.espirit.moddev.cli.api.command.Command;
 import com.espirit.moddev.cli.commands.HelpCommand;
 import com.espirit.moddev.cli.commands.export.ExportCommand;
-import com.espirit.moddev.cli.exception.ExceptionHandler;
 import com.github.rvesse.airline.builder.CliBuilder;
 import com.github.rvesse.airline.model.CommandGroupMetadata;
-import org.junit.Before;
-import org.junit.Rule;
+
 import org.junit.Test;
-import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
  * @author e-Spirit AG
  */
 public class CliTest {
+
+    @Test
+    public void testMain() throws Exception {
+        Cli.main(new String[]{"fs-cli"});
+    }
 
     @Test(expected = IllegalArgumentException.class)
     public void defaultCliHasNoUndefinedGroup() {

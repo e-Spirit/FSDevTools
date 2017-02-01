@@ -23,15 +23,12 @@
 package com.espirit.moddev.cli.configuration;
 
 import com.espirit.moddev.cli.CliConstants;
-import com.espirit.moddev.cli.Environment;
 import com.espirit.moddev.cli.SyncDirectoryFactory;
 import com.espirit.moddev.cli.api.FsConnectionMode;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;
 import com.github.rvesse.airline.annotations.restrictions.AllowedRawValues;
-import com.github.rvesse.airline.annotations.restrictions.Port;
-import com.github.rvesse.airline.annotations.restrictions.PortType;
 
 import de.espirit.firstspirit.access.project.ProjectScriptContext;
 import de.espirit.firstspirit.io.FileHandle;
@@ -116,9 +113,9 @@ public class GlobalConfig implements Config {
     }
 
     /**
-     * Get the {@link com.espirit.moddev.cli.Environment} used by this instance.
+     * Get the {@link Environment} used by this instance.
      *
-     * @return the {@link com.espirit.moddev.cli.Environment} used by this instance
+     * @return the {@link Environment} used by this instance
      */
     public Environment getEnvironment() {
         return environment;

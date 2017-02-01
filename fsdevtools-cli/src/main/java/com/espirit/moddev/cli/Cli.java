@@ -26,24 +26,33 @@ import com.google.common.base.Stopwatch;
 
 import com.espirit.moddev.cli.api.command.Command;
 import com.espirit.moddev.cli.api.configuration.Config;
+import com.espirit.moddev.cli.api.event.CliErrorEvent;
 import com.espirit.moddev.cli.api.event.CliListener;
 import com.espirit.moddev.cli.api.result.Result;
 import com.espirit.moddev.cli.commands.HelpCommand;
-import com.espirit.moddev.cli.api.event.CliErrorEvent;
 import com.espirit.moddev.cli.exception.ExceptionHandler;
+import com.espirit.moddev.cli.exception.FsLoggingBridge;
 import com.espirit.moddev.cli.exception.SystemExitListener;
 import com.espirit.moddev.cli.reflection.CommandUtils;
 import com.espirit.moddev.cli.reflection.GroupUtils;
 import com.github.rvesse.airline.builder.CliBuilder;
 
+import de.espirit.common.base.Logging;
+
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.jar.JarFile;
 
 
 /**
@@ -67,13 +76,26 @@ public final class Cli {
     private static Set<Class<? extends Command>> commandClasses = CommandUtils.scanForCommandClasses(DEFAULT_COMMAND_PACKAGE_NAME);
     private static Set<Class<?>> groupClasses = GroupUtils.scanForGroupClasses(DEFAULT_GROUP_PACKAGE_NAME);
     private final List<CliListener> listeners = new LinkedList<>();
+    private final Properties buildProperties;
+    private final Properties gitProperties;
+
+    public Cli() throws IOException {
+        buildProperties = new Properties();
+        gitProperties = new Properties();
+        try (InputStream resourceAsStream = ClassLoader.getSystemClassLoader().getResourceAsStream("CliBuild.properties")) {
+            buildProperties.load(resourceAsStream);
+        }
+        try (InputStream resourceAsStream = ClassLoader.getSystemClassLoader().getResourceAsStream("CliGit.properties")) {
+            gitProperties.load(resourceAsStream);
+        }
+    }
 
     /**
      * The entry point of the cli application.
      *
      * @param args the input arguments
      */
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws IOException {
         new Cli().execute(args);
     }
 
@@ -112,17 +134,48 @@ public final class Cli {
         listeners.add(new SystemExitListener());
 
         try {
+            logVersionsAndGitHash();
             final CliBuilder<Command> builder = getDefaultCliBuilder();
             final Command command = parseCommandLine(args, builder);
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.start();
             executeCommand(exceptionHandler, command);
             stopwatch.stop();
-            double milliseconds = stopwatch.elapsedTime(TimeUnit.MILLISECONDS);
-            LOGGER.info("Time: " + (milliseconds / CliConstants.ONE_SECOND_IN_MILLIS.valueAsInt()) + "s");
+            logExecutionTime(stopwatch);
         } catch (Exception e) { //NOSONAR
             fireErrorOccurredEvent(new CliErrorEvent(this, e));
         }
+    }
+
+    private static void logExecutionTime(final Stopwatch stopwatch) {
+        double milliseconds = stopwatch.elapsedTime(TimeUnit.MILLISECONDS);
+        final String executionTime = String.format("Execution time: %ss", milliseconds / CliConstants.ONE_SECOND_IN_MILLIS.valueAsInt());
+        LOGGER.info(executionTime);
+    }
+
+    private void logVersionsAndGitHash() throws IOException {
+        final Object[] argsVersion =
+            {CliConstants.FS_CLI, buildProperties.getProperty("fs.cli.build.version"), gitProperties.getProperty("git.hash")};
+        LOGGER.info("{} version {} / git hash {}", argsVersion);
+        LOGGER.info("Build for FirstSpirit version {}", new Object[]{buildProperties.getProperty("fs.cli.fs.version")});
+        String jarFilePath = System.getenv("jarfile") != null ? System.getenv("jarfile") : System.getenv("JARFILE");
+        if (jarFilePath != null) {
+            String fsAccessPath = normalizePath(jarFilePath);
+            try (JarFile jar = new JarFile(fsAccessPath)) {
+                final String fsVersionJar = jar.getManifest().getMainAttributes().getValue("FirstSpirit-Version");
+                final Object[] argsFsVersion = {fsVersionJar, fsAccessPath};
+                LOGGER.info("Using FirstSpirit Access API version {} (see {})", argsFsVersion);
+            }
+        }
+    }
+
+    @NotNull
+    private static String normalizePath(String filePath) {
+        String jarFilePath = filePath.replace("\"", "");
+        final String libPath = new File(jarFilePath).getParentFile().getAbsolutePath();
+        jarFilePath = libPath + "/fs-access.jar";
+        jarFilePath = jarFilePath.replace("\\", "/");
+        return jarFilePath;
     }
 
     /**
@@ -143,16 +196,22 @@ public final class Cli {
     }
 
     private static void setLoggingSystemProperties() {
+        // Set logging directory for Log4J configuration
         final String logDir = System.getProperty(CliConstants.USER_HOME.value()) + CliConstants.FS_CLI_DIR;
         System.setProperty(CliConstants.FS_CLI_LOG_DIR.value(), logDir);
 
+        // Pipe through Log4J debug switch
         if (System.getenv(CliConstants.LOG4J_DEBUG.value()) != null) {
             System.setProperty(CliConstants.LOG4J_DEBUG.value(), System.getenv(CliConstants.LOG4J_DEBUG.value()));
         }
+
+        // Enable full FS logging
+        Logging.init(new FsLoggingBridge());
+        Logging.logDebug("FS-Logging initialized!", Cli.class);
     }
 
     private void executeCommand(ExceptionHandler exceptionHandler, Command<Result> command) {
-        LOGGER.info("Executing command");
+        LOGGER.info("Executing " + command.getClass().getSimpleName());
         try {
             if (command instanceof Config) {
                 Config commandAsConfig = (Config) command;

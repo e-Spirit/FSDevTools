@@ -7,81 +7,98 @@
 	applicable law or agreed to in writing, software ~ distributed under the 
 	License is distributed on an "AS IS" BASIS, ~ WITHOUT WARRANTIES OR CONDITIONS 
 	OF ANY KIND, either express or implied. ~ See the License for the specific 
-	language governing permissions and ~ limitations under the License. ~ ********************************************************************** 
-	~ -->
+	language governing permissions and ~ limitations under the License.
+	~ *********************************************************************~ -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<parent>
-		<artifactId>fsdevtools-parent</artifactId>
-		<groupId>com.espirit.moddev.fsdevtools</groupId>
-		<version>${ci.version}</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<name>Command Line Interface</name>
-	<artifactId>fsdevtools-cli</artifactId>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>fsdevtools-parent</artifactId>
+        <groupId>com.espirit.moddev.fsdevtools</groupId>
+        <version>${ci.version}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <name>Command Line Interface</name>
+    <artifactId>fsdevtools-cli</artifactId>
 
-	<dependencies>
+    <dependencies>
 
-		<dependency>
-			<groupId>com.espirit.moddev.fsdevtools</groupId>
-			<artifactId>fsdevtools-cli-api</artifactId>
-			<version>${ci.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>com.espirit.moddev.fsdevtools</groupId>
+            <artifactId>fsdevtools-cli-api</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>com.espirit.moddev.fsdevtools</groupId>
-			<artifactId>fsdevtools-core</artifactId>
-			<version>${ci.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>com.espirit.moddev.fsdevtools</groupId>
+            <artifactId>fsdevtools-core</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
-			<!--<scope>provided</scope> -->
-		</dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
 
-		<dependency>
-			<groupId>com.github.rvesse</groupId>
-			<artifactId>airline</artifactId>
-			<version>2.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.reflections</groupId>
-			<artifactId>reflections</artifactId>
-			<version>0.9.10</version>
-		</dependency>
+        <dependency>
+            <groupId>com.github.rvesse</groupId>
+            <artifactId>airline</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.10</version>
+        </dependency>
 
-		<!-- Logging -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jul-to-slf4j</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<!-- test -->
-		<dependency>
-			<groupId>com.github.stefanbirkner</groupId>
-			<artifactId>system-rules</artifactId>
-			<version>1.14.0</version>
-			<scope>test</scope>
-		</dependency>
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
 
-	</dependencies>
+        <!-- test -->
+        <dependency>
+            <groupId>com.github.stefanbirkner</groupId>
+            <artifactId>system-rules</artifactId>
+            <version>1.14.0</version>
+            <scope>test</scope>
+        </dependency>
 
-	<build>
-		<plugins>
+    </dependencies>
+
+    <build>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>CliBuild.properties</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>CliError.properties</include>
+                    <include>CliGit.properties</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <plugins>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -195,227 +212,230 @@
 	</build>
 
 
-	<profiles>
+    <profiles>
 
-		<profile>
-			<id>no-unit-tests</id>
-			<properties>
-				<failIfNoTests>false</failIfNoTests>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<configuration>
-							<skipTests>true</skipTests>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
+        <profile>
+            <id>no-unit-tests</id>
+            <properties>
+                <failIfNoTests>false</failIfNoTests>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skipTests>true</skipTests>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 
-		<profile>
-			<id>integration-test</id>
-			<properties>
-				<firstspiritserver.plugin.version>${firstspirit.version}</firstspiritserver.plugin.version>
-				<fsServerRoot>${project.build.directory}/firstspirit-server</fsServerRoot>
-				<fsServerPort>8000</fsServerPort>
-				<fsServerGcLog>true</fsServerGcLog>
-				<fsServerInstall>true</fsServerInstall>
-				<fsThreadwait>20000</fsThreadwait>
-				<fsConnectionRetryCount>18</fsConnectionRetryCount>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>createFSDir</id>
-								<phase>process-resources</phase>
-								<configuration>
-									<tasks>
-										<delete dir="${fsServerRoot}" />
-										<mkdir dir="${fsServerRoot}" />
-										<mkdir dir="${fsServerRoot}/log" />
-									</tasks>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<!-- starting and stopping firstspirit server -->
-					<plugin>
-						<groupId>com.espirit.moddev</groupId>
-						<artifactId>maven-firstspiritserver-plugin</artifactId>
-						<version>${firstspiritserver.plugin.version}</version>
-						<executions>
-							<execution>
-								<id>start-container</id>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>start</goal>
-								</goals>
-								<configuration>
-									<classpathScope>runtime</classpathScope>
-								</configuration>
-							</execution>
-							<execution>
-								<id>stop-container</id>
-								<phase>post-integration-test</phase>
-								<goals>
-									<goal>stop</goal>
-								</goals>
-								<configuration>
-									<classpathScope>runtime</classpathScope>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<version>2.10</version>
-						<executions>
-							<execution>
-								<id>copy-demo-project</id>
-								<!-- compile goal is used because the project has to be available 
-									before project import -->
-								<phase>compile</phase>
-								<goals>
-									<goal>copy-dependencies</goal>
-								</goals>
-								<configuration>
-									<includeArtifactIds>pm-demo-with-db,pm-demo-without-db</includeArtifactIds>
-									<outputDirectory>${project.basedir}/target/test-classes</outputDirectory>
-									<overWriteIfNewer>true</overWriteIfNewer>
-									<stripVersion>true</stripVersion>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
+        <profile>
+            <id>integration-test</id>
+            <properties>
+                <fsServerRoot>${project.build.directory}/firstspirit-server</fsServerRoot>
+                <fsServerPort>8000</fsServerPort>
+                <fsServerGcLog>true</fsServerGcLog>
+                <fsServerInstall>true</fsServerInstall>
+                <fsThreadwait>20000</fsThreadwait>
+                <fsConnectionRetryCount>18</fsConnectionRetryCount>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>createFSDir</id>
+                                <phase>process-resources</phase>
+                                <configuration>
+                                    <tasks>
+                                        <delete dir="${fsServerRoot}"/>
+                                        <mkdir dir="${fsServerRoot}"/>
+                                        <mkdir dir="${fsServerRoot}/log"/>
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- starting and stopping firstspirit server -->
+                    <plugin>
+                        <groupId>com.espirit.moddev</groupId>
+                        <artifactId>maven-firstspiritserver-plugin</artifactId>
+                        <version>${firstspirit.version}</version>
+                        <executions>
+                            <execution>
+                                <id>start-container</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                                <configuration>
+                                    <classpathScope>runtime</classpathScope>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>stop-container</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                                <configuration>
+                                    <classpathScope>runtime</classpathScope>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>2.10</version>
+                        <executions>
+                            <execution>
+                                <id>copy-demo-project</id>
+                                <!-- compile goal is used because the project has to be available
+                                    before project import -->
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <includeArtifactIds>pm-demo-with-db,pm-demo-without-db</includeArtifactIds>
+                                    <outputDirectory>${project.basedir}/target/test-classes</outputDirectory>
+                                    <overWriteIfNewer>true</overWriteIfNewer>
+                                    <stripVersion>true</stripVersion>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
 
-					<!-- installing firstspirit project on server after deleting the old 
-						one -->
-					<plugin>
-						<groupId>com.espirit.moddev</groupId>
-						<artifactId>maven-firstspiritproject-plugin</artifactId>
-						<version>${firstspiritserver.plugin.version}</version>
-						<executions>
-							<execution>
-								<id>remove-project0</id>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>remove</goal>
-								</goals>
-								<configuration>
-									<projectfile>${project.basedir}/target/test-classes/pm-demo-without-db.tar.gz</projectfile>
-									<projectname>fs-cli Project</projectname>
-									<projectdescription>fs-cli Project</projectdescription>
-									<databases>
-										<old_schema_name>new_schema</old_schema_name>
-									</databases>
-								</configuration>
-							</execution>
-							<execution>
-								<id>import-project0</id>
-								<phase>package</phase>
-								<goals>
-									<goal>import</goal>
-								</goals>
-								<configuration>
-									<projectfile>${project.basedir}/target/test-classes/pm-demo-without-db.tar.gz</projectfile>
-									<projectname>fs-cli Project</projectname>
-									<projectdescription>fs-cli Project</projectdescription>
-									<databases>
-										<old_schema_name>new_schema</old_schema_name>
-									</databases>
-								</configuration>
-							</execution>
+                    <!-- installing firstspirit project on server after deleting the old
+                        one -->
+                    <plugin>
+                        <groupId>com.espirit.moddev</groupId>
+                        <artifactId>maven-firstspiritproject-plugin</artifactId>
+                        <version>${firstspirit.version}</version>
+                        <executions>
+                            <execution>
+                                <id>remove-project0</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>remove</goal>
+                                </goals>
+                                <configuration>
+                                    <projectfile>${project.basedir}/target/test-classes/pm-demo-without-db.tar.gz</projectfile>
+                                    <projectname>fs-cli Project</projectname>
+                                    <projectdescription>fs-cli Project</projectdescription>
+                                    <databases>
+                                        <old_schema_name>new_schema</old_schema_name>
+                                    </databases>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>import-project0</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>import</goal>
+                                </goals>
+                                <configuration>
+                                    <projectfile>${project.basedir}/target/test-classes/pm-demo-without-db.tar.gz</projectfile>
+                                    <projectname>fs-cli Project</projectname>
+                                    <projectdescription>fs-cli Project</projectdescription>
+                                    <databases>
+                                        <old_schema_name>new_schema</old_schema_name>
+                                    </databases>
+                                </configuration>
+                            </execution>
 
-							<execution>
-								<id>remove-project1</id>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>remove</goal>
-								</goals>
-								<configuration>
-									<projectfile>${project.basedir}/target/test-classes/pm-demo-with-db.tar.gz</projectfile>
-									<projectname>fs-cli Project with db</projectname>
-									<projectdescription>fs-cli Project with db</projectdescription>
-									<databases>
-										<old_schema_name>new_schema</old_schema_name>
-									</databases>
-								</configuration>
-							</execution>
-							<execution>
-								<id>import-project1</id>
-								<phase>package</phase>
-								<goals>
-									<goal>import</goal>
-								</goals>
-								<configuration>
-									<projectfile>${project.basedir}/target/test-classes/pm-demo-with-db.tar.gz</projectfile>
-									<projectname>fs-cli Project with db</projectname>
-									<projectdescription>fs-cli Project with db</projectdescription>
-									<databases>
-										<old_schema_name>new_schema</old_schema_name>
-									</databases>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<artifactId>maven-failsafe-plugin</artifactId>
-						<version>2.11</version>
-						<configuration>
-							<groups>com.espirit.moddev.IntegrationTest</groups>
-							<!--<includes> -->
-							<!--<include>**/*Test.java</include> -->
-							<!--</includes> -->
-							<excludes>
-								<exclude>**/*Test.java</exclude>
-							</excludes>
-						</configuration>
-						<executions>
-							<execution>
-								<id>integration-test</id>
-								<goals>
-									<goal>integration-test</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>verify</id>
-								<goals>
-									<goal>verify</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
+                            <execution>
+                                <id>remove-project1</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>remove</goal>
+                                </goals>
+                                <configuration>
+                                    <projectfile>${project.basedir}/target/test-classes/pm-demo-with-db.tar.gz</projectfile>
+                                    <projectname>fs-cli Project with db</projectname>
+                                    <projectdescription>fs-cli Project with db</projectdescription>
+                                    <databases>
+                                        <old_schema_name>new_schema</old_schema_name>
+                                    </databases>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>import-project1</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>import</goal>
+                                </goals>
+                                <configuration>
+                                    <projectfile>${project.basedir}/target/test-classes/pm-demo-with-db.tar.gz</projectfile>
+                                    <projectname>fs-cli Project with db</projectname>
+                                    <projectdescription>fs-cli Project with db</projectdescription>
+                                    <databases>
+                                        <old_schema_name>new_schema</old_schema_name>
+                                    </databases>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.11</version>
+                        <configuration>
+                            <groups>com.espirit.moddev.IntegrationTest</groups>
+                            <!--<includes> -->
+                            <!--<include>**/*Test.java</include> -->
+                            <!--</includes> -->
+                            <excludes>
+                                <exclude>**/*Test.java</exclude>
+                            </excludes>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>verify</id>
+                                <goals>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
 
-				</plugins>
-			</build>
-			<dependencies>
-				<dependency>
-					<groupId>com.espirit.moddev</groupId>
-					<artifactId>pm-demo-without-db</artifactId>
-					<version>1.0</version>
-					<type>tar.gz</type>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>com.espirit.moddev</groupId>
-					<artifactId>pm-demo-with-db</artifactId>
-					<version>1.0</version>
-					<type>tar.gz</type>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
-		</profile>
-	</profiles>
+                </plugins>
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>de.espirit.firstspirit</groupId>
+                    <artifactId>server</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.espirit.moddev</groupId>
+                    <artifactId>pm-demo-without-db</artifactId>
+                    <version>1.0</version>
+                    <type>tar.gz</type>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.espirit.moddev</groupId>
+                    <artifactId>pm-demo-with-db</artifactId>
+                    <version>1.0</version>
+                    <type>tar.gz</type>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 
 </project>

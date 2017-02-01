@@ -20,7 +20,7 @@
  *
  */
 
-package com.espirit.moddev.cli;
+package com.espirit.moddev.cli.configuration;
 
 import java.util.HashMap;
 import java.util.Map;
