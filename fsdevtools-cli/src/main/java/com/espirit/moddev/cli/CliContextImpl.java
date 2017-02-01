@@ -22,11 +22,11 @@
 
 package com.espirit.moddev.cli;
 
+import com.espirit.moddev.cli.api.CliContext;
+import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.exception.CliError;
 import com.espirit.moddev.cli.exception.CliException;
-import com.espirit.moddev.cli.api.configuration.Config;
-import com.espirit.moddev.cli.api.configuration.ImportConfig;
-import com.espirit.moddev.cli.api.CliContext;
+
 import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ConnectionManager;
@@ -83,7 +83,7 @@ public class CliContextImpl implements CliContext {
         requireProjectSpecificBroker();
     }
 
-    private void openConnection() {
+    protected void openConnection() {
         try {
             connection = obtainConnection();
             Object[] args = {clientConfig.getHost(), clientConfig.getPort(), clientConfig.getUser()};
