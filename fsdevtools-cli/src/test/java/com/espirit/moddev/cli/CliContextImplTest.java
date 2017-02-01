@@ -27,7 +27,6 @@ import com.espirit.moddev.cli.api.FsConnectionMode;
 import com.espirit.moddev.cli.api.FullQualifiedUid;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.api.configuration.ImportConfig;
-import com.espirit.moddev.cli.exception.CliException;
 
 import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.BaseContext;
@@ -47,7 +46,6 @@ import org.apache.log4j.spi.ErrorHandler;
 import org.apache.log4j.spi.Filter;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.varia.FallbackErrorHandler;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -141,7 +139,8 @@ public class CliContextImplTest {
         when(clientConfig.getProject()).thenReturn(null);
         when(clientConfig.getHost()).thenReturn("localhost");
         new CliContextImpl(clientConfig) {
-            @Override protected void openConnection() {}
+            @Override
+            protected void openConnection() {}
         };
     }
 

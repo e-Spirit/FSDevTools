@@ -419,6 +419,7 @@
                 <dependency>
                     <groupId>de.espirit.firstspirit</groupId>
                     <artifactId>server</artifactId>
+                    <scope>provided</scope>
                 </dependency>
                 <dependency>
                     <groupId>com.espirit.moddev</groupId>
