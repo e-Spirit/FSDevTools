@@ -20,16 +20,15 @@
  *
  */
 
-package com.espirit.moddev.cli.api;
+package com.espirit.moddev.cli.api.parsing.parser;
 
-import com.espirit.moddev.cli.api.exceptions.UnknownRootNodeException;
 import com.espirit.moddev.cli.api.exceptions.UnregisteredPrefixException;
 
+import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 import de.espirit.firstspirit.access.store.IDProvider;
-import de.espirit.firstspirit.base.store.StoreType;
 
-import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -39,7 +38,6 @@ import org.junit.runner.RunWith;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -47,20 +45,35 @@ import static org.junit.Assert.assertThat;
  * @author e-Spirit AG
  */
 @RunWith(Theories.class)
-public class FullQualifiedUidParseTest {
+public class UidIdentifierParserTest {
 
     @DataPoints
-    public static List[]
-        testcases =
+    public static List[] testcases =
         new List[]{ Arrays.asList("page:myuid"),
                     Arrays.asList("PAGE:myuid"),
                     Arrays.asList("PAGE :myuid"),
                     Arrays.asList("PAGE :myuid"),
                     Arrays.asList("PAGE : myuid")};
 
+    private UidIdentifierParser testling;
+
+    @Before
+    public void setUp() {
+        testling = new UidIdentifierParser();
+    }
+
+
+    @Theory
+    public void testAppliesTo(List<String> uids) throws Exception {
+        for(String current : uids) {
+            boolean appliesTo = testling.appliesTo(current);
+            Assert.assertTrue("Parser should apply to string " + current, appliesTo);
+        }
+    }
+
     @Theory
     public void testParse(List<String> uids) throws Exception {
-        final List<FullQualifiedUid> list = FullQualifiedUid.parse(uids);
+        final List<UidIdentifier> list = testling.parse(uids);
 
         assertThat("Expected PAGE but got: " + uids, list.get(0).getUidType(), is(IDProvider.UidType.PAGESTORE));
         assertThat("Expected 'myuid' but got: " + uids, list.get(0).getUid(), is("myuid"));
@@ -68,33 +81,12 @@ public class FullQualifiedUidParseTest {
 
     @Test(expected = UnregisteredPrefixException.class)
     public void testParseWithNonExistentPrefix() throws Exception {
-        FullQualifiedUid.parse(Arrays.asList("xxxxx:myuid"));
+        testling.parse(Arrays.asList("xxxxx:myuid"));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testParseWithNoneStore() throws Exception {
-        FullQualifiedUid.parse(Arrays.asList("myuid"));
+        testling.parse(Arrays.asList("myuid"));
     }
 
-    @Test
-    public void testParseWithTemplateStoreRoot() throws Exception {
-        FullQualifiedUid.parse(Arrays.asList("root:templatestore"));
-    }
-    @Test
-    public void testParseStoreRootRequestWithExistingStore() throws Exception {
-        final List<FullQualifiedUid> list = FullQualifiedUid.parse(Arrays.asList("root:templatestore"));
-        Assert.assertThat(list.contains(new FullQualifiedUid(IDProvider.UidType.TEMPLATESTORE, "root")), equalTo(true));
-    }
-
-    @Test
-    public void testParseMultipleElements() throws Exception {
-        final List<FullQualifiedUid> list = FullQualifiedUid.parse(Arrays.asList("root:templatestore", "mediastore:layout"));
-        Assert.assertThat(list.contains(new FullQualifiedUid(IDProvider.UidType.TEMPLATESTORE, "root")), equalTo(true));
-        Assert.assertThat(list.contains(new FullQualifiedUid(IDProvider.UidType.MEDIASTORE_FOLDER, "layout")), equalTo(true));
-    }
-
-    @Test(expected = UnknownRootNodeException.class)
-    public void testParseWithNonExistingStore() throws Exception {
-        FullQualifiedUid.parse(Arrays.asList("root:xyz"));
-    }
 }

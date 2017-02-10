@@ -25,7 +25,7 @@ package com.espirit.moddev.cli.api.exceptions;
 
 /**
  * This exception indicates, that a requested IDProvider could not be found. For example
- * if a server query with a FullQualifiedUid returns no elements.
+ * if a server query with a UidIdentifier returns no elements.
  *
  * @author e-Spirit AG
  */

@@ -23,7 +23,7 @@
 package com.espirit.moddev.cli.testcommands;
 
 import com.espirit.moddev.IntegrationTest;
-import com.espirit.moddev.cli.api.FullQualifiedUid;
+import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 import com.espirit.moddev.cli.commands.export.ExportTemplatesCommand;
 import com.espirit.moddev.cli.results.ExportResult;
 
@@ -56,7 +56,7 @@ public class ExportTemplatesCommandTest extends AbstractIntegrationTest {
 
         command.addUid("page:homepage");
         initContextWithDefaultConfiguration(command);
-        Assert.assertTrue(command.getFullQualifiedUids().contains(new FullQualifiedUid(IDProvider.UidType.PAGESTORE, "homepage")));
+        Assert.assertTrue(command.getIdentifiers().contains(new UidIdentifier(IDProvider.UidType.PAGESTORE, "homepage")));
 
         ExportResult result = command.call();
         Assert.assertTrue(result.get().getCreatedFiles().size() > 0);

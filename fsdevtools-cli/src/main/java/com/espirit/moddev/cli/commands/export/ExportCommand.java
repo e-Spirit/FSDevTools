@@ -22,8 +22,10 @@
 
 package com.espirit.moddev.cli.commands.export;
 
-import com.espirit.moddev.cli.api.FullQualifiedUid;
 import com.espirit.moddev.cli.api.annotations.Description;
+import com.espirit.moddev.cli.api.parsing.identifier.Identifier;
+import com.espirit.moddev.cli.api.parsing.identifier.RootNodeIdentifier;
+import com.espirit.moddev.cli.api.parsing.parser.UidIdentifierParser;
 import com.espirit.moddev.cli.results.ExportResult;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.help.Examples;
@@ -56,7 +58,7 @@ public class ExportCommand extends AbstractExportCommand {
 
     @Override
     public ExportResult call() {
-        List<FullQualifiedUid> uids = getFullQualifiedUids();
+        List<Identifier> uids = getIdentifiers();
 
         final ExportOperation exportOperation = this.getContext().requireSpecialist(OperationAgent.TYPE).getOperation(ExportOperation.TYPE);
         exportOperation.setDeleteObsoleteFiles(isDeleteObsoleteFiles());
@@ -79,10 +81,10 @@ public class ExportCommand extends AbstractExportCommand {
     @Description
     public static String getDescription() {
         return "Exports elements from all stores. If no arguments given, the store roots are exported. \n"
-                + "Known prefixes for export: " + FullQualifiedUid.getAllKnownPrefixStrings()
+                + "Known prefixes for export: " + UidIdentifierParser.getAllKnownPrefixStrings()
                                                     .stream()
-                                                    .filter(prefix -> !FullQualifiedUid.getAllStorePostfixStrings().contains(prefix))
+                                                    .filter(prefix -> !UidIdentifierParser.getAllKnownPrefixStrings().contains(prefix))
                                                     .collect(Collectors.joining(", ")) + "\n"
-                + "Known root node identifiers: " + FullQualifiedUid.getAllStorePostfixStrings().stream().collect(Collectors.joining(", ")) + "\n\n";
+                + "Known root node identifiers: " + RootNodeIdentifier.getAllStorePostfixes().keySet().stream().collect(Collectors.joining(", ")) + "\n\n";
     }
 }

@@ -23,7 +23,8 @@
 package com.espirit.moddev.cli.testcommands;
 
 import com.espirit.moddev.IntegrationTest;
-import com.espirit.moddev.cli.api.FullQualifiedUid;
+import com.espirit.moddev.cli.api.parsing.identifier.RootNodeIdentifier;
+import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 import com.espirit.moddev.cli.commands.export.ExportCommand;
 import com.espirit.moddev.cli.results.ExportResult;
 import de.espirit.common.io.IoUtil;
@@ -73,9 +74,9 @@ public class ExportCommandIT extends AbstractIntegrationTest {
         command.addUid("pagetemplate:default");
         command.addUid("page:homepage");
         initContextWithDefaultConfiguration(command);
-        Assert.assertEquals(2, command.getFullQualifiedUids().size());
-        Assert.assertTrue(command.getFullQualifiedUids().contains(new FullQualifiedUid(IDProvider.UidType.TEMPLATESTORE, "default")));
-        Assert.assertTrue(command.getFullQualifiedUids().contains(new FullQualifiedUid(UidType.PAGESTORE, "homepage")));
+        Assert.assertEquals(2, command.getIdentifiers().size());
+        Assert.assertTrue(command.getIdentifiers().contains(new UidIdentifier(IDProvider.UidType.TEMPLATESTORE, "default")));
+        Assert.assertTrue(command.getIdentifiers().contains(new UidIdentifier(UidType.PAGESTORE, "homepage")));
 
         ExportResult result = command.call();
         Assert.assertTrue(result.get().getCreatedFiles().size() > 0);
@@ -89,8 +90,8 @@ public class ExportCommandIT extends AbstractIntegrationTest {
 
         initContextWithDefaultConfiguration(command);
         command.addUid("root:templatestore");
-        Assert.assertEquals(1, command.getFullQualifiedUids().size());
-        Assert.assertTrue(command.getFullQualifiedUids().contains(new FullQualifiedUid(IDProvider.UidType.TEMPLATESTORE, "root")));
+        Assert.assertEquals(1, command.getIdentifiers().size());
+        Assert.assertTrue(command.getIdentifiers().contains(new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE)));
 
         ExportResult result = command.call();
         Assert.assertTrue(result.get().getCreatedFiles().size() > 0);

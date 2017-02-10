@@ -22,8 +22,12 @@
 
 package com.espirit.moddev.cli.commands.export;
 
-import com.espirit.moddev.cli.api.FullQualifiedUid;
+import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 import com.espirit.moddev.cli.api.exceptions.IDProviderNotFoundException;
+import com.espirit.moddev.cli.api.parsing.identifier.Identifier;
+import com.espirit.moddev.cli.api.parsing.parser.RegistryBasedParserHelper;
+import com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser;
+import com.espirit.moddev.cli.api.parsing.parser.UidIdentifierParser;
 import com.espirit.moddev.cli.commands.SimpleCommand;
 import com.espirit.moddev.cli.results.ExportResult;
 import com.github.rvesse.airline.annotations.Arguments;
@@ -40,7 +44,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedList;
@@ -72,8 +75,8 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     @Option(name = "--includeProjectProperties", description = "export with project properties like resolutions or fonts")
     private boolean includeProjectProperties;
 
-    @Arguments(title = "uids", description = "A list of unique identifiers, in the form of 'pagetemplate:default' (<uid type>:<uid>)")
-    private List<String> fullQualifiedUidsAsStrings = new LinkedList<>();
+    @Arguments(title = "uids", description = "A list of parsable unique identifiers, in the form of 'pagetemplate:default' (<uid type>:<uid>), root:storetype or similar")
+    private List<String> uids = new LinkedList<>();
 
     /**
      * Gets delete obsolete files.
@@ -123,41 +126,6 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     }
 
     /**
-     * Retrieves IDProviders via the StoreAgent instance. Uses the result of {@link #getFullQualifiedUids()} to query all stores.
-     *
-     * @param storeAgent that is used to search for IDProviders
-     * @return a list of IDProviders that match the uid parameters
-     * @throws IDProviderNotFoundException if no IDProvider can be retrieved for a given uid
-     */
-    protected List<IDProvider> getIDProvidersForFullQualifiedUids(final StoreAgent storeAgent) {
-        return getIDProvidersForFullQualifiedUids(storeAgent, getFullQualifiedUids());
-    }
-    /**
-     * Retrieves IDProviders via the StoreAgent instance. Queries all stores for objects corresponding to fullQualifiedUids.
-     *
-     * @param storeAgent that is used to search for IDProviders
-     * @param fullQualifiedUids the uids used to query the store
-     * @return a list of IDProviders that match the uid parameters
-     * @throws IDProviderNotFoundException if no IDProvider can be retrieved for a given uid
-     */
-    protected List<IDProvider> getIDProvidersForFullQualifiedUids(final StoreAgent storeAgent, List<FullQualifiedUid> fullQualifiedUids) {
-        final List<IDProvider> result = new ArrayList<>();
-        for (final FullQualifiedUid uid : fullQualifiedUids) {
-            if(uid.getUid().equals(FullQualifiedUid.ROOT_NODE_IDENTIFIER)) {
-                result.add(storeAgent.getStore(uid.getUidType().getStoreType()));
-            } else {
-                final IDProvider storeElement = storeAgent.getStore(uid.getUidType().getStoreType()).getStoreElement(uid.getUid(), uid.getUidType());
-                if(storeElement != null) {
-                    result.add(storeElement);
-                } else {
-                    throw new IDProviderNotFoundException("IDProvider cannot be retrieved for " + uid);
-                }
-            }
-        }
-        return result;
-    }
-
-    /**
      * Log release state.
      *
      * @param idProvider the id provider
@@ -174,39 +142,34 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
      * @param exportOperation the ExportOperation to add the elements to
      */
     public void addExportElements(final StoreAgent storeAgent, final ExportOperation exportOperation) {
-        addExportElements(storeAgent, getFullQualifiedUids(), exportOperation);
+        addExportElements(storeAgent, getIdentifiers(), exportOperation);
     }
 
     /**
-     * Adds elements to the given export operation. Uses {@link #getIDProvidersForFullQualifiedUids(StoreAgent)} to retrieve IDProviders matching the {@code
-     * fullQualifiedUidsAsStrings} parameter. {@link IDProviderNotFoundException} from #getIDProvidersForFullQualifiedUids(StoreAgent) is handled by aborting
-     * the whole operation.
+     * Adds elements to the given export operation. Uses registered parsers to retrieve elements.
      *
      * @param storeAgent      the StoreAgent to retrieve IDProviders with
-     * @param uids            the identifiers of elements that should be added to the ExportOperation
+     * @param identifiers     the identifiers of elements that should be added to the ExportOperation
      * @param exportOperation the ExportOperation to add the elements to
      * @throws IllegalArgumentException if the ExportOperation is null
      */
-    public void addExportElements(final StoreAgent storeAgent, final List<FullQualifiedUid> uids, final ExportOperation exportOperation) {
-        if(exportOperation == null) {
+    public void addExportElements(final StoreAgent storeAgent, final List<Identifier> identifiers, final ExportOperation exportOperation) {
+        if (exportOperation == null) {
             throw new IllegalArgumentException("No null ExportOperation allowed");
         }
 
         LOGGER.debug("Adding export elements...");
-        if (uids.isEmpty()) {
+        if (identifiers.isEmpty()) {
             LOGGER.debug("Adding store roots...");
             addStoreRoots(storeAgent, exportOperation);
         } else {
-            LOGGER.debug("addExportedElements - UIDs " + uids);
+            LOGGER.debug("addExportedElements - UIDs " + identifiers);
             try {
-                final List<IDProvider> elements = getIDProvidersForFullQualifiedUids(storeAgent, uids);
-                for (final IDProvider element : elements) {
-                    LOGGER.debug("Adding store element: " + element);
-                    exportOperation.addElement(element);
+                for (Identifier identifier : identifiers) {
+                    identifier.addToExportOperation(storeAgent, exportOperation);
                 }
-                LOGGER.debug("Added " + elements.size() + " elements");
             } catch (IDProviderNotFoundException e) {
-                LOGGER.error("Cannot retrieve IDProvider for one or more given uids. No elements added to the export operation.", e);
+                LOGGER.error("Cannot retrieve IDProvider for one or more given identifiers. No elements added to the export operation.", e);
             }
         }
 
@@ -216,12 +179,19 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     }
 
     /**
-     * Get a list of {@link com.espirit.moddev.cli.api.FullQualifiedUid}s that specify the elements that should be synchronized.
+     * Get a list of {@link UidIdentifier}s that specify the elements that should be synchronized.
      *
-     * @return a {@link java.util.List} of {@link com.espirit.moddev.cli.api.FullQualifiedUid}s that specify the elements that should be synchronized
+     * @return a {@link java.util.List} of {@link UidIdentifier}s that specify the elements that should be synchronized
      */
-    public List<FullQualifiedUid> getFullQualifiedUids() {
-        return fullQualifiedUidsAsStrings.isEmpty() ? Collections.emptyList() : FullQualifiedUid.parse(fullQualifiedUidsAsStrings);
+    public List<Identifier> getIdentifiers() {
+        return uids.isEmpty() ? Collections.emptyList() : parse(uids);
+    }
+
+    private List<Identifier> parse(List<String> uids) {
+        RegistryBasedParserHelper parser = new RegistryBasedParserHelper();
+        parser.registerParser(new RootNodeIdentifierParser());
+        parser.registerParser(new UidIdentifierParser());
+        return parser.parse(uids);
     }
 
     /**
@@ -292,12 +262,12 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     }
 
     /**
-     * Adds the given string based FullQualifiedUid to this command's argument list. This method doesn't validate the input at all.
+     * Adds the given string based UidIdentifier to this command's argument list. This method doesn't validate the input at all.
      *
-     * @param fullQualifiedUid the string based FullQualifiedUid that should be added to this command's argument list
+     * @param identifier the string based UidIdentifier that should be added to this command's argument list
      */
-    public void addUid(final String fullQualifiedUid) {
-        fullQualifiedUidsAsStrings.add(fullQualifiedUid);
+    public void addUid(final String identifier) {
+        uids.add(identifier);
     }
 
 }

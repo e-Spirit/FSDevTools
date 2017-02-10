@@ -24,7 +24,7 @@ package com.espirit.moddev.cli;
 
 import com.espirit.moddev.cli.api.CliContext;
 import com.espirit.moddev.cli.api.FsConnectionMode;
-import com.espirit.moddev.cli.api.FullQualifiedUid;
+import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.api.configuration.ImportConfig;
 
@@ -94,9 +94,9 @@ public class CliContextImplTest {
         when(clientConfig.getProject()).thenReturn("myProject");
         when(clientConfig.getSynchronizationDirectoryString()).thenReturn("dir");
         when(clientConfig.getConnectionMode()).thenReturn(FsConnectionMode.HTTP);
-        final List<FullQualifiedUid> uidList = new ArrayList<>();
-        uidList.add(new FullQualifiedUid(IDProvider.UidType.PAGESTORE, "yourUID"));
-        uidList.add(new FullQualifiedUid(IDProvider.UidType.PAGESTORE, "yourSecondUID"));
+        final List<UidIdentifier> uidList = new ArrayList<>();
+        uidList.add(new UidIdentifier(IDProvider.UidType.PAGESTORE, "yourUID"));
+        uidList.add(new UidIdentifier(IDProvider.UidType.PAGESTORE, "yourSecondUID"));
         when(clientConfig.isCreatingProjectIfMissing()).thenReturn(true);
         /**when(clientConfig.isDeleteObsoleteFiles()).thenReturn(true);
          when(clientConfig.isExportChildElements()).thenReturn(true);*/
