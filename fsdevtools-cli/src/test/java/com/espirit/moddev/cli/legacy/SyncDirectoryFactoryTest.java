@@ -23,10 +23,8 @@
 package com.espirit.moddev.cli.legacy;
 
 import com.espirit.moddev.cli.api.FsConnectionMode;
-import com.espirit.moddev.cli.api.FullQualifiedUid;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.SyncDirectoryFactory;
-import de.espirit.firstspirit.access.BaseContext;
 
 import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.io.FileSystem;
@@ -36,8 +34,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
-import java.util.List;
-import java.util.Locale;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

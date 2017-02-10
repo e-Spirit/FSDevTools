@@ -23,7 +23,6 @@
 package com.espirit.moddev.cli.exceptions;
 
 import com.espirit.moddev.cli.exception.CliError;
-import com.espirit.moddev.cli.api.FullQualifiedUid;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.api.FsConnectionMode;
 import de.espirit.firstspirit.io.FileHandle;
@@ -35,7 +34,6 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import static org.hamcrest.Matchers.containsString;

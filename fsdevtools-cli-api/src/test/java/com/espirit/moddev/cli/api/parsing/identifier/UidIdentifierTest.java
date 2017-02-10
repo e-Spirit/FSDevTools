@@ -20,7 +20,7 @@
  *
  */
 
-package com.espirit.moddev.cli.api;
+package com.espirit.moddev.cli.api.parsing.identifier;
 
 import de.espirit.firstspirit.access.store.IDProvider;
 import org.junit.Rule;
@@ -39,7 +39,7 @@ import static org.junit.Assert.assertThat;
  * @author e-Spirit AG
  */
 @RunWith(Theories.class)
-public class FullQualifiedUidTest {
+public class UidIdentifierTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -49,30 +49,30 @@ public class FullQualifiedUidTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testNullTemplateStore() {
-        new FullQualifiedUid(null, "");
+        new UidIdentifier(null, "");
     }
 
     @Theory
     public void testEmptyOrNullUid(String uid) {
         expectedException.expect(IllegalArgumentException.class);
 
-        new FullQualifiedUid(IDProvider.UidType.TEMPLATESTORE, uid);
+        new UidIdentifier(IDProvider.UidType.TEMPLATESTORE, uid);
     }
 
     @Theory
     public void testEmptyOrNullUidWithSubStore(IDProvider.UidType subStore, String uid) {
         expectedException.expect(IllegalArgumentException.class);
 
-        new FullQualifiedUid(subStore, uid);
+        new UidIdentifier(subStore, uid);
     }
 
     @Test
     public void testEquality() {
-        FullQualifiedUid uid = new FullQualifiedUid(IDProvider.UidType.TEMPLATESTORE, "reference_name");
-        FullQualifiedUid anEqualUid = new FullQualifiedUid(IDProvider.UidType.TEMPLATESTORE, "reference_name");
+        UidIdentifier uid = new UidIdentifier(IDProvider.UidType.TEMPLATESTORE, "reference_name");
+        UidIdentifier anEqualUid = new UidIdentifier(IDProvider.UidType.TEMPLATESTORE, "reference_name");
 
-        FullQualifiedUid anUnequalUid = new FullQualifiedUid(IDProvider.UidType.TEMPLATESTORE, "another_reference_name");
-        FullQualifiedUid anotherUnequalUid = new FullQualifiedUid(IDProvider.UidType.TEMPLATESTORE_FORMATTEMPLATE, "reference_name");
+        UidIdentifier anUnequalUid = new UidIdentifier(IDProvider.UidType.TEMPLATESTORE, "another_reference_name");
+        UidIdentifier anotherUnequalUid = new UidIdentifier(IDProvider.UidType.TEMPLATESTORE_FORMATTEMPLATE, "reference_name");
 
         assertThat("Expected two equal full qualified uids for equal template store and uid", uid, equalTo(anEqualUid));
         assertThat("Expected two different full qualified uids for non equal uid", uid, not(equalTo(anUnequalUid)));

@@ -91,7 +91,7 @@ public class ExportTemplatesCommand extends AbstractExportCommand {
      */
     @Override
     public void addExportElements(final StoreAgent storeAgent, final ExportOperation exportOperation) {
-        super.addExportElements(storeAgent, getFullQualifiedUids(), exportOperation);
+        super.addExportElements(storeAgent, getIdentifiers(), exportOperation);
         if(exportFullTemplateStore()) {
             addDatabaseDefinitions(exportOperation, (TemplateStoreRoot) storeAgent.getStore(Store.Type.TEMPLATESTORE).getStore());
         }
