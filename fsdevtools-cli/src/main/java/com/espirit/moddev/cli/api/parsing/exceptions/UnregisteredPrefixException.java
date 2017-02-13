@@ -20,10 +20,23 @@
  *
  */
 
+package com.espirit.moddev.cli.api.parsing.exceptions;
+
 /**
- * This package contains classes of exceptions that can occur in the command
- * processing environment and the cli tool.
+ * States, that a given prefix is not within the registered ones.
+ * Prefixes are meant to identify FirstSpirit elements in specific namespaces.
  *
  * @author e-Spirit AG
  */
-package com.espirit.moddev.cli.api.exceptions;
+public class UnregisteredPrefixException extends RuntimeException {
+
+    /**
+     * Create a new instance of this exception with the given message.
+     *
+     * @param message the message of this exception
+     * @see java.lang.Exception#Exception(String)
+     */
+    public UnregisteredPrefixException(String message) {
+        super(message);
+    }
+}

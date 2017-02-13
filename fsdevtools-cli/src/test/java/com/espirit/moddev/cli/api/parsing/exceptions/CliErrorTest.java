@@ -20,7 +20,7 @@
  *
  */
 
-package com.espirit.moddev.cli.exceptions;
+package com.espirit.moddev.cli.api.parsing.exceptions;
 
 import com.espirit.moddev.cli.exception.CliError;
 import com.espirit.moddev.cli.api.configuration.Config;

@@ -1,6 +1,6 @@
 package com.espirit.moddev.cli.api.parsing.parser;
 
-import com.espirit.moddev.cli.api.exceptions.UnknownRootNodeException;
+import com.espirit.moddev.cli.api.parsing.exceptions.UnknownRootNodeException;
 import com.espirit.moddev.cli.api.parsing.identifier.RootNodeIdentifier;
 import de.espirit.firstspirit.access.store.IDProvider;
 

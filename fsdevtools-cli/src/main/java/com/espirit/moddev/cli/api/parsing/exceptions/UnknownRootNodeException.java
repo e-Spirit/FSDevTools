@@ -20,23 +20,21 @@
  *
  */
 
-package com.espirit.moddev.cli.api.exceptions;
+package com.espirit.moddev.cli.api.parsing.exceptions;
 
 /**
- * States, that a given prefix is not within the registered ones.
- * Prefixes are meant to identify FirstSpirit elements in specific namespaces.
+ * States, that a given FirstSpirit root node identifier is not a known one.
  *
  * @author e-Spirit AG
  */
-public class UnregisteredPrefixException extends RuntimeException {
+public class UnknownRootNodeException extends RuntimeException {
 
     /**
      * Create a new instance of this exception with the given message.
-     *
-     * @param message the message of this exception
      * @see java.lang.Exception#Exception(String)
+     * @param message the message of this exception
      */
-    public UnregisteredPrefixException(String message) {
+    public UnknownRootNodeException(String message) {
         super(message);
     }
 }

@@ -137,7 +137,7 @@ public class CliContextImpl implements CliContext {
             projectBroker = brokerAgent.getBrokerByProjectName(name);
         }
         if (projectBroker == null) {
-            throw new IllegalStateException("ProjectBroker cannot be retrieved for project " + name);
+            throw new IllegalStateException("ProjectBroker cannot be retrieved for project " + name + ". Wrong project name?");
         }
     }
 
