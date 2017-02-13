@@ -49,7 +49,7 @@ public class RootNodeIdentifier implements Identifier {
     public void addToExportOperation(StoreAgent storeAgent, ExportOperation exportOperation) {
         final IDProvider storeRoot = storeAgent.getStore(uidType.getStoreType());
         if(storeRoot != null) {
-            LOGGER.debug("Adding store element: " + storeRoot);
+            LOGGER.debug("Adding store element: {}", storeRoot);
             exportOperation.addElement(storeRoot);
         } else {
             throw new UnknownRootNodeException("Store root cannot be retrieved for uidType " + uidType.getStoreType());

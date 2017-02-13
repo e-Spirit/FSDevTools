@@ -80,7 +80,7 @@ public class ExportResult extends SimpleResult<ExportOperation.Result> {
      * @param state  is used for the log message ("updated", "created" and "deleted")
      */
     private void logFileChanges(final Set<FileHandle> handle, final String state) {
-        LOGGER.info(state + ": " + handle.size());
+        LOGGER.info("{}: {}", state, handle.size());
         for (FileHandle _handle : handle) {
             LOGGER.debug("fileName: " + _handle.getName() + " filePath: " + _handle.getPath());
         }

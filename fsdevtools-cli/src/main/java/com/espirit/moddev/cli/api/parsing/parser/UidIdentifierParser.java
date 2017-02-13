@@ -61,7 +61,7 @@ public class UidIdentifierParser implements Parser<UidIdentifier> {
                     final String firstPart = uidScanner.next();
                     if (uidScanner.hasNext()) {
                         final String secondPart = uidScanner.next();
-                        final UidIdentifier fqUid = new UidIdentifier(getUidTypeForPrefix(firstPart.toLowerCase()), secondPart);
+                        final UidIdentifier fqUid = new UidIdentifier(getUidTypeForPrefix(firstPart.toLowerCase(Locale.UK)), secondPart);
                         list.add(fqUid);
                     } else {
                         throw new IllegalArgumentException("Wrong input format for input string " + firstPart);
@@ -75,7 +75,7 @@ public class UidIdentifierParser implements Parser<UidIdentifier> {
     @Override
     public boolean appliesTo(String input) {
         for(String prefix : getAllKnownPrefixStrings()) {
-            if(input.toLowerCase().startsWith(prefix)) {
+            if(input.toLowerCase(Locale.UK).startsWith(prefix)) {
                 return true;
             }
         }

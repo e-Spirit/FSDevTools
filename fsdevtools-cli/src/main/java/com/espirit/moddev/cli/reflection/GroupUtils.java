@@ -56,7 +56,7 @@ public final class GroupUtils {
         Set<Class<?>> groupClasses = reflections.getTypesAnnotatedWith(Group.class);
 
         String commaSeparatedGroups = groupClasses.stream()
-            .map(groupClass -> groupClass.getSimpleName().toString())
+            .map(groupClass -> groupClass.getSimpleName())
             .collect(Collectors.joining(", "));
         LOGGER.debug("Found " + groupClasses.size() + " groups. " + commaSeparatedGroups);
 

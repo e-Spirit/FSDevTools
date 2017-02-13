@@ -79,14 +79,18 @@ public final class Cli {
     private final Properties buildProperties;
     private final Properties gitProperties;
 
-    public Cli() throws IOException {
+    public Cli() {
         buildProperties = new Properties();
         gitProperties = new Properties();
         try (InputStream resourceAsStream = ClassLoader.getSystemClassLoader().getResourceAsStream("CliBuild.properties")) {
             buildProperties.load(resourceAsStream);
+        } catch (IOException e) {
+            LOGGER.error("Failed to load BuildProperties", e);
         }
         try (InputStream resourceAsStream = ClassLoader.getSystemClassLoader().getResourceAsStream("CliGit.properties")) {
             gitProperties.load(resourceAsStream);
+        } catch (IOException e) {
+            LOGGER.error("Failed to load GitProperties", e);
         }
     }
 
@@ -95,7 +99,7 @@ public final class Cli {
      *
      * @param args the input arguments
      */
-    public static void main(final String[] args) throws IOException {
+    public static void main(final String[] args) {
         new Cli().execute(args);
     }
 

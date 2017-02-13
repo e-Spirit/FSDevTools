@@ -35,6 +35,8 @@ import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.io.FileSystem;
 import de.espirit.firstspirit.io.FileSystemsAgent;
 
+import java.util.Locale;
+
 /**
  * A configuration class for a common configuration in a FirstSpirit environment.
  * Some getters return the value of a corresponding environment variable, if the provided
@@ -84,6 +86,9 @@ public class GlobalConfig implements Config {
 
     @Option(type = OptionType.GLOBAL, name = {"-sd", "--syncDir"}, description = "The synchronization directory that is used for im- and export. Default is current directory")
     private String synchronizationDirectory = ".";
+
+    public GlobalConfig() {
+    }
 
     @Override
     public final void setContext(ProjectScriptContext context) {
@@ -150,7 +155,7 @@ public class GlobalConfig implements Config {
         if(fsMode == null) {
             boolean environmentContainsPort = getEnvironment().containsKey(CliConstants.KEY_FS_MODE.value());
             if(environmentContainsPort) {
-                return FsConnectionMode.valueOf(getEnvironment().get(CliConstants.KEY_FS_MODE.value()).trim().toUpperCase());
+                return FsConnectionMode.valueOf(getEnvironment().get(CliConstants.KEY_FS_MODE.value()).trim().toUpperCase(Locale.UK));
             }
             return FsConnectionMode.valueOf(CliConstants.DEFAULT_CONNECTION_MODE.value());
         }

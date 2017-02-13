@@ -80,14 +80,14 @@ public class ImportResult extends SimpleResult<ImportOperation.Result> {
     }
 
     private void logProblems(List<ImportOperation.Problem> problems, String state) {
-        LOGGER.info(state + ": " + problems.size());
+        LOGGER.info("{}: {}", state, problems.size());
         for (ImportOperation.Problem problem : problems) {
             LOGGER.debug(problem.getMessage());
         }
     }
 
     private void logEntityChanges(Set<BasicEntityInfo> createdEntities, String state) {
-        LOGGER.info(state + ": " + createdEntities.size());
+        LOGGER.info("{}: {}", state, createdEntities.size());
         for (BasicEntityInfo info : createdEntities) {
             LOGGER.debug("Gid: " + info.getGid() + " EntityType: " + info.getEntityType());
         }
@@ -100,7 +100,7 @@ public class ImportResult extends SimpleResult<ImportOperation.Result> {
      * @param state  is used for the log message ("updated", "created" and "deleted" etc.)
      */
     private void logElementChanges(final Set<BasicElementInfo> handle, final String state) {
-        LOGGER.info(state + ": " + handle.size());
+        LOGGER.info("{}: {}", state, handle.size());
         for (BasicElementInfo _handle : handle) {
             LOGGER.debug("Uid: " + _handle.getUid() + " NodeId: " + _handle.getNodeId());
         }

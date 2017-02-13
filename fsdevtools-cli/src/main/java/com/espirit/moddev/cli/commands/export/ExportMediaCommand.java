@@ -43,6 +43,9 @@ public class ExportMediaCommand extends AbstractExportCommand {
     @Option(name = "--includeProjectProperties", override = true, hidden = true, description = "export with project properties like resolutions or fonts")
     private boolean includeProjectProperties;
 
+    public ExportMediaCommand() {
+    }
+
     /**
      * Overrides the default behaviour of {@link #addStoreRoots(StoreAgent, ExportOperation)},
      * because it is used if no further uid arguments are given and a

@@ -4,10 +4,7 @@ import com.espirit.moddev.cli.api.parsing.exceptions.UnknownRootNodeException;
 import com.espirit.moddev.cli.api.parsing.identifier.RootNodeIdentifier;
 import de.espirit.firstspirit.access.store.IDProvider;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static com.espirit.moddev.cli.api.parsing.identifier.RootNodeIdentifier.getAllStorePostfixes;
@@ -66,6 +63,6 @@ public class RootNodeIdentifierParser implements Parser<RootNodeIdentifier> {
 
     @Override
     public boolean appliesTo(String input) {
-        return input.toLowerCase().startsWith(RootNodeIdentifier.ROOT_NODE_IDENTIFIER);
+        return input.toLowerCase(Locale.UK).startsWith(RootNodeIdentifier.ROOT_NODE_IDENTIFIER);
     }
 }

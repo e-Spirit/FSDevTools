@@ -22,6 +22,8 @@
 
 package com.espirit.moddev.cli.exception;
 
+import java.util.Locale;
+
 /**
  * Error severities used in the cli application.
  *
@@ -57,6 +59,6 @@ public enum CliErrorSevereness {
 
     @Override
     public String toString() {
-        return name().charAt(0) + name().substring(1).toLowerCase();
+        return name().charAt(0) + name().substring(1).toLowerCase(Locale.UK);
     }
 }

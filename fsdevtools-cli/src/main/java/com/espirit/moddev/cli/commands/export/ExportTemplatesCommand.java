@@ -55,6 +55,9 @@ public class ExportTemplatesCommand extends AbstractExportCommand {
     @Option(name = "--excludeCurrentState", override = true, hidden = true, description = "export without release entities")
     private boolean excludeCurrentState;
 
+    public ExportTemplatesCommand() {
+    }
+
     @Override
     public ExportResult call() {
         LOGGER.info("Exporting...");

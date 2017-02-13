@@ -89,7 +89,7 @@ public final class ExceptionHandler implements Thread.UncaughtExceptionHandler, 
      */
     private void logException(final Throwable error) {
         if (argumentsContains("-e")) {
-            LOGGER.error(error.toString(), error);
+            LOGGER.error("An error occurred!", error);
         } else {
             final Throwable rootCause = ExceptionUtils.getRootCause(error);
             if (rootCause != null) {
@@ -98,10 +98,10 @@ public final class ExceptionHandler implements Thread.UncaughtExceptionHandler, 
                 LOGGER.error("{}", error.getMessage());
             }
             if (!arguments.isEmpty()) {
-                LOGGER.info("See '" + appName + " help {}' for more information on a specific command.",
-                            arguments.stream()
-                                .filter(s -> ("import".equals(s) || "export".equals(s) || s.indexOf("store") != -1) && !"help".equals(s))
-                                .reduce("", (s1, s2) -> s1 + " " + s2));
+                String commandString = arguments.stream()
+                        .filter(s -> ("import".equals(s) || "export".equals(s) || s.indexOf("store") != -1) && !"help".equals(s))
+                        .reduce("", (s1, s2) -> s1 + " " + s2);
+                LOGGER.info("See '{} help {}' for more information on a specific command.", appName, commandString);
             }
         }
     }

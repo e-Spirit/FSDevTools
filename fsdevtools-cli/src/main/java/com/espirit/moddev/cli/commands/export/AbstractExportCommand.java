@@ -172,7 +172,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
             LOGGER.debug("Adding store roots...");
             addStoreRoots(storeAgent, exportOperation);
         } else {
-            LOGGER.debug("addExportedElements - UIDs " + identifiers);
+            LOGGER.debug("addExportedElements - UIDs {}", identifiers);
             try {
                 for (Identifier identifier : identifiers) {
                     identifier.addToExportOperation(storeAgent, exportOperation);
@@ -248,6 +248,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
      *
      * @return the export result
      */
+    @SuppressWarnings("squid:S2221")
     protected ExportResult exportStoreElements() {
         try {
             final ExportOperation exportOperation = this.getContext().requireSpecialist(OperationAgent.TYPE).getOperation(ExportOperation.TYPE);
@@ -262,7 +263,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
 
             return new ExportResult(result);
         } catch (final Exception e) {
-            return new ExportResult(e); // NOSONAR
+            return new ExportResult(e);
         }
     }
 

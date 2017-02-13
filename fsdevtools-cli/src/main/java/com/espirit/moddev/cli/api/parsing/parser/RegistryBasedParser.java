@@ -39,7 +39,7 @@ public class RegistryBasedParser implements Parser<Identifier> {
                     if(parsed == null) {
                         throw new IllegalStateException("A parser of class " + currentParser.getClass() + " was invoked and returned null for input " + currentInput);
                     } else if(parsed.isEmpty()) {
-                         LOGGER.warn("A parser of class " + currentParser.getClass() + " was invoked and returned an empty list for input " + currentInput);
+                         LOGGER.warn("A parser of class {} was invoked and returned an empty list for input {}", currentParser.getClass(), currentInput);
                     }
                     result.addAll(parsed);
                     break parserLoop;

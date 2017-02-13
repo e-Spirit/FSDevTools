@@ -63,7 +63,7 @@ public final class CommandUtils {
             .collect(Collectors.toSet());
 
         String commaSeparatedCommands = commandClasses.stream()
-            .map(commandClass -> commandClass.getSimpleName().toString())
+            .map(commandClass -> commandClass.getSimpleName())
             .collect(Collectors.joining(", "));
         LOGGER.debug("Found " + commandClasses.size() + " commands. " + commaSeparatedCommands);
 

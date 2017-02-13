@@ -55,7 +55,7 @@ public class SyncDirectoryFactory {
      * @throws java.lang.IllegalArgumentException if the sync dir ist not a directory or if the sync dir can not be read.
      */
     public void checkAndCreateSyncDirIfNeeded(String syncDirStr) {
-        LOGGER.debug("Check sync dir: " + syncDirStr);
+        LOGGER.debug("Check sync dir: {}", syncDirStr);
         try {
             File syncDir = new File(syncDirStr);
             LOGGER.debug("Sync dir absolute path: " + syncDir.getAbsolutePath());
@@ -88,7 +88,7 @@ public class SyncDirectoryFactory {
     private Boolean createSyncDirIfMissing() {
         final String key = CliConstants.CREATE_SYNC_DIR_IF_MISSING.value();
         final Boolean decision = config.createSynchronizationDirectoryIfMissing();
-        LOGGER.debug(key + ": " + decision);
+        LOGGER.debug("{}: {}", key, decision);
         return decision;
     }
 }
