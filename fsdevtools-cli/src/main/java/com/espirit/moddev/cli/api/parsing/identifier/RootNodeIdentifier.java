@@ -39,6 +39,9 @@ public class RootNodeIdentifier implements Identifier {
         if (uidType == null) {
             throw new IllegalArgumentException("uidType is null.");
         }
+        if(getAllStorePostfixes().inverse().get(uidType) == null) {
+            throw new IllegalArgumentException("UidType unknown for " + uidType);
+        }
         this.uidType = uidType;
     }
 

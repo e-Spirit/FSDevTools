@@ -6,11 +6,11 @@ import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegistryBasedParserHelper implements Parser<Identifier> {
+public class RegistryBasedParser implements Parser<Identifier> {
 
     private final List<Parser> registeredParsers = new ArrayList<>();
 
-    public RegistryBasedParserHelper() {
+    public RegistryBasedParser() {
     }
 
     @Override

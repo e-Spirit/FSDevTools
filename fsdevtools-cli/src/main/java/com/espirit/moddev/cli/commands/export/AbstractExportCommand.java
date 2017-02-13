@@ -25,7 +25,7 @@ package com.espirit.moddev.cli.commands.export;
 import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 import com.espirit.moddev.cli.api.exceptions.IDProviderNotFoundException;
 import com.espirit.moddev.cli.api.parsing.identifier.Identifier;
-import com.espirit.moddev.cli.api.parsing.parser.RegistryBasedParserHelper;
+import com.espirit.moddev.cli.api.parsing.parser.RegistryBasedParser;
 import com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser;
 import com.espirit.moddev.cli.api.parsing.parser.UidIdentifierParser;
 import com.espirit.moddev.cli.commands.SimpleCommand;
@@ -188,7 +188,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     }
 
     private List<Identifier> parse(List<String> uids) {
-        RegistryBasedParserHelper parser = new RegistryBasedParserHelper();
+        RegistryBasedParser parser = new RegistryBasedParser();
         parser.registerParser(new RootNodeIdentifierParser());
         parser.registerParser(new UidIdentifierParser());
         return parser.parse(uids);

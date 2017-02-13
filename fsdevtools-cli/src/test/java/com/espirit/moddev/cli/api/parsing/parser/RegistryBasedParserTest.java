@@ -13,13 +13,13 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
 
-public class RegistryBasedParserHelperTest {
+public class RegistryBasedParserTest {
 
-    private RegistryBasedParserHelper testling;
+    private RegistryBasedParser testling;
 
     @Before
     public void setUp() {
-        testling = new RegistryBasedParserHelper();
+        testling = new RegistryBasedParser();
     }
     @Test(expected = IllegalArgumentException.class)
     public void registerNullParser() {
