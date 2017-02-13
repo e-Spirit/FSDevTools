@@ -20,21 +20,18 @@
  *
  */
 
-package com.espirit.moddev.cli.api.exceptions;
+package com.espirit.moddev.cli.api.parsing.exceptions;
+
 
 /**
- * States, that a given FirstSpirit root node identifier is not a known one.
+ * This exception indicates, that a requested IDProvider could not be found. For example
+ * if a server query with a UidIdentifier returns no elements.
  *
  * @author e-Spirit AG
  */
-public class UnknownRootNodeException extends RuntimeException {
+public class IDProviderNotFoundException extends RuntimeException {
 
-    /**
-     * Create a new instance of this exception with the given message.
-     * @see java.lang.Exception#Exception(String)
-     * @param message the message of this exception
-     */
-    public UnknownRootNodeException(String message) {
+    public IDProviderNotFoundException(String message) {
         super(message);
     }
 }

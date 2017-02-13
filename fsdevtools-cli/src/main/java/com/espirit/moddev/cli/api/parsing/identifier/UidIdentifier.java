@@ -22,7 +22,7 @@
 
 package com.espirit.moddev.cli.api.parsing.identifier;
 
-import com.espirit.moddev.cli.api.exceptions.IDProviderNotFoundException;
+import com.espirit.moddev.cli.api.parsing.exceptions.IDProviderNotFoundException;
 import com.espirit.moddev.cli.api.parsing.parser.UidIdentifierParser;
 import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.agency.StoreAgent;

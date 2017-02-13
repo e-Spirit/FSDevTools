@@ -1,7 +1,7 @@
 package com.espirit.moddev.cli.api.parsing.parser;
 
-import com.espirit.moddev.cli.api.exceptions.UnknownRootNodeException;
-import com.espirit.moddev.cli.api.exceptions.UnregisteredPrefixException;
+import com.espirit.moddev.cli.api.parsing.exceptions.UnknownRootNodeException;
+import com.espirit.moddev.cli.api.parsing.exceptions.UnregisteredPrefixException;
 import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.access.store.ReferenceType;

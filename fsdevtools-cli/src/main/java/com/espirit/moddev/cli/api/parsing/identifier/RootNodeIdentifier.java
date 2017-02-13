@@ -1,6 +1,6 @@
 package com.espirit.moddev.cli.api.parsing.identifier;
 
-import com.espirit.moddev.cli.api.exceptions.IDProviderNotFoundException;
+import com.espirit.moddev.cli.api.parsing.exceptions.UnknownRootNodeException;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
@@ -52,7 +52,7 @@ public class RootNodeIdentifier implements Identifier {
             LOGGER.debug("Adding store element: " + storeRoot);
             exportOperation.addElement(storeRoot);
         } else {
-            throw new IDProviderNotFoundException("IDProvider cannot be retrieved for storeType " + uidType.getStoreType());
+            throw new UnknownRootNodeException("Store root cannot be retrieved for uidType " + uidType.getStoreType());
         }
     }
 

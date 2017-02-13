@@ -22,7 +22,7 @@
 
 package com.espirit.moddev.cli.api.parsing.parser;
 
-import com.espirit.moddev.cli.api.exceptions.UnregisteredPrefixException;
+import com.espirit.moddev.cli.api.parsing.exceptions.UnregisteredPrefixException;
 
 import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 import de.espirit.firstspirit.access.store.IDProvider;

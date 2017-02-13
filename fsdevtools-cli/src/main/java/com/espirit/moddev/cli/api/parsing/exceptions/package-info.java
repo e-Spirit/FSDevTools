@@ -20,18 +20,10 @@
  *
  */
 
-package com.espirit.moddev.cli.api.exceptions;
-
-
 /**
- * This exception indicates, that a requested IDProvider could not be found. For example
- * if a server query with a UidIdentifier returns no elements.
+ * This package contains classes of exceptions that can occur in the command
+ * processing environment and the cli tool.
  *
  * @author e-Spirit AG
  */
-public class IDProviderNotFoundException extends RuntimeException {
-
-    public IDProviderNotFoundException(String message) {
-        super(message);
-    }
-}
+package com.espirit.moddev.cli.api.parsing.exceptions;

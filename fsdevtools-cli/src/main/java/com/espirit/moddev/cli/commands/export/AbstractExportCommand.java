@@ -23,7 +23,7 @@
 package com.espirit.moddev.cli.commands.export;
 
 import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
-import com.espirit.moddev.cli.api.exceptions.IDProviderNotFoundException;
+import com.espirit.moddev.cli.api.parsing.exceptions.IDProviderNotFoundException;
 import com.espirit.moddev.cli.api.parsing.identifier.Identifier;
 import com.espirit.moddev.cli.api.parsing.parser.RegistryBasedParser;
 import com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser;
@@ -40,6 +40,7 @@ import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 import de.espirit.firstspirit.transport.PropertiesTransportOptions;
 
+import de.espirit.firstspirit.transport.PropertiesTransportOptions.ProjectPropertyType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,8 +76,16 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     @Option(name = "--includeProjectProperties", description = "export with project properties like resolutions or fonts")
     private boolean includeProjectProperties;
 
-    @Arguments(title = "uids", description = "A list of parsable unique identifiers, in the form of 'pagetemplate:default' (<uid type>:<uid>), root:storetype or similar")
+    @Arguments(title = "identifiers", description = "A list of parsable identifiers, in the form of 'pagetemplate:default' (<uid type>:<uid>) root:storetype or similar")
     private List<String> uids = new LinkedList<>();
+
+    private RegistryBasedParser parser;
+
+    public AbstractExportCommand() {
+        parser = new RegistryBasedParser();
+        parser.registerParser(new RootNodeIdentifierParser());
+        parser.registerParser(new UidIdentifierParser());
+    }
 
     /**
      * Gets delete obsolete files.
@@ -188,9 +197,6 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     }
 
     private List<Identifier> parse(List<String> uids) {
-        RegistryBasedParser parser = new RegistryBasedParser();
-        parser.registerParser(new RootNodeIdentifierParser());
-        parser.registerParser(new UidIdentifierParser());
         return parser.parse(uids);
     }
 
@@ -201,8 +207,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
      */
     public static void addProjectProperties(final ExportOperation exportOperation) {
         final PropertiesTransportOptions options = exportOperation.configurePropertiesExport();
-        final EnumSet<PropertiesTransportOptions.ProjectPropertyType>
-                propertiesToTransport = EnumSet.allOf(PropertiesTransportOptions.ProjectPropertyType.class);
+        final EnumSet<ProjectPropertyType> propertiesToTransport = EnumSet.allOf(ProjectPropertyType.class);
         options.setProjectPropertiesTransport(propertiesToTransport);
     }
 
