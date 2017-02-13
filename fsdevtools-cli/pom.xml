@@ -475,7 +475,7 @@
                             <releaseName>Release ${project.version}</releaseName>
                             <repositoryId>https://github.com/e-Spirit/FSDevTools.git</repositoryId>
                             <tag>${project.version}</tag>
-                            <artifact></artifact>
+                            <release.artifact></release.artifact>
                             <fileSets>
                                 <fileSet>
                                     <directory>${project.build.directory}</directory>
