@@ -479,11 +479,13 @@
                                 <fileSet>
                                     <directory>${project.build.directory}</directory>
                                     <includes>
-                                        <include>fs-cli*.tar.gz</include>
-                                        <include>fs-cli*.zip</include>
+                                        <include>*-without-access-*.tar.gz</include>
+                                        <include>*-without-access-*.zip</include>
                                     </includes>
                                     <excludes>
-                                        <exclude>fs-cli*.jar</exclude>
+                                        <exclude>*.jar</exclude>
+                                        <exclude>fs-cli-${project.version}.zip</exclude>
+                                        <exclude>fs-cli-${project.version}.tar.gz</exclude>
                                     </excludes>
                                 </fileSet>
                             </fileSets>
