@@ -479,8 +479,8 @@
                                 <fileSet>
                                     <directory>${project.build.directory}</directory>
                                     <includes>
-                                        <include>*-without-access-*.tar.gz</include>
-                                        <include>*-without-access-*.zip</include>
+                                        <include>*-without-access-jar-*.tar.gz</include>
+                                        <include>*-without-access-jar-*.zip</include>
                                     </includes>
                                     <excludes>
                                         <exclude>*.jar</exclude>
