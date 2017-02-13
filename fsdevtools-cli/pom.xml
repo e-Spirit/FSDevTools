@@ -22,6 +22,10 @@
     <name>Command Line Interface</name>
     <artifactId>fsdevtools-cli</artifactId>
 
+    <scm>
+        <connection>https://github.com/e-Spirit/FSDevTools.git</connection>
+    </scm>
+
     <dependencies>
 
         <dependency>
@@ -474,7 +478,6 @@
                             <description>Binary release</description>
                             <releaseName>Release ${project.version}</releaseName>
                             <tag>${project.version}</tag>
-                            <repositoryId>https://github.com/e-Spirit/FSDevTools.git</repositoryId>
                             <fileSets>
                                 <fileSet>
                                     <directory>${project.build.directory}</directory>
