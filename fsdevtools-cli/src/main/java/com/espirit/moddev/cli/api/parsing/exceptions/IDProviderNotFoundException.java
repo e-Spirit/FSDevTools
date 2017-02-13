@@ -31,6 +31,11 @@ package com.espirit.moddev.cli.api.parsing.exceptions;
  */
 public class IDProviderNotFoundException extends RuntimeException {
 
+    /**
+     * Create a new instance of this exception with the given message.
+     * @see java.lang.Exception#Exception(String)
+     * @param message the message of this exception
+     */
     public IDProviderNotFoundException(String message) {
         super(message);
     }
