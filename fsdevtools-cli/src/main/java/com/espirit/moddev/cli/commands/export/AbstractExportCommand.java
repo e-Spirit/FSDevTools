@@ -81,6 +81,9 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
 
     private RegistryBasedParser parser;
 
+    /**
+     * Creates a new AbstractExportCommand and configures a set of default argument parsers.
+     */
     public AbstractExportCommand() {
         parser = new RegistryBasedParser();
         parser.registerParser(new RootNodeIdentifierParser());
