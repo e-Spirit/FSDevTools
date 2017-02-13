@@ -471,7 +471,7 @@
                         <artifactId>github-release-plugin</artifactId>
                         <version>1.2.0</version>
                         <configuration>
-                            <description>Binary release</description>
+                            <description>This binary release is without FS Access jar file. Please add fs-access.jar to lib directory.</description>
                             <releaseName>Release ${project.version}</releaseName>
                             <repositoryId>https://github.com/e-Spirit/FSDevTools.git</repositoryId>
                             <tag>${project.version}</tag>
