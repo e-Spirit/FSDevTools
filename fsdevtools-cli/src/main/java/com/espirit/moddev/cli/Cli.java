@@ -22,6 +22,7 @@
 
 package com.espirit.moddev.cli;
 
+import com.espirit.moddev.cli.api.CliContext;
 import com.google.common.base.Stopwatch;
 
 import com.espirit.moddev.cli.api.command.Command;
@@ -216,11 +217,13 @@ public final class Cli {
 
     private void executeCommand(ExceptionHandler exceptionHandler, Command<Result> command) {
         LOGGER.info("Executing " + command.getClass().getSimpleName());
+        CliContext context = null;
         try {
             if (command instanceof Config) {
                 Config commandAsConfig = (Config) command;
                 if (commandAsConfig.needsContext()) {
-                    commandAsConfig.setContext(new CliContextImpl(commandAsConfig));
+                    context = new CliContextImpl(commandAsConfig);
+                    commandAsConfig.setContext(context);
                 }
             }
             Result result = command.call();
@@ -231,6 +234,14 @@ public final class Cli {
             }
         } catch (Exception e) {
             exceptionHandler.errorOccurred(new CliErrorEvent(this, e));
+        } finally {
+            if(context != null) {
+                try {
+                    context.close();
+                } catch (Exception e) {
+                    LOGGER.error("Closing context caused an exception!", e);
+                }
+            }
         }
     }
 
