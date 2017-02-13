@@ -475,6 +475,7 @@
                             <releaseName>Release ${project.version}</releaseName>
                             <repositoryId>https://github.com/e-Spirit/FSDevTools.git</repositoryId>
                             <tag>${project.version}</tag>
+                            <artifact></artifact>
                             <fileSets>
                                 <fileSet>
                                     <directory>${project.build.directory}</directory>
@@ -483,7 +484,7 @@
                                         <include>*without-access-jar*.zip</include>
                                     </includes>
                                     <excludes>
-                                        <exclude>**/*.jar</exclude>
+                                        <exclude>*.jar</exclude>
                                         <exclude>fs-cli-${project.version}.zip</exclude>
                                         <exclude>fs-cli-${project.version}.tar.gz</exclude>
                                     </excludes>
