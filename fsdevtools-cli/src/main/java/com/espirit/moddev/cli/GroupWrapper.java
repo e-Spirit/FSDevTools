@@ -24,6 +24,8 @@ package com.espirit.moddev.cli;
 
 import com.github.rvesse.airline.annotations.Group;
 
+import java.util.Locale;
+
 /**
  * A wrapper value class for airline groups. Offers convenience
  * over airline's API. The different constructors can be used to
@@ -86,7 +88,7 @@ public class GroupWrapper {
      * @param description the group's description
      */
     public GroupWrapper(String name, String description) {
-        this.name = name.toLowerCase();
+        this.name = name.toLowerCase(Locale.UK);
         this.description = description;
         commands = new Class<?>[0];
         defaultCommand = null;
@@ -98,7 +100,7 @@ public class GroupWrapper {
      * @param groupAnnotation {@link com.github.rvesse.airline.annotations.Group} used to initializes the public properties
      */
     public GroupWrapper(Group groupAnnotation) {
-        name = groupAnnotation.name().toLowerCase();
+        name = groupAnnotation.name().toLowerCase(Locale.UK);
         description = groupAnnotation.description();
         commands = groupAnnotation.commands();
         defaultCommand = groupAnnotation.defaultCommand();

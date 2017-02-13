@@ -107,7 +107,7 @@ public class UidIdentifier implements Identifier {
     public void addToExportOperation(StoreAgent storeAgent, ExportOperation exportOperation) {
         final IDProvider storeElement = storeAgent.getStore(getUidType().getStoreType()).getStoreElement(getUid(), getUidType());
         if(storeElement != null) {
-            LOGGER.debug("Adding store element: " + storeElement);
+            LOGGER.debug("Adding store element: {}", storeElement);
             exportOperation.addElement(storeElement);
         } else {
             throw new IDProviderNotFoundException("IDProvider cannot be retrieved for " + uid);

@@ -38,6 +38,7 @@ import com.espirit.moddev.cli.results.TestResult;
 public class TestConnectionCommand extends GlobalConfig implements Command {
 
     @Override
+    @SuppressWarnings("squid:S2221")
     public Result call() {
         try(CliContextImpl cliContext = new CliContextImpl(this)) {
             return new TestResult(this);

@@ -77,6 +77,10 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
             type = OptionType.COMMAND)
     private String layerMapping;
 
+    public ImportCommand() {
+        super();
+    }
+
     @Override
     public boolean isCreatingProjectIfMissing() {
         return !dontCreateProjectIfMissing;
@@ -117,7 +121,7 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
             LOGGER.debug("Layer mapping is empty!");
             layerMapper = SchemaUidToNameBasedLayerMapper.empty();
         } else {
-            LOGGER.debug("Layer mapping: " + layerMapping);
+            LOGGER.debug("Layer mapping: {}", layerMapping);
             final StringPropertiesMap mappingParser = new StringPropertiesMap(layerMapping);
             layerMapper = SchemaUidToNameBasedLayerMapper.from(mappingParser);
         }
