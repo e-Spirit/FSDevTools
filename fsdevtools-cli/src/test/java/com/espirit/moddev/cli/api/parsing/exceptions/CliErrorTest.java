@@ -55,7 +55,7 @@ public class CliErrorTest {
 
     @Test
     public void testToString() throws Exception {
-        assertThat("Exception a specific value", CliError.AUTHENTICATION.toString(),
+        assertThat("Expecting a specific value", CliError.AUTHENTICATION.toString(),
                    containsString("code " + CliError.AUTHENTICATION.getErrorCode()));
 
     }

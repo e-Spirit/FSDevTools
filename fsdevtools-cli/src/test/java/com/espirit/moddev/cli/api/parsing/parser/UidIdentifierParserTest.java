@@ -52,7 +52,6 @@ public class UidIdentifierParserTest {
         new List[]{ Arrays.asList("page:myuid"),
                     Arrays.asList("PAGE:myuid"),
                     Arrays.asList("PAGE :myuid"),
-                    Arrays.asList("PAGE :myuid"),
                     Arrays.asList("PAGE : myuid")};
 
     private UidIdentifierParser testling;
@@ -71,6 +70,12 @@ public class UidIdentifierParserTest {
         }
     }
 
+    @Test
+    public void testDontApplyTo() {
+        boolean appliesTo = testling.appliesTo("pagexyz :bla");
+        Assert.assertFalse("Parser should apply to string pagexyz :bla", appliesTo);
+    }
+
     @Theory
     public void testParse(List<String> uids) throws Exception {
         final List<UidIdentifier> list = testling.parse(uids);
@@ -85,7 +90,7 @@ public class UidIdentifierParserTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testParseWithNoneStore() throws Exception {
+    public void testParseWithNoStore() throws Exception {
         testling.parse(Arrays.asList("myuid"));
     }
 

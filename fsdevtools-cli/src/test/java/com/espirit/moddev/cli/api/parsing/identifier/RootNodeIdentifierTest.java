@@ -24,10 +24,10 @@ public class RootNodeIdentifierTest {
         RootNodeIdentifier identifier = new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE);
         RootNodeIdentifier equalIdentifier = new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE);
 
-        RootNodeIdentifier anotherUnequalIdentifier = new RootNodeIdentifier(IDProvider.UidType.CONTENTSTORE);
+        RootNodeIdentifier anUnequalIdentifier = new RootNodeIdentifier(IDProvider.UidType.CONTENTSTORE);
 
         assertThat("Expected two equal root node identifiers for equal uidType", identifier, equalTo(equalIdentifier));
-        assertThat("Expected two different root node identifiers to not be equal", identifier, not(equalTo(anotherUnequalIdentifier)));
+        assertThat("Expected two different root node identifiers to not be equal", identifier, not(equalTo(anUnequalIdentifier)));
     }
 
     @Test

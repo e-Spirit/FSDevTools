@@ -29,6 +29,7 @@ import de.espirit.firstspirit.access.store.IDProvider;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static com.espirit.moddev.cli.api.parsing.identifier.RootNodeIdentifier.ROOT_NODE_IDENTIFIER;
 import static com.espirit.moddev.cli.api.parsing.identifier.RootNodeIdentifier.getAllStorePostfixes;
 
 /**
@@ -85,6 +86,11 @@ public class RootNodeIdentifierParser implements Parser<RootNodeIdentifier> {
 
     @Override
     public boolean appliesTo(String input) {
-        return input.toLowerCase(Locale.UK).startsWith(RootNodeIdentifier.ROOT_NODE_IDENTIFIER);
+        String[] splitted = input.split(DELIMITER.pattern());
+        if(splitted.length != 2) {
+            return false;
+        }
+
+        return splitted[0].toLowerCase(Locale.UK).trim().equals(ROOT_NODE_IDENTIFIER);
     }
 }

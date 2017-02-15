@@ -48,7 +48,7 @@ public class UidIdentifierTest {
     public static String[] uids = {"", " ", null};
 
     @Test(expected = IllegalArgumentException.class)
-    public void testNullTemplateStore() {
+    public void testNullStore() {
         new UidIdentifier(null, "");
     }
 
@@ -60,10 +60,10 @@ public class UidIdentifierTest {
     }
 
     @Theory
-    public void testEmptyOrNullUidWithSubStore(IDProvider.UidType subStore, String uid) {
+    public void testEmptyOrNullUidWithSubStore(String uid) {
         expectedException.expect(IllegalArgumentException.class);
 
-        new UidIdentifier(subStore, uid);
+        new UidIdentifier(null, uid);
     }
 
     @Test

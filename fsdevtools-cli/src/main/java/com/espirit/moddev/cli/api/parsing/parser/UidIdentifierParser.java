@@ -96,8 +96,12 @@ public class UidIdentifierParser implements Parser<UidIdentifier> {
 
     @Override
     public boolean appliesTo(String input) {
+        String[] splitted = input.split(DELIMITER.pattern());
+        if(splitted.length != 2) {
+            return false;
+        }
         for(String prefix : getAllKnownPrefixStrings()) {
-            if(input.toLowerCase(Locale.UK).startsWith(prefix)) {
+            if(splitted[0].toLowerCase(Locale.UK).trim().equals(prefix)) {
                 return true;
             }
         }
