@@ -399,7 +399,7 @@
                 </property>
             </activation>
             <properties>
-                <firstspirit.version>5.2.514</firstspirit.version>
+                <firstspirit.version>5.2.611</firstspirit.version>
             </properties>
         </profile>
         <profile>
