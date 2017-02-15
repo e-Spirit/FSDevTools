@@ -46,7 +46,6 @@ public class RootNodeIdentifierParserTest {
             new List[]{ Arrays.asList("root:myuid"),
                     Arrays.asList("ROOT:myuid"),
                     Arrays.asList("ROOT :myuid"),
-                    Arrays.asList("ROOT :myuid"),
                     Arrays.asList("ROOT : myuid")};
 
     private RootNodeIdentifierParser testling;

@@ -50,7 +50,6 @@ public class RegistryBasedParser implements Parser<Identifier> {
     @Override
     public List<Identifier> parse(List<String> input) {
         List result = new ArrayList(input.size());
-        inputLoop:
         for(String currentInput : input) {
             boolean suitableParserRegistered = false;
             parserLoop:
