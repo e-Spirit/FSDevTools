@@ -48,11 +48,13 @@ import java.util.stream.Collectors;
 @Examples(examples =
             {
                 "export all -- pagetemplate:default page:homepage",
-                "export all -- root:templatestore page:homepage"
+                "export all -- root:templatestore page:homepage",
+                "export all -- page:homepage entities:news"
             },
             descriptions = {
                 "Exports a pagetemplate and a page",
-                "Exports the templatestore and a page"
+                "Exports the templatestore and a page",
+                "Exports a page and news entities according to the configured filter"
             })
 public class ExportCommand extends AbstractExportCommand {
 
@@ -85,7 +87,7 @@ public class ExportCommand extends AbstractExportCommand {
                                                     .stream()
                                                     .filter(prefix -> !UidIdentifierParser.getAllKnownPrefixStrings().contains(prefix))
                                                     .collect(Collectors.joining(", ")) + "\n"
-                + "Export entities with identifiers like 'entities'\n"
+                + "Export entities with identifiers like 'entities:news'\n"
                 + "Known root node identifiers: " + RootNodeIdentifier.getAllStorePostfixes().keySet().stream().collect(Collectors.joining(", ")) + "\n\n";
     }
 }
