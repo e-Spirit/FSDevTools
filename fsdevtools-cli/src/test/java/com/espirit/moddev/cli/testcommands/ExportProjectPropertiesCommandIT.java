@@ -29,6 +29,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import static com.espirit.moddev.IntegrationTest.PROJECT_NAME;
+
 /**
  * The type Project config command test.
  *
@@ -40,7 +42,7 @@ public class ExportProjectPropertiesCommandIT extends AbstractIntegrationTest {
     @Test
     public void noParameterCommandWithProjectPropertiesCreatesFiles() throws Exception {
         ExportProjectPropertiesCommand command = new ExportProjectPropertiesCommand();
-
+        command.setProject(PROJECT_NAME);
         initContextWithDefaultConfiguration(command);
 
         ExportResult result = command.call();

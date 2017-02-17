@@ -30,6 +30,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import static com.espirit.moddev.IntegrationTest.PROJECT_NAME;
+
 /**
  * @author e-Spirit AG
  */
@@ -39,7 +41,7 @@ public class ExportMediaCommandIT extends AbstractIntegrationTest {
     @Test
     public void parameterLessCommandCreatesFiles() {
         ExportMediaCommand command = new ExportMediaCommand();
-
+        command.setProject(PROJECT_NAME);
         initContextWithDefaultConfiguration(command);
 
         ExportResult result = command.call();

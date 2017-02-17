@@ -76,7 +76,7 @@ public class RootNodeIdentifierParser implements Parser<RootNodeIdentifier> {
                         final RootNodeIdentifier rootNodeIdentifier = new RootNodeIdentifier(uidType);
                         list.add(rootNodeIdentifier);
                     } else {
-                        throw new IllegalArgumentException("Wrong input format for input string " + firstPart);
+                        throw new IllegalArgumentException("Wrong input format for input string " + identifier);
                     }
                 }
             }

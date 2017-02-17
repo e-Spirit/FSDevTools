@@ -43,6 +43,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Set;
 
+import static com.espirit.moddev.IntegrationTest.PROJECT_NAME;
 import static com.espirit.moddev.IntegrationTest.PROJECT_NAME_WITH_DB;
 
 /**
@@ -54,6 +55,7 @@ public class ExportCommandIT extends AbstractIntegrationTest {
     @Test
     public void parameterLessCommandCreatesFiles() throws Exception {
         ExportCommand command = new ExportCommand();
+        command.setProject(PROJECT_NAME);
         initContextWithDefaultConfiguration(command);
 
         ExportResult result = command.call();
@@ -73,6 +75,7 @@ public class ExportCommandIT extends AbstractIntegrationTest {
 
         command.addUid("pagetemplate:default");
         command.addUid("page:homepage");
+        command.setProject(PROJECT_NAME);
         initContextWithDefaultConfiguration(command);
         Assert.assertEquals(2, command.getIdentifiers().size());
         Assert.assertTrue(command.getIdentifiers().contains(new UidIdentifier(IDProvider.UidType.TEMPLATESTORE, "default")));
@@ -87,7 +90,7 @@ public class ExportCommandIT extends AbstractIntegrationTest {
     @Test
     public void templatestoreRootParameterCommandCreatesFiles() throws Exception {
         ExportCommand command = new ExportCommand();
-
+        command.setProject(PROJECT_NAME);
         initContextWithDefaultConfiguration(command);
         command.addUid("root:templatestore");
         Assert.assertEquals(1, command.getIdentifiers().size());
@@ -103,8 +106,8 @@ public class ExportCommandIT extends AbstractIntegrationTest {
         ExportCommand command = new ExportCommand();
 
         command.addUid("pagetemplate:default");
-        initContextWithDefaultConfiguration(command);
         command.setProject(PROJECT_NAME_WITH_DB);
+        initContextWithDefaultConfiguration(command);
         command.setIncludeProjectProperties(true);
 
         ExportResult result = command.call();
@@ -116,8 +119,8 @@ public class ExportCommandIT extends AbstractIntegrationTest {
     @Test
     public void exportCurrentState() throws Exception {
         ExportCommand command = new ExportCommand();
-        initContextWithDefaultConfiguration(command);
         command.setProject(PROJECT_NAME_WITH_DB);
+        initContextWithDefaultConfiguration(command);
 
 
         // make some changes to page 'imprint' which is based on pagetemplate 'default' of integration test project
@@ -156,8 +159,8 @@ public class ExportCommandIT extends AbstractIntegrationTest {
      @Test
     public void exportReleaseState() throws Exception {
         ExportCommand command = new ExportCommand();
+         command.setProject(PROJECT_NAME_WITH_DB);
         initContextWithDefaultConfiguration(command);
-        command.setProject(PROJECT_NAME_WITH_DB);
 
 
         // make some changes to page 'imprint' which is based on pagetemplate 'default' of integration test project

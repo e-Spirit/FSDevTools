@@ -26,12 +26,12 @@ import com.espirit.moddev.IntegrationTest;
 import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 import com.espirit.moddev.cli.commands.export.ExportTemplatesCommand;
 import com.espirit.moddev.cli.results.ExportResult;
-
 import de.espirit.firstspirit.access.store.IDProvider;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import static com.espirit.moddev.IntegrationTest.PROJECT_NAME;
 
 /**
  * @author e-Spirit AG
@@ -42,6 +42,7 @@ public class ExportTemplatesCommandTest extends AbstractIntegrationTest {
     @Test
     public void parameterLessCommandCreatesFiles() {
         ExportTemplatesCommand command = new ExportTemplatesCommand();
+        command.setProject(PROJECT_NAME);
         initContextWithDefaultConfiguration(command);
 
         ExportResult result = command.call();
