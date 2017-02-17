@@ -22,6 +22,7 @@
 
 package com.espirit.moddev.cli.api.parsing.parser;
 
+import com.espirit.moddev.cli.api.parsing.identifier.EntitiesIdentifier;
 import com.espirit.moddev.cli.api.parsing.identifier.Identifier;
 import com.espirit.moddev.cli.api.parsing.identifier.RootNodeIdentifier;
 import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
@@ -89,10 +90,12 @@ public class RegistryBasedParserTest {
     public void testParseMultipleElements() throws Exception {
         testling.registerParser(new RootNodeIdentifierParser());
         testling.registerParser(new UidIdentifierParser());
-        final List<Identifier> list = testling.parse(Arrays.asList("root:templatestore", "mediafolder:layout"));
-        Assert.assertEquals("List should contain two identifiers!", 2, list.size());
+        testling.registerParser(new EntitiesIdentifierParser());
+        final List<Identifier> list = testling.parse(Arrays.asList("root:templatestore", "mediafolder:layout", "entities:news"));
+        Assert.assertEquals("List should contain two identifiers!", 3, list.size());
         Assert.assertThat(list.contains(new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE)), equalTo(true));
         Assert.assertThat(list.contains(new UidIdentifier(IDProvider.UidType.MEDIASTORE_FOLDER, "layout")), equalTo(true));
+        Assert.assertThat(list.contains(new EntitiesIdentifier("news")), equalTo(true));
     }
 
     @Test

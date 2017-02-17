@@ -25,6 +25,7 @@ package com.espirit.moddev.cli.commands.export;
 import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 import com.espirit.moddev.cli.api.parsing.exceptions.IDProviderNotFoundException;
 import com.espirit.moddev.cli.api.parsing.identifier.Identifier;
+import com.espirit.moddev.cli.api.parsing.parser.EntitiesIdentifierParser;
 import com.espirit.moddev.cli.api.parsing.parser.RegistryBasedParser;
 import com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser;
 import com.espirit.moddev.cli.api.parsing.parser.UidIdentifierParser;
@@ -87,6 +88,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     public AbstractExportCommand() {
         parser = new RegistryBasedParser();
         parser.registerParser(new RootNodeIdentifierParser());
+        parser.registerParser(new EntitiesIdentifierParser());
         parser.registerParser(new UidIdentifierParser());
     }
 

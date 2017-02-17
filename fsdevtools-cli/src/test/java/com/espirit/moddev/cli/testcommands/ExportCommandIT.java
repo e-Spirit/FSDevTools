@@ -115,6 +115,23 @@ public class ExportCommandIT extends AbstractIntegrationTest {
         Assert.assertTrue(result.get().getCreatedFiles().size() > 0);
     }
 
+    @Test
+    public void singleContent2ExportCommand() throws Exception {
+        ExportCommand command = new ExportCommand();
+
+        String content2 = "news";
+        command.addUid("entities:" + content2);
+        command.setProject(PROJECT_NAME_WITH_DB);
+        initContextWithDefaultConfiguration(command);
+
+        ExportResult result = command.call();
+        Assert.assertTrue("Export folder not found.", containsSubDirectory(testFolder.getRoot(), "Entities"));
+        File entitiesFolder = new File(testFolder.getRoot() + "/Entities");
+        Assert.assertTrue("Export folder for entities not found.", entitiesFolder.exists());
+        Assert.assertTrue("Export folder not for News entities not found.", containsSubDirectory(entitiesFolder, "News"));
+        Assert.assertTrue(result.get().getCreatedFiles().size() > 0);
+    }
+
 
     @Test
     public void exportCurrentState() throws Exception {
