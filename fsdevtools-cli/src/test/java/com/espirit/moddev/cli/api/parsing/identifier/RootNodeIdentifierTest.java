@@ -14,8 +14,9 @@ public class RootNodeIdentifierTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNullUidType() {
+        expectedException.expect(IllegalArgumentException.class);
         new RootNodeIdentifier(null);
     }
 

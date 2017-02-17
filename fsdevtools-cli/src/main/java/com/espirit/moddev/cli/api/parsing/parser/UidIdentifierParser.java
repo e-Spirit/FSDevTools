@@ -86,7 +86,7 @@ public class UidIdentifierParser implements Parser<UidIdentifier> {
                         final UidIdentifier fqUid = new UidIdentifier(getUidTypeForPrefix(firstPart.toLowerCase(Locale.UK)), secondPart);
                         list.add(fqUid);
                     } else {
-                        throw new IllegalArgumentException("Wrong input format for input string " + firstPart);
+                        throw new IllegalArgumentException("Wrong input format for input string " + identifier);
                     }
                 }
             }

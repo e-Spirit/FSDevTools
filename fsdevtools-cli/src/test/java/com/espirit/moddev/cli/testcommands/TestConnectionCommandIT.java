@@ -40,7 +40,7 @@ public class TestConnectionCommandIT extends AbstractIntegrationTest {
     @Test
     public void connectionCanBeEstablished() {
         TestConnectionCommand command = new TestConnectionCommand();
-
+        command.setProject(PROJECT_NAME);
         initDefaultConfiguration(command);
 
         Result result = command.call();

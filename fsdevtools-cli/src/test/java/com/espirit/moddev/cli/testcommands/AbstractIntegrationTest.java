@@ -38,8 +38,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Collection;
 
-import static com.espirit.moddev.IntegrationTest.PROJECT_NAME;
-
 /**
  * Can be used as a base for integration tests that need a connection to a fs server. Uses connection and temporary folder rules to isolate filesync
  * tests from each other as far as possible.
@@ -57,7 +55,7 @@ public abstract class AbstractIntegrationTest {
     }
 
     public void initDefaultConfiguration(GlobalConfig command) {
-        command.setProject(PROJECT_NAME);
+        command.setProject(command.getProject());
         command.setHost(CliConstants.DEFAULT_HOST.value());
         command.setUser(CliConstants.DEFAULT_USER.value());
         command.setPassword(CliConstants.DEFAULT_USER.value());
