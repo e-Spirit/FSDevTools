@@ -81,8 +81,10 @@ public class ExportResult extends SimpleResult<ExportOperation.Result> {
      */
     private void logFileChanges(final Set<FileHandle> handle, final String state) {
         LOGGER.info("{}: {}", state, handle.size());
-        for (FileHandle _handle : handle) {
-            LOGGER.debug("fileName: " + _handle.getName() + " filePath: " + _handle.getPath());
+        if (LOGGER.isDebugEnabled()) {
+            for (FileHandle _handle : handle) {
+                LOGGER.debug("fileName: " + _handle.getName() + " filePath: " + _handle.getPath());
+            }
         }
     }
 }

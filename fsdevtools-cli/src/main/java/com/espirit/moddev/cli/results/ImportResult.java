@@ -81,15 +81,19 @@ public class ImportResult extends SimpleResult<ImportOperation.Result> {
 
     private void logProblems(List<ImportOperation.Problem> problems, String state) {
         LOGGER.info("{}: {}", state, problems.size());
-        for (ImportOperation.Problem problem : problems) {
-            LOGGER.debug(problem.getMessage());
+        if (LOGGER.isDebugEnabled()) {
+            for (ImportOperation.Problem problem : problems) {
+                LOGGER.debug(problem.getMessage());
+            }
         }
     }
 
     private void logEntityChanges(Set<BasicEntityInfo> createdEntities, String state) {
         LOGGER.info("{}: {}", state, createdEntities.size());
-        for (BasicEntityInfo info : createdEntities) {
-            LOGGER.debug("Gid: " + info.getGid() + " EntityType: " + info.getEntityType());
+        if (LOGGER.isDebugEnabled()) {
+            for (BasicEntityInfo info : createdEntities) {
+                LOGGER.debug("Gid: " + info.getGid() + " EntityType: " + info.getEntityType());
+            }
         }
     }
 
@@ -101,8 +105,10 @@ public class ImportResult extends SimpleResult<ImportOperation.Result> {
      */
     private void logElementChanges(final Set<BasicElementInfo> handle, final String state) {
         LOGGER.info("{}: {}", state, handle.size());
-        for (BasicElementInfo _handle : handle) {
-            LOGGER.debug("Uid: " + _handle.getUid() + " NodeId: " + _handle.getNodeId());
+        if (LOGGER.isDebugEnabled()) {
+            for (BasicElementInfo _handle : handle) {
+                LOGGER.debug("Uid: " + _handle.getUid() + " NodeId: " + _handle.getNodeId());
+            }
         }
     }
 }
