@@ -37,7 +37,7 @@ their regions is arbitrary.
 While groups behave mostly like commands - because a default command is executed
 if specified for a group - the description of a group might give information about several commands.
 In order to get information about all known commands or command groups, use `fs-cli help`. Information about a command
-or a group can be retrieved with `fs-cli help commandorgroup`. Besides that, examples are provided per command.
+or a group can be retrieved with `fs-cli help commandogroup`. Besides that, examples are provided per command.
 Every command description also features information about the command's specific options and all global options.
 
 Exampe online help for test command group (enter `fs-cli help test`):

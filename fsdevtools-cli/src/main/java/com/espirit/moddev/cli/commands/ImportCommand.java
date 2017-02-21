@@ -68,7 +68,7 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
     private boolean dontCreateProjectIfMissing;
 
     /** The dont create entities. */
-    @Option(name = {"--dont-create-entities"}, description = "Don not create entities when importing")
+    @Option(name = {"--dont-create-entities"}, description = "Do not create entities when importing")
     private boolean dontCreateEntities;
 
     /** The layer mapping. */
