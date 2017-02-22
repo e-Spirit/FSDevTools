@@ -90,7 +90,6 @@ public class ExportCommand extends AbstractExportCommand {
         return "Exports elements from all stores. If no arguments given, the store roots are exported. \n"
                 + "Known prefixes for export: " + UidIdentifierParser.getAllKnownPrefixStrings()
                                                     .stream()
-                                                    .filter(prefix -> !UidIdentifierParser.getAllKnownPrefixStrings().contains(prefix))
                                                     .collect(Collectors.joining(", ")) + "\n"
                 + "Export entities with identifiers like 'entities:news'\n"
                 + "Known root node identifiers: " + RootNodeIdentifier.getAllStorePostfixes().keySet().stream().collect(Collectors.joining(", ")) + "\n\n"
