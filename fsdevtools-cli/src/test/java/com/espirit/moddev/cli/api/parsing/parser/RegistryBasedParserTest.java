@@ -147,6 +147,6 @@ public class RegistryBasedParserTest {
         Assert.assertTrue(testling.appliesTo("projectprops:RESOLUTION"));
 
         List<Identifier> result = testling.parse(Lists.newArrayList("path:/TemplateStore/Pagetemplates/<FOLDER_NAME>/UID", "entities:Produkte", "projectprops:RESOLUTION", "template:homepage", "projectprops:COMMON"));
-        Assert.assertEquals(5, result.size());
+        Assert.assertEquals(4, result.size());
     }
 }

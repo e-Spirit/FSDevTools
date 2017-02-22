@@ -35,8 +35,11 @@ import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import de.espirit.firstspirit.transport.PropertiesTransportOptions;
 
 /**
  * This command can be used to export elements from all stores at the same time.
@@ -49,12 +52,14 @@ import java.util.stream.Collectors;
             {
                 "export all -- pagetemplate:default page:homepage",
                 "export all -- root:templatestore page:homepage",
-                "export all -- page:homepage entities:news"
+                "export all -- page:homepage entities:news",
+                "export all -- projectproperty:LANGUAGES projectproperty:RESOLUTIONS"
             },
             descriptions = {
                 "Exports a pagetemplate and a page",
                 "Exports the templatestore and a page",
-                "Exports a page and news entities according to the configured filter"
+                "Exports a page and news entities according to the configured filter",
+                "Exports the project properties languages and resolutions"
             })
 public class ExportCommand extends AbstractExportCommand {
 
@@ -88,6 +93,7 @@ public class ExportCommand extends AbstractExportCommand {
                                                     .filter(prefix -> !UidIdentifierParser.getAllKnownPrefixStrings().contains(prefix))
                                                     .collect(Collectors.joining(", ")) + "\n"
                 + "Export entities with identifiers like 'entities:news'\n"
-                + "Known root node identifiers: " + RootNodeIdentifier.getAllStorePostfixes().keySet().stream().collect(Collectors.joining(", ")) + "\n\n";
+                + "Known root node identifiers: " + RootNodeIdentifier.getAllStorePostfixes().keySet().stream().collect(Collectors.joining(", ")) + "\n\n"
+                + "Possible project properties: " + Arrays.toString(PropertiesTransportOptions.ProjectPropertyType.values());
     }
 }
