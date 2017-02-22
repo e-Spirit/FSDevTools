@@ -42,6 +42,7 @@ import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 import de.espirit.firstspirit.transport.PropertiesTransportOptions;
 
 import de.espirit.firstspirit.transport.PropertiesTransportOptions.ProjectPropertyType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +51,8 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.espirit.moddev.cli.api.parsing.parser.ProjectPropertiesParser;
 
 /**
  * This class gathers shared logic and options for different export commands. It can be extended for custom implementations of uid filtering, or to
@@ -90,6 +93,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
         parser.registerParser(new RootNodeIdentifierParser());
         parser.registerParser(new EntitiesIdentifierParser());
         parser.registerParser(new UidIdentifierParser());
+        parser.registerParser(new ProjectPropertiesParser());
     }
 
     /**
