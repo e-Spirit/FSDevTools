@@ -1,9 +1,7 @@
 package com.espirit.moddev.cli.api.parsing.parser;
 
 import com.espirit.moddev.cli.api.parsing.identifier.Identifier;
-import com.google.common.collect.Lists;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
