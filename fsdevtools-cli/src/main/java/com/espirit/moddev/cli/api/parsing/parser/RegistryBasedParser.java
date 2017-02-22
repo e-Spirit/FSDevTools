@@ -24,12 +24,16 @@ package com.espirit.moddev.cli.api.parsing.parser;
 
 import com.espirit.moddev.cli.api.parsing.exceptions.NoSuitableParserRegisteredException;
 import com.espirit.moddev.cli.api.parsing.identifier.Identifier;
+
 import com.google.common.collect.Lists;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import org.apache.commons.collections4.map.HashedMap;
 
 public class RegistryBasedParser implements Parser<Identifier> {
     protected static final Logger LOGGER = LoggerFactory.getLogger(RegistryBasedParser.class);
@@ -50,25 +54,38 @@ public class RegistryBasedParser implements Parser<Identifier> {
     @Override
     public List<Identifier> parse(List<String> input) {
         List result = new ArrayList(input.size());
+        
+        Map<Parser, List<String>> inputForParser = new HashedMap<Parser, List<String>>();
+        
         for(String currentInput : input) {
             boolean suitableParserRegistered = false;
-            parserLoop:
             for(Parser currentParser : registeredParsers) {
                 if(currentParser.appliesTo(currentInput)) {
                     suitableParserRegistered = true;
-                    List parsed = currentParser.parse(Lists.newArrayList(currentInput));
-                    if(parsed == null) {
-                        throw new IllegalStateException("A parser of class " + currentParser.getClass() + " was invoked and returned null for input " + currentInput);
-                    } else if(parsed.isEmpty()) {
-                         LOGGER.warn("A parser of class {} was invoked and returned an empty list for input {}", currentParser.getClass(), currentInput);
+                    List tempList;
+                    if(!inputForParser.containsKey(currentParser)) {
+                        tempList = new ArrayList();
+                    } else {
+                        tempList = inputForParser.get(currentParser);
                     }
-                    result.addAll(parsed);
-                    break parserLoop;
+                    tempList.add(currentInput);
+                    inputForParser.put(currentParser, tempList);
                 }
             }
             if(!suitableParserRegistered) {
                 throw new NoSuitableParserRegisteredException("No applicable parser found for input string " + currentInput);
             }
+        }
+        
+        for (Map.Entry<Parser, List<String>> entry : inputForParser.entrySet()) {
+            Parser currentParser = entry.getKey();
+            List parsed = currentParser.parse(entry.getValue());
+            if(parsed == null) {
+                throw new IllegalStateException("A parser of class " + currentParser.getClass() + " was invoked and returned null for input " + entry.getValue());
+            } else if(parsed.isEmpty()) {
+                LOGGER.warn("A parser of class {} was invoked and returned an empty list for input {}", currentParser.getClass(), entry.getValue());
+            }
+            result.addAll(parsed);
         }
         return result;
     }

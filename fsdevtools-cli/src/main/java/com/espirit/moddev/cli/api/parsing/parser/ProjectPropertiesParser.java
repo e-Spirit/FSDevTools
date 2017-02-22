@@ -49,7 +49,7 @@ public class ProjectPropertiesParser implements Parser<ProjectPropertiesIdentifi
                     uidScanner.next();
                     if (uidScanner.hasNext()) {
                         final String secondPart = uidScanner.next();
-                        tempEnum.add(PropertiesTransportOptions.ProjectPropertyType.valueOf(secondPart));
+                        tempEnum.add(PropertiesTransportOptions.ProjectPropertyType.valueOf(secondPart.toUpperCase()));
                     } else {
                         throw new IllegalArgumentException("Wrong input format for input string " + identifier);
                     }

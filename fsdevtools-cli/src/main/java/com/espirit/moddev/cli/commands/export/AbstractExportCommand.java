@@ -195,18 +195,14 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
             addProjectProperties(exportOperation);
         }
     }
-
+     
     /**
      * Get a list of {@link UidIdentifier}s that specify the elements that should be synchronized.
      *
      * @return a {@link java.util.List} of {@link UidIdentifier}s that specify the elements that should be synchronized
      */
     public List<Identifier> getIdentifiers() {
-        return uids.isEmpty() ? Collections.emptyList() : parse(uids);
-    }
-
-    private List<Identifier> parse(List<String> uids) {
-        return parser.parse(uids);
+        return uids.isEmpty() ? Collections.emptyList() : parser.parse(uids);
     }
 
     /**
