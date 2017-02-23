@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.espirit.moddev.cli.api.parsing.parser;
 
 import java.util.ArrayList;
@@ -12,10 +7,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 import java.util.regex.Pattern;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.espirit.moddev.cli.api.parsing.identifier.ProjectPropertiesIdentifier;
-import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 
 import de.espirit.firstspirit.transport.PropertiesTransportOptions;
 
@@ -23,8 +18,8 @@ import de.espirit.firstspirit.transport.PropertiesTransportOptions;
  *
  * @author kohlbrecher
  */
-public class ProjectPropertiesParser implements Parser<ProjectPropertiesIdentifier>{
-    protected static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ProjectPropertiesParser.class);
+public class ProjectPropertiesParser implements Parser<ProjectPropertiesIdentifier> {
+    protected static final Logger LOGGER = LoggerFactory.getLogger(ProjectPropertiesParser.class);
     
     private static final Pattern DELIMITER = Pattern.compile("\\s*:\\s*");
     
@@ -64,13 +59,7 @@ public class ProjectPropertiesParser implements Parser<ProjectPropertiesIdentifi
     @Override
     public boolean appliesTo(String input) {
         String[] splitted = input.split(DELIMITER.pattern());
-        if(splitted.length != 2) {
-            return false;
-        }
-        if(splitted[0].toLowerCase(Locale.UK).trim().equals(CUSTOM_PREFIX_PROJECT_PROPERTIES)) {
-            return true;
-        }
-        return false;
+        return splitted.length != 2 && splitted[0].toLowerCase(Locale.UK).trim().equals(CUSTOM_PREFIX_PROJECT_PROPERTIES);
     }
     
 }
