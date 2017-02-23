@@ -1,11 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.espirit.moddev.cli.api.parsing.identifier;
 
 import java.util.EnumSet;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.espirit.firstspirit.agency.StoreAgent;
@@ -16,9 +12,9 @@ import de.espirit.firstspirit.transport.PropertiesTransportOptions;
  *
  * @author kohlbrecher
  */
-public class ProjectPropertiesIdentifier implements Identifier{
+public class ProjectPropertiesIdentifier implements Identifier {
     
-    protected static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ProjectPropertiesIdentifier.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(ProjectPropertiesIdentifier.class);
 
     final EnumSet<PropertiesTransportOptions.ProjectPropertyType> projectPropertyTypes;
 
@@ -35,7 +31,7 @@ public class ProjectPropertiesIdentifier implements Identifier{
         options.setProjectPropertiesTransport(projectPropertyTypes);
     }
     
-     @Override
+    @Override
     public boolean equals(final Object o) {
         if(o == null || o.getClass() != this.getClass()) {
             return false;
