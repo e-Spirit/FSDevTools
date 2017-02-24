@@ -180,6 +180,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
         if (identifiers.isEmpty()) {
             LOGGER.debug("Adding store roots...");
             addStoreRoots(storeAgent, exportOperation);
+            addProjectProperties(exportOperation);
         } else {
             LOGGER.debug("addExportedElements - UIDs {}", identifiers);
             try {
@@ -189,10 +190,10 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
             } catch (IDProviderNotFoundException e) {
                 LOGGER.error("Cannot retrieve IDProvider for one or more given identifiers. No elements added to the export operation.", e);
             }
-        }
 
-        if (isIncludeProjectProperties()) {
-            addProjectProperties(exportOperation);
+            if (isIncludeProjectProperties()) {
+                addProjectProperties(exportOperation);
+            }
         }
     }
      
