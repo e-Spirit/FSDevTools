@@ -59,7 +59,7 @@ public class ProjectPropertiesParser implements Parser<ProjectPropertiesIdentifi
     @Override
     public boolean appliesTo(String input) {
         String[] splitted = input.split(DELIMITER.pattern());
-        return splitted.length != 2 && splitted[0].toLowerCase(Locale.UK).trim().equals(CUSTOM_PREFIX_PROJECT_PROPERTIES);
+        return splitted.length == 2 && splitted[0].toLowerCase(Locale.UK).trim().equals(CUSTOM_PREFIX_PROJECT_PROPERTIES);
     }
     
 }
