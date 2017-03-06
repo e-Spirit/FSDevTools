@@ -32,6 +32,7 @@
         <module>fsdevtools-cli-api</module>
         <module>fsdevtools-cli</module>
         <module>fsdevtools-core</module>
+        <module>fsdevtools-serverstart</module>
     </modules>
     <packaging>pom</packaging>
     <name>FirstSpirit Development Tools</name>
