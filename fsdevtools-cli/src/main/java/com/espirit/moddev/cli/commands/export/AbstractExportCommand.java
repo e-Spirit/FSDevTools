@@ -81,7 +81,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     private boolean includeProjectProperties;
 
     @Arguments(title = "identifiers", description = "A list of parsable identifiers, in the form of 'pagetemplate:default' (<uid type>:<uid>) root:storetype or similar")
-    private List<String> uids = new LinkedList<>();
+    private List<String> identifiers = new LinkedList<>();
 
     private RegistryBasedParser parser;
 
@@ -203,7 +203,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
      * @return a {@link java.util.List} of {@link UidIdentifier}s that specify the elements that should be synchronized
      */
     public List<Identifier> getIdentifiers() {
-        return uids.isEmpty() ? Collections.emptyList() : parser.parse(uids);
+        return identifiers.isEmpty() ? Collections.emptyList() : parser.parse(identifiers);
     }
 
     /**
@@ -278,8 +278,8 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
      *
      * @param identifier the string based UidIdentifier that should be added to this command's argument list
      */
-    public void addUid(final String identifier) {
-        uids.add(identifier);
+    public void addIdentifier(final String identifier) {
+        identifiers.add(identifier);
     }
 
 }

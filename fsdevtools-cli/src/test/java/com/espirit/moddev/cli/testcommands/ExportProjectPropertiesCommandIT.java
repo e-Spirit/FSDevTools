@@ -22,12 +22,16 @@
 
 package com.espirit.moddev.cli.testcommands;
 
-import com.espirit.moddev.cli.commands.export.ExportProjectPropertiesCommand;
+import com.espirit.moddev.cli.api.parsing.identifier.ProjectPropertiesIdentifier;
+import com.espirit.moddev.cli.commands.export.ExportCommand;
 import com.espirit.moddev.cli.results.ExportResult;
 
+import de.espirit.firstspirit.transport.PropertiesTransportOptions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.util.EnumSet;
 
 import static com.espirit.moddev.IntegrationTest.PROJECT_NAME;
 
@@ -41,9 +45,13 @@ public class ExportProjectPropertiesCommandIT extends AbstractIntegrationTest {
 
     @Test
     public void noParameterCommandWithProjectPropertiesCreatesFiles() throws Exception {
-        ExportProjectPropertiesCommand command = new ExportProjectPropertiesCommand();
+        ExportCommand command = new ExportCommand();
+        command.addIdentifier("projectproperty:languages");
         command.setProject(PROJECT_NAME);
         initContextWithDefaultConfiguration(command);
+
+        Assert.assertTrue(command.getIdentifiers().contains(new ProjectPropertiesIdentifier(EnumSet.of(PropertiesTransportOptions.ProjectPropertyType.LANGUAGES))));
+
 
         ExportResult result = command.call();
         Assert.assertTrue("Export folder for project properties not found.",

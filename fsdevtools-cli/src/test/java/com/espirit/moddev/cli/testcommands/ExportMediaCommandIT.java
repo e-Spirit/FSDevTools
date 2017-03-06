@@ -23,9 +23,11 @@
 package com.espirit.moddev.cli.testcommands;
 
 import com.espirit.moddev.IntegrationTest;
-import com.espirit.moddev.cli.commands.export.ExportMediaCommand;
+import com.espirit.moddev.cli.api.parsing.identifier.RootNodeIdentifier;
+import com.espirit.moddev.cli.commands.export.ExportCommand;
 import com.espirit.moddev.cli.results.ExportResult;
 
+import de.espirit.firstspirit.access.store.IDProvider;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -40,9 +42,12 @@ public class ExportMediaCommandIT extends AbstractIntegrationTest {
 
     @Test
     public void parameterLessCommandCreatesFiles() {
-        ExportMediaCommand command = new ExportMediaCommand();
+        ExportCommand command = new ExportCommand();
+        command.addIdentifier("root:mediastore");
         command.setProject(PROJECT_NAME);
         initContextWithDefaultConfiguration(command);
+
+        Assert.assertTrue(command.getIdentifiers().contains(new RootNodeIdentifier(IDProvider.UidType.MEDIASTORE_FOLDER)));
 
         ExportResult result = command.call();
         // This value depends on the used test project
