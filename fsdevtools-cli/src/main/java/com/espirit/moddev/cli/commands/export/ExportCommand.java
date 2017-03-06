@@ -47,13 +47,13 @@ import de.espirit.firstspirit.transport.PropertiesTransportOptions;
  *
  * @author e-Spirit AG
  */
-@Command(name = "all", groupNames = {"export"})
+@Command(name = "export")
 @Examples(examples =
             {
-                "export all -- pagetemplate:default page:homepage",
-                "export all -- root:templatestore page:homepage",
-                "export all -- page:homepage entities:news",
-                "export all -- projectproperty:LANGUAGES projectproperty:RESOLUTIONS"
+                "export -- pagetemplate:default page:homepage",
+                "export -- root:templatestore page:homepage",
+                "export -- page:homepage entities:news",
+                "export -- projectproperty:LANGUAGES projectproperty:RESOLUTIONS"
             },
             descriptions = {
                 "Exports a pagetemplate and a page",
@@ -87,7 +87,7 @@ public class ExportCommand extends AbstractExportCommand {
 
     @Description
     public static String getDescription() {
-        return "Exports elements from all stores. If no arguments given, the store roots are exported. \n"
+        return "Exports elements from all stores. If no arguments given, the store roots and project properties are exported. \n\n"
                 + "Known prefixes for export: " + UidIdentifierParser.getAllKnownPrefixStrings()
                                                     .stream()
                                                     .collect(Collectors.joining(", ")) + "\n"

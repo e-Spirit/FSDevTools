@@ -73,8 +73,8 @@ public class ExportCommandIT extends AbstractIntegrationTest {
     public void multipleParameterCommandCreatesFiles() throws Exception {
         ExportCommand command = new ExportCommand();
 
-        command.addUid("pagetemplate:default");
-        command.addUid("page:homepage");
+        command.addIdentifier("pagetemplate:default");
+        command.addIdentifier("page:homepage");
         command.setProject(PROJECT_NAME);
         initContextWithDefaultConfiguration(command);
         Assert.assertEquals(2, command.getIdentifiers().size());
@@ -92,7 +92,7 @@ public class ExportCommandIT extends AbstractIntegrationTest {
         ExportCommand command = new ExportCommand();
         command.setProject(PROJECT_NAME);
         initContextWithDefaultConfiguration(command);
-        command.addUid("root:templatestore");
+        command.addIdentifier("root:templatestore");
         Assert.assertEquals(1, command.getIdentifiers().size());
         Assert.assertTrue(command.getIdentifiers().contains(new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE)));
 
@@ -105,7 +105,7 @@ public class ExportCommandIT extends AbstractIntegrationTest {
     public void singleParameterCommandWithProjectPropertiesCreatesFiles() throws Exception {
         ExportCommand command = new ExportCommand();
 
-        command.addUid("pagetemplate:default");
+        command.addIdentifier("pagetemplate:default");
         command.setProject(PROJECT_NAME_WITH_DB);
         initContextWithDefaultConfiguration(command);
         command.setIncludeProjectProperties(true);
@@ -120,7 +120,7 @@ public class ExportCommandIT extends AbstractIntegrationTest {
         ExportCommand command = new ExportCommand();
 
         String content2 = "news";
-        command.addUid("entities:" + content2);
+        command.addIdentifier("entities:" + content2);
         command.setProject(PROJECT_NAME_WITH_DB);
         initContextWithDefaultConfiguration(command);
 
@@ -144,8 +144,8 @@ public class ExportCommandIT extends AbstractIntegrationTest {
         final Page page = (Page) command.getContext().requireSpecialist(StoreAgent.TYPE).getStore(Store.Type.PAGESTORE).getStoreElement("imprint", Page.UID_TYPE);
         changeDisplayName(page, command.getContext().getProject().getMasterLanguage(), "new displayname");
 
-        command.addUid("pagetemplate:default");
-        command.addUid("page:imprint");
+        command.addIdentifier("pagetemplate:default");
+        command.addIdentifier("page:imprint");
 
 
         ExportResult result = command.call();
@@ -184,8 +184,8 @@ public class ExportCommandIT extends AbstractIntegrationTest {
         final Page page = (Page) command.getContext().requireSpecialist(StoreAgent.TYPE).getStore(Store.Type.PAGESTORE).getStoreElement("imprint", Page.UID_TYPE);
         changeDisplayName(page, command.getContext().getProject().getMasterLanguage(), "new displayname");
 
-        command.addUid("pagetemplate:default");
-        command.addUid("page:imprint");
+        command.addIdentifier("pagetemplate:default");
+        command.addIdentifier("page:imprint");
         command.setExportReleaseState(true);
 
 

@@ -58,44 +58,12 @@ public class CliTest {
     @Test
     public void defaultCliHasAllGroups() {
         CliBuilder<Command> builder = Cli.getDefaultCliBuilder();
-        assertNotNull(builder.getGroup("export"));
         assertNotNull(builder.getGroup("test"));
     }
     @Test
     public void defaultCliHasHelpAsDefaultCommand() {
         CliBuilder<Command> builder = Cli.getDefaultCliBuilder();
         assertEquals(builder.build().getMetadata().getDefaultCommand().getType(), HelpCommand.class);
-    }
-
-    @Test
-    public void defaultCliHasExportGroupWithCommands() {
-        com.github.rvesse.airline.Cli<Command> cli = Cli.getDefaultCliBuilder().build();
-        Optional<CommandGroupMetadata> group = cli.getMetadata().getCommandGroups()
-                .stream()
-                .filter(groupMetadata -> groupMetadata.getName().equals("export"))
-                .findFirst();
-
-        assertTrue(group.isPresent());
-        assertFalse(group.get().getDescription().isEmpty());
-        List<String> commands = group.get().getCommands().stream().map(command -> command.getName()).collect(Collectors.toList());
-
-        boolean hasExportCommand = commands.stream()
-                .anyMatch(commandName -> commandName.equals("all"));
-        assertTrue(hasExportCommand);
-
-        boolean hasTemplateStoreCommand = commands.stream()
-                .anyMatch(commandName -> commandName.equals("templatestore"));
-        assertTrue(hasTemplateStoreCommand);
-
-        boolean hasMediaStoreCommand = commands.stream()
-                .anyMatch(commandName -> commandName.equals("mediastore"));
-        assertTrue(hasMediaStoreCommand);
-
-        boolean hasProjectPropertiesCommand = commands.stream()
-                .anyMatch(commandName -> commandName.equals("projectproperties"));
-        assertTrue(hasProjectPropertiesCommand);
-
-        assertEquals(ExportCommand.class, group.get().getDefaultCommand().getType());
     }
 
     @Test
