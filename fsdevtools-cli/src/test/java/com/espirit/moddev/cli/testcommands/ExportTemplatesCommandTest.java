@@ -43,7 +43,7 @@ public class ExportTemplatesCommandTest extends AbstractIntegrationTest {
     @Test
     public void parameterLessCommandCreatesFiles() {
         ExportCommand command = new ExportCommand();
-        command.addIdentifier("root:templatestore");
+        command.addIdentifier("templatestore");
         command.setProject(PROJECT_NAME);
         initContextWithDefaultConfiguration(command);
 

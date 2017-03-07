@@ -31,23 +31,14 @@ import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 import org.slf4j.LoggerFactory;
 
+import static com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser.getAllStorePostfixes;
+
 /**
  * Identifier for FirstSpirit store root nodes.
  */
 public class RootNodeIdentifier implements Identifier {
     protected static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(RootNodeIdentifier.class);
     public static final String ROOT_NODE_IDENTIFIER = "root";
-
-    private static final BiMap<String, IDProvider.UidType> STORE_POSTFIXES;
-    static {
-        STORE_POSTFIXES = HashBiMap.create();
-        STORE_POSTFIXES.put("templatestore", IDProvider.UidType.TEMPLATESTORE);
-        STORE_POSTFIXES.put("pagestore", IDProvider.UidType.PAGESTORE);
-        STORE_POSTFIXES.put("contentstore", IDProvider.UidType.CONTENTSTORE);
-        STORE_POSTFIXES.put("sitestore", IDProvider.UidType.SITESTORE_FOLDER);
-        STORE_POSTFIXES.put("mediastore", IDProvider.UidType.MEDIASTORE_FOLDER);
-        STORE_POSTFIXES.put("globalstore", IDProvider.UidType.GLOBALSTORE);
-    }
 
     private final IDProvider.UidType uidType;
 
@@ -101,11 +92,4 @@ public class RootNodeIdentifier implements Identifier {
         return result;
     }
 
-    /**
-     * Retrieves all FirstSpirit store postfix identifiers that are used as export uids.
-     * @return a collection of postfixes and UidTypes
-     */
-    public static BiMap<String, IDProvider.UidType> getAllStorePostfixes() {
-        return Maps.unmodifiableBiMap(STORE_POSTFIXES);
-    }
 }

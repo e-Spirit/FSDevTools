@@ -43,7 +43,7 @@ public class ExportMediaCommandIT extends AbstractIntegrationTest {
     @Test
     public void parameterLessCommandCreatesFiles() {
         ExportCommand command = new ExportCommand();
-        command.addIdentifier("root:mediastore");
+        command.addIdentifier("mediastore");
         command.setProject(PROJECT_NAME);
         initContextWithDefaultConfiguration(command);
 
