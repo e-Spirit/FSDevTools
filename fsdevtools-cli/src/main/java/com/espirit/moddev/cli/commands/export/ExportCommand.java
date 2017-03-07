@@ -54,11 +54,13 @@ import static com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser
             {
                 "export -- pagetemplate:default page:homepage",
                 "export -- root:templatestore page:homepage",
+                "export -- templatestore page:homepage",
                 "export -- page:homepage entities:news",
                 "export -- projectproperty:LANGUAGES projectproperty:RESOLUTIONS"
             },
             descriptions = {
                 "Exports a pagetemplate and a page",
+                "Exports the templatestore and a page",
                 "Exports the templatestore and a page",
                 "Exports a page and news entities according to the configured filter",
                 "Exports the project properties languages and resolutions"
@@ -94,6 +96,7 @@ public class ExportCommand extends AbstractExportCommand {
                                                     .stream()
                                                     .collect(Collectors.joining(", ")) + "\n"
                 + "Export entities with identifiers like 'entities:news'\n"
+                + "Export projectproperties with identifiers like 'projectproperty:RESOLUTIONS'\n"
                 + "Known root node identifiers: " + getAllStorePostfixes().keySet().stream().collect(Collectors.joining(", ")) + "\n\n"
                 + "Possible project properties: " + Arrays.toString(PropertiesTransportOptions.ProjectPropertyType.values());
     }
