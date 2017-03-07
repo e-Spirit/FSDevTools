@@ -23,6 +23,7 @@
 package com.espirit.moddev.cli.testcommands.reflectiontest;
 
 import com.espirit.moddev.cli.api.command.Command;
+import com.espirit.moddev.cli.commands.export.ExportCommand;
 import com.espirit.moddev.cli.reflection.CommandUtils;
 import com.espirit.moddev.cli.reflection.ReflectionUtils;
 
@@ -67,6 +68,12 @@ public class CommandUtilsTest {
         public void readsCommandDescriptionAsEmptyFromDescriptionMethodReturnsNonStringTest() {
             Assert.assertTrue("Description is expected to be empty from getDescription()",
                               ReflectionUtils.getDescriptionFromClass(CommandWithNonStringDescriptionMethod.class).isEmpty());
+        }
+        @Test
+        public void readsCommandDescriptionExportCommand() {
+            final String expectedMsgPart = "Possible project properties: [ALL, COMMON, RESOLUTIONS, GROUPS, SCHEDULE_ENTRIES, TEMPLATE_SETS, FONTS, MODULE_CONFIGURATIONS, LANGUAGES, USERS]";
+            final String msg = ReflectionUtils.getDescriptionFromClass(ExportCommand.class);
+            Assert.assertTrue("wrong project properties msg. was=\n" + msg, msg.contains(expectedMsgPart));
         }
     }
 }

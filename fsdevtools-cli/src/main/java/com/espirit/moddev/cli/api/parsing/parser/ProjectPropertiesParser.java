@@ -1,11 +1,6 @@
 package com.espirit.moddev.cli.api.parsing.parser;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +18,12 @@ public class ProjectPropertiesParser implements Parser<ProjectPropertiesIdentifi
     
     private static final Pattern DELIMITER = Pattern.compile("\\s*:\\s*");
     
-    private static final String CUSTOM_PREFIX_PROJECT_PROPERTIES = "projectproperty";
+    public static final String CUSTOM_PREFIX_PROJECT_PROPERTIES = "projectproperty";
+
+    /**
+     * Special keyword to identify all project properties (projectproperty:ALL)
+     */
+    public static final String ALL = "ALL";
 
     @Override
     public List<ProjectPropertiesIdentifier> parse(List<String> input) {
@@ -44,7 +44,13 @@ public class ProjectPropertiesParser implements Parser<ProjectPropertiesIdentifi
                     uidScanner.next();
                     if (uidScanner.hasNext()) {
                         final String secondPart = uidScanner.next();
-                        tempEnum.add(PropertiesTransportOptions.ProjectPropertyType.valueOf(secondPart.toUpperCase()));
+                        if (ALL.equalsIgnoreCase(secondPart)) {
+                            // user wants to export all project properties --> ignore already collected properties and skip further collecting
+                            tempEnum = EnumSet.allOf(PropertiesTransportOptions.ProjectPropertyType.class);
+                            break;
+                        } else {
+                            tempEnum.add(PropertiesTransportOptions.ProjectPropertyType.valueOf(secondPart.toUpperCase()));
+                        }
                     } else {
                         throw new IllegalArgumentException("Wrong input format for input string " + identifier);
                     }
@@ -56,9 +62,23 @@ public class ProjectPropertiesParser implements Parser<ProjectPropertiesIdentifi
         return list;
     }
 
+
+    /**
+     * Returns a set of all possible values for the related keyword {@link #CUSTOM_PREFIX_PROJECT_PROPERTIES}
+     */
+    public static Collection<String> getAllPossibleValues() {
+        final List<String> result = new ArrayList<>();
+        result.add(ALL);
+        for (final PropertiesTransportOptions.ProjectPropertyType projectPropertyType : PropertiesTransportOptions.ProjectPropertyType.values()) {
+            result.add(projectPropertyType.name());
+        }
+        return result;
+    }
+
+
     @Override
     public boolean appliesTo(String input) {
-        String[] splitted = input.split(DELIMITER.pattern());
+        final String[] splitted = input.split(DELIMITER.pattern());
         return splitted.length == 2 && splitted[0].toLowerCase(Locale.UK).trim().equals(CUSTOM_PREFIX_PROJECT_PROPERTIES);
     }
     

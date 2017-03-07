@@ -77,7 +77,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
             description = "export only the release state of store elements; default is false (export of current state)")
     private boolean exportReleaseState;
 
-    @Option(name = "--includeProjectProperties", description = "export with project properties like resolutions or fonts")
+    @Option(name = "--includeProjectProperties", description = "DEPRECATED: use '" + ProjectPropertiesParser.CUSTOM_PREFIX_PROJECT_PROPERTIES + ":" + ProjectPropertiesParser.ALL + "' instead. Export with project properties like resolutions or fonts")
     private boolean includeProjectProperties;
 
     @Arguments(title = "identifiers", description = "A list of parsable identifiers, in the form of 'pagetemplate:default' (<uid type>:<uid>), \n" +
@@ -193,6 +193,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
             }
 
             if (isIncludeProjectProperties()) {
+                LOGGER.warn("usage of flag '--includeProjectProperties' is deprecated - use " + ProjectPropertiesParser.CUSTOM_PREFIX_PROJECT_PROPERTIES + ":" + ProjectPropertiesParser.ALL + "' instead");
                 addProjectProperties(exportOperation);
             }
         }
