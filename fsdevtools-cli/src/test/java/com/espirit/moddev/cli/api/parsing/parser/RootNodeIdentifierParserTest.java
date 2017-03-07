@@ -29,6 +29,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.FromDataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
@@ -37,16 +38,31 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.isA;
 
 @RunWith(Theories.class)
 public class RootNodeIdentifierParserTest {
 
-    @DataPoints
-    public static List[] testcases =
+    @DataPoints("applyable")
+    public static List[] applyable =
             new List[]{ Arrays.asList("root:myuid"),
                     Arrays.asList("ROOT:myuid"),
                     Arrays.asList("ROOT :myuid"),
-                    Arrays.asList("ROOT : myuid")};
+                    Arrays.asList("ROOT : myuid"),
+                    Arrays.asList("contentstore"),
+                    Arrays.asList("globalstore"),
+                    Arrays.asList("templatestore"),
+                    Arrays.asList("pagestore"),
+                    Arrays.asList("sitestore")};
+
+    @DataPoints("parsable")
+    public static List[] parsable =
+            new List[]{Arrays.asList("ROOT : contentstore"),
+                    Arrays.asList("contentstore"),
+                    Arrays.asList("globalstore"),
+                    Arrays.asList("templatestore"),
+                    Arrays.asList("pagestore"),
+                    Arrays.asList("sitestore")};
 
     private RootNodeIdentifierParser testling;
 
@@ -56,7 +72,7 @@ public class RootNodeIdentifierParserTest {
     }
 
     @Theory
-    public void testAppliesTo(List<String> uids) throws Exception {
+    public void testAppliesTo(@FromDataPoints("applyable") List<String> uids) throws Exception {
         for(String current : uids) {
             boolean appliesTo = testling.appliesTo(current);
             Assert.assertTrue("Parser should apply to string " + current, appliesTo);
@@ -76,5 +92,12 @@ public class RootNodeIdentifierParserTest {
     public void testParseStoreRootRequestWithExistingStore() throws Exception {
         final List<RootNodeIdentifier> list = testling.parse(Arrays.asList("root:templatestore"));
         Assert.assertThat(list.contains(new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE)), equalTo(true));
+    }
+
+    @Theory
+    public void testParseNakedStoreRoot(@FromDataPoints("parsable") List<String> uids) throws Exception {
+        final List<RootNodeIdentifier> list = testling.parse(uids);
+        Assert.assertThat(list.size(), equalTo(1));
+        Assert.assertThat(list.get(0), isA(RootNodeIdentifier.class));
     }
 }

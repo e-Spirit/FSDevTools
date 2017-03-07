@@ -41,6 +41,8 @@ import java.util.stream.Collectors;
 
 import de.espirit.firstspirit.transport.PropertiesTransportOptions;
 
+import static com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser.getAllStorePostfixes;
+
 /**
  * This command can be used to export elements from all stores at the same time.
  * It makes use of its command arguments to retrieve elements for the export.
@@ -92,7 +94,7 @@ public class ExportCommand extends AbstractExportCommand {
                                                     .stream()
                                                     .collect(Collectors.joining(", ")) + "\n"
                 + "Export entities with identifiers like 'entities:news'\n"
-                + "Known root node identifiers: " + RootNodeIdentifier.getAllStorePostfixes().keySet().stream().collect(Collectors.joining(", ")) + "\n\n"
+                + "Known root node identifiers: " + getAllStorePostfixes().keySet().stream().collect(Collectors.joining(", ")) + "\n\n"
                 + "Possible project properties: " + Arrays.toString(PropertiesTransportOptions.ProjectPropertyType.values());
     }
 }
