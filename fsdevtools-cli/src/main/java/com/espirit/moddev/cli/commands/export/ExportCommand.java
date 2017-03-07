@@ -25,17 +25,22 @@ package com.espirit.moddev.cli.commands.export;
 import com.espirit.moddev.cli.api.annotations.Description;
 import com.espirit.moddev.cli.api.parsing.identifier.Identifier;
 import com.espirit.moddev.cli.api.parsing.identifier.RootNodeIdentifier;
+import com.espirit.moddev.cli.api.parsing.parser.ProjectPropertiesParser;
 import com.espirit.moddev.cli.api.parsing.parser.UidIdentifierParser;
 import com.espirit.moddev.cli.results.ExportResult;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.help.Examples;
 
+import de.espirit.common.StringUtil;
+import de.espirit.common.tools.Strings;
 import de.espirit.firstspirit.agency.OperationAgent;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,14 +61,16 @@ import static com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser
                 "export -- root:templatestore page:homepage",
                 "export -- templatestore page:homepage",
                 "export -- page:homepage entities:news",
-                "export -- projectproperty:LANGUAGES projectproperty:RESOLUTIONS"
+                "export -- projectproperty:LANGUAGES projectproperty:RESOLUTIONS",
+                "export -- projectproperty:ALL"
             },
             descriptions = {
                 "Exports a pagetemplate and a page",
                 "Exports the templatestore and a page",
                 "Exports the templatestore and a page",
                 "Exports a page and news entities according to the configured filter",
-                "Exports the project properties languages and resolutions"
+                "Exports the project properties languages and resolutions",
+                "Exports the all project properties"
             })
 public class ExportCommand extends AbstractExportCommand {
 
@@ -98,6 +105,7 @@ public class ExportCommand extends AbstractExportCommand {
                 + "Export entities with identifiers like 'entities:news'\n"
                 + "Export projectproperties with identifiers like 'projectproperty:RESOLUTIONS'\n"
                 + "Known root node identifiers: " + getAllStorePostfixes().keySet().stream().collect(Collectors.joining(", ")) + "\n\n"
-                + "Possible project properties: " + Arrays.toString(PropertiesTransportOptions.ProjectPropertyType.values());
+                + "Possible project properties: [" + ProjectPropertiesParser.getAllPossibleValues().stream().collect(Collectors.joining(", ")) + "]";
+
     }
 }
