@@ -80,7 +80,8 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     @Option(name = "--includeProjectProperties", description = "export with project properties like resolutions or fonts")
     private boolean includeProjectProperties;
 
-    @Arguments(title = "identifiers", description = "A list of parsable identifiers, in the form of 'pagetemplate:default' (<uid type>:<uid>) root:storetype or similar")
+    @Arguments(title = "identifiers", description = "A list of parsable identifiers, in the form of 'pagetemplate:default' (<uid type>:<uid>), \n" +
+            "'root:templatestore' (root:<root node identifier>), 'templatestore' (root node identifier) or similar")
     private List<String> identifiers = new LinkedList<>();
 
     private RegistryBasedParser parser;
