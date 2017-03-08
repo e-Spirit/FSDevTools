@@ -63,7 +63,7 @@ public class ProjectPropertiesParserTest {
 
 
     @Test
-    public void parse_All_whitespace() throws Exception {
+    public void parseAllWhitespace() throws Exception {
         List<ProjectPropertiesIdentifier> result = testling.parse(Arrays.asList("projectproperty: ALL"));
         Assert.assertEquals(1, result.size());
         EnumSet<PropertiesTransportOptions.ProjectPropertyType> enumSet = EnumSet.allOf(PropertiesTransportOptions.ProjectPropertyType.class);
@@ -72,7 +72,7 @@ public class ProjectPropertiesParserTest {
 
 
     @Test
-    public void parse_all_with_additional_prop() throws Exception {
+    public void parseAllWithAdditionalProperty() throws Exception {
         List<ProjectPropertiesIdentifier> result = testling.parse(Arrays.asList("projectproperty:LANGUAGES", "projectproperty:ALL"));
         Assert.assertEquals(1, result.size());
         EnumSet<PropertiesTransportOptions.ProjectPropertyType> enumSet = EnumSet.allOf(PropertiesTransportOptions.ProjectPropertyType.class);
@@ -81,7 +81,7 @@ public class ProjectPropertiesParserTest {
 
 
     @Test
-    public void parse_all_with_additional_properties() throws Exception {
+    public void parseAllWithAdditionalProperties() throws Exception {
         List<ProjectPropertiesIdentifier> result = testling.parse(Arrays.asList("projectproperty:LANGUAGES", "projectproperty:ALL", "projectproperty:RESOLUTIONS"));
         Assert.assertEquals(1, result.size());
         EnumSet<PropertiesTransportOptions.ProjectPropertyType> enumSet = EnumSet.allOf(PropertiesTransportOptions.ProjectPropertyType.class);
