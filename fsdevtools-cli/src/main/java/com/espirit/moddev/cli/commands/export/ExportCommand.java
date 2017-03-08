@@ -70,7 +70,7 @@ import static com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser
                 "Exports the templatestore and a page",
                 "Exports a page and news entities according to the configured filter",
                 "Exports the project properties languages and resolutions",
-                "Exports the all project properties"
+                "Exports all project properties"
             })
 public class ExportCommand extends AbstractExportCommand {
 
