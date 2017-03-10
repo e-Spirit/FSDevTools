@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
 
@@ -167,9 +168,11 @@ public final class Cli {
         if (jarFilePath != null) {
             String fsAccessPath = normalizePath(jarFilePath);
             try (JarFile jar = new JarFile(fsAccessPath)) {
-                final String fsVersionJar = jar.getManifest().getMainAttributes().getValue("FirstSpirit-Version");
-                final Object[] argsFsVersion = {fsVersionJar, fsAccessPath};
-                LOGGER.info("Using FirstSpirit Access API version {} (see {})", argsFsVersion);
+                final Attributes mainAttributes = jar.getManifest().getMainAttributes();
+                final String fsVersionJar = mainAttributes.getValue("FirstSpirit-Version");
+                final String fsImplVersionJar = mainAttributes.getValue("Implementation-Version");
+                final Object[] argsFsVersion = {fsVersionJar, fsImplVersionJar, fsAccessPath};
+                LOGGER.info("Using FirstSpirit Access API version {}.{} (see {})", argsFsVersion);
             }
         }
     }
