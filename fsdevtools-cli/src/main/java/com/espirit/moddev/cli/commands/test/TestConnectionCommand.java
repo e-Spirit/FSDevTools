@@ -46,4 +46,13 @@ public class TestConnectionCommand extends GlobalConfig implements Command {
             return new TestResult(this, e);
         }
     }
+
+    @Override
+    public boolean needsContext() {
+        /*
+         super class returns {@code true} by default which leads CliContextImpl initialization and connecting of FS connection
+         --> this command creates his own context to initialize connection --> return true to disable default behaviour
+         */
+        return false;
+    }
 }
