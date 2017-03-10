@@ -126,7 +126,12 @@ public final class ReflectionUtils {
                 }
             }
         } catch (InvocationTargetException | IllegalAccessException e) {
-            LOGGER.debug(e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("error getting description for command '" + commandClass + "'", e);
+            } else {
+                LOGGER.info("error getting description for command '" + commandClass + "'");
+            }
+            description = "<error reading description of command>";
         }
 
         return description;
