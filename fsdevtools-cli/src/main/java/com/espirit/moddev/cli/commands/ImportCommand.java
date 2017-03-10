@@ -107,7 +107,9 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
             importOperation.setIgnoreEntities(dontCreateEntities);
             importOperation.setRevisionComment(getImportComment());
             importOperation.setLayerMapper(configureLayerMapper());
-            final ImportOperation.Result result = importOperation.perform(getSynchronizationDirectory());
+            final String syncDirStr = getSynchronizationDirectoryString();
+            LOGGER.info("importing from directory '" + syncDirStr + "'");
+            final ImportOperation.Result result = importOperation.perform(getSynchronizationDirectory(syncDirStr));
             return new ImportResult(result);
         } catch (final Exception e) { //NOSONAR
             return new ImportResult(e);

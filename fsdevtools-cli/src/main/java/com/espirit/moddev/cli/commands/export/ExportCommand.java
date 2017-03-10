@@ -24,27 +24,18 @@ package com.espirit.moddev.cli.commands.export;
 
 import com.espirit.moddev.cli.api.annotations.Description;
 import com.espirit.moddev.cli.api.parsing.identifier.Identifier;
-import com.espirit.moddev.cli.api.parsing.identifier.RootNodeIdentifier;
 import com.espirit.moddev.cli.api.parsing.parser.ProjectPropertiesParser;
 import com.espirit.moddev.cli.api.parsing.parser.UidIdentifierParser;
 import com.espirit.moddev.cli.results.ExportResult;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.help.Examples;
-
-import de.espirit.common.StringUtil;
-import de.espirit.common.tools.Strings;
 import de.espirit.firstspirit.agency.OperationAgent;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import de.espirit.firstspirit.transport.PropertiesTransportOptions;
 
 import static com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser.getAllStorePostfixes;
 
@@ -88,7 +79,9 @@ public class ExportCommand extends AbstractExportCommand {
 
         final ExportOperation.Result result;
         try {
-            result = exportOperation.perform(getSynchronizationDirectory());
+            final String syncDirStr = getSynchronizationDirectoryString();
+            LOGGER.info("exporting to directory '" + syncDirStr + "'");
+            result = exportOperation.perform(getSynchronizationDirectory(syncDirStr));
         } catch (IOException e) {
             return new ExportResult(e);
         }

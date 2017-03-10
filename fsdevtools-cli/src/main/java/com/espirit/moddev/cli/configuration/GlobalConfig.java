@@ -34,6 +34,8 @@ import de.espirit.firstspirit.access.project.ProjectScriptContext;
 import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.io.FileSystem;
 import de.espirit.firstspirit.io.FileSystemsAgent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 
@@ -209,8 +211,11 @@ public class GlobalConfig implements Config {
 
     @Override
     public <F extends FileHandle> FileSystem<F> getSynchronizationDirectory() {
-        final String syncDirStr = getSynchronizationDirectoryString();
+        return getSynchronizationDirectory(getSynchronizationDirectoryString());
+    }
 
+
+    protected <F extends FileHandle> FileSystem<F> getSynchronizationDirectory(final String syncDirStr) {
         SyncDirectoryFactory syncDirectoryFactory = new SyncDirectoryFactory(this);
         syncDirectoryFactory.checkAndCreateSyncDirIfNeeded(syncDirStr);
 
