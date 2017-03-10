@@ -158,8 +158,8 @@
                                 <requireProperty>
                                     <property>firstspirit.version</property>
                                     <message>"FirstSpirit version of 5.2.x must be specified."</message>
-                                    <regex>^5\.2\.[\d]+</regex>
-                                    <regexMessage>"FirstSpirit version must start with '5.2.'."</regexMessage>
+                                    <regex>^5\.2(_BETA)?\.[\d]+</regex>
+                                    <regexMessage>"FirstSpirit version must start with '5.2.' or '5.2_BETA.'."</regexMessage>
                                 </requireProperty>
                             </rules>
                             <fail>true</fail>
@@ -399,7 +399,7 @@
                 </property>
             </activation>
             <properties>
-                <firstspirit.version>5.2.611</firstspirit.version>
+                <firstspirit.version>5.2.715</firstspirit.version>
             </properties>
         </profile>
         <profile>

@@ -22,13 +22,17 @@
 
 package com.espirit.moddev.cli.results;
 
+import com.espirit.moddev.cli.results.logging.AdvancedLogger;
+import de.espirit.firstspirit.common.TsFeatures;
 import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
 /**
  * Specialization of {@link com.espirit.moddev.cli.results.SimpleResult} that can be used in conjunction with export commands.
+ *
  * @author e-Spirit AG
  */
 public class ExportResult extends SimpleResult<ExportOperation.Result> {
@@ -45,6 +49,7 @@ public class ExportResult extends SimpleResult<ExportOperation.Result> {
 
     /**
      * Creates a new error result using the given exception.
+     *
      * @param exception Exception produced by the command
      * @see com.espirit.moddev.cli.results.SimpleResult#SimpleResult(Exception)
      */
@@ -54,23 +59,45 @@ public class ExportResult extends SimpleResult<ExportOperation.Result> {
 
     @Override
     public void log() {
-        if(isError()) {
+        if (isError()) {
             LOGGER.error("Export operation not successful", exception);
         } else {
             LOGGER.info("Export operation successful");
-
-                logFileChanges(get().getUpdatedFiles(), "updated files");
-                logFileChanges(get().getCreatedFiles(), "created files");
-                logFileChanges(get().getDeletedFiles(), "deleted files");
-                Object[] args = {Integer.valueOf(get().getUpdatedFiles().size()),
-                        Integer.valueOf(get().getCreatedFiles().size()),
-                        Integer.valueOf(get().getDeletedFiles().size())};
-
-                LOGGER.info("Export done.\n\t"
-                        + "updated files: {}\n\t"
-                        + "created files: {}\n\t"
-                        + "deleted files: {}", args);
+            if (TsFeatures.TS_194654.isEnabled()) {
+                // new logging, based on elements
+                logElementBasedResult(get());
+            } else {
+                // old logging, based on files
+                logFileHandleBasedResult(get());
+            }
         }
+    }
+
+    /**
+     * Logs a result based on the element based export operation api result.
+     *
+     * @see de.espirit.firstspirit.store.access.nexport.ExportInfo
+     */
+    private void logElementBasedResult(@NotNull final ExportOperation.Result exportResult) {
+        AdvancedLogger.logResult(LOGGER, exportResult);
+    }
+
+
+    /**
+     * Logs a result based on file handles.
+     */
+    private void logFileHandleBasedResult(@NotNull final ExportOperation.Result exportResult) {
+        logFileChanges(exportResult.getUpdatedFiles(), "updated files");
+        logFileChanges(exportResult.getCreatedFiles(), "created files");
+        logFileChanges(exportResult.getDeletedFiles(), "deleted files");
+        Object[] args = {Integer.valueOf(exportResult.getUpdatedFiles().size()),
+                Integer.valueOf(exportResult.getCreatedFiles().size()),
+                Integer.valueOf(exportResult.getDeletedFiles().size())};
+
+        LOGGER.info("Export done.\n\t"
+                + "updated files: {}\n\t"
+                + "created files: {}\n\t"
+                + "deleted files: {}", args);
     }
 
     /**
