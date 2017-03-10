@@ -160,7 +160,7 @@ public class CliContextImpl implements CliContext {
         if (clientConfig.isActivateProjectIfDeactivated()) {
             activateProject(projectName, project);
         }
-        LOGGER.debug("project is '{}'", project);
+        LOGGER.info("project is '{}'", project);
         return project;
     }
 
