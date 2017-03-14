@@ -40,25 +40,27 @@ import org.slf4j.LoggerFactory;
 public class UidIdentifier implements Identifier {
     protected static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(UidIdentifier.class);
 
-    private final IDProvider.UidType uidType;
+    private final UidMapping uidMapping;
     private final String uid;
+    private final String stringRepresentation;
 
     /**
      * Instantiates a new full qualified uid.
      *
-     * @param uidType {@link de.espirit.firstspirit.access.store.IDProvider.UidType} of the uid
+     * @param uidMapping {@link UidMapping} of the uid
      * @param uid the uid
-     * @throws IllegalArgumentException if uidType or uid is null or blank
+     * @throws IllegalArgumentException if uidMapping or uid is null or blank
      */
-    public UidIdentifier(final IDProvider.UidType uidType, final String uid) {
-        if (uidType == null) {
-            throw new IllegalArgumentException("uidType is null.");
+    public UidIdentifier(final UidMapping uidMapping, final String uid) {
+        if (uidMapping == null) {
+            throw new IllegalArgumentException("uidMapping is null.");
         }
         if (StringUtils.isBlank(uid)) {
             throw new IllegalArgumentException("Uid is null or empty.");
         }
-        this.uidType = uidType;
+        this.uidMapping = uidMapping;
         this.uid = uid;
+        stringRepresentation = uidMapping.getPrefix() + ":" + uid;
     }
 
     /**
@@ -66,8 +68,8 @@ public class UidIdentifier implements Identifier {
      *
      * @return the {@link de.espirit.firstspirit.access.store.IDProvider.UidType} of this uid.
      */
-    public IDProvider.UidType getUidType() {
-        return uidType;
+    public UidMapping getUidMapping() {
+        return uidMapping;
     }
 
     /**
@@ -87,30 +89,50 @@ public class UidIdentifier implements Identifier {
             return true;
         } else {
             final UidIdentifier that = (UidIdentifier) o;
-            return uidType.equals(that.uidType) && uid.equals(that.uid);
+            return uidMapping.equals(that.uidMapping) && uid.equals(that.uid);
         }
     }
 
     @Override
     public int hashCode() {
-        int result = uidType.hashCode();
+        int result = uidMapping.hashCode();
         result = 31 * result + uid.hashCode(); //NOSONAR
         return result;
     }
 
     @Override
     public String toString() {
-        return UidIdentifierParser.getPrefixForUidType(uidType) + ":" + uid;
+        return stringRepresentation;
     }
 
+    /**
+     * Selects a StoreElement from the store corresponding to this element's uidMapping. If any
+     * object matching the uid could be retrieved, a check is performed, if its class
+     * matches the class specified by this identifiers class (@code {@link UidMapping#getCorrespondingType()}).
+     *
+     * That is, because multiple implementing classes (for example FILE and MEDIA) can share the same UidType.
+     * If you query the store with uid and UidType only, you could retrieve a MEDIA item, even if you only wanted
+     * a FILE item. Since uids are unique across stores, there shouldn't be further problems.
+     *
+     * @param storeAgent the StoreAgent to retrieve store instances from
+     * @param exportOperation the ExportOperation matching elements should be added to
+     */
     @Override
     public void addToExportOperation(StoreAgent storeAgent, ExportOperation exportOperation) {
-        final IDProvider storeElement = storeAgent.getStore(getUidType().getStoreType()).getStoreElement(getUid(), getUidType());
+        final IDProvider storeElement = storeAgent.getStore(getUidMapping().getStoreType()).getStoreElement(getUid(), getUidMapping().getUidType());
         if(storeElement != null) {
-            LOGGER.debug("Adding store element: {}", storeElement);
-            exportOperation.addElement(storeElement);
+            if(isAssignableFrom(storeElement)) {
+                LOGGER.debug("Adding store element: {}", storeElement);
+                exportOperation.addElement(storeElement);
+            } else {
+                LOGGER.warn("Store element not added, because the class of the uid mapping isn't compatible: {}", storeElement);
+            }
         } else {
             throw new IDProviderNotFoundException("IDProvider cannot be retrieved for " + uid);
         }
+    }
+
+    private boolean isAssignableFrom(IDProvider storeElement) {
+        return getUidMapping().getCorrespondingType().isAssignableFrom(storeElement.getClass());
     }
 }

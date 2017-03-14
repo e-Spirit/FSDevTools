@@ -64,7 +64,7 @@ public class ProjectPropertiesParser implements Parser<ProjectPropertiesIdentifi
 
 
     /**
-     * Returns a set of all possible values for the related keyword {@link #CUSTOM_PREFIX_PROJECT_PROPERTIES}
+     * @return Returns a set of all possible values for the related keyword {@link #CUSTOM_PREFIX_PROJECT_PROPERTIES}
      */
     public static Collection<String> getAllPossibleValues() {
         final List<String> result = new ArrayList<>();

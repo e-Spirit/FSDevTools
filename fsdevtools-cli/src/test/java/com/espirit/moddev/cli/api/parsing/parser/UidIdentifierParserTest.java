@@ -25,6 +25,7 @@ package com.espirit.moddev.cli.api.parsing.parser;
 import com.espirit.moddev.cli.api.parsing.exceptions.UnregisteredPrefixException;
 
 import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
+import com.espirit.moddev.cli.api.parsing.identifier.UidMapping;
 import de.espirit.firstspirit.access.store.IDProvider;
 
 import org.junit.Assert;
@@ -80,7 +81,7 @@ public class UidIdentifierParserTest {
     public void testParse(List<String> uids) throws Exception {
         final List<UidIdentifier> list = testling.parse(uids);
 
-        assertThat("Expected PAGE but got: " + uids, list.get(0).getUidType(), is(IDProvider.UidType.PAGESTORE));
+        assertThat("Expected PAGE but got: " + uids, list.get(0).getUidMapping(), is(UidMapping.PAGE));
         assertThat("Expected 'myuid' but got: " + uids, list.get(0).getUid(), is("myuid"));
     }
 
