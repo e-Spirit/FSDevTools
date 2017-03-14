@@ -28,6 +28,7 @@ import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.api.configuration.ImportConfig;
 
+import com.espirit.moddev.cli.api.parsing.identifier.UidMapping;
 import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.BaseContext;
 import de.espirit.firstspirit.access.Connection;
@@ -95,11 +96,9 @@ public class CliContextImplTest {
         when(clientConfig.getSynchronizationDirectoryString()).thenReturn("dir");
         when(clientConfig.getConnectionMode()).thenReturn(FsConnectionMode.HTTP);
         final List<UidIdentifier> uidList = new ArrayList<>();
-        uidList.add(new UidIdentifier(IDProvider.UidType.PAGESTORE, "yourUID"));
-        uidList.add(new UidIdentifier(IDProvider.UidType.PAGESTORE, "yourSecondUID"));
+        uidList.add(new UidIdentifier(UidMapping.PAGE, "yourUID"));
+        uidList.add(new UidIdentifier(UidMapping.PAGE, "yourSecondUID"));
         when(clientConfig.isCreatingProjectIfMissing()).thenReturn(true);
-        /**when(clientConfig.isDeleteObsoleteFiles()).thenReturn(true);
-         when(clientConfig.isExportChildElements()).thenReturn(true);*/
 
         connection = mock(Connection.class);
         specialistsBroker = mock(SpecialistsBroker.class);

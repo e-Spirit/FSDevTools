@@ -22,10 +22,7 @@
 
 package com.espirit.moddev.cli.api.parsing.parser;
 
-import com.espirit.moddev.cli.api.parsing.identifier.EntitiesIdentifier;
-import com.espirit.moddev.cli.api.parsing.identifier.Identifier;
-import com.espirit.moddev.cli.api.parsing.identifier.RootNodeIdentifier;
-import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
+import com.espirit.moddev.cli.api.parsing.identifier.*;
 import com.google.common.collect.Lists;
 import de.espirit.firstspirit.access.store.IDProvider;
 import org.junit.Assert;
@@ -94,7 +91,7 @@ public class RegistryBasedParserTest {
         final List<Identifier> list = testling.parse(Arrays.asList("root:templatestore", "mediafolder:layout", "entities:news"));
         Assert.assertEquals("List should contain two identifiers!", 3, list.size());
         Assert.assertThat(list.contains(new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE)), equalTo(true));
-        Assert.assertThat(list.contains(new UidIdentifier(IDProvider.UidType.MEDIASTORE_FOLDER, "layout")), equalTo(true));
+        Assert.assertThat(list.contains(new UidIdentifier(UidMapping.MEDIAFOLDER, "layout")), equalTo(true));
         Assert.assertThat(list.contains(new EntitiesIdentifier("news")), equalTo(true));
     }
 
@@ -141,12 +138,12 @@ public class RegistryBasedParserTest {
         });
         testling.registerParser(new UidIdentifierParser());
 
-        Assert.assertTrue(testling.appliesTo("template:homepage"));
+        Assert.assertTrue(testling.appliesTo("pagetemplate:homepage"));
         Assert.assertTrue(testling.appliesTo("path:/TemplateStore/Pagetemplates/FOLDER_NAME/UID"));
         Assert.assertTrue(testling.appliesTo("entities:Produkte"));
         Assert.assertTrue(testling.appliesTo("projectprops:RESOLUTION"));
 
-        List<Identifier> result = testling.parse(Lists.newArrayList("path:/TemplateStore/Pagetemplates/<FOLDER_NAME>/UID", "entities:Produkte", "projectprops:RESOLUTION", "template:homepage", "projectprops:COMMON"));
+        List<Identifier> result = testling.parse(Lists.newArrayList("path:/TemplateStore/Pagetemplates/<FOLDER_NAME>/UID", "entities:Produkte", "projectprops:RESOLUTION", "pagetemplate:homepage", "projectprops:COMMON"));
         Assert.assertEquals(4, result.size());
     }
 }

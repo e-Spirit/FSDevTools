@@ -25,6 +25,7 @@ package com.espirit.moddev.cli.testcommands;
 import com.espirit.moddev.IntegrationTest;
 import com.espirit.moddev.cli.api.parsing.identifier.RootNodeIdentifier;
 import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
+import com.espirit.moddev.cli.api.parsing.identifier.UidMapping;
 import com.espirit.moddev.cli.commands.export.ExportCommand;
 import com.espirit.moddev.cli.results.ExportResult;
 import de.espirit.common.io.IoUtil;
@@ -78,8 +79,8 @@ public class ExportCommandIT extends AbstractIntegrationTest {
         command.setProject(PROJECT_NAME);
         initContextWithDefaultConfiguration(command);
         Assert.assertEquals(2, command.getIdentifiers().size());
-        Assert.assertTrue(command.getIdentifiers().contains(new UidIdentifier(IDProvider.UidType.TEMPLATESTORE, "default")));
-        Assert.assertTrue(command.getIdentifiers().contains(new UidIdentifier(UidType.PAGESTORE, "homepage")));
+        Assert.assertTrue(command.getIdentifiers().contains(new UidIdentifier(UidMapping.PAGETEMPLATE, "default")));
+        Assert.assertTrue(command.getIdentifiers().contains(new UidIdentifier(UidMapping.PAGE, "homepage")));
 
         ExportResult result = command.call();
         Assert.assertTrue(result.get().getCreatedFiles().size() > 0);

@@ -24,6 +24,7 @@ package com.espirit.moddev.cli.commands.export;
 
 import com.espirit.moddev.cli.api.annotations.Description;
 import com.espirit.moddev.cli.api.parsing.identifier.Identifier;
+import com.espirit.moddev.cli.api.parsing.identifier.UidMapping;
 import com.espirit.moddev.cli.api.parsing.parser.ProjectPropertiesParser;
 import com.espirit.moddev.cli.api.parsing.parser.UidIdentifierParser;
 import com.espirit.moddev.cli.results.ExportResult;
@@ -34,6 +35,7 @@ import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -92,8 +94,8 @@ public class ExportCommand extends AbstractExportCommand {
     @Description
     public static String getDescription() {
         return "Exports elements from all stores. If no arguments given, the store roots and project properties are exported. \n\n"
-                + "Known prefixes for export: " + UidIdentifierParser.getAllKnownPrefixStrings()
-                                                    .stream()
+                + "Known prefixes for export: " + Arrays.stream(UidMapping.values())
+                                                    .map(UidMapping::getPrefix)
                                                     .collect(Collectors.joining(", ")) + "\n"
                 + "Export entities with identifiers like 'entities:news'\n"
                 + "Export projectproperties with identifiers like 'projectproperty:RESOLUTIONS'\n"
