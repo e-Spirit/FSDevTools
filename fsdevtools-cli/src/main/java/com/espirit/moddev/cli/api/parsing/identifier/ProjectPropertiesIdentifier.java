@@ -8,21 +8,15 @@ import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 import de.espirit.firstspirit.transport.PropertiesTransportOptions;
 
-/**
- *
- * @author kohlbrecher
- */
 public class ProjectPropertiesIdentifier implements Identifier {
     
-    protected static final Logger LOGGER = LoggerFactory.getLogger(ProjectPropertiesIdentifier.class);
-
-    final EnumSet<PropertiesTransportOptions.ProjectPropertyType> projectPropertyTypes;
+    private final EnumSet<PropertiesTransportOptions.ProjectPropertyType> projectPropertyTypes;
 
     public ProjectPropertiesIdentifier(EnumSet<PropertiesTransportOptions.ProjectPropertyType> projectPropertyTypes) {
         if (projectPropertyTypes == null) {
             throw new IllegalArgumentException("projectPropertyType is null.");
         }
-        this.projectPropertyTypes = projectPropertyTypes;
+        this.projectPropertyTypes = EnumSet.copyOf(projectPropertyTypes);
     }
 
     @Override

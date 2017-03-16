@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author e-Spirit AG
  */
-@Command(name = "import", description = "Imports a FirstSpirit project with optional schema to target layer mapping")
+@Command(name = "import", description = "Imports a FirstSpirit project into a FirstSpirit Server.")
 @Examples(
         examples = {"fs-cli import -lm *:CREATE_NEW", "fs-cli import -lm my_schema:CREATE_NEW", "fs-cli import -lm *:derby_project14747_0",
         "fs-cli import -lm schema_a:derby_project14747_0,schema_b:derby_project14747_1"},
@@ -108,7 +108,7 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
             importOperation.setRevisionComment(getImportComment());
             importOperation.setLayerMapper(configureLayerMapper());
             final String syncDirStr = getSynchronizationDirectoryString();
-            LOGGER.info("importing from directory '" + syncDirStr + "'");
+            LOGGER.info("importing from directory '{}'", syncDirStr);
             final ImportOperation.Result result = importOperation.perform(getSynchronizationDirectory(syncDirStr));
             return new ImportResult(result);
         } catch (final Exception e) { //NOSONAR

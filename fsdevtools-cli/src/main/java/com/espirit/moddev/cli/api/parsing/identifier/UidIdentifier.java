@@ -125,7 +125,8 @@ public class UidIdentifier implements Identifier {
                 LOGGER.debug("Adding store element: {}", storeElement);
                 exportOperation.addElement(storeElement);
             } else {
-                LOGGER.warn("Store element not added, because the class of the uid mapping isn't compatible: {}", storeElement);
+                String errorMessage = "IDProvider of class " + storeElement.getClass().getSimpleName() + " found, but expected to find one of class " + getUidMapping().getCorrespondingType().getSimpleName() + " for uid " + uid;
+                throw new IDProviderNotFoundException(errorMessage);
             }
         } else {
             throw new IDProviderNotFoundException("IDProvider cannot be retrieved for " + uid);

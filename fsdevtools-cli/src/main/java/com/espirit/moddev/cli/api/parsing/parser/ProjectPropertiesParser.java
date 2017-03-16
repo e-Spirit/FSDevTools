@@ -49,7 +49,7 @@ public class ProjectPropertiesParser implements Parser<ProjectPropertiesIdentifi
                             tempEnum = EnumSet.allOf(PropertiesTransportOptions.ProjectPropertyType.class);
                             break;
                         } else {
-                            tempEnum.add(PropertiesTransportOptions.ProjectPropertyType.valueOf(secondPart.toUpperCase()));
+                            tempEnum.add(PropertiesTransportOptions.ProjectPropertyType.valueOf(secondPart.toUpperCase(Locale.UK)));
                         }
                     } else {
                         throw new IllegalArgumentException("Wrong input format for input string " + identifier);

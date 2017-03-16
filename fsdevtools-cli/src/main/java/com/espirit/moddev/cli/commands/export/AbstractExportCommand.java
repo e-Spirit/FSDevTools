@@ -154,23 +154,13 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     }
 
     /**
-     * Adds elements to the given ExportOperation. Calls {@link #addExportElements(StoreAgent, List, ExportOperation)} with the command's uid
-     * arguments.
-     *
-     * @param storeAgent      the StoreAgent to retrieve IDProviders with
-     * @param exportOperation the ExportOperation to add the elements to
-     */
-    public void addExportElements(final StoreAgent storeAgent, final ExportOperation exportOperation) {
-        addExportElements(storeAgent, getIdentifiers(), exportOperation);
-    }
-
-    /**
      * Adds elements to the given export operation. Uses registered parsers to retrieve elements.
      *
      * @param storeAgent      the StoreAgent to retrieve IDProviders with
      * @param identifiers     the identifiers of elements that should be added to the ExportOperation
      * @param exportOperation the ExportOperation to add the elements to
      * @throws IllegalArgumentException if the ExportOperation is null
+     * @throws IDProviderNotFoundException if {@link Identifier#addToExportOperation(StoreAgent, ExportOperation)} throws it
      */
     public void addExportElements(final StoreAgent storeAgent, final List<Identifier> identifiers, final ExportOperation exportOperation) {
         if (exportOperation == null) {
@@ -184,16 +174,12 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
             addProjectProperties(exportOperation);
         } else {
             LOGGER.debug("addExportedElements - UIDs {}", identifiers);
-            try {
-                for (Identifier identifier : identifiers) {
-                    identifier.addToExportOperation(storeAgent, exportOperation);
-                }
-            } catch (IDProviderNotFoundException e) {
-                LOGGER.error("Cannot retrieve IDProvider for one or more given identifiers. No elements added to the export operation.", e);
+            for (Identifier identifier : identifiers) {
+                identifier.addToExportOperation(storeAgent, exportOperation);
             }
 
             if (isIncludeProjectProperties()) {
-                LOGGER.warn("usage of flag '--includeProjectProperties' is deprecated - use " + ProjectPropertiesParser.CUSTOM_PREFIX_PROJECT_PROPERTIES + ":" + ProjectPropertiesParser.ALL + "' instead");
+                LOGGER.warn("usage of flag '--includeProjectProperties' is deprecated - use {}:{}' instead", ProjectPropertiesParser.CUSTOM_PREFIX_PROJECT_PROPERTIES, ProjectPropertiesParser.ALL);
                 addProjectProperties(exportOperation);
             }
         }
@@ -265,11 +251,11 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
             exportOperation.setExportParentElements(isExportParentElements());
             exportOperation.setExportRelease(isExportReleaseState());
 
-            addExportElements(getContext().requireSpecialist(StoreAgent.TYPE), exportOperation);
+            addExportElements(this.getContext().requireSpecialist(StoreAgent.TYPE), getIdentifiers(), exportOperation);
 
-            final ExportOperation.Result result = exportOperation.perform(getSynchronizationDirectory());
-
-            return new ExportResult(result);
+            final String syncDirStr = getSynchronizationDirectoryString();
+            LOGGER.info("exporting to directory '{}'", syncDirStr);
+            return new ExportResult(exportOperation.perform(getSynchronizationDirectory(syncDirStr)));
         } catch (final Exception e) {
             return new ExportResult(e);
         }
