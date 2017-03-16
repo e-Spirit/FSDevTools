@@ -22,6 +22,7 @@
 
 package com.espirit.moddev.cli.api.parsing.identifier;
 
+import com.espirit.moddev.cli.api.parsing.exceptions.IDProviderNotFoundException;
 import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.access.store.Store;
 import de.espirit.firstspirit.access.store.mediastore.Media;
@@ -98,8 +99,8 @@ public class UidIdentifierTest {
     }
     @Test
     public void addToExportOperationWithNonMatchingClass() {
+        expectedException.expect(IDProviderNotFoundException.class);
         ExportOperation exportOperation = createMediaElementAndExportItWithGivenUidMappingUidType(UidMapping.FILE);
-        verify(exportOperation, never()).addElement(any());
     }
 
     /**

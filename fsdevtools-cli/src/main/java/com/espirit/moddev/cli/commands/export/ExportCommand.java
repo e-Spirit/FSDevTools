@@ -69,26 +69,7 @@ public class ExportCommand extends AbstractExportCommand {
 
     @Override
     public ExportResult call() {
-        List<Identifier> uids = getIdentifiers();
-
-        final ExportOperation exportOperation = this.getContext().requireSpecialist(OperationAgent.TYPE).getOperation(ExportOperation.TYPE);
-        exportOperation.setDeleteObsoleteFiles(isDeleteObsoleteFiles());
-        exportOperation.setExportChildElements(isExportChildElements());
-        exportOperation.setExportParentElements(isExportParentElements());
-        exportOperation.setExportRelease(isExportReleaseState());
-
-        addExportElements(this.getContext().requireSpecialist(StoreAgent.TYPE), uids, exportOperation);
-
-        final ExportOperation.Result result;
-        try {
-            final String syncDirStr = getSynchronizationDirectoryString();
-            LOGGER.info("exporting to directory '" + syncDirStr + "'");
-            result = exportOperation.perform(getSynchronizationDirectory(syncDirStr));
-        } catch (IOException e) {
-            return new ExportResult(e);
-        }
-
-        return new ExportResult(result);
+        return exportStoreElements();
     }
 
     @Description

@@ -28,11 +28,15 @@ import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 import com.espirit.moddev.cli.api.parsing.identifier.UidMapping;
 import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.access.store.ReferenceType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.regex.Pattern;
 
 public class UidIdentifierParser implements Parser<UidIdentifier> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UidIdentifierParser.class);
 
     private static final Pattern DELIMITER = Pattern.compile("\\s*:\\s*");
 
@@ -40,7 +44,7 @@ public class UidIdentifierParser implements Parser<UidIdentifier> {
      * Parse a list of full qualified uid strings.
      * The strings must match the following pattern:<br>
      * <code>&lt;TYPE_PREFIX&gt;:&lt;UID&gt;</code><br>
-     * The allowed values for <code>TYPE_PREFIX</code> are defined by the {@link UidMapping} enum.
+     * The allowed values for <code>TYPE_PREFIX</code> are defined by {@link UidMapping}.
      *
      * @param input the {@link java.util.List} of full qualified uids following the above pattern
      * @throws IllegalArgumentException if input is null or if a string does not follow the above pattern
@@ -68,6 +72,7 @@ public class UidIdentifierParser implements Parser<UidIdentifier> {
                             final UidIdentifier fqUid = new UidIdentifier(UidMapping.valueOf(firstPart.toUpperCase(Locale.UK)), secondPart);
                             list.add(fqUid);
                         } catch (IllegalArgumentException e) {
+                            LOGGER.trace("Identifier string caused an exception, leading to an UnregisteredPrefixException", e);
                             throw new UnregisteredPrefixException("No uid mapping found for identifier " + firstPart);
                         }
                     } else {
@@ -89,8 +94,8 @@ public class UidIdentifierParser implements Parser<UidIdentifier> {
             UidMapping.valueOf(splitted[0].trim().toUpperCase(Locale.UK));
             return true;
         } catch (IllegalArgumentException e) {
+            LOGGER.trace("Identifier string caused an exception, leading to an UnregisteredPrefixException", e);
             return false;
         }
     }
-
 }

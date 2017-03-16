@@ -17,6 +17,12 @@ import de.espirit.firstspirit.access.store.templatestore.*;
 
 import java.util.Locale;
 
+/**
+ * This enum specifies all valid prefixes for {@link UidIdentifier}. A prefix
+ * always determines in which store to search for an element, which FirstSpirit
+ * {@link de.espirit.firstspirit.access.store.IDProvider.UidType} is addressed by
+ * the prefix and by which class the found result should be filtered.
+ */
 public enum UidMapping {
     CONTENT2(Store.Type.CONTENTSTORE, IDProvider.UidType.CONTENTSTORE, Content2.class),
     GCAPAGE(Store.Type.GLOBALSTORE, IDProvider.UidType.GLOBALSTORE, ContentStoreRoot.class),
@@ -53,18 +59,35 @@ public enum UidMapping {
         this.correspondingType = correspondingType;
     }
 
+    /**
+     * Getter for the prefix string, that identifies a mapping.
+     * @return the prefix string that corresponds to this mapping
+     */
     public String getPrefix() {
         return this.name().toLowerCase(Locale.UK);
     }
 
+    /**
+     * Getter for the {@link de.espirit.firstspirit.access.store.IDProvider.UidType} the
+     * uid mapping corresponds to.
+     * @return the {@link de.espirit.firstspirit.access.store.IDProvider.UidType} for this mapping
+     */
     public IDProvider.UidType getUidType() {
         return uidType;
     }
 
+    /**
+     * Getter for the class, a uid mapping uses for filtering.
+     * @return the class of which corresponding elements should be
+     */
     public Class getCorrespondingType() {
         return correspondingType;
     }
 
+    /**
+     * Getter for the {@link de.espirit.firstspirit.base.store.StoreType}
+     * @return the {@link de.espirit.firstspirit.base.store.StoreType} used by this mapping
+     */
     public Store.Type getStoreType() {
         return storeType;
     }
