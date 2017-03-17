@@ -23,20 +23,12 @@
 package com.espirit.moddev.cli.commands.export;
 
 import com.espirit.moddev.cli.api.annotations.Description;
-import com.espirit.moddev.cli.api.parsing.identifier.Identifier;
 import com.espirit.moddev.cli.api.parsing.identifier.UidMapping;
 import com.espirit.moddev.cli.api.parsing.parser.ProjectPropertiesParser;
-import com.espirit.moddev.cli.api.parsing.parser.UidIdentifierParser;
 import com.espirit.moddev.cli.results.ExportResult;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.help.Examples;
-import de.espirit.firstspirit.agency.OperationAgent;
-import de.espirit.firstspirit.agency.StoreAgent;
-import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser.getAllStorePostfixes;
@@ -72,16 +64,33 @@ public class ExportCommand extends AbstractExportCommand {
         return exportStoreElements();
     }
 
+    private static final String tabSequence = "\t\t\t\t";
     @Description
     public static String getDescription() {
-        return "Exports elements from all stores. If no arguments given, the store roots and project properties are exported. \n\n"
-                + "Known prefixes for export: " + Arrays.stream(UidMapping.values())
-                                                    .map(UidMapping::getPrefix)
-                                                    .collect(Collectors.joining(", ")) + "\n"
-                + "Export entities with identifiers like 'entities:news'\n"
-                + "Export projectproperties with identifiers like 'projectproperty:RESOLUTIONS'\n"
-                + "Known root node identifiers: " + getAllStorePostfixes().keySet().stream().collect(Collectors.joining(", ")) + "\n\n"
-                + "Possible project properties: [" + ProjectPropertiesParser.getAllPossibleValues().stream().collect(Collectors.joining(", ")) + "]";
+        return "Exports elements (specified by the <identifiers> option) from all stores.\n\r\n" + tabSequence +
+                "1. If no arguments given, all store roots and project properties are exported.\n\r\n" + tabSequence
+                + "2. Export elements based on uid with identifiers like 'pageref:pageRefUid'.\n" + tabSequence
+                + "Known prefixes for uid-based export:\n" + tabSequence + getUidPrefixesWithNewlineEveryNthElement() + "\n\r\n" + tabSequence
+                + "3. Export entities with identifiers like 'entities:news'.\n\r\n" + tabSequence
+                + "4. Export projectproperties with identifiers like 'projectproperty:RESOLUTIONS'\n" + tabSequence
+                + "Known project properties:\n" + tabSequence + ProjectPropertiesParser.getAllPossibleValues().stream().collect(Collectors.joining(", ")) + "\n\r\n" + tabSequence
+                + "5. Export store root nodes with identifiers like 'templatestore' or 'root:tempaltestore'\n\r" + tabSequence
+                + "Known root node identifiers: " + getAllStorePostfixes().keySet().stream().collect(Collectors.joining(", "));
+    }
 
+    private static String getUidPrefixesWithNewlineEveryNthElement() {
+        StringBuilder result = new StringBuilder();
+        for(int i = 0; i <  UidMapping.values().length; i++) {
+            UidMapping currentMapping = UidMapping.values()[i];
+
+            result.append(currentMapping.getPrefix());
+            if(i != UidMapping.values().length-1) {
+                result.append(",");
+            }
+            if(i != 0 && i%5 == 0) {
+                result.append("\n\r" + tabSequence);
+            }
+        }
+        return result.toString();
     }
 }

@@ -39,7 +39,7 @@ import static com.espirit.moddev.IntegrationTest.PROJECT_NAME;
  * @author e-Spirit AG
  */
 @Category(IntegrationTest.class)
-public class ExportTemplatesCommandTest extends AbstractIntegrationTest {
+public class ExportTemplatesCommandIT extends AbstractIntegrationTest {
 
     @Test
     public void parameterLessCommandCreatesFiles() {
