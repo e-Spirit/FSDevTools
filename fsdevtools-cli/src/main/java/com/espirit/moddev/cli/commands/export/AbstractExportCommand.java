@@ -22,27 +22,21 @@
 
 package com.espirit.moddev.cli.commands.export;
 
-import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 import com.espirit.moddev.cli.api.parsing.exceptions.IDProviderNotFoundException;
 import com.espirit.moddev.cli.api.parsing.identifier.Identifier;
-import com.espirit.moddev.cli.api.parsing.parser.EntitiesIdentifierParser;
-import com.espirit.moddev.cli.api.parsing.parser.RegistryBasedParser;
-import com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser;
-import com.espirit.moddev.cli.api.parsing.parser.UidIdentifierParser;
+import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
+import com.espirit.moddev.cli.api.parsing.parser.*;
 import com.espirit.moddev.cli.commands.SimpleCommand;
 import com.espirit.moddev.cli.results.ExportResult;
 import com.github.rvesse.airline.annotations.Arguments;
 import com.github.rvesse.airline.annotations.Option;
-
 import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.access.store.Store;
 import de.espirit.firstspirit.agency.OperationAgent;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 import de.espirit.firstspirit.transport.PropertiesTransportOptions;
-
 import de.espirit.firstspirit.transport.PropertiesTransportOptions.ProjectPropertyType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,8 +45,6 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
-
-import com.espirit.moddev.cli.api.parsing.parser.ProjectPropertiesParser;
 
 /**
  * This class gathers shared logic and options for different export commands. It can be extended for custom implementations of uid filtering, or to
@@ -80,8 +72,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     @Option(name = "--includeProjectProperties", description = "DEPRECATED: use '" + ProjectPropertiesParser.CUSTOM_PREFIX_PROJECT_PROPERTIES + ":" + ProjectPropertiesParser.ALL + "' instead. Export with project properties like resolutions or fonts")
     private boolean includeProjectProperties;
 
-    @Arguments(title = "identifiers", description = "A list of parsable identifiers, in the form of 'pagetemplate:default' (<uid type>:<uid>), \n" +
-            "'root:templatestore' (root:<root node identifier>), 'templatestore' (root node identifier) or similar")
+    @Arguments(title = "identifiers", description = "A list of various parsable identifiers. Please have a look at the command description for further information.")
     private List<String> identifiers = new LinkedList<>();
 
     private RegistryBasedParser parser;
