@@ -17,6 +17,8 @@ import de.espirit.firstspirit.access.store.templatestore.*;
 
 import java.util.Locale;
 
+import de.espirit.firstspirit.access.store.globalstore.GCAPage;
+
 /**
  * This enum specifies all valid prefixes for {@link UidIdentifier}. A prefix
  * always determines in which store to search for an element, which FirstSpirit
@@ -25,11 +27,11 @@ import java.util.Locale;
  */
 public enum UidMapping {
     CONTENT2(Store.Type.CONTENTSTORE, IDProvider.UidType.CONTENTSTORE, Content2.class),
-    GCAPAGE(Store.Type.GLOBALSTORE, IDProvider.UidType.GLOBALSTORE, ContentStoreRoot.class),
+    GCAPAGE(Store.Type.GLOBALSTORE, IDProvider.UidType.GLOBALSTORE, GCAPage.class),
     MEDIAFOLDER(Store.Type.MEDIASTORE, IDProvider.UidType.MEDIASTORE_FOLDER, MediaFolder.class),
-    PICTURE(Store.Type.MEDIASTORE, IDProvider.UidType.MEDIASTORE_LEAF, File.class),
+    PICTURE(Store.Type.MEDIASTORE, IDProvider.UidType.MEDIASTORE_LEAF, Picture.class),
     MEDIA(Store.Type.MEDIASTORE, IDProvider.UidType.MEDIASTORE_LEAF, Media.class),
-    FILE(Store.Type.MEDIASTORE, IDProvider.UidType.MEDIASTORE_LEAF, Picture.class),
+    FILE(Store.Type.MEDIASTORE, IDProvider.UidType.MEDIASTORE_LEAF, File.class),
     PAGE(Store.Type.PAGESTORE, IDProvider.UidType.PAGESTORE, Page.class),
     PAGEFOLDER(Store.Type.PAGESTORE, IDProvider.UidType.PAGESTORE, PageFolder.class),
     PAGEREFFOLDER(Store.Type.SITESTORE, IDProvider.UidType.SITESTORE_FOLDER, PageRefFolder.class),
