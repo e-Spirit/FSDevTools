@@ -70,7 +70,7 @@ public class ExportCommand extends AbstractExportCommand {
         return "Exports elements (specified by the <identifiers> option) from all stores.\n\r\n" + tabSequence +
                 "1. If no arguments given, all store roots and project properties are exported.\n\r\n" + tabSequence
                 + "2. Export elements based on uid with identifiers like 'pageref:pageRefUid'.\n" + tabSequence
-                + "Known prefixes for uid-based export:\n" + tabSequence + getUidPrefixesWithNewlineEveryNthElement() + "\n\r\n" + tabSequence
+                + "Known prefixes for uid-based export:\n" + tabSequence + getUidPrefixesWithNewlineEvery5thElement() + "\n\r\n" + tabSequence
                 + "3. Export entities with identifiers like 'entities:news'.\n\r\n" + tabSequence
                 + "4. Export projectproperties with identifiers like 'projectproperty:RESOLUTIONS'\n" + tabSequence
                 + "Known project properties:\n" + tabSequence + ProjectPropertiesParser.getAllPossibleValues().stream().collect(Collectors.joining(", ")) + "\n\r\n" + tabSequence
@@ -78,7 +78,7 @@ public class ExportCommand extends AbstractExportCommand {
                 + "Known root node identifiers: " + getAllStorePostfixes().keySet().stream().collect(Collectors.joining(", "));
     }
 
-    private static String getUidPrefixesWithNewlineEveryNthElement() {
+    private static String getUidPrefixesWithNewlineEvery5thElement() {
         StringBuilder result = new StringBuilder();
         for(int i = 0; i <  UidMapping.values().length; i++) {
             UidMapping currentMapping = UidMapping.values()[i];
