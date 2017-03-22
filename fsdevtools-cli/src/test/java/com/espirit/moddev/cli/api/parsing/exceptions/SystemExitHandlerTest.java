@@ -22,8 +22,7 @@
 
 package com.espirit.moddev.cli.api.parsing.exceptions;
 
-import com.espirit.moddev.cli.api.event.CliErrorEvent;
-import com.espirit.moddev.cli.exception.SystemExitListener;
+import com.espirit.moddev.cli.exception.SystemExitHandler;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,23 +33,23 @@ import static org.junit.Assert.fail;
 /**
  * @author e-Spirit AG
  */
-public class SystemExitListenerTest {
+public class SystemExitHandlerTest {
 
     @Rule
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
-    private SystemExitListener tesling;
+    private SystemExitHandler tesling;
 
     @Before
-    public void setUp() throws Exception {
-        tesling = new SystemExitListener();
+    public void setUp() throws java.lang.Exception {
+        tesling = new SystemExitHandler();
     }
 
     @Test
-    public void testErrorOccurred() throws Exception {
+    public void testHandlerCallsSystemExit() throws java.lang.Exception {
         exit.expectSystemExitWithStatus(1);
 
-        tesling.errorOccurred(new CliErrorEvent(this, new Exception("JUnit")));
+        tesling.handle(new Exception());
 
         fail("Schould not be called if rule works");
     }
