@@ -20,45 +20,31 @@
  *
  */
 
-package com.espirit.moddev.cli.api.event;
+package com.espirit.moddev.cli.exception;
 
+import com.espirit.moddev.cli.api.event.CliEventHandler;
+import org.slf4j.LoggerFactory;
 
 /**
- * Event used in the cli application to notify about an error.
+ * Listener that will exit the cli application with {@link System#exit(int)} if an error occurs.
  *
  * @author e-Spirit AG
  */
-public class CliErrorEvent {
+public final class SystemExitHandler implements CliEventHandler {
+    protected static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(SystemExitHandler.class);
 
-    private final Object source;
-    private final Throwable error;
-
-    /**
-     * Instantiates a new instance.
-     *
-     * @param source the source of the event
-     * @param error the error that occurred
-     */
-    public CliErrorEvent(Object source, Throwable error) {
-        this.source = source;
-        this.error = error;
+    @Override
+    @SuppressWarnings("squid:S1147")
+    public final void handle(Throwable e) {
+        LOGGER.error("", e);
+        System.exit(1);
     }
 
-    /**
-     * Get source of the event.
-     *
-     * @return the source
-     */
-    public Object getSource() {
-        return source;
+    @Override
+    @SuppressWarnings("squid:S1147")
+    public final void afterExecution() {
+        LOGGER.trace("Execution terminated without exception. Calling System.exit(0).");
+        System.exit(0);
     }
 
-    /**
-     * Get error that occurred.
-     *
-     * @return the error
-     */
-    public Throwable getError() {
-        return error;
-    }
 }
