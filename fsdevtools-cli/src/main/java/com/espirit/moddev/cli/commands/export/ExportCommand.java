@@ -45,6 +45,8 @@ import static com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser
                 "export -- pagetemplate:default page:homepage",
                 "export -- root:templatestore page:homepage",
                 "export -- templatestore page:homepage",
+                "export -- path:/templatestore/pagetemplates/folderName/folderToExport",
+                "export -- path:/PageStore/pageFolderUid/pageUid",
                 "export -- page:homepage entities:news",
                 "export -- projectproperty:LANGUAGES projectproperty:RESOLUTIONS",
                 "export -- projectproperty:ALL"
@@ -53,6 +55,8 @@ import static com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser
                 "Exports a pagetemplate and a page",
                 "Exports the templatestore and a page",
                 "Exports the templatestore and a page",
+                "Exports the first occurrence of the folder named 'folderToExport' beneath folder 'folderName'",
+                "Exports the page identified by the path",
                 "Exports a page and news entities according to the configured filter",
                 "Exports the project properties languages and resolutions",
                 "Exports all project properties"
@@ -71,10 +75,11 @@ public class ExportCommand extends AbstractExportCommand {
                 "1. If no arguments given, all store roots and project properties are exported.\n\r\n" + tabSequence
                 + "2. Export elements based on uid with identifiers like 'pageref:pageRefUid'.\n" + tabSequence
                 + "Known prefixes for uid-based export:\n" + tabSequence + getUidPrefixesWithNewlineEvery5thElement() + "\n\r\n" + tabSequence
-                + "3. Export entities with identifiers like 'entities:news'.\n\r\n" + tabSequence
-                + "4. Export projectproperties with identifiers like 'projectproperty:RESOLUTIONS'\n" + tabSequence
+                + "3. Export elements based on path 'path:/<STORE>/<UID>|<NAME>'.\n\r\n" + tabSequence + tabSequence
+                + "4. Export entities with identifiers like 'entities:news'.\n\r\n" + tabSequence
+                + "5. Export projectproperties with identifiers like 'projectproperty:RESOLUTIONS'\n" + tabSequence
                 + "Known project properties:\n" + tabSequence + ProjectPropertiesParser.getAllPossibleValues().stream().collect(Collectors.joining(", ")) + "\n\r\n" + tabSequence
-                + "5. Export store root nodes with identifiers like 'templatestore' or 'root:tempaltestore'\n\r" + tabSequence
+                + "6. Export store root nodes with identifiers like 'templatestore' or 'root:tempaltestore'\n\r" + tabSequence
                 + "Known root node identifiers: " + getAllStorePostfixes().keySet().stream().collect(Collectors.joining(", "));
     }
 
