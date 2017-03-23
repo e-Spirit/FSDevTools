@@ -100,7 +100,7 @@ public class UidIdentifierTest {
     @Test
     public void addToExportOperationWithNonMatchingClass() {
         expectedException.expect(IDProviderNotFoundException.class);
-        ExportOperation exportOperation = createMediaElementAndExportItWithGivenUidMappingUidType(UidMapping.FILE);
+        ExportOperation exportOperation = createMediaElementAndExportItWithGivenUidMappingUidType(UidMapping.PAGE);
     }
 
     /**
