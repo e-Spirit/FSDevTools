@@ -3,11 +3,8 @@ package com.espirit.moddev.cli.api.parsing.identifier;
 import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.access.store.Store;
 import de.espirit.firstspirit.access.store.contentstore.Content2;
-import de.espirit.firstspirit.access.store.contentstore.ContentStoreRoot;
-import de.espirit.firstspirit.access.store.mediastore.File;
 import de.espirit.firstspirit.access.store.mediastore.Media;
 import de.espirit.firstspirit.access.store.mediastore.MediaFolder;
-import de.espirit.firstspirit.access.store.mediastore.Picture;
 import de.espirit.firstspirit.access.store.pagestore.Page;
 import de.espirit.firstspirit.access.store.pagestore.PageFolder;
 import de.espirit.firstspirit.access.store.sitestore.DocumentGroup;
@@ -29,15 +26,12 @@ public enum UidMapping {
     CONTENT2(Store.Type.CONTENTSTORE, IDProvider.UidType.CONTENTSTORE, Content2.class),
     GCAPAGE(Store.Type.GLOBALSTORE, IDProvider.UidType.GLOBALSTORE, GCAPage.class),
     MEDIAFOLDER(Store.Type.MEDIASTORE, IDProvider.UidType.MEDIASTORE_FOLDER, MediaFolder.class),
-    PICTURE(Store.Type.MEDIASTORE, IDProvider.UidType.MEDIASTORE_LEAF, Picture.class),
     MEDIA(Store.Type.MEDIASTORE, IDProvider.UidType.MEDIASTORE_LEAF, Media.class),
-    FILE(Store.Type.MEDIASTORE, IDProvider.UidType.MEDIASTORE_LEAF, File.class),
     PAGE(Store.Type.PAGESTORE, IDProvider.UidType.PAGESTORE, Page.class),
     PAGEFOLDER(Store.Type.PAGESTORE, IDProvider.UidType.PAGESTORE, PageFolder.class),
     PAGEREFFOLDER(Store.Type.SITESTORE, IDProvider.UidType.SITESTORE_FOLDER, PageRefFolder.class),
     DOCUMENTGROUP(Store.Type.SITESTORE, IDProvider.UidType.SITESTORE_LEAF, DocumentGroup.class),
     PAGEREF(Store.Type.SITESTORE, IDProvider.UidType.SITESTORE_LEAF, PageRef.class),
-    LINKTEMPLATEFOLDER(Store.Type.TEMPLATESTORE, IDProvider.UidType.TEMPLATESTORE, LinkTemplateFolder.class),
     PAGETEMPLATE(Store.Type.TEMPLATESTORE, IDProvider.UidType.TEMPLATESTORE, PageTemplate.class),
     SCHEMA(Store.Type.TEMPLATESTORE, IDProvider.UidType.TEMPLATESTORE, Schema.class),
     SCRIPT(Store.Type.TEMPLATESTORE, IDProvider.UidType.TEMPLATESTORE, Script.class),
