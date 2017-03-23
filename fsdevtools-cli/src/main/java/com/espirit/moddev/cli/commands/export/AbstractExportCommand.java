@@ -86,6 +86,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
         parser.registerParser(new EntitiesIdentifierParser());
         parser.registerParser(new UidIdentifierParser());
         parser.registerParser(new ProjectPropertiesParser());
+        parser.registerParser(new PathIdentifierParser());
     }
 
     /**
