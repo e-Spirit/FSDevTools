@@ -25,11 +25,8 @@ package com.espirit.moddev.cli;
 import com.espirit.moddev.cli.api.CliContext;
 import com.espirit.moddev.cli.api.command.Command;
 import com.espirit.moddev.cli.api.configuration.Config;
-import com.espirit.moddev.cli.api.event.CliEventHandler;
-import com.espirit.moddev.cli.api.event.ExceptionHandler;
 import com.espirit.moddev.cli.api.result.Result;
 import com.espirit.moddev.cli.commands.HelpCommand;
-import com.espirit.moddev.cli.exception.CliException;
 import com.espirit.moddev.cli.exception.FsLoggingBridge;
 import com.espirit.moddev.cli.exception.SystemExitHandler;
 import com.espirit.moddev.cli.reflection.CommandUtils;
@@ -43,7 +40,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collections;
+import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -52,11 +51,11 @@ import java.util.jar.JarFile;
 /**
  * Class to represent a command line interface. Is meant to be used from the command line
  * or programmatically.
- * Exceptions during command execution and cli execution termination can be processed by handlers
- * that can be registered. Exception handlers can be registered with {@link Cli#addExceptionHandler(ExceptionHandler)},
- * while a {@link CliEventHandler} can be passed to the constructor. The latter one is called
- * in case of an exception during command execution, but after the registered exception handlers and
- * after the command execution has finished - whether with or without exception.
+ * Exceptions during command execution and cli execution can be caught on top level.
+ * The cli closes the optional connection before exceptions are rethrown. The main
+ * method of this class (which is normally used from command line) uses a handler to
+ * call System.exit() with an appropriate error code in case of regular termination or
+ * in case of an exception.
  *
  * @author e-Spirit AG
  */
@@ -76,25 +75,14 @@ public final class Cli {
     private static Set<Class<? extends Command>> commandClasses = CommandUtils.scanForCommandClasses(DEFAULT_COMMAND_PACKAGE_NAME);
     private static Set<Class<?>> groupClasses = GroupUtils.scanForGroupClasses(DEFAULT_GROUP_PACKAGE_NAME);
 
-    private final List<ExceptionHandler> handlers = new LinkedList<>();
     private final Properties buildProperties;
     private final Properties gitProperties;
 
-    private final CliEventHandler cliEventHandler;
 
     /**
-     * Instantiates a new Cli. Adds an empty implementation of the {@link CliEventHandler} interface.
+     * Instantiates a new Cli.
      */
     public Cli() {
-        this(new CliEventHandler() {});
-    }
-
-    /**
-     * Instantiates a new Cli. Adds an empty implementation of the {@link CliEventHandler} interface
-     * if the passed handler is null.
-     * @param terminationHandler the event handler to use for this Cli instance
-     */
-    public Cli(CliEventHandler terminationHandler) {
         buildProperties = new Properties();
         gitProperties = new Properties();
         try (InputStream resourceAsStream = ClassLoader.getSystemClassLoader().getResourceAsStream("CliBuild.properties")) {
@@ -107,18 +95,24 @@ public final class Cli {
         } catch (IOException e) {
             LOGGER.error("Failed to load GitProperties", e);
         }
-        cliEventHandler = terminationHandler == null ? new CliEventHandler() {} : terminationHandler;
     }
 
     /**
-     * The entry point of the cli application. This adds a {@link SystemExitHandler} to the cli application
+     * The entry point of the cli application. Uses a {@link SystemExitHandler}
      * in order to exit correctly when called from the command line.
      * If you don't want this behaviour, instantiate a cli application programmatically on your own.
      *
      * @param args the input arguments
      */
     public static void main(final String[] args) {
-        new Cli(new SystemExitHandler()).execute(args);
+
+        SystemExitHandler cliEventHandler = new SystemExitHandler();
+        try {
+            new Cli().execute(args);
+            cliEventHandler.afterTermination();
+        } catch (Exception e) {
+            cliEventHandler.afterExceptionalTermination(e);
+        }
     }
 
     /**
@@ -126,7 +120,7 @@ public final class Cli {
      *
      * @param args the input arguments
      */
-    public void execute(final String[] args) {
+    public void execute(final String[] args) throws Exception {
         setLoggingSystemProperties();
 
         try {
@@ -140,10 +134,14 @@ public final class Cli {
         final Command command = parseCommandLine(args, builder);
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.start();
-        executeCommand(command);
-        stopwatch.stop();
-        logExecutionTime(stopwatch);
-        cliEventHandler.afterExecution();
+        try {
+            executeCommand(command);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            stopwatch.stop();
+            logExecutionTime(stopwatch);
+        }
     }
 
     private static void logExecutionTime(final Stopwatch stopwatch) {
@@ -220,37 +218,28 @@ public final class Cli {
      *
      * @param command the command instance to execute
      */
-    public void executeCommand(Command<Result> command) {
+    public void executeCommand(Command<Result> command) throws Exception {
         LOGGER.info("Executing " + command.getClass().getSimpleName());
         CliContext context = null;
         try {
             context = getCliContextOrNull(command);
             Result result = command.call();
             logResult(result);
-        } catch (CliException e) {
-            LOGGER.trace("CliException occurred during context initialization or command execution", e);
-            handleCliException(e);
         } catch (Exception e) {
-            notifyExceptionHandlers(e);
+            LOGGER.trace("Exception occurred during context initialization or command execution", e);
+            throw e;
         } finally {
             closeContext(context);
         }
     }
 
-    private static void closeContext(CliContext context) {
+    static void closeContext(CliContext context) {
         if(context != null) {
             try {
                 context.close();
             } catch (Exception e) {
                 LOGGER.error("Closing context caused an exception!", e);
             }
-        }
-    }
-
-    private void handleCliException(CliException e) {
-        Throwable cause = e.getCause();
-        if(cause != null) {
-            notifyExceptionHandlers(cause);
         }
     }
 
@@ -272,23 +261,6 @@ public final class Cli {
             }
         }
         return context;
-    }
-
-    /**
-     * Notifies all registered exception handlers. In case of an exception in one
-     * of the handler implementations, the cliEventHandler is notified nonetheless.
-     * @param t the occurred exception
-     */
-    private void notifyExceptionHandlers(Throwable t) {
-        try {
-            for(ExceptionHandler handler : handlers) {
-                handler.handle(t);
-            }
-        } catch (Exception e) {
-            LOGGER.warn("Exception in exception handler implementation occurred!", e);
-        } finally {
-            cliEventHandler.handle(t);
-        }
     }
 
     private static void addHelpCommand(CliBuilder<Command> builder) {
@@ -318,16 +290,6 @@ public final class Cli {
         return cliParser.parse(args);
     }
 
-
-    /**
-     * Add an exception handler to this Cli. This handler is invoked in case of an exception.
-     *
-     * @param handler the handler to add
-     * @return true if the handler was added (see {@link java.util.List#add(Object)})
-     */
-    public boolean addExceptionHandler(ExceptionHandler handler) {
-        return handlers.add(handler);
-    }
 
 
     /**

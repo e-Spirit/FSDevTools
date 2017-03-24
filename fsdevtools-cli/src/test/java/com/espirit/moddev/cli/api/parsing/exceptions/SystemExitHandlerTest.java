@@ -49,7 +49,7 @@ public class SystemExitHandlerTest {
     public void testHandlerCallsSystemExit() throws java.lang.Exception {
         exit.expectSystemExitWithStatus(1);
 
-        tesling.handle(new Exception());
+        tesling.afterExceptionalTermination(new Exception());
 
         fail("Schould not be called if rule works");
     }

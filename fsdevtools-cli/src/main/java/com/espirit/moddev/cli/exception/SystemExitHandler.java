@@ -35,14 +35,14 @@ public final class SystemExitHandler implements CliEventHandler {
 
     @Override
     @SuppressWarnings("squid:S1147")
-    public final void handle(Throwable e) {
+    public final void afterExceptionalTermination(Throwable e) {
         LOGGER.error("", e);
         System.exit(1);
     }
 
     @Override
     @SuppressWarnings("squid:S1147")
-    public final void afterExecution() {
+    public final void afterTermination() {
         LOGGER.trace("Execution terminated without exception. Calling System.exit(0).");
         System.exit(0);
     }

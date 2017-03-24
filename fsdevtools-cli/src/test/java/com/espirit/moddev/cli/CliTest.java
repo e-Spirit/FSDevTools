@@ -23,12 +23,9 @@
 package com.espirit.moddev.cli;
 
 import com.espirit.moddev.cli.api.command.Command;
-import com.espirit.moddev.cli.api.event.CliEventHandler;
-import com.espirit.moddev.cli.api.event.ExceptionHandler;
 import com.espirit.moddev.cli.commands.HelpCommand;
 import com.github.rvesse.airline.builder.CliBuilder;
 import com.github.rvesse.airline.model.CommandGroupMetadata;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
@@ -37,19 +34,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.junit.Assert.*;
 
 public class CliTest {
 
     @Rule
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
+
+    @Test
+    public void testDefaultConstructor() {
+        new Cli();
+    }
 
     @Test
     public void testMainFromCommandLine() throws Exception {
@@ -63,28 +58,9 @@ public class CliTest {
         Cli.main(new String[]{"throwexception"});
     }
 
-    @Test
+    @Test(expected = Exception.class)
     public void testMainCalledProgrammatically() throws Exception {
         new Cli().execute(new String[]{"throwexception"});
-    }
-
-    @Test
-    public void testExceptionListenerCalledOnException() throws Exception {
-        Cli cli = new Cli();
-        ExceptionHandler exceptionHandler = mock(ExceptionHandler.class);
-        cli.addExceptionHandler(exceptionHandler);
-        cli.execute(new String[]{"throwexception"});
-        verify(exceptionHandler).handle(any());
-    }
-
-    @Test
-    public void testCliListenerCalled() throws Exception {
-        CliEventHandler cliEventHandler = mock(CliEventHandler.class);
-
-        Cli cli = new Cli(cliEventHandler);
-        cli.execute(new String[]{"throwexception"});
-        verify(cliEventHandler).handle(any());
-        verify(cliEventHandler).afterExecution();
     }
 
     @Test(expected = IllegalArgumentException.class)
