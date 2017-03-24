@@ -33,13 +33,13 @@ public class SystemExitHandlerTest {
     @Test
     public void handle() throws Exception {
         exit.expectSystemExitWithStatus(1);
-        new SystemExitHandler().handle(new Exception());
+        new SystemExitHandler().afterExceptionalTermination(new Exception());
     }
 
     @Test
     public void afterExecution() throws Exception {
         exit.expectSystemExitWithStatus(0);
-        new SystemExitHandler().afterExecution();
+        new SystemExitHandler().afterTermination();
     }
 
 }
