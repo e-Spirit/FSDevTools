@@ -97,6 +97,8 @@ public class UidIdentifierTest {
         ExportOperation exportOperation = createMediaElementAndExportItWithGivenUidMappingUidType(UidMapping.MEDIA);
         verify(exportOperation).addElement(any());
     }
+
+
     @Test
     public void addToExportOperationWithNonMatchingClass() {
         expectedException.expect(IDProviderNotFoundException.class);
@@ -118,10 +120,10 @@ public class UidIdentifierTest {
         ExportOperation exportOperation = mock(ExportOperation.class);
         Store mediaStoreRoot = mock(MediaStoreRoot.class);
         Store.Type storeType = uidMapping.getStoreType();
-        when(storeAgent.getStore(storeType)).thenReturn(mediaStoreRoot);
+        when(storeAgent.getStore(storeType, false)).thenReturn(mediaStoreRoot);
         IDProvider storeElement = mock(Media.class);
-        when(storeAgent.getStore(storeType).getStoreElement(uidString, uidMapping.getUidType())).thenReturn(storeElement);
-        uid.addToExportOperation(storeAgent, exportOperation);
+        when(mediaStoreRoot.getStoreElement(uidString, uidMapping.getUidType())).thenReturn(storeElement);
+        uid.addToExportOperation(storeAgent, false, exportOperation);
         return exportOperation;
     }
 

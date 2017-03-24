@@ -54,8 +54,8 @@ public class EntitiesIdentifier implements Identifier {
     }
 
     @Override
-    public void addToExportOperation(StoreAgent storeAgent, ExportOperation exportOperation) {
-        ContentStoreRoot store = (ContentStoreRoot) storeAgent.getStore(Store.Type.CONTENTSTORE);
+    public void addToExportOperation(StoreAgent storeAgent, boolean useReleaseState, ExportOperation exportOperation) {
+        ContentStoreRoot store = (ContentStoreRoot) storeAgent.getStore(Store.Type.CONTENTSTORE, useReleaseState);
 
         final Content2 content2 = store.getContent2ByName(uid);
         if(content2 == null) {

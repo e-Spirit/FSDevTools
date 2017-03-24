@@ -151,7 +151,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
      * @param identifiers     the identifiers of elements that should be added to the ExportOperation
      * @param exportOperation the ExportOperation to add the elements to
      * @throws IllegalArgumentException if the ExportOperation is null
-     * @throws IDProviderNotFoundException if {@link Identifier#addToExportOperation(StoreAgent, ExportOperation)} throws it
+     * @throws IDProviderNotFoundException if {@link Identifier#addToExportOperation(StoreAgent, boolean, ExportOperation)} throws it
      */
     public void addExportElements(final StoreAgent storeAgent, final List<Identifier> identifiers, final ExportOperation exportOperation) {
         if (exportOperation == null) {
@@ -166,7 +166,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
         } else {
             LOGGER.debug("addExportedElements - UIDs {}", identifiers);
             for (Identifier identifier : identifiers) {
-                identifier.addToExportOperation(storeAgent, exportOperation);
+                identifier.addToExportOperation(storeAgent, isExportReleaseState(), exportOperation);
             }
 
             if (isIncludeProjectProperties()) {
@@ -205,7 +205,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
      */
     protected void addStoreRoots(final StoreAgent storeAgent, final ExportOperation exportOperation) {
         for (final Store.Type storeType : Store.Type.values()) {
-            exportOperation.addElement(storeAgent.getStore(storeType));
+            exportOperation.addElement(storeAgent.getStore(storeType, isExportReleaseState()));
         }
     }
 
