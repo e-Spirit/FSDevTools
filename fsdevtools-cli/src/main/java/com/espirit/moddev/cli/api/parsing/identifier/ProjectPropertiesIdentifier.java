@@ -1,8 +1,6 @@
 package com.espirit.moddev.cli.api.parsing.identifier;
 
 import java.util.EnumSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
@@ -20,7 +18,7 @@ public class ProjectPropertiesIdentifier implements Identifier {
     }
 
     @Override
-    public void addToExportOperation(StoreAgent storeAgent, ExportOperation exportOperation) {
+    public void addToExportOperation(StoreAgent storeAgent, boolean useReleaseState, ExportOperation exportOperation) {
         final PropertiesTransportOptions options = exportOperation.configurePropertiesExport();
         options.setProjectPropertiesTransport(projectPropertyTypes);
     }

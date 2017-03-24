@@ -101,7 +101,7 @@ public class RegistryBasedParserTest {
             @Override
             public List<Identifier> parse(List<String> input) {
                 return new ArrayList<Identifier>() {{
-                    add((storeAgent, exportOperation) -> {});
+                    add((storeAgent, useReleaseState, exportOperation) -> {});
                 }};
             }
 
@@ -114,7 +114,7 @@ public class RegistryBasedParserTest {
             @Override
             public List<Identifier> parse(List<String> input) {
                 return new ArrayList<Identifier>() {{
-                    add((storeAgent, exportOperation) -> {});
+                    add((storeAgent, useReleaseState, exportOperation) -> {});
                 }};
             }
 
@@ -127,7 +127,7 @@ public class RegistryBasedParserTest {
             @Override
             public List<Identifier> parse(List<String> input) {
                 return new ArrayList<Identifier>() {{
-                    add((storeAgent, exportOperation) -> {});
+                    add((storeAgent, useReleaseState, exportOperation) -> {});
                 }};
             }
 

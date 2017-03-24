@@ -23,9 +23,6 @@
 package com.espirit.moddev.cli.api.parsing.identifier;
 
 import com.espirit.moddev.cli.api.parsing.exceptions.UnknownRootNodeException;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Maps;
 import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
@@ -59,8 +56,8 @@ public class RootNodeIdentifier implements Identifier {
     }
 
     @Override
-    public void addToExportOperation(StoreAgent storeAgent, ExportOperation exportOperation) {
-        final IDProvider storeRoot = storeAgent.getStore(uidType.getStoreType());
+    public void addToExportOperation(StoreAgent storeAgent, boolean useReleaseState, ExportOperation exportOperation) {
+        final IDProvider storeRoot = storeAgent.getStore(uidType.getStoreType(), useReleaseState);
         if(storeRoot != null) {
             LOGGER.debug("Adding store element: {}", storeRoot);
             exportOperation.addElement(storeRoot);

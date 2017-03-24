@@ -23,8 +23,8 @@
 package com.espirit.moddev.cli.api.parsing.identifier;
 
 import com.espirit.moddev.cli.api.parsing.exceptions.IDProviderNotFoundException;
-import com.espirit.moddev.cli.api.parsing.parser.UidIdentifierParser;
 import de.espirit.firstspirit.access.store.IDProvider;
+import de.espirit.firstspirit.access.store.Store;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 import org.apache.commons.lang.StringUtils;
@@ -113,13 +113,13 @@ public class UidIdentifier implements Identifier {
      * That is, because multiple implementing classes (for example FILE and MEDIA) can share the same UidType.
      * If you query the store with uid and UidType only, you could retrieve a MEDIA item, even if you only wanted
      * a FILE item. Since uids are unique across stores, there shouldn't be further problems.
-     *
      * @param storeAgent the StoreAgent to retrieve store instances from
+     * @param useReleaseState indicates whether to request elements from {@link Store#isRelease() release} or current store via given {@link StoreAgent}
      * @param exportOperation the ExportOperation matching elements should be added to
      */
     @Override
-    public void addToExportOperation(StoreAgent storeAgent, ExportOperation exportOperation) {
-        final IDProvider storeElement = storeAgent.getStore(getUidMapping().getStoreType()).getStoreElement(getUid(), getUidMapping().getUidType());
+    public void addToExportOperation(StoreAgent storeAgent, boolean useReleaseState, ExportOperation exportOperation) {
+        final IDProvider storeElement = storeAgent.getStore(getUidMapping().getStoreType(), useReleaseState).getStoreElement(getUid(), getUidMapping().getUidType());
         if(storeElement != null) {
             if(isAssignableFrom(storeElement)) {
                 LOGGER.debug("Adding store element: {}", storeElement);
