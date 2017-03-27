@@ -7,10 +7,12 @@ import de.espirit.firstspirit.access.store.BasicElementInfo;
 import de.espirit.firstspirit.access.store.Store;
 import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.store.access.BasicElementInfoImpl;
+import de.espirit.firstspirit.store.access.TagNames;
 import de.espirit.firstspirit.store.access.nexport.*;
 import de.espirit.firstspirit.store.access.nexport.io.ExportInfoFileHandle;
 import de.espirit.firstspirit.store.access.nexport.io.ExportInfoFileHandleImpl;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
+import de.espirit.firstspirit.store.access.pagestore.PageImpl;
 import de.espirit.firstspirit.transport.PropertiesTransportOptions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,12 +63,12 @@ public class AdvancedLoggerTest {
                                     "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[INFO] - store elements: 5\n" +
                                     "[INFO]  - pagestore: 1\n" +
-                                    "[INFO]   - page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[INFO]  - templatestore: 4\n" +
-                                    "[INFO]   - template: 'first'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - template: 'fourth'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - template: 'second'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - template: 'third'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[INFO] - entity types: 1                       ( schemas: 1, entities: 1 )\n" +
                                     "[INFO]  - Schema: 'createdSchema'              ( entity types: 1, entities: 1 )\n" +
                                     "[INFO]   - EntityType: 'createdType'           ( entities: 1 )\n" +
@@ -75,12 +77,12 @@ public class AdvancedLoggerTest {
                                     "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[INFO] - store elements: 5\n" +
                                     "[INFO]  - mediastore: 2\n" +
-                                    "[INFO]   - media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[INFO]  - sitestore: 3\n" +
-                                    "[INFO]   - site: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - site: 'second'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - site: 'third'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[INFO] - entity types: 3                       ( schemas: 2, entities: 6 )\n" +
                                     "[INFO]  - Schema: 'updatedSchema1'             ( entity types: 2, entities: 5 )\n" +
                                     "[INFO]   - EntityType: 'updatedType1'          ( entities: 2 )\n" +
@@ -92,11 +94,11 @@ public class AdvancedLoggerTest {
                                     "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[INFO] - store elements: 4\n" +
                                     "[INFO]  - pagestore: 1\n" +
-                                    "[INFO]   - page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[INFO]  - sitestore: 3\n" +
-                                    "[INFO]   - site: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - site: 'second'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - site: 'third'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[INFO] - entity types: 2                       ( schemas: 1, entities: 7 )\n" +
                                     "[INFO]  - Schema: 'deletedSchema'              ( entity types: 2, entities: 7 )\n" +
                                     "[INFO]   - EntityType: 'deletedType1'          ( entities: 3 )\n" +
@@ -106,13 +108,13 @@ public class AdvancedLoggerTest {
                                     "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[INFO] - store elements: 6\n" +
                                     "[INFO]  - mediastore: 2\n" +
-                                    "[INFO]   - media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[INFO]  - templatestore: 4\n" +
-                                    "[INFO]   - template: 'first'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - template: 'fourth'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - template: 'second'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - template: 'third'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[INFO] - entity types: 2                       ( schemas: 2, entities: 3 )\n" +
                                     "[INFO]  - Schema: 'movedSchema1'               ( entity types: 1, entities: 1 )\n" +
                                     "[INFO]   - EntityType: 'movedType1'            ( entities: 1 )\n" +
@@ -151,7 +153,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]    - 3.txt ( from '/from/USERS' to '/to/USERS' )\n" +
                                     "[INFO] - store elements: 5\n" +
                                     "[INFO]  - pagestore: 1\n" +
-                                    "[INFO]   - page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/first/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -167,7 +169,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[INFO]  - templatestore: 4\n" +
-                                    "[INFO]   - template: 'first'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/first/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -182,7 +184,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - template: 'fourth'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/fourth/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -197,7 +199,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/fourth' to '/to/fourth' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/fourth' to '/to/fourth' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/fourth' to '/to/fourth' )\n" +
-                                    "[INFO]   - template: 'second'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/second/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -212,7 +214,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[INFO]   - template: 'third'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/third/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -263,7 +265,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]    - 3.txt ( from '/from/USERS' to '/to/USERS' )\n" +
                                     "[INFO] - store elements: 5\n" +
                                     "[INFO]  - mediastore: 2\n" +
-                                    "[INFO]   - media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/first/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -278,7 +280,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/second/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -294,7 +296,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[INFO]  - sitestore: 3\n" +
-                                    "[INFO]   - site: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/first/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -309,7 +311,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - site: 'second'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/second/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -324,7 +326,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[INFO]   - site: 'third'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/third/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -406,7 +408,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]    - 3.txt ( from '/from/USERS' to '/to/USERS' )\n" +
                                     "[INFO] - store elements: 4\n" +
                                     "[INFO]  - pagestore: 1\n" +
-                                    "[INFO]   - page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/first/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -422,7 +424,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[INFO]  - sitestore: 3\n" +
-                                    "[INFO]   - site: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/first/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -437,7 +439,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - site: 'second'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/second/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -452,7 +454,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[INFO]   - site: 'third'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/third/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -518,7 +520,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]    - 3.txt ( from '/from/USERS' to '/to/USERS' )\n" +
                                     "[INFO] - store elements: 6\n" +
                                     "[INFO]  - mediastore: 2\n" +
-                                    "[INFO]   - media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/first/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -533,7 +535,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/second/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -549,7 +551,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[INFO]  - templatestore: 4\n" +
-                                    "[INFO]   - template: 'first'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/first/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -564,7 +566,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - template: 'fourth'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/fourth/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -579,7 +581,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/fourth' to '/to/fourth' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/fourth' to '/to/fourth' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/fourth' to '/to/fourth' )\n" +
-                                    "[INFO]   - template: 'second'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/second/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -594,7 +596,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[INFO]   - template: 'third'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/third/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -703,19 +705,19 @@ public class AdvancedLoggerTest {
                                     "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[INFO] - store elements: 10\n" +
                                     "[INFO]  - pagestore: 1\n" +
-                                    "[INFO]   - page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[INFO]  - mediastore: 2\n" +
-                                    "[INFO]   - media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[INFO]  - sitestore: 3\n" +
-                                    "[INFO]   - site: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - site: 'second'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - site: 'third'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[INFO]  - templatestore: 4\n" +
-                                    "[INFO]   - template: 'first'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - template: 'fourth'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - template: 'second'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - template: 'third'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[INFO] - entity types: 2                       ( schemas: 2, entities: 3 )\n" +
                                     "[INFO]  - Schema: 'myFirstSchema'              ( entity types: 1, entities: 1 )\n" +
                                     "[INFO]   - EntityType: 'myType'                ( entities: 1 )\n" +
@@ -798,7 +800,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]    - 3.txt ( from '/from/USERS' to '/to/USERS' )\n" +
                                     "[INFO] - store elements: 10\n" +
                                     "[INFO]  - pagestore: 1\n" +
-                                    "[INFO]   - page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/first/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -814,7 +816,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[INFO]  - mediastore: 2\n" +
-                                    "[INFO]   - media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/first/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -829,7 +831,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/second/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -845,7 +847,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[INFO]  - sitestore: 3\n" +
-                                    "[INFO]   - site: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/first/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -860,7 +862,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - site: 'second'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/second/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -875,7 +877,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[INFO]   - site: 'third'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/third/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -891,7 +893,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )\n" +
                                     "[INFO]  - templatestore: 4\n" +
-                                    "[INFO]   - template: 'first'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/first/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -906,7 +908,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - template: 'fourth'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/fourth/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -921,7 +923,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/fourth' to '/to/fourth' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/fourth' to '/to/fourth' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/fourth' to '/to/fourth' )\n" +
-                                    "[INFO]   - template: 'second'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/second/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -936,7 +938,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[INFO]   - template: 'third'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/third/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -1262,19 +1264,19 @@ public class AdvancedLoggerTest {
             // @formatter:off
             final String expected = "[INFO] - store elements: 10\n" +
                                     "[INFO]  - pagestore: 1\n" +
-                                    "[INFO]   - page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[INFO]  - mediastore: 2\n" +
-                                    "[INFO]   - media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[INFO]  - sitestore: 3\n" +
-                                    "[INFO]   - site: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - site: 'second'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - site: 'third'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[INFO]  - templatestore: 4\n" +
-                                    "[INFO]   - template: 'first'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - template: 'fourth'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - template: 'second'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - template: 'third'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n";
+                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n";
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -1284,7 +1286,7 @@ public class AdvancedLoggerTest {
             // @formatter:off
             final String expected = "[INFO] - store elements: 10\n" +
                                     "[INFO]  - pagestore: 1\n" +
-                                    "[INFO]   - page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/first/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -1300,7 +1302,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[INFO]  - mediastore: 2\n" +
-                                    "[INFO]   - media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/first/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -1315,7 +1317,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/second/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -1331,7 +1333,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[INFO]  - sitestore: 3\n" +
-                                    "[INFO]   - site: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/first/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -1346,7 +1348,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - site: 'second'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/second/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -1361,7 +1363,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[INFO]   - site: 'third'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/third/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -1377,7 +1379,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )\n" +
                                     "[INFO]  - templatestore: 4\n" +
-                                    "[INFO]   - template: 'first'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/first/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -1392,7 +1394,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - template: 'fourth'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/fourth/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -1407,7 +1409,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/fourth' to '/to/fourth' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/fourth' to '/to/fourth' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/fourth' to '/to/fourth' )\n" +
-                                    "[INFO]   - template: 'second'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/second/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -1422,7 +1424,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
                                     "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[INFO]   - template: 'third'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
+                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
                                     "[DEBUG]    - Created files: 1\n" +
                                     "[DEBUG]     - /path/third/0.txt\n" +
                                     "[DEBUG]    - Updated files: 2\n" +
@@ -1762,31 +1764,31 @@ public class AdvancedLoggerTest {
         if (pageStore) {
             final Store.Type storeType = Store.Type.PAGESTORE;
             final List<ElementExportInfo> list = new ArrayList<>();
-            list.add(new MockedElementExportInfo(storeType, "first", "page", status));
+            list.add(new MockedElementExportInfo(storeType, "first", TagNames.PAGE, status));
             storeElements.put(storeType, list);
         }
         if (mediaStore) {
             final Store.Type storeType = Store.Type.MEDIASTORE;
             final List<ElementExportInfo> list = new ArrayList<>();
-            list.add(new MockedElementExportInfo(storeType, "second", "media", status));
-            list.add(new MockedElementExportInfo(storeType, "first", "media", status));
+            list.add(new MockedElementExportInfo(storeType, "second", TagNames.MEDIUM, status));
+            list.add(new MockedElementExportInfo(storeType, "first", TagNames.MEDIUM, status));
             storeElements.put(storeType, list);
         }
         if (siteStore) {
             final Store.Type storeType = Store.Type.SITESTORE;
             final List<ElementExportInfo> list = new ArrayList<>();
-            list.add(new MockedElementExportInfo(storeType, "third", "site", status));
-            list.add(new MockedElementExportInfo(storeType, "first", "site", status));
-            list.add(new MockedElementExportInfo(storeType, "second", "site", status));
+            list.add(new MockedElementExportInfo(storeType, "third", TagNames.PAGEREF, status));
+            list.add(new MockedElementExportInfo(storeType, "first", TagNames.PAGEREF, status));
+            list.add(new MockedElementExportInfo(storeType, "second", TagNames.PAGEREF, status));
             storeElements.put(storeType, list);
         }
         if (templateStore) {
             final Store.Type storeType = Store.Type.TEMPLATESTORE;
             final List<ElementExportInfo> list = new ArrayList<>();
-            list.add(new MockedElementExportInfo(storeType, "second", "template", status));
-            list.add(new MockedElementExportInfo(storeType, "fourth", "template", status));
-            list.add(new MockedElementExportInfo(storeType, "third", "template", status));
-            list.add(new MockedElementExportInfo(storeType, "first", "template", status));
+            list.add(new MockedElementExportInfo(storeType, "second", TagNames.TEMPLATE, status));
+            list.add(new MockedElementExportInfo(storeType, "fourth", TagNames.TEMPLATE, status));
+            list.add(new MockedElementExportInfo(storeType, "third", TagNames.TEMPLATE, status));
+            list.add(new MockedElementExportInfo(storeType, "first", TagNames.TEMPLATE, status));
             storeElements.put(storeType, list);
         }
         return storeElements;
@@ -1872,7 +1874,7 @@ public class AdvancedLoggerTest {
         }
 
         MockedElementExportInfo(@NotNull final Store.Type storeType, @NotNull final String name, @NotNull final ExportStatus exportStatus) {
-            this(storeType, name, "page", exportStatus);
+            this(storeType, name, TagNames.PAGE, exportStatus);
         }
 
         MockedElementExportInfo(@NotNull final Store.Type storeType, @NotNull final String name, @NotNull final String nodeTag, @NotNull final ExportStatus exportStatus) {
