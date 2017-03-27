@@ -18,7 +18,6 @@ import scala.io.Source
 import scala.language.{implicitConversions, postfixOps}
 
 class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
-
   def fixture = new {
     lazy val propsWithVersionBuilder = ServerProperties.builder().version("5.2.611")
     lazy val minimalServerProperties = propsWithVersionBuilder.serverInstall(false).build()
@@ -36,7 +35,7 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
   }
 
   "NativeServerRunner.waitForCondition" should {
-    def time(block: => Unit): Duration = {
+    def executeAndClock(block: => Unit): Duration = {
       val startTime = System.currentTimeMillis()
       block
       Duration.ofMillis(System.currentTimeMillis() - startTime)
@@ -53,7 +52,7 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
       for { i <- 1 to 3 } {
         callCount = 0
         lazy val result = NativeServerRunner.waitForCondition(condition, i * waitTime, 2)
-        val duration    = time(result)
+        val duration    = executeAndClock(result)
         assert(!result)
         assert(duration >= i * waitTime)
         assert(callCount == 2)
@@ -61,13 +60,13 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
     }
     "wait approximately `waitTime` between calls" in {
       lazy val result = NativeServerRunner.waitForCondition(() => false, 100 milliseconds, 2)
-      val duration    = time(result)
+      val duration    = executeAndClock(result)
       assert(!result)
       assert(duration >= 100.milliseconds)
     }
     "return immediately if 'condition' is true" in {
       lazy val result = NativeServerRunner.waitForCondition(() => true, 100 milliseconds, 1)
-      val duration    = time(result)
+      val duration    = executeAndClock(result)
       assert(result)
       assert(duration < 50.milliseconds)
     }
@@ -145,10 +144,10 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
     }
     "only contain '-Xloggc' when it is explicitly configured" in {
       val argsNoGcLog = NativeServerRunner.prepareStartup(fixture.minimalServerProperties).asScala
-      assert(!argsNoGcLog.exists(_.contains("-Xloggc")))
+      assert(!argsNoGcLog.exists(str => str startsWith "-Xloggc"))
       val argsGcLog =
         NativeServerRunner.prepareStartup(ServerProperties.builder().serverInstall(false).serverGcLog(true).version("5.2.611").build()).asScala
-      assert(argsGcLog.exists(_.contains("-Xloggc")))
+      assert(argsGcLog.count(str => str startsWith "-Xloggc") == 1)
     }
     "add the server ops" in {
       val commands = NativeServerRunner
@@ -185,14 +184,14 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
         assert(!NativeServerRunner.testConnection(throwingConnection))
       }
       "the connection is null" in {
-        assert(!NativeServerRunner.testConnection(null))
+        an[IllegalArgumentException] shouldBe thrownBy(NativeServerRunner.testConnection(null))
       }
     }
   }
 
   "NativeServerRunner.prepareStop" should {
-    val props  = fixture.propsWithVersionBuilder.serverHost("rainbow.unicorn").serverPort(1234).build()
-    val result = NativeServerRunner.prepareStop(props).asScala
+    lazy val props  = fixture.propsWithVersionBuilder.serverHost("rainbow.unicorn").serverPort(1234).build()
+    lazy val result = NativeServerRunner.prepareStop(props).asScala
 
     "have 'java' as the first element" in assert(result.head == "java")
     "have 'de.espirit.firstspirit.server.ShutdownServer' as the last argument" in assert(
@@ -210,6 +209,7 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
       eventually(timeout(60 seconds), interval(2 seconds)) {
         assert(NativeServerRunner.testConnection(NativeServerRunner.getFSConnection(props)))
       }
+      assert(new NativeServerRunner(props).stop())
     }
   }
 
@@ -235,6 +235,9 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
     "return true when no server has been started by the runner itself and already a server was running (from another service)" taggedAs IntegrationTest in {
       val runner1 = new NativeServerRunner(fixture.minimalServerProperties)
       val runner2 = new NativeServerRunner(fixture.minimalServerProperties)
+      assert(!runner1.isRunning)
+      assert(!runner2.isRunning)
+
       info("runner1 will start the server itself, runner2 will jump on the already-existing server")
       assert(runner1.start())
       assert(runner2.start())

@@ -9,7 +9,7 @@ public interface ServerRunner {
      * Makes sure a FirstSpirit server is running. If another server is already running at the given destination, it will not try to start another
      * one.
      *
-     * @return whether a FirstSpirit server is running or not.
+     * @return whether a FirstSpirit server is running or not
      */
     boolean start();
 
@@ -20,8 +20,9 @@ public interface ServerRunner {
 
     /**
      * Stops a running FirstSpirit server. Even if the FirstSpirit server was not started using this class, an attempt to stop the server is executed.
+     * Will not try to stop the server if it cannot be contacted beforehand.
      *
-     * @return whether stopping the server was successful. Returns `false` when no connection to a server can be made.
+     * @return whether stopping the server was successful
      */
     boolean stop();
 }
