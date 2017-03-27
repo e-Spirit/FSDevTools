@@ -4,14 +4,15 @@ import com.google.common.annotations.VisibleForTesting;
 
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ConnectionManager;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import de.espirit.firstspirit.common.MaximumNumberOfSessionsExceededException;
+import de.espirit.firstspirit.server.authentication.AuthenticationException;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -28,9 +29,12 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class NativeServerRunner implements ServerRunner {
 
-    private static Logger log = LoggerFactory.getLogger(NativeServerRunner.class);
+    private static final String PROBLEM_READING = "Problem reading data from FirstSpirit server process";
 
     protected ServerProperties serverProperties;
     /**
@@ -39,7 +43,7 @@ public class NativeServerRunner implements ServerRunner {
     protected Optional<FutureTask<Void>> serverTask = Optional.empty();
     protected ExecutorService executor = Executors.newCachedThreadPool();
 
-    public NativeServerRunner(ServerProperties serverProperties) {
+    public NativeServerRunner(final ServerProperties serverProperties) {
         this.serverProperties = serverProperties;
     }
 
@@ -52,7 +56,7 @@ public class NativeServerRunner implements ServerRunner {
      * @return the value of the last call of `condition`.
      */
     @VisibleForTesting
-    protected static boolean waitForCondition(Supplier<Boolean> condition, Duration waitTime, int triesLeft) {
+    static boolean waitForCondition(final Supplier<Boolean> condition, final Duration waitTime, final int triesLeft) {
         if (triesLeft > 0) {
             if (condition.get()) {
                 return true;
@@ -77,17 +81,16 @@ public class NativeServerRunner implements ServerRunner {
      * @throws java.io.IOException on file system access problems
      */
     @VisibleForTesting
-    protected static List<String> prepareFilesystem(ServerProperties serverProperties) throws IOException {
-        List<String> args = new ArrayList<>();
-        Path fsServerRoot = serverProperties.getServerRoot();
+    static List<String> prepareFilesystem(final ServerProperties serverProperties) throws IOException {
+        final List<String> args = new ArrayList<>();
+        final Path fsServerRoot = serverProperties.getServerRoot();
 
-        Path serverDir = fsServerRoot.resolve("server");
-        Path confDir = fsServerRoot.resolve("conf");
+        final Path serverDir = fsServerRoot.resolve("server");
+        final Path confDir = fsServerRoot.resolve("conf");
 
-        Path initFile = serverDir.resolve("fs-init");
-        Path policyFile = confDir.resolve("fs-server.policy");
-        Path licenseFile = confDir.resolve("fs-license.conf");
-        Path confFile = confDir.resolve("fs-server.conf");
+        final Path initFile = serverDir.resolve("fs-init");
+        final Path policyFile = confDir.resolve("fs-server.policy");
+        final Path confFile = confDir.resolve("fs-server.conf");
 
         Files.createDirectories(serverDir);
         Files.createDirectories(confDir);
@@ -97,16 +100,16 @@ public class NativeServerRunner implements ServerRunner {
         } else {
             Files.write(initFile, Collections.emptyList());
         }
-        Files.copy(NativeServerRunner.class.getResourceAsStream("/" + licenseFile.getFileName().toString()), licenseFile,
-                   StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(serverProperties.getLicenseFileSupplier().get(), confDir.resolve("fs-license.conf"), StandardCopyOption.REPLACE_EXISTING);
         try (BufferedReader reader = confFile.toFile().exists() ?
                                      Files.newBufferedReader(confFile) :
                                      new BufferedReader(
-                                         new InputStreamReader(NativeServerRunner.class.getResourceAsStream("/" + confFile.getFileName().toString()))
+                                         new InputStreamReader(NativeServerRunner.class.getResourceAsStream("/" + confFile.getFileName().toString()),
+                                                               StandardCharsets.UTF_8)
                                      )) {
             //matches HTTP_PORT=123 with whitespace allowed in between
-            Pattern pattern = Pattern.compile("HTTP_PORT\\s*=\\s*\\d+");
-            List<String> lines = reader.lines().map(line -> {
+            final Pattern pattern = Pattern.compile("HTTP_PORT\\s*=\\s*\\d+");
+            final List<String> lines = reader.lines().map(line -> {
                 if (pattern.matcher(line).matches()) {
                     return "HTTP_PORT=" + serverProperties.getServerPort();
                 } else {
@@ -134,9 +137,9 @@ public class NativeServerRunner implements ServerRunner {
      * @throws java.io.IOException on file system access problems
      */
     @VisibleForTesting
-    protected static List<String> prepareStartup(ServerProperties serverProperties) throws IOException {
-        Path fsServerRoot = serverProperties.getServerRoot();
-        ArrayList<String> args = new ArrayList<>();
+    static List<String> prepareStartup(final ServerProperties serverProperties) throws IOException {
+        final Path fsServerRoot = serverProperties.getServerRoot();
+        final ArrayList<String> args = new ArrayList<>();
         args.add("java");
 
         if (serverProperties.isServerGcLog()) {
@@ -163,27 +166,29 @@ public class NativeServerRunner implements ServerRunner {
      * @return whether the connection was successfully established
      */
     @VisibleForTesting
-    protected static boolean testConnection(Connection connection) {
+    static boolean testConnection(final Connection connection) {
+        if (connection == null) {
+            throw new IllegalArgumentException("connection may not be null!");
+        }
         try {
             connection.connect();
             if (connection.isConnected()) {
                 return true;
             }
-        } catch (Exception e) {
-            return false;
+        } catch (IOException | MaximumNumberOfSessionsExceededException | AuthenticationException | RuntimeException e) {
+            log.debug(PROBLEM_READING, e);
         } finally {
-            if (connection != null) {
-                try {
-                    connection.disconnect();
-                    connection.close();
-                } catch (IOException ignore) {
-                }
+            try {
+                connection.disconnect();
+                connection.close();
+            } catch (final IOException | RuntimeException e) {
+                log.debug(PROBLEM_READING, e);
             }
         }
         return false;
     }
 
-    protected static Connection getFSConnection(ServerProperties serverProperties) {
+    static Connection getFSConnection(final ServerProperties serverProperties) {
         return ConnectionManager
             .getConnection(serverProperties.getServerHost(), serverProperties.getServerPort(), ConnectionManager.HTTP_MODE, "Admin",
                            serverProperties.getServerAdminPw());
@@ -198,31 +203,35 @@ public class NativeServerRunner implements ServerRunner {
      * @throws java.io.IOException on file system access problems
      */
     @VisibleForTesting
-    protected static FutureTask<Void> bootFirstSpiritServer(ServerProperties serverProperties, ExecutorService executor) throws IOException {
-        List<String> commands = Collections.unmodifiableList(prepareStartup(serverProperties));
-        log.info("Execute command {}", String.join(" ", commands));
+    @SuppressWarnings({"squid:S1141", "squid:S1188"}) //nested try and too long lambda
+    static FutureTask<Void> bootFirstSpiritServer(final ServerProperties serverProperties, final ExecutorService executor) throws IOException {
+        final List<String> commands = Collections.unmodifiableList(new ArrayList<>(prepareStartup(serverProperties)));
+        if (log.isInfoEnabled()) {
+            log.info("Execute command " + String.join(" ", commands));
+        }
 
-        FutureTask<Void> task = new FutureTask<>(() -> {
-            ProcessBuilder builder = new ProcessBuilder(new ArrayList<>(commands)); //copy list because we run on a different thread here
+        //start FirstSpirit async
+        final FutureTask<Void> task = new FutureTask<>(() -> {
+            final ProcessBuilder builder = new ProcessBuilder(commands);
             builder.redirectErrorStream(true);
             final Process process;
             try {
                 process = builder.start();
                 //start logging on another task to be able to be interrupted to destroy the original process because it hangs sometimes
-                FutureTask<Void> logTask = new FutureTask<>(() -> {
-                    new BufferedReader(new InputStreamReader(process.getInputStream())).lines()
+                final FutureTask<Void> logTask = new FutureTask<>(() -> {
+                    new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8)).lines()
                         .forEach(line -> log.info("FirstSpirit Server log:" + line));
                     return null; //that one hurts
                 });
                 executor.submit(logTask);
                 try {
                     logTask.get();
-                } catch (InterruptedException ie) {
+                } catch (final InterruptedException ie) {
                     process.destroy();  //kill the process if it did not die on its own
                     Thread.currentThread().interrupt();
                 }
-            } catch (IOException ioe) {
-                log.error("Problem reading data from FirstSpirit server process");
+            } catch (final IOException ioe) {
+                log.error(PROBLEM_READING, ioe);
             }
             return null; //that one hurts
         });
@@ -238,8 +247,8 @@ public class NativeServerRunner implements ServerRunner {
      * @return command line arguments to stop the server
      */
     @VisibleForTesting
-    protected static List<String> prepareStop(ServerProperties serverProperties) {
-        List<String> args = new ArrayList<>();
+    static List<String> prepareStop(final ServerProperties serverProperties) {
+        final List<String> args = new ArrayList<>();
         args.add("java");
         args.addAll(Arrays.asList("-cp", serverProperties.getFsServerJars().stream().map(File::toString).collect(Collectors.joining(":"))));
         args.add("-Dhost=" + serverProperties.getServerHost());
@@ -249,23 +258,23 @@ public class NativeServerRunner implements ServerRunner {
         return args;
     }
 
-    @VisibleForTesting
-    protected static boolean shutdownFirstSpiritServer(ServerProperties serverProperties, Optional<FutureTask<Void>> serverTask) {
-        ProcessBuilder builder = new ProcessBuilder(prepareStop(serverProperties));
+    private static boolean shutdownFirstSpiritServer(final ServerProperties serverProperties, final Optional<FutureTask<Void>> serverTask) {
+        final ProcessBuilder builder = new ProcessBuilder(prepareStop(serverProperties));
         builder.redirectErrorStream(true);
-        Process process;
+        final Process process;
         try {
             process = builder.start();
-            new BufferedReader(new InputStreamReader(process.getInputStream())).lines().forEach(line -> log.info("FirstSpirit shutdown log:" + line));
-        } catch (IOException ioe) {
-            log.error("Problem reading data from FirstSpirit server process");
+            new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8)).lines()
+                .forEach(line -> log.info("FirstSpirit shutdown log:" + line));
+        } catch (final IOException ioe) {
+            log.error(PROBLEM_READING, ioe);
             return false;
         }
         //ensure the FS lock file is removed (indicates that the server is still running if the lock file is still there)
         waitForCondition(() -> !serverProperties.getLockFile().exists(), Duration.ofSeconds(1), 15);
         try {
             Thread.sleep(500);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException ie) {
             Thread.currentThread().interrupt();
         }
         serverTask.ifPresent(x -> x.cancel(true)); //kill running process if it did not die itself
@@ -288,8 +297,9 @@ public class NativeServerRunner implements ServerRunner {
                                                  }, serverProperties.getThreadWait(),
                                                  serverProperties.getConnectionRetryCount()
                                                  + 1); //retry count means we try one more time allover
-            } catch (IOException ioe) {
+            } catch (final IOException ioe) {
                 //nothing to do, server will not be running in this case, normal behaviour following
+                log.error(PROBLEM_READING, ioe);
             }
             if (!serverRunning) {
                 log.error("Could not start FirstSpirit server.");

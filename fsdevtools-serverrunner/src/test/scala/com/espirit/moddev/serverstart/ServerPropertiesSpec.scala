@@ -17,7 +17,7 @@ import scala.util.Try
 class ServerPropertiesSpec extends UnitSpec with GeneratorDrivenPropertyChecks with Matchers {
 
   def objWithVersion(version: String) =
-    new ServerProperties(Paths.get(""), 1, true, true, new util.ArrayList(), Duration.ofMillis(0), "", "", 0, version, null)
+    new ServerProperties(Paths.get(""), null, 1, true, true, new util.ArrayList(), Duration.ofMillis(0), "", 0, version, null, null)
 
   "ServerProperties constructor, parameter version" should "not accept null" in {
     an[IllegalArgumentException] should be thrownBy objWithVersion(null)
@@ -41,15 +41,16 @@ class ServerPropertiesSpec extends UnitSpec with GeneratorDrivenPropertyChecks w
     }
   }
   "ServerProperties constructor, parameter serverRoot" should "use a default parameter if given null" in {
-    assert(new ServerProperties(null, 1, true, true, new util.ArrayList(), Duration.ofMillis(0), "", "", 0, "1.0", null).getServerRoot != null)
+    assert(
+      new ServerProperties(null, null, 1, true, true, new util.ArrayList(), Duration.ofMillis(0), "", 0, "1.0", null, null).getServerRoot != null)
   }
   "ServerProperties constructor, parameter serverInstall" should "use a default parameter if given null" in {
     noException should be thrownBy
-      new ServerProperties(Paths.get(""), 1, true, true, new util.ArrayList(), Duration.ofMillis(0), "", "", 0, "1.0", null).isServerInstall
+      new ServerProperties(Paths.get(""), null, 1, true, true, new util.ArrayList(), Duration.ofMillis(0), "", 0, "1.0", null, null).isServerInstall
   }
 
   def objWithPort(port: Int) =
-    new ServerProperties(Paths.get(""), port, true, true, new util.ArrayList(), Duration.ofMillis(0), "", "", 0, "1.0", null)
+    new ServerProperties(Paths.get(""), null, port, true, true, new util.ArrayList(), Duration.ofMillis(0), "", 0, "1.0", null, null)
 
   "ServerProperties constructor, parameter serverPort" should "accept ports that are strictly positive and smaller than 65536" in {
     forAll(Gen.choose(1, 65536)) { port =>
@@ -69,7 +70,7 @@ class ServerPropertiesSpec extends UnitSpec with GeneratorDrivenPropertyChecks w
   }
 
   def objWithThreadWait(threadWait: Duration) =
-    new ServerProperties(Paths.get(""), 1, true, true, new util.ArrayList(), threadWait, "", "", 0, "1.0", null)
+    new ServerProperties(Paths.get(""), null, 1, true, true, new util.ArrayList(), threadWait, "", 0, "1.0", null, null)
 
   "ServerProperties constructor, parameter threadWait" should "accept positive values" in {
     forAll(arbitrary[Long] suchThat (_ >= 0)) { threadWait =>
@@ -86,15 +87,15 @@ class ServerPropertiesSpec extends UnitSpec with GeneratorDrivenPropertyChecks w
   }
   "ServerProperties constructor, parameter serverAdminPw" should "use a default parameter if given null" in {
     assert(
-      new ServerProperties(Paths.get(""), 1, true, true, new util.ArrayList(), Duration.ofMillis(0), null, "", 0, "1.0", null).getServerAdminPw != null)
+      new ServerProperties(Paths.get(""), null, 1, true, true, new util.ArrayList(), Duration.ofMillis(0), null, 0, "1.0", null, null).getServerAdminPw != null)
   }
   "ServerProperties constructor, parameter serverHost" should "use a default parameter if given null" in {
     assert(
-      new ServerProperties(Paths.get(""), 1, true, true, new util.ArrayList(), Duration.ofMillis(0), "", null, 0, "1.0", null).getServerHost != null)
+      new ServerProperties(Paths.get(""), null, 1, true, true, new util.ArrayList(), Duration.ofMillis(0), "", 0, "1.0", null, null).getServerHost != null)
   }
 
   def objWithConnectionRetryCount(connectionRetryCount: Int) =
-    new ServerProperties(Paths.get(""), 1, true, true, new util.ArrayList(), Duration.ofMillis(0), "", null, connectionRetryCount, "1.0", null)
+    new ServerProperties(Paths.get(""), null, 1, true, true, new util.ArrayList(), Duration.ofMillis(0), "", connectionRetryCount, "1.0", null, null)
 
   "ServerProperties constructor, parameter connectionRetryCount" should "accept positive values" in {
     forAll(arbitrary[Int] suchThat (_ >= 0)) { connectionRetryCount =>
@@ -107,12 +108,12 @@ class ServerPropertiesSpec extends UnitSpec with GeneratorDrivenPropertyChecks w
     }
   }
   "ServerProperties constructor, parameter serverOps" should "use a default parameter if given null" in {
-    noException should be thrownBy new ServerProperties(Paths.get(""), 1, true, true, null, Duration.ofMillis(0), "", "", 0, "1.0", null)
+    noException should be thrownBy new ServerProperties(Paths.get(""), null, 1, true, true, null, Duration.ofMillis(0), "", 0, "1.0", null, null)
   }
   it should "not contain null" in {
     val listWithNulls = Seq("list", null, "null")
     val listFromServerProps =
-      new ServerProperties(Paths.get(""), 1, true, true, listWithNulls.asJava, Duration.ofMillis(0), "", null, 0, "1.0", null).getServerOps.asScala
+      new ServerProperties(Paths.get(""), null, 1, true, true, listWithNulls.asJava, Duration.ofMillis(0), "", 0, "1.0", null, null).getServerOps.asScala
     listFromServerProps should contain inOrderElementsOf listWithNulls.filter(_ != null)
   }
 }

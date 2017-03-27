@@ -30,25 +30,33 @@
         <version>${ci.version}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <name>FirstSpirit Development Tools Server Startup Module</name>
-    <artifactId>fsdevtools-serverstart</artifactId>
+    <name>FirstSpirit Development Tools Server Runner Module</name>
+    <artifactId>fsdevtools-serverrunner</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.24</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>de.espirit.firstspirit</groupId>
             <artifactId>server</artifactId>
             <version>${firstspirit.version}</version>
-            <scope>provided</scope>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>de.espirit.firstspirit</groupId>
             <artifactId>wrapper</artifactId>
             <version>${firstspirit.wrapper.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.espirit.firstspirit</groupId>
+            <artifactId>fs-access</artifactId>
+            <version>${firstspirit.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>de.espirit.firstspirit</groupId>
@@ -59,7 +67,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.14</version>
+            <version>1.16.16</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -101,20 +109,6 @@
     </dependencies>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>net.alchim31.maven</groupId>
-                    <artifactId>scala-maven-plugin</artifactId>
-                    <version>3.2.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.0.2</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>com.coderplus.maven.plugins</groupId>
