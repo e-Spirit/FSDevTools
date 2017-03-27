@@ -75,7 +75,7 @@ class ReorganizedResult {
 
     @NotNull
     Collection<EntityTypeExportInfo> getEntityTypes() {
-        return _entityTypes;
+        return Collections.unmodifiableCollection(_entityTypes);
     }
 
     /**

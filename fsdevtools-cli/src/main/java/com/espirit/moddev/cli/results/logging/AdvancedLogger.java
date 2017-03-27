@@ -211,12 +211,7 @@ public enum AdvancedLogger {
             });
             logger.info(" - " + entry.getKey().getName() + ": " + sortedElements.size());
             for (final ElementExportInfo element : sortedElements) {
-                String identifier;
-                try {
-                    identifier = StoreElements.determineElementType(element.getElementInfo().getNodeTag());
-                } catch (final NullPointerException justForTests) {
-                    identifier = element.getElementInfo().getNodeTag();
-                }
+                String identifier = StoreElements.determineElementType(element.getElementInfo().getNodeTag());
                 identifier += ": '" + element.getName() + "'";
                 final String spacedString = getSpacedString(SPACE_INDENT - identifier.length());
                 final String files = getFilesStringForElement(element);
@@ -228,6 +223,9 @@ public enum AdvancedLogger {
     }
 
     static void logEntityTypes(Logger logger, @NotNull final Collection<EntityTypeExportInfo> entityTypes) {
+        if (! logger.isInfoEnabled()) {
+            return;
+        }
         // ignore empty entity types
         if (entityTypes.isEmpty()) {
             return;
@@ -245,7 +243,8 @@ public enum AdvancedLogger {
         // append headline
         final String entityTypesIdentifier = "entity types: " + entityTypes.size();
         final String spacedStringEntityTypes = getSpacedString(SPACE_INDENT - entityTypesIdentifier.length() + 2);
-        logger.info("- " + entityTypesIdentifier + spacedStringEntityTypes + " ( schemas: " + schemaMap.size() + ", entities: " + totalEntityCount + " )");
+        final String headline = "- " + entityTypesIdentifier + spacedStringEntityTypes + " ( schemas: " + schemaMap.size() + ", entities: " + totalEntityCount + " )";
+        logger.info(headline);
 
         // log schemas & entity types
         for (final Map.Entry<String, List<EntityTypeExportInfo>> entry : schemaMap.entrySet()) {
