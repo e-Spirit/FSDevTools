@@ -10,6 +10,7 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,10 +24,10 @@ public class PathIdentifierParserTest {
 
     @DataPoints
     public static List[] testcases =
-            new List[]{ Arrays.asList("path:/TemplateStore/PageTemplates/hurz"),
-                    Arrays.asList("PATH:/TemplateStore/PageTemplates/hurz"),
-                    Arrays.asList("path :/TemplateStore/PageTemplates/hurz"),
-                    Arrays.asList("path : /TemplateStore/PageTemplates/hurz")};
+            new List[]{Collections.singletonList("path:/TemplateStore/PageTemplates/hurz"),
+                    Collections.singletonList("PATH:/TemplateStore/PageTemplates/hurz"),
+                    Collections.singletonList("path :/TemplateStore/PageTemplates/hurz"),
+                    Collections.singletonList("path : /TemplateStore/PageTemplates/hurz")};
 
     private PathIdentifierParser testling;
 
@@ -62,30 +63,31 @@ public class PathIdentifierParserTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testParseWithNonExistentPrefix() throws Exception {
-        testling.parse(Arrays.asList("xxxxx:myPath"));
+        testling.parse(Collections.singletonList("xxxxx:myPath"));
     }
 
 
     @Test
     public void testParseMultiple() throws Exception {
-        testling.parse(Arrays.asList("path:/TemplateStore/PageTemplates/first"));
+        final List<PathIdentifier> parse = testling.parse(Arrays.asList("path:/TemplateStore/PageTemplates/first", "path:/PageStore/folder"));
+        assertThat(parse).hasSize(2);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void testEmptyPath() throws Exception {
-        testling.parse(Arrays.asList("path:"));
+        testling.parse(Collections.singletonList("path:"));
     }
 
 
     @Test(expected = IllegalArgumentException.class)
-    public void testEmptyPath_whitespaces() throws Exception {
-        testling.parse(Arrays.asList("path: "));
+    public void testEmptyPathWhitespaces() throws Exception {
+        testling.parse(Collections.singletonList("path: "));
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void testNoLeadingSlash() throws Exception {
-        testling.parse(Arrays.asList("path:TemplateStore/PageTemplates/first"));
+        testling.parse(Collections.singletonList("path:TemplateStore/PageTemplates/first"));
     }
 }
