@@ -24,9 +24,20 @@ import java.util.*;
 public enum AdvancedLogger {
     ;
 
-    private final static int SPACE_INDENT = 35;
+    private static final int SPACE_INDENT = 35;
 
+    /**
+     * Logs the given {@code exportResult} to the given logger. Only performed if the log level is at least INFO.
+     * A summary and some minor information will be logged to info. If loglevel DEBUG is enabled, detailed information
+     * including file handles will be logged.
+     * @param logger the logger the export result information will be logged to
+     * @param exportResult the result to be loggged
+     */
     public static void logResult(@NotNull final Logger logger, @NotNull final ExportOperation.Result exportResult) {
+        if (! logger.isInfoEnabled()) {
+            // nothing to do if loglevel is not at least info
+            return;
+        }
         // set logger
         logger.info("Export done.");
 
@@ -45,26 +56,30 @@ public enum AdvancedLogger {
         logger.info(moved);
     }
 
+
     static String logElements(@NotNull final Logger logger, @NotNull final Collection<ExportInfo> elements, @NotNull final String description) {
-        // re-organize result
-        final ReorganizedResult reorganizedResult = new ReorganizedResult(elements);
+        if (logger.isInfoEnabled()) {
+            // re-organize result
+            final ReorganizedResult reorganizedResult = new ReorganizedResult(elements);
 
-        // log short description
-        final StringBuilder headline = new StringBuilder(description).append(": ");
-        int count = elements.size();
-        if (reorganizedResult.containsFsMeta()) {
-            // ExportInfo.Type.FS_META (.FirstSpirit/Import*.txt) is always update --> do not show in result summary
-            count--;
+            // log short description
+            final StringBuilder headline = new StringBuilder(description).append(": ");
+            int count = elements.size();
+            if (reorganizedResult.containsFsMeta()) {
+                // ExportInfo.Type.FS_META (.FirstSpirit/Import*.txt) is always update --> do not show in result summary
+                count--;
+            }
+            headline.append(count);
+
+            logger.info(headline.toString());
+
+            // log elements
+            logProjectProperties(logger, reorganizedResult.getProjectProperties());
+            logStoreElements(logger, reorganizedResult.getStoreElements());
+            logEntityTypes(logger, reorganizedResult.getEntityTypes());
+            return buildSummary(elements, description, reorganizedResult);
         }
-        headline.append(count);
-
-        logger.info(headline.toString());
-
-        // log elements
-        logProjectProperties(logger, reorganizedResult.getProjectProperties());
-        logStoreElements(logger, reorganizedResult.getStoreElements());
-        logEntityTypes(logger, reorganizedResult.getEntityTypes());
-        return buildSummary(elements, description, reorganizedResult);
+        return "";
     }
 
     @NotNull
@@ -144,31 +159,39 @@ public enum AdvancedLogger {
         }
     }
 
+
     static void logProjectProperties(Logger logger, @NotNull final Collection<PropertyTypeExportInfo> projectProperties) {
-        // ignore empty properties
-        if (projectProperties.isEmpty()) {
-            return;
-        }
+        if (logger.isInfoEnabled()) {
+            // ignore empty properties
+            if (projectProperties.isEmpty()) {
+                return;
+            }
 
-        // append headline
-        logger.info("- project properties: " + projectProperties.size());
+            // append headline
+            logger.info("- project properties: " + projectProperties.size());
 
-        // append single properties
-        final List<PropertyTypeExportInfo> sortedProjectProperties = new ArrayList<>(projectProperties);
-        sortedProjectProperties.sort((first, second) -> {
-            String firstName = first.getPropertyType() == null ? first.getName() : String.valueOf(first.getPropertyType().ordinal());
-            String secondName = second.getPropertyType() == null ? second.getName() : String.valueOf(second.getPropertyType().ordinal());
-            return firstName.compareTo(secondName);
-        });
-        for (final PropertyTypeExportInfo exportInfo : sortedProjectProperties) {
-            final String identifier = toCamelCase("_", exportInfo.getName());
-            final String spacedString = getSpacedString(SPACE_INDENT - identifier.length() + 1);
-            logger.info(" - " + identifier + spacedString + getFilesStringForElement(exportInfo));
-            logFileInfos(logger, exportInfo, "");
+            // append single properties
+            final List<PropertyTypeExportInfo> sortedProjectProperties = new ArrayList<>(projectProperties);
+            sortedProjectProperties.sort((first, second) -> {
+                String firstName = first.getPropertyType() == null ? first.getName() : String.valueOf(first.getPropertyType().ordinal());
+                String secondName = second.getPropertyType() == null ? second.getName() : String.valueOf(second.getPropertyType().ordinal());
+                return firstName.compareTo(secondName);
+            });
+            for (final PropertyTypeExportInfo exportInfo : sortedProjectProperties) {
+                final String identifier = toCamelCase("_", exportInfo.getName());
+                final String spacedString = getSpacedString(SPACE_INDENT - identifier.length() + 1);
+                logger.info(" - " + identifier + spacedString + getFilesStringForElement(exportInfo));
+                logFileInfos(logger, exportInfo, "");
+            }
         }
     }
 
+    @SuppressWarnings("squid:S2629")
     static void logStoreElements(Logger logger, @NotNull final Map<Store.Type, List<ElementExportInfo>> storeElements) {
+        if (! logger.isInfoEnabled()) {
+            // nothing to do if loglevel is not at least info
+            return;
+        }
         // ignore empty store elements
         if (storeElements.isEmpty()) {
             return;
@@ -194,19 +217,17 @@ public enum AdvancedLogger {
                 }
 
                 private String getPath(final ElementExportInfo exportInfo) {
+                    String path = null;
                     if (!exportInfo.getCreatedFileHandles().isEmpty()) {
-                        return exportInfo.getCreatedFileHandles().iterator().next().getPath();
+                        path = exportInfo.getCreatedFileHandles().iterator().next().getPath();
+                    } else if (!exportInfo.getUpdatedFileHandles().isEmpty()) {
+                        path = exportInfo.getUpdatedFileHandles().iterator().next().getPath();
+                    } else if (!exportInfo.getDeletedFileHandles().isEmpty()) {
+                        path = exportInfo.getDeletedFileHandles().iterator().next().getPath();
+                    } else if (!exportInfo.getMovedFileHandles().isEmpty()) {
+                        path = exportInfo.getMovedFileHandles().iterator().next().getValue().getPath();
                     }
-                    if (!exportInfo.getUpdatedFileHandles().isEmpty()) {
-                        return exportInfo.getUpdatedFileHandles().iterator().next().getPath();
-                    }
-                    if (!exportInfo.getDeletedFileHandles().isEmpty()) {
-                        return exportInfo.getDeletedFileHandles().iterator().next().getPath();
-                    }
-                    if (!exportInfo.getMovedFileHandles().isEmpty()) {
-                        return exportInfo.getMovedFileHandles().iterator().next().getValue().getPath();
-                    }
-                    return exportInfo.getName();
+                    return path != null ? path : exportInfo.getName();
                 }
             });
             logger.info(" - " + entry.getKey().getName() + ": " + sortedElements.size());
@@ -222,6 +243,8 @@ public enum AdvancedLogger {
         }
     }
 
+
+    @SuppressWarnings("squid:S2629")
     static void logEntityTypes(Logger logger, @NotNull final Collection<EntityTypeExportInfo> entityTypes) {
         if (! logger.isInfoEnabled()) {
             return;
@@ -266,6 +289,7 @@ public enum AdvancedLogger {
         }
     }
 
+
     static void logFileInfos(Logger logger, @NotNull final ExportInfo exportInfo, @NotNull final String extraIndent) {
         if (!logger.isDebugEnabled()) {
             return;
@@ -282,42 +306,52 @@ public enum AdvancedLogger {
     //
     //////////////////////////////////////////////////////////
 
+    /**
+     * Logging file handles will only be performed in LogLevel DEBUG.
+     */
     static void logFileHandles(Logger logger, @NotNull final Collection<ExportInfoFileHandle> fileHandles, @NotNull final String description, @NotNull final String extraIndent) {
-        // ignore empty sets
-        if (fileHandles.isEmpty()) {
-            return;
-        }
+       if (logger.isDebugEnabled()) {
+            // ignore empty sets
+            if (fileHandles.isEmpty()) {
+                return;
+            }
 
-        // append headline
-        logger.debug(extraIndent + "  - " + description + ": " + fileHandles.size());
+            // append headline
+            logger.debug(extraIndent + "  - " + description + ": " + fileHandles.size());
 
-        // sort file handles
-        final ArrayList<ExportInfoFileHandle> sortedFileHandles = new ArrayList<>(fileHandles);
-        sortedFileHandles.sort(Comparator.comparing(FileHandle::getPath));
+            // sort file handles
+            final ArrayList<ExportInfoFileHandle> sortedFileHandles = new ArrayList<>(fileHandles);
+            sortedFileHandles.sort(Comparator.comparing(FileHandle::getPath));
 
-        // append file handles
-        for (final ExportInfoFileHandle fileHandle : sortedFileHandles) {
-            logger.debug(extraIndent + "   - " + fileHandle.getPath());
+            // append file handles
+            for (final ExportInfoFileHandle fileHandle : sortedFileHandles) {
+                logger.debug(extraIndent + "   - " + fileHandle.getPath());
+            }
         }
     }
 
+    /**
+     * Logging file handles will only be performed in LogLevel DEBUG.
+     */
     static void logMovedFileHandles(Logger logger, @NotNull final Collection<Pair<ExportInfoFileHandle, ExportInfoFileHandle>> fileHandles, @NotNull final String extraIndent) {
-        // ignore empty sets
-        if (fileHandles.isEmpty()) {
-            return;
-        }
+        if (logger.isDebugEnabled()) {
+            // ignore empty sets
+            if (fileHandles.isEmpty()) {
+                return;
+            }
 
-        // append headline
-        logger.debug(extraIndent + "  - Moved files: " + fileHandles.size());
+            // append headline
+            logger.debug(extraIndent + "  - Moved files: " + fileHandles.size());
 
-        // sort file handles
-        final ArrayList<Pair<ExportInfoFileHandle, ExportInfoFileHandle>> sortedFileHandles = new ArrayList<>(fileHandles);
-        sortedFileHandles.sort(Comparator.comparing(exportInfoFileHandleExportInfoFileHandlePair -> exportInfoFileHandleExportInfoFileHandlePair.getValue().getPath()));
+            // sort file handles
+            final ArrayList<Pair<ExportInfoFileHandle, ExportInfoFileHandle>> sortedFileHandles = new ArrayList<>(fileHandles);
+            sortedFileHandles.sort(Comparator.comparing(exportInfoFileHandleExportInfoFileHandlePair -> exportInfoFileHandleExportInfoFileHandlePair.getValue().getPath()));
 
-        // append filehandles
-        for (final Pair<ExportInfoFileHandle, ExportInfoFileHandle> pair : sortedFileHandles) {
-            final String pathAppendix = " ( from '" + getDirectoryForFile(pair.getKey()) + "' to '" + getDirectoryForFile(pair.getValue()) + "' )";
-            logger.debug(extraIndent + "   - " + pair.getKey().getName() + pathAppendix);
+            // append filehandles
+            for (final Pair<ExportInfoFileHandle, ExportInfoFileHandle> pair : sortedFileHandles) {
+                final String pathAppendix = " ( from '" + getDirectoryForFile(pair.getKey()) + "' to '" + getDirectoryForFile(pair.getValue()) + "' )";
+                logger.debug(extraIndent + "   - " + pair.getKey().getName() + pathAppendix);
+            }
         }
     }
 
@@ -330,18 +364,18 @@ public enum AdvancedLogger {
      */
     static String toCamelCase(@NotNull final String regex, @NotNull final String string) {
         final String[] split = string.split(regex);
-        String name = "";
+        StringBuilder nameBuf = new StringBuilder();
         for (final String text : split) {
             if (text.isEmpty()) {
                 continue;
             }
 
-            name += Character.toUpperCase(text.charAt(0));
+            nameBuf.append(Character.toUpperCase(text.charAt(0)));
             if (text.length() > 1) {
-                name += text.substring(1, text.length()).toLowerCase(Locale.ENGLISH);
+                nameBuf.append(text.substring(1, text.length()).toLowerCase(Locale.ENGLISH));
             }
         }
-        return name;
+        return nameBuf.toString();
     }
 
     static String getDirectoryForFile(@NotNull final ExportInfoFileHandle fileHandle) {
