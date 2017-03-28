@@ -1,6 +1,5 @@
 package com.espirit.moddev.cli.api.parsing.parser;
 
-import com.espirit.moddev.cli.api.parsing.exceptions.UnregisteredPrefixException;
 import com.espirit.moddev.cli.api.parsing.identifier.PathIdentifier;
 
 import java.util.ArrayList;
@@ -27,25 +26,30 @@ public class PathIdentifierParser implements Parser<PathIdentifier> {
             try(Scanner uidScanner = new Scanner(identifier)) {
                 uidScanner.useDelimiter(DELIMITER);
                 if (uidScanner.hasNext()) {
-                    final String prefix = uidScanner.next();
-                    if (! PATH_PREFIX.equalsIgnoreCase(prefix)) {
-                        // normally checked by #appliesTo
-                        throw new IllegalArgumentException("invalid prefix - should be 'path'");
-                    }
-                    if (uidScanner.hasNext()) {
-                        final String path = uidScanner.next();
-                        if (! path.startsWith("/")) {
-                            throw new IllegalArgumentException("path should start with '/'");
-                        }
-                        list.add(new PathIdentifier(path));
-                    } else {
-                        throw new IllegalArgumentException("Wrong input format for input string " + identifier);
-                    }
+                    checkAndAddPath(list, identifier, uidScanner);
                 }
             }
         }
 
         return list;
+    }
+
+
+    private static void checkAndAddPath(List<PathIdentifier> list, String identifier, Scanner uidScanner) {
+        final String prefix = uidScanner.next();
+        if (! PATH_PREFIX.equalsIgnoreCase(prefix)) {
+            // normally checked by #appliesTo
+            throw new IllegalArgumentException("invalid prefix - should be 'path'");
+        }
+        if (uidScanner.hasNext()) {
+            final String path = uidScanner.next();
+            if (! path.startsWith("/")) {
+                throw new IllegalArgumentException("path should start with '/'");
+            }
+            list.add(new PathIdentifier(path));
+        } else {
+            throw new IllegalArgumentException("Wrong input format for input string " + identifier);
+        }
     }
 
 

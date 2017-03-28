@@ -17,6 +17,11 @@ public class PathIdentifier implements Identifier {
     protected static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(PathIdentifier.class);
     private String _path;
 
+    /**
+     * Instantiates a new path identifier
+     *
+     * @param path the path
+     */
     public PathIdentifier(String path) {
         if (path == null) {
             throw new IllegalArgumentException("path is null");
