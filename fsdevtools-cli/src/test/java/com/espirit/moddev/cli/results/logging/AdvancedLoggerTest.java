@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 public class AdvancedLoggerTest {
 
     @Test
-    public void logEmptyResult() throws Exception {
+    public void testLogEmptyResult() throws Exception {
         {
             final MockLogger logger = new MockLogger(false);
             AdvancedLogger.logResult(logger, new MockedResult(false));
@@ -51,7 +51,7 @@ public class AdvancedLoggerTest {
     }
 
     @Test
-    public void logResult() throws Exception {
+    public void testLogResult() throws Exception {
         {
             final MockLogger logger = new MockLogger(false);
             AdvancedLogger.logResult(logger, new MockedResult());
@@ -655,7 +655,7 @@ public class AdvancedLoggerTest {
     }
 
     @Test
-    public void logElements() throws Exception {
+    public void testLogElements() throws Exception {
         {
             final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logElements(logger, Collections.emptyList(), "myDescription");
@@ -993,7 +993,7 @@ public class AdvancedLoggerTest {
 
 
     @Test
-    public void buildSummaryEmptyUpdate() throws Exception {
+    public void testBuildSummaryEmptyUpdate() throws Exception {
         {
             // empty test
             final Collection<ExportInfo> elements = Collections.emptyList();
@@ -1006,7 +1006,7 @@ public class AdvancedLoggerTest {
 
 
     @Test
-    public void buildSummary() throws Exception {
+    public void testBuildSummary() throws Exception {
         {
             // empty test
             final Collection<ExportInfo> elements = Collections.emptyList();
@@ -1116,7 +1116,7 @@ public class AdvancedLoggerTest {
     }
 
     @Test
-    public void appendProjectPropertySummary() throws Exception {
+    public void testAppendProjectPropertySummary() throws Exception {
         {
             final StringBuilder stringBuilder = new StringBuilder();
             final Collection<PropertyTypeExportInfo> projectProperties = Collections.emptyList();
@@ -1138,7 +1138,7 @@ public class AdvancedLoggerTest {
     }
 
     @Test
-    public void appendStoreElementSummary() throws Exception {
+    public void testAppendStoreElementSummary() throws Exception {
         {
             final StringBuilder stringBuilder = new StringBuilder();
             final Map<Store.Type, List<ElementExportInfo>> storeElements = Collections.emptyMap();
@@ -1154,7 +1154,7 @@ public class AdvancedLoggerTest {
     }
 
     @Test
-    public void appendEntityTypeSummary() throws Exception {
+    public void testAppendEntityTypeSummary() throws Exception {
         {
             final StringBuilder stringBuilder = new StringBuilder();
             final Collection<EntityTypeExportInfo> entityTypes = Collections.emptyList();
@@ -1188,7 +1188,7 @@ public class AdvancedLoggerTest {
     }
 
     @Test
-    public void logProjectProperties() throws Exception {
+    public void testLogProjectProperties() throws Exception {
         {
             final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logProjectProperties(logger, Collections.emptyList());
@@ -1252,7 +1252,7 @@ public class AdvancedLoggerTest {
     }
 
     @Test
-    public void logStoreElements() throws Exception {
+    public void testLogStoreElements() throws Exception {
         {
             final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logStoreElements(logger, Collections.emptyMap());
@@ -1445,7 +1445,7 @@ public class AdvancedLoggerTest {
     }
 
     @Test
-    public void logEntityTypes() throws Exception {
+    public void testLogEntityTypes() throws Exception {
         {
             final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logEntityTypes(logger, Collections.emptyList());
@@ -1519,7 +1519,7 @@ public class AdvancedLoggerTest {
     }
 
     @Test
-    public void logFileInfos() throws Exception {
+    public void testLogFileInfos() throws Exception {
         {
             final MockLogger logger = new MockLogger(false);
             AdvancedLogger.logFileInfos(logger, new MockedExportInfo(), "");
@@ -1596,14 +1596,14 @@ public class AdvancedLoggerTest {
     }
 
     @Test
-    public void logFileHandles() throws Exception {
+    public void testLogFileHandles() throws Exception {
         {
-            final MockLogger logger = new MockLogger();
+            final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logFileHandles(logger, createFileHandleCollection(new MockedExportInfo(), 0), "description", "");
             assertEquals("Result does not match.", "", logger.toString());
         }
         {
-            final MockLogger logger = new MockLogger();
+            final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logFileHandles(logger, createFileHandleCollection(new MockedExportInfo(), 1), "myDescription", "");
             // @formatter:off
             final String expected = "[DEBUG]   - myDescription: 1\n" +
@@ -1612,7 +1612,16 @@ public class AdvancedLoggerTest {
             assertEquals("Result does not match.", expected, logger.toString());
         }
         {
+            // debug disabled
             final MockLogger logger = new MockLogger();
+            AdvancedLogger.logFileHandles(logger, createFileHandleCollection(new MockedExportInfo(), 1), "myDescription", "");
+            // @formatter:off
+            final String expected = "";
+            // @formatter:on
+            assertEquals("Result does not match.", expected, logger.toString());
+        }
+        {
+            final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logFileHandles(logger, createFileHandleCollection(new MockedExportInfo(), 2), "myDescription", " ");
             // @formatter:off
             final String expected = "[DEBUG]    - myDescription: 2\n" +
@@ -1622,7 +1631,7 @@ public class AdvancedLoggerTest {
             assertEquals("Result does not match.", expected, logger.toString());
         }
         {
-            final MockLogger logger = new MockLogger();
+            final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logFileHandles(logger, createFileHandleCollection(new MockedExportInfo(), 3), "myDescription", "  ");
             // @formatter:off
             final String expected = "[DEBUG]     - myDescription: 3\n" +
@@ -1635,14 +1644,14 @@ public class AdvancedLoggerTest {
     }
 
     @Test
-    public void logMovedFileHandles() throws Exception {
+    public void testLogMovedFileHandles() throws Exception {
         {
-            final MockLogger logger = new MockLogger();
+            final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logMovedFileHandles(logger, createMovedFileHandleCollection(new MockedExportInfo(), 0), "");
             assertEquals("Result does not match.", "", logger.toString());
         }
         {
-            final MockLogger logger = new MockLogger();
+            final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logMovedFileHandles(logger, createMovedFileHandleCollection(new MockedExportInfo(), 1), "");
             // @formatter:off
             final String expected = "[DEBUG]   - Moved files: 1\n" +
@@ -1651,7 +1660,7 @@ public class AdvancedLoggerTest {
             assertEquals("Result does not match.", expected, logger.toString());
         }
         {
-            final MockLogger logger = new MockLogger();
+            final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logMovedFileHandles(logger, createMovedFileHandleCollection(new MockedExportInfo(), 2), " ");
             // @formatter:off
             final String expected = "[DEBUG]    - Moved files: 2\n" +
@@ -1661,7 +1670,7 @@ public class AdvancedLoggerTest {
             assertEquals("Result does not match.", expected, logger.toString());
         }
         {
-            final MockLogger logger = new MockLogger();
+            final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logMovedFileHandles(logger, createMovedFileHandleCollection(new MockedExportInfo(), 3), "  ");
             // @formatter:off
             final String expected = "[DEBUG]     - Moved files: 3\n" +
@@ -1671,10 +1680,19 @@ public class AdvancedLoggerTest {
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
+        {
+            // debug disabled
+            final MockLogger logger = new MockLogger();
+            AdvancedLogger.logMovedFileHandles(logger, createMovedFileHandleCollection(new MockedExportInfo(), 3), "  ");
+            // @formatter:off
+            final String expected = "";
+            // @formatter:on
+            assertEquals("Result does not match.", expected, logger.toString());
+        }
     }
 
     @Test
-    public void toCamelCase() throws Exception {
+    public void testToCamelCase() throws Exception {
         assertEquals("Result does not match.", "PageStore", AdvancedLogger.toCamelCase("_", "pAGE_sTORE"));
         assertEquals("Result does not match.", "", AdvancedLogger.toCamelCase("_", "_"));
         assertEquals("Result does not match.", "P", AdvancedLogger.toCamelCase("_", "p_"));
@@ -1686,25 +1704,25 @@ public class AdvancedLoggerTest {
     }
 
     @Test
-    public void getDirectoryForFile() throws Exception {
+    public void testGetDirectoryForFile() throws Exception {
         final String result = AdvancedLogger.getDirectoryForFile(new MockedFileHandle(null, "/test/path/fileName.txt", "fileName.txt"));
         assertEquals("Result does not match.", "/test/path", result);
     }
 
     @Test
-    public void getDirectoryForFileEmptyPath() throws Exception {
+    public void testGetDirectoryForFileEmptyPath() throws Exception {
         final String result = AdvancedLogger.getDirectoryForFile(new MockedFileHandle(null, "", ""));
         assertEquals("Result does not match.", "", result);
     }
 
     @Test
-    public void getDirectoryForFileRootPath() throws Exception {
+    public void testGetDirectoryForFileRootPath() throws Exception {
         final String result = AdvancedLogger.getDirectoryForFile(new MockedFileHandle(null, "fileName.txt", "fileName.txt"));
         assertEquals("Result does not match.", "fileName.txt", result);
     }
 
     @Test
-    public void getFilesStringForElementAllPresent() throws Exception {
+    public void testGetFilesStringForElementAllPresent() throws Exception {
         final MockedExportInfo exportInfo = new MockedExportInfo(ExportInfo.Type.ELEMENT, "storeElement", ExportStatus.CREATED);
         exportInfo.setCreatedFileHandles(createFileHandleCollection(exportInfo, 1));
         exportInfo.setUpdatedFileHandles(createFileHandleCollection(exportInfo, 2));
@@ -1716,7 +1734,7 @@ public class AdvancedLoggerTest {
     }
 
     @Test
-    public void getFilesStringForElementPartialPresent() throws Exception {
+    public void testGetFilesStringForElementPartialPresent() throws Exception {
         final MockedExportInfo exportInfo = new MockedExportInfo(ExportInfo.Type.ELEMENT, "storeElement", ExportStatus.CREATED);
         exportInfo.setUpdatedFileHandles(createFileHandleCollection(exportInfo, 2));
         final String result = AdvancedLogger.getFilesStringForElement(exportInfo);
@@ -1725,7 +1743,7 @@ public class AdvancedLoggerTest {
     }
 
     @Test
-    public void getFilesStringForElementAllEmpty() throws Exception {
+    public void testGetFilesStringForElementAllEmpty() throws Exception {
         final MockedExportInfo exportInfo = new MockedExportInfo(ExportInfo.Type.ELEMENT, "storeElement", ExportStatus.CREATED);
         final String result = AdvancedLogger.getFilesStringForElement(exportInfo);
         final String expected = " ( )";
@@ -1733,7 +1751,7 @@ public class AdvancedLoggerTest {
     }
 
     @Test
-    public void getFilesString() throws Exception {
+    public void testGetFilesString() throws Exception {
         // assert non empty
         final List<String> list = new ArrayList<>(Arrays.asList("First", "Second"));
         final String description = "myDescription";
@@ -1745,7 +1763,7 @@ public class AdvancedLoggerTest {
     }
 
     @Test
-    public void getSpacedString() {
+    public void testGetSpacedString() {
         assertEquals("Result does not match.", "", AdvancedLogger.getSpacedString(-5));
         assertEquals("Result does not match.", "", AdvancedLogger.getSpacedString(-1));
         assertEquals("Result does not match.", "", AdvancedLogger.getSpacedString(0));
