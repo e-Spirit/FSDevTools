@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -55,7 +56,7 @@ public class HelpCommand implements com.espirit.moddev.cli.api.command.Command<H
     protected final CliBuilder<Callable> builder = com.github.rvesse.airline.Cli.<Callable>builder("fs-cli");
 
     @Arguments
-    protected List<String> args = new ArrayList<>();
+    protected List<String> _args = new ArrayList<>();
 
     @Override
     public HelpResult call() {
@@ -66,11 +67,11 @@ public class HelpCommand implements com.espirit.moddev.cli.api.command.Command<H
 
         ArrayList<String> argsCopy = new ArrayList<>();
         argsCopy.add(COMMAND_NAME);
-        argsCopy.addAll(args);
+        argsCopy.addAll(_args);
         String[] argumentArray = argsCopy.toArray(new String[0]);
         help = (Help) cli.parse(argumentArray);
         try {
-            Help.help(help.global, args);
+            Help.help(help.global, _args);
             return new HelpResult(help.global);
         } catch (IOException e) {
             LOGGER.debug("Help command execution caused an exception", e);
@@ -78,4 +79,12 @@ public class HelpCommand implements com.espirit.moddev.cli.api.command.Command<H
         }
     }
 
+    /**
+     * Pass arguments for this help command.
+     *
+     * @param args the arguments (e.g. 'export')
+     */
+    public void addArguments(String... args) {
+        _args.addAll(Arrays.asList(args));
+    }
 }

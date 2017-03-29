@@ -26,6 +26,7 @@ import com.espirit.moddev.cli.api.parsing.exceptions.IDProviderNotFoundException
 import com.espirit.moddev.cli.api.parsing.identifier.Identifier;
 import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 import com.espirit.moddev.cli.api.parsing.parser.*;
+import com.espirit.moddev.cli.commands.HelpCommand;
 import com.espirit.moddev.cli.commands.SimpleCommand;
 import com.espirit.moddev.cli.results.ExportResult;
 import com.github.rvesse.airline.annotations.Arguments;
@@ -161,9 +162,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
 
         LOGGER.debug("Adding export elements...");
         if (identifiers.isEmpty()) {
-            LOGGER.debug("Adding store roots...");
-            addStoreRoots(storeAgent, exportOperation);
-            addProjectProperties(exportOperation);
+            LOGGER.error("no identifiers found - pass at least 1 identifier --> call 'fs-cli help export' for details");
         } else {
             LOGGER.debug("addExportedElements - UIDs {}", identifiers);
             for (Identifier identifier : identifiers) {
@@ -237,14 +236,25 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
     @SuppressWarnings("squid:S2221")
     protected ExportResult exportStoreElements() {
         try {
+            // no arguments --> call help-command
+            final List<Identifier> identifierList = getIdentifiers();
+            if (identifierList.isEmpty()) {
+                LOGGER.error("no identifiers found - pass at least 1 identifier --> see 'fs-cli help export' for details\nfs-cli help export");
+                final HelpCommand helpCommand = new HelpCommand();
+                helpCommand.addArguments("export");
+                helpCommand.call();
+                return null;
+            }
+
+            // create export operation
             final ExportOperation exportOperation = this.getContext().requireSpecialist(OperationAgent.TYPE).getOperation(ExportOperation.TYPE);
             exportOperation.setDeleteObsoleteFiles(isDeleteObsoleteFiles());
             exportOperation.setExportChildElements(isExportChildElements());
             exportOperation.setExportParentElements(isExportParentElements());
             exportOperation.setExportRelease(isExportReleaseState());
+            addExportElements(this.getContext().requireSpecialist(StoreAgent.TYPE), identifierList, exportOperation);
 
-            addExportElements(this.getContext().requireSpecialist(StoreAgent.TYPE), getIdentifiers(), exportOperation);
-
+            // export
             final String syncDirStr = getSynchronizationDirectoryString();
             LOGGER.info("exporting to directory '{}'", syncDirStr);
             return new ExportResult(exportOperation.perform(getSynchronizationDirectory(syncDirStr)));
