@@ -45,7 +45,8 @@ public class StringPropertiesMap extends HashMap<String, String> {
      * Instantiates a new string properties map.
      */
     public StringPropertiesMap() {
-        super(); // das muss hier sein
+        // der super-Aufruf muss hier sein
+        super(); 
     }
 
     /**

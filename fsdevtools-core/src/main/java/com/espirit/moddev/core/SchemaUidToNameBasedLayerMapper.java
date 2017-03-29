@@ -31,7 +31,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SchemaUidToNameBasedLayerMapper implements LayerMapper {
+/**
+ * This class maps a scheme UID to a layer.
+ * 
+ */
+public final class SchemaUidToNameBasedLayerMapper implements LayerMapper {
 
     public static final String CREATE_NEW = "CREATE_NEW";
     private static final Logger LOGGER = LoggerFactory.getLogger(SchemaUidToNameBasedLayerMapper.class);
