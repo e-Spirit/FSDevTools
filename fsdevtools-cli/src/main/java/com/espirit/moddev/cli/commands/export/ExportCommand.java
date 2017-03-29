@@ -45,6 +45,8 @@ import static com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser
                 "export -- pagetemplate:default page:homepage",
                 "export -- root:templatestore page:homepage",
                 "export -- templatestore page:homepage",
+                "export -- path:/templatestore/pagetemplates/folderName/folderToExport",
+                "export -- path:/PageStore/pageFolderUid/pageUid",
                 "export -- page:homepage entities:news",
                 "export -- projectproperty:LANGUAGES projectproperty:RESOLUTIONS",
                 "export -- projectproperty:ALL"
@@ -53,28 +55,33 @@ import static com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser
                 "Exports a pagetemplate and a page",
                 "Exports the templatestore and a page",
                 "Exports the templatestore and a page",
+                "Exports the first occurrence of the folder named 'folderToExport' beneath folder 'folderName'",
+                "Exports the page identified by the path",
                 "Exports a page and news entities according to the configured filter",
                 "Exports the project properties languages and resolutions",
                 "Exports all project properties"
             })
 public class ExportCommand extends AbstractExportCommand {
 
+    private static final String TAB_SEQUENCE = "\t\t\t\t";
+    private static final int PREFIX_COUNT_PER_LINE = 5;
+
     @Override
     public ExportResult call() {
         return exportStoreElements();
     }
 
-    private static final String tabSequence = "\t\t\t\t";
     @Description
     public static String getDescription() {
-        return "Exports elements (specified by the <identifiers> option) from all stores.\n\r\n" + tabSequence +
-                "1. If no arguments given, all store roots and project properties are exported.\n\r\n" + tabSequence
-                + "2. Export elements based on uid with identifiers like 'pageref:pageRefUid'.\n" + tabSequence
-                + "Known prefixes for uid-based export:\n" + tabSequence + getUidPrefixesWithNewlineEvery5thElement() + "\n\r\n" + tabSequence
-                + "3. Export entities with identifiers like 'entities:news'.\n\r\n" + tabSequence
-                + "4. Export projectproperties with identifiers like 'projectproperty:RESOLUTIONS'\n" + tabSequence
-                + "Known project properties:\n" + tabSequence + ProjectPropertiesParser.getAllPossibleValues().stream().collect(Collectors.joining(", ")) + "\n\r\n" + tabSequence
-                + "5. Export store root nodes with identifiers like 'templatestore' or 'root:tempaltestore'\n\r" + tabSequence
+        return "Exports elements (specified by the <identifiers> option) from all stores.\n\r\n" + TAB_SEQUENCE +
+                "1. If no arguments given, all store roots and project properties are exported.\n\r\n" + TAB_SEQUENCE
+                + "2. Export elements based on uid with identifiers like 'pageref:pageRefUid'.\n" + TAB_SEQUENCE
+                + "Known prefixes for uid-based export:\n" + TAB_SEQUENCE + getUidPrefixesWithNewlineEvery5thElement() + "\n\r\n" + TAB_SEQUENCE
+                + "3. Export elements based on path 'path:/<STORE>/<UID>|<NAME>'.\n\r\n" + TAB_SEQUENCE + TAB_SEQUENCE
+                + "4. Export entities with identifiers like 'entities:<CONTENT2_UID>'.\n\r\n" + TAB_SEQUENCE
+                + "5. Export projectproperties with identifiers like 'projectproperty:RESOLUTIONS'\n" + TAB_SEQUENCE
+                + "Known project properties:\n" + TAB_SEQUENCE + ProjectPropertiesParser.getAllPossibleValues().stream().collect(Collectors.joining(", ")) + "\n\r\n" + TAB_SEQUENCE
+                + "6. Export store root nodes with identifiers like 'templatestore' or 'root:templatestore'\n\r" + TAB_SEQUENCE
                 + "Known root node identifiers: " + getAllStorePostfixes().keySet().stream().collect(Collectors.joining(", "));
     }
 
@@ -87,8 +94,8 @@ public class ExportCommand extends AbstractExportCommand {
             if(i != UidMapping.values().length-1) {
                 result.append(",");
             }
-            if(i != 0 && i%5 == 0) {
-                result.append("\n\r" + tabSequence);
+            if(i != 0 && i % PREFIX_COUNT_PER_LINE == 0) {
+                result.append("\n\r" + TAB_SEQUENCE);
             }
         }
         return result.toString();

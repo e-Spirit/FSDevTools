@@ -54,7 +54,7 @@ import java.util.List;
  */
 public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Option(name = "--keepObsoleteFiles", description = "keep obsolete files in sync dir which are deleted in project")
     private boolean keepObsoleteFiles;
@@ -86,6 +86,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
         parser.registerParser(new EntitiesIdentifierParser());
         parser.registerParser(new UidIdentifierParser());
         parser.registerParser(new ProjectPropertiesParser());
+        parser.registerParser(new PathIdentifierParser());
     }
 
     /**
