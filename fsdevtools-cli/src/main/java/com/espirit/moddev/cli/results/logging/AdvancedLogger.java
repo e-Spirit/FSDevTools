@@ -13,6 +13,7 @@ import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -38,7 +39,6 @@ public enum AdvancedLogger {
             // nothing to do if loglevel is not at least info
             return;
         }
-        // set logger
         logger.info("Export done.");
 
         // log details and fetch summary
@@ -210,26 +210,7 @@ public enum AdvancedLogger {
         final List<ElementExportInfo> sortedElements = new ArrayList<>();
         for (final Map.Entry<Store.Type, List<ElementExportInfo>> entry : storeElements.entrySet()) {
             sortedElements.addAll(entry.getValue());
-            sortedElements.sort(new Comparator<ElementExportInfo>() {
-                @Override
-                public int compare(final ElementExportInfo first, final ElementExportInfo second) {
-                    return getPath(first).compareTo(getPath(second));
-                }
-
-                private String getPath(final ElementExportInfo exportInfo) {
-                    String path = null;
-                    if (!exportInfo.getCreatedFileHandles().isEmpty()) {
-                        path = exportInfo.getCreatedFileHandles().iterator().next().getPath();
-                    } else if (!exportInfo.getUpdatedFileHandles().isEmpty()) {
-                        path = exportInfo.getUpdatedFileHandles().iterator().next().getPath();
-                    } else if (!exportInfo.getDeletedFileHandles().isEmpty()) {
-                        path = exportInfo.getDeletedFileHandles().iterator().next().getPath();
-                    } else if (!exportInfo.getMovedFileHandles().isEmpty()) {
-                        path = exportInfo.getMovedFileHandles().iterator().next().getValue().getPath();
-                    }
-                    return path != null ? path : exportInfo.getName();
-                }
-            });
+            sortedElements.sort(new ElementExportInfoComparator());
             logger.info(" - " + entry.getKey().getName() + ": " + sortedElements.size());
             for (final ElementExportInfo element : sortedElements) {
                 String identifier = StoreElements.determineElementType(element.getElementInfo().getNodeTag());
@@ -413,5 +394,30 @@ public enum AdvancedLogger {
             stringBuilder.append(" ");
         }
         return stringBuilder.toString();
+    }
+
+    private static class ElementExportInfoComparator implements Comparator<ElementExportInfo>, Serializable {
+
+        private static final long serialVersionUID = -2121789213L;
+
+        @Override
+        public int compare(final ElementExportInfo first, final ElementExportInfo second) {
+            return getPath(first).compareTo(getPath(second));
+        }
+
+        private static String getPath(final ElementExportInfo exportInfo) {
+            String path = null;
+            if (!exportInfo.getCreatedFileHandles().isEmpty()) {
+                path = exportInfo.getCreatedFileHandles().iterator().next().getPath();
+            } else if (!exportInfo.getUpdatedFileHandles().isEmpty()) {
+                path = exportInfo.getUpdatedFileHandles().iterator().next().getPath();
+            } else if (!exportInfo.getDeletedFileHandles().isEmpty()) {
+                path = exportInfo.getDeletedFileHandles().iterator().next().getPath();
+            } else if (!exportInfo.getMovedFileHandles().isEmpty()) {
+                path = exportInfo.getMovedFileHandles().iterator().next().getValue().getPath();
+            }
+            return path != null ? path : exportInfo.getName();
+        }
+
     }
 }
