@@ -33,6 +33,10 @@
     <name>FirstSpirit Development Tools Server Runner Module</name>
     <artifactId>fsdevtools-serverrunner</artifactId>
 
+    <properties>
+        <scala.version>2.12.1</scala.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -144,23 +148,26 @@
                 <groupId>org.scalatest</groupId>
                 <artifactId>scalatest-maven-plugin</artifactId>
                 <version>1.0</version>
-                <configuration>
-                    <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-                    <junitxml>.</junitxml>
-                    <filereports>WDF TestSuite.txt</filereports>
-                </configuration>
                 <executions>
                     <execution>
                         <id>test</id>
+                        <phase>test</phase>
                         <goals>
                             <goal>test</goal>
                         </goals>
+                        <configuration>
+                            <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                            <junitxml>.</junitxml>
+                            <filereports>WDF TestSuite.txt</filereports>
+                            <tagsToExclude>IntegrationTest</tagsToExclude>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <id>scala-compile-first</id>
@@ -178,6 +185,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <scalaVersion>${scala.version}</scalaVersion>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -194,4 +204,32 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>integration-test</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.scalatest</groupId>
+                        <artifactId>scalatest-maven-plugin</artifactId>
+                        <version>1.0</version>
+                        <executions>
+                            <execution>
+                                <id>itest</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <reportsDirectory>${project.build.directory}/failsafe-reports</reportsDirectory>
+                                    <junitxml>.</junitxml>
+                                    <filereports>WDF TestSuite.txt</filereports>
+                                    <tagsToInclude>IntegrationTest</tagsToInclude>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
