@@ -26,12 +26,13 @@ import static org.junit.Assert.assertEquals;
 
 public class AdvancedLoggerTest {
 
+    private static final String NEW_LINE = "\n";
+
     @Test
     public void testLogEmptyResult() throws Exception {
         {
             final MockLogger logger = new MockLogger(false);
             AdvancedLogger.logResult(logger, new MockedResult(false));
-            final String NEW_LINE = "\n";
             final String expected =
                     "[INFO] Export done."               + NEW_LINE +
                     "[INFO] == DETAILS =="              + NEW_LINE +
@@ -56,75 +57,75 @@ public class AdvancedLoggerTest {
             final MockLogger logger = new MockLogger(false);
             AdvancedLogger.logResult(logger, new MockedResult());
             //@formatter:off
-            final String expected = "[INFO] Export done.\n" +
-                                    "[INFO] == DETAILS ==\n" +
-                                    "[INFO] Created elements: 7\n" +
-                                    "[INFO] - project properties: 1\n" +
-                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO] - store elements: 5\n" +
-                                    "[INFO]  - pagestore: 1\n" +
-                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]  - templatestore: 4\n" +
-                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO] - entity types: 1                       ( schemas: 1, entities: 1 )\n" +
-                                    "[INFO]  - Schema: 'createdSchema'              ( entity types: 1, entities: 1 )\n" +
-                                    "[INFO]   - EntityType: 'createdType'           ( entities: 1 )\n" +
-                                    "[INFO] Updated elements: 9\n" +
-                                    "[INFO] - project properties: 1\n" +
-                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO] - store elements: 5\n" +
-                                    "[INFO]  - mediastore: 2\n" +
-                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]  - sitestore: 3\n" +
-                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO] - entity types: 3                       ( schemas: 2, entities: 6 )\n" +
-                                    "[INFO]  - Schema: 'updatedSchema1'             ( entity types: 2, entities: 5 )\n" +
-                                    "[INFO]   - EntityType: 'updatedType1'          ( entities: 2 )\n" +
-                                    "[INFO]   - EntityType: 'updatedType2'          ( entities: 3 )\n" +
-                                    "[INFO]  - Schema: 'updatedSchema2'             ( entity types: 1, entities: 1 )\n" +
-                                    "[INFO]   - EntityType: 'updatedType1'          ( entities: 1 )\n" +
-                                    "[INFO] Deleted elements: 7\n" +
-                                    "[INFO] - project properties: 1\n" +
-                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO] - store elements: 4\n" +
-                                    "[INFO]  - pagestore: 1\n" +
-                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]  - sitestore: 3\n" +
-                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO] - entity types: 2                       ( schemas: 1, entities: 7 )\n" +
-                                    "[INFO]  - Schema: 'deletedSchema'              ( entity types: 2, entities: 7 )\n" +
-                                    "[INFO]   - EntityType: 'deletedType1'          ( entities: 3 )\n" +
-                                    "[INFO]   - EntityType: 'deletedType2'          ( entities: 4 )\n" +
-                                    "[INFO]   Moved elements: 9\n" +
-                                    "[INFO] - project properties: 1\n" +
-                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO] - store elements: 6\n" +
-                                    "[INFO]  - mediastore: 2\n" +
-                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]  - templatestore: 4\n" +
-                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO] - entity types: 2                       ( schemas: 2, entities: 3 )\n" +
-                                    "[INFO]  - Schema: 'movedSchema1'               ( entity types: 1, entities: 1 )\n" +
-                                    "[INFO]   - EntityType: 'movedType1'            ( entities: 1 )\n" +
-                                    "[INFO]  - Schema: 'movedSchema2'               ( entity types: 1, entities: 2 )\n" +
-                                    "[INFO]   - EntityType: 'movedType2'            ( entities: 2 )\n" +
-                                    "[INFO] == SUMMARY ==\n" +
-                                    "[INFO] Created elements: 7 | project properties: 1 | store elements: 5 ( pagestore: 1, templatestore: 4 ) | entity types: 1 ( schemas: 1, entities: 1 )\n" +
-                                    "[INFO] Updated elements: 9 | project properties: 1 | store elements: 5 ( mediastore: 2, sitestore: 3 ) | entity types: 3 ( schemas: 2, entities: 6 )\n" +
-                                    "[INFO] Deleted elements: 7 | project properties: 1 | store elements: 4 ( pagestore: 1, sitestore: 3 ) | entity types: 2 ( schemas: 1, entities: 7 )\n" +
-                                    "[INFO]   Moved elements: 9 | project properties: 1 | store elements: 6 ( mediastore: 2, templatestore: 4 ) | entity types: 2 ( schemas: 2, entities: 3 )\n";
+            final String expected = "[INFO] Export done."               + NEW_LINE +
+                                    "[INFO] == DETAILS =="              + NEW_LINE +
+                                    "[INFO] Created elements: 7"        + NEW_LINE +
+                                    "[INFO] - project properties: 1"    + NEW_LINE +
+                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO] - store elements: 5"        + NEW_LINE +
+                                        "[INFO]  - pagestore: 1"        + NEW_LINE +
+                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]  - templatestore: 4"        + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO] - entity types: 1                       ( schemas: 1, entities: 1 )"        + NEW_LINE +
+                                    "[INFO]  - Schema: 'createdSchema'              ( entity types: 1, entities: 1 )"   + NEW_LINE +
+                                    "[INFO]   - EntityType: 'createdType'           ( entities: 1 )"                    + NEW_LINE +
+                                    "[INFO] Updated elements: 9"        + NEW_LINE +
+                                    "[INFO] - project properties: 1"    + NEW_LINE +
+                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO] - store elements: 5"        + NEW_LINE +
+                                    "[INFO]  - mediastore: 2"           + NEW_LINE +
+                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]  - sitestore: 3"            + NEW_LINE +
+                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO] - entity types: 3                       ( schemas: 2, entities: 6 )"        + NEW_LINE +
+                                    "[INFO]  - Schema: 'updatedSchema1'             ( entity types: 2, entities: 5 )"   + NEW_LINE +
+                                    "[INFO]   - EntityType: 'updatedType1'          ( entities: 2 )"                    + NEW_LINE +
+                                    "[INFO]   - EntityType: 'updatedType2'          ( entities: 3 )"                    + NEW_LINE +
+                                    "[INFO]  - Schema: 'updatedSchema2'             ( entity types: 1, entities: 1 )"   + NEW_LINE +
+                                    "[INFO]   - EntityType: 'updatedType1'          ( entities: 1 )"                    + NEW_LINE +
+                                    "[INFO] Deleted elements: 7"        + NEW_LINE +
+                                    "[INFO] - project properties: 1"    + NEW_LINE +
+                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO] - store elements: 4"        + NEW_LINE +
+                                    "[INFO]  - pagestore: 1"            + NEW_LINE +
+                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]  - sitestore: 3"            + NEW_LINE +
+                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO] - entity types: 2                       ( schemas: 1, entities: 7 )"        + NEW_LINE +
+                                    "[INFO]  - Schema: 'deletedSchema'              ( entity types: 2, entities: 7 )"   + NEW_LINE +
+                                    "[INFO]   - EntityType: 'deletedType1'          ( entities: 3 )"                    + NEW_LINE +
+                                    "[INFO]   - EntityType: 'deletedType2'          ( entities: 4 )"                    + NEW_LINE +
+                                    "[INFO]   Moved elements: 9"        + NEW_LINE +
+                                    "[INFO] - project properties: 1"    + NEW_LINE +
+                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO] - store elements: 6"        + NEW_LINE +
+                                    "[INFO]  - mediastore: 2"           + NEW_LINE +
+                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]  - templatestore: 4"        + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO] - entity types: 2                       ( schemas: 2, entities: 3 )"        + NEW_LINE +
+                                    "[INFO]  - Schema: 'movedSchema1'               ( entity types: 1, entities: 1 )"   + NEW_LINE +
+                                    "[INFO]   - EntityType: 'movedType1'            ( entities: 1 )"                    + NEW_LINE +
+                                    "[INFO]  - Schema: 'movedSchema2'               ( entity types: 1, entities: 2 )"   + NEW_LINE +
+                                    "[INFO]   - EntityType: 'movedType2'            ( entities: 2 )"                    + NEW_LINE +
+                                    "[INFO] == SUMMARY =="              + NEW_LINE +
+                                    "[INFO] Created elements: 7 | project properties: 1 | store elements: 5 ( pagestore: 1, templatestore: 4 ) | entity types: 1 ( schemas: 1, entities: 1 )"   + NEW_LINE +
+                                    "[INFO] Updated elements: 9 | project properties: 1 | store elements: 5 ( mediastore: 2, sitestore: 3 ) | entity types: 3 ( schemas: 2, entities: 6 )"      + NEW_LINE +
+                                    "[INFO] Deleted elements: 7 | project properties: 1 | store elements: 4 ( pagestore: 1, sitestore: 3 ) | entity types: 2 ( schemas: 1, entities: 7 )"       + NEW_LINE +
+                                    "[INFO]   Moved elements: 9 | project properties: 1 | store elements: 6 ( mediastore: 2, templatestore: 4 ) | entity types: 2 ( schemas: 2, entities: 3 )"  + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -132,523 +133,523 @@ public class AdvancedLoggerTest {
             final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logResult(logger, new MockedResult());
             //@formatter:off
-            final String expected = "[INFO] Export done.\n" +
-                                    "[INFO] == DETAILS ==\n" +
-                                    "[INFO] Created elements: 7\n" +
-                                    "[INFO] - project properties: 1\n" +
-                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]   - Created files: 1\n" +
-                                    "[DEBUG]    - /path/USERS/0.txt\n" +
-                                    "[DEBUG]   - Updated files: 2\n" +
-                                    "[DEBUG]    - /path/USERS/0.txt\n" +
-                                    "[DEBUG]    - /path/USERS/1.txt\n" +
-                                    "[DEBUG]   - Deleted files: 3\n" +
-                                    "[DEBUG]    - /path/USERS/0.txt\n" +
-                                    "[DEBUG]    - /path/USERS/1.txt\n" +
-                                    "[DEBUG]    - /path/USERS/2.txt\n" +
-                                    "[DEBUG]   - Moved files: 4\n" +
-                                    "[DEBUG]    - 0.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[DEBUG]    - 1.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[DEBUG]    - 2.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[DEBUG]    - 3.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[INFO] - store elements: 5\n" +
-                                    "[INFO]  - pagestore: 1\n" +
-                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]     - /path/first/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]  - templatestore: 4\n" +
-                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]     - /path/first/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/fourth/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/fourth/0.txt\n" +
-                                    "[DEBUG]     - /path/fourth/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/fourth/0.txt\n" +
-                                    "[DEBUG]     - /path/fourth/1.txt\n" +
-                                    "[DEBUG]     - /path/fourth/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/fourth' to '/to/fourth' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/fourth' to '/to/fourth' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/fourth' to '/to/fourth' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/fourth' to '/to/fourth' )\n" +
-                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]     - /path/second/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]     - /path/third/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]     - /path/third/1.txt\n" +
-                                    "[DEBUG]     - /path/third/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[INFO] - entity types: 1                       ( schemas: 1, entities: 1 )\n" +
-                                    "[INFO]  - Schema: 'createdSchema'              ( entity types: 1, entities: 1 )\n" +
-                                    "[INFO]   - EntityType: 'createdType'           ( entities: 1 )\n" +
-                                    "[DEBUG]     - Created files: 1\n" +
-                                    "[DEBUG]      - /path/createdSchema#createdType/0.txt\n" +
-                                    "[DEBUG]     - Updated files: 2\n" +
-                                    "[DEBUG]      - /path/createdSchema#createdType/0.txt\n" +
-                                    "[DEBUG]      - /path/createdSchema#createdType/1.txt\n" +
-                                    "[DEBUG]     - Deleted files: 3\n" +
-                                    "[DEBUG]      - /path/createdSchema#createdType/0.txt\n" +
-                                    "[DEBUG]      - /path/createdSchema#createdType/1.txt\n" +
-                                    "[DEBUG]      - /path/createdSchema#createdType/2.txt\n" +
-                                    "[DEBUG]     - Moved files: 4\n" +
-                                    "[DEBUG]      - 0.txt ( from '/from/createdSchema#createdType' to '/to/createdSchema#createdType' )\n" +
-                                    "[DEBUG]      - 1.txt ( from '/from/createdSchema#createdType' to '/to/createdSchema#createdType' )\n" +
-                                    "[DEBUG]      - 2.txt ( from '/from/createdSchema#createdType' to '/to/createdSchema#createdType' )\n" +
-                                    "[DEBUG]      - 3.txt ( from '/from/createdSchema#createdType' to '/to/createdSchema#createdType' )\n" +
-                                    "[INFO] Updated elements: 9\n" +
-                                    "[INFO] - project properties: 1\n" +
-                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]   - Created files: 1\n" +
-                                    "[DEBUG]    - /path/USERS/0.txt\n" +
-                                    "[DEBUG]   - Updated files: 2\n" +
-                                    "[DEBUG]    - /path/USERS/0.txt\n" +
-                                    "[DEBUG]    - /path/USERS/1.txt\n" +
-                                    "[DEBUG]   - Deleted files: 3\n" +
-                                    "[DEBUG]    - /path/USERS/0.txt\n" +
-                                    "[DEBUG]    - /path/USERS/1.txt\n" +
-                                    "[DEBUG]    - /path/USERS/2.txt\n" +
-                                    "[DEBUG]   - Moved files: 4\n" +
-                                    "[DEBUG]    - 0.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[DEBUG]    - 1.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[DEBUG]    - 2.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[DEBUG]    - 3.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[INFO] - store elements: 5\n" +
-                                    "[INFO]  - mediastore: 2\n" +
-                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]     - /path/first/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]     - /path/second/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[INFO]  - sitestore: 3\n" +
-                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]     - /path/first/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]     - /path/second/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]     - /path/third/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]     - /path/third/1.txt\n" +
-                                    "[DEBUG]     - /path/third/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[INFO] - entity types: 3                       ( schemas: 2, entities: 6 )\n" +
-                                    "[INFO]  - Schema: 'updatedSchema1'             ( entity types: 2, entities: 5 )\n" +
-                                    "[INFO]   - EntityType: 'updatedType1'          ( entities: 2 )\n" +
-                                    "[DEBUG]     - Created files: 1\n" +
-                                    "[DEBUG]      - /path/updatedSchema1#updatedType1/0.txt\n" +
-                                    "[DEBUG]     - Updated files: 2\n" +
-                                    "[DEBUG]      - /path/updatedSchema1#updatedType1/0.txt\n" +
-                                    "[DEBUG]      - /path/updatedSchema1#updatedType1/1.txt\n" +
-                                    "[DEBUG]     - Deleted files: 3\n" +
-                                    "[DEBUG]      - /path/updatedSchema1#updatedType1/0.txt\n" +
-                                    "[DEBUG]      - /path/updatedSchema1#updatedType1/1.txt\n" +
-                                    "[DEBUG]      - /path/updatedSchema1#updatedType1/2.txt\n" +
-                                    "[DEBUG]     - Moved files: 4\n" +
-                                    "[DEBUG]      - 0.txt ( from '/from/updatedSchema1#updatedType1' to '/to/updatedSchema1#updatedType1' )\n" +
-                                    "[DEBUG]      - 1.txt ( from '/from/updatedSchema1#updatedType1' to '/to/updatedSchema1#updatedType1' )\n" +
-                                    "[DEBUG]      - 2.txt ( from '/from/updatedSchema1#updatedType1' to '/to/updatedSchema1#updatedType1' )\n" +
-                                    "[DEBUG]      - 3.txt ( from '/from/updatedSchema1#updatedType1' to '/to/updatedSchema1#updatedType1' )\n" +
-                                    "[INFO]   - EntityType: 'updatedType2'          ( entities: 3 )\n" +
-                                    "[DEBUG]     - Created files: 1\n" +
-                                    "[DEBUG]      - /path/updatedSchema1#updatedType2/0.txt\n" +
-                                    "[DEBUG]     - Updated files: 2\n" +
-                                    "[DEBUG]      - /path/updatedSchema1#updatedType2/0.txt\n" +
-                                    "[DEBUG]      - /path/updatedSchema1#updatedType2/1.txt\n" +
-                                    "[DEBUG]     - Deleted files: 3\n" +
-                                    "[DEBUG]      - /path/updatedSchema1#updatedType2/0.txt\n" +
-                                    "[DEBUG]      - /path/updatedSchema1#updatedType2/1.txt\n" +
-                                    "[DEBUG]      - /path/updatedSchema1#updatedType2/2.txt\n" +
-                                    "[DEBUG]     - Moved files: 4\n" +
-                                    "[DEBUG]      - 0.txt ( from '/from/updatedSchema1#updatedType2' to '/to/updatedSchema1#updatedType2' )\n" +
-                                    "[DEBUG]      - 1.txt ( from '/from/updatedSchema1#updatedType2' to '/to/updatedSchema1#updatedType2' )\n" +
-                                    "[DEBUG]      - 2.txt ( from '/from/updatedSchema1#updatedType2' to '/to/updatedSchema1#updatedType2' )\n" +
-                                    "[DEBUG]      - 3.txt ( from '/from/updatedSchema1#updatedType2' to '/to/updatedSchema1#updatedType2' )\n" +
-                                    "[INFO]  - Schema: 'updatedSchema2'             ( entity types: 1, entities: 1 )\n" +
-                                    "[INFO]   - EntityType: 'updatedType1'          ( entities: 1 )\n" +
-                                    "[DEBUG]     - Created files: 1\n" +
-                                    "[DEBUG]      - /path/updatedSchema2#updatedType1/0.txt\n" +
-                                    "[DEBUG]     - Updated files: 2\n" +
-                                    "[DEBUG]      - /path/updatedSchema2#updatedType1/0.txt\n" +
-                                    "[DEBUG]      - /path/updatedSchema2#updatedType1/1.txt\n" +
-                                    "[DEBUG]     - Deleted files: 3\n" +
-                                    "[DEBUG]      - /path/updatedSchema2#updatedType1/0.txt\n" +
-                                    "[DEBUG]      - /path/updatedSchema2#updatedType1/1.txt\n" +
-                                    "[DEBUG]      - /path/updatedSchema2#updatedType1/2.txt\n" +
-                                    "[DEBUG]     - Moved files: 4\n" +
-                                    "[DEBUG]      - 0.txt ( from '/from/updatedSchema2#updatedType1' to '/to/updatedSchema2#updatedType1' )\n" +
-                                    "[DEBUG]      - 1.txt ( from '/from/updatedSchema2#updatedType1' to '/to/updatedSchema2#updatedType1' )\n" +
-                                    "[DEBUG]      - 2.txt ( from '/from/updatedSchema2#updatedType1' to '/to/updatedSchema2#updatedType1' )\n" +
-                                    "[DEBUG]      - 3.txt ( from '/from/updatedSchema2#updatedType1' to '/to/updatedSchema2#updatedType1' )\n" +
-                                    "[INFO] Deleted elements: 7\n" +
-                                    "[INFO] - project properties: 1\n" +
-                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]   - Created files: 1\n" +
-                                    "[DEBUG]    - /path/USERS/0.txt\n" +
-                                    "[DEBUG]   - Updated files: 2\n" +
-                                    "[DEBUG]    - /path/USERS/0.txt\n" +
-                                    "[DEBUG]    - /path/USERS/1.txt\n" +
-                                    "[DEBUG]   - Deleted files: 3\n" +
-                                    "[DEBUG]    - /path/USERS/0.txt\n" +
-                                    "[DEBUG]    - /path/USERS/1.txt\n" +
-                                    "[DEBUG]    - /path/USERS/2.txt\n" +
-                                    "[DEBUG]   - Moved files: 4\n" +
-                                    "[DEBUG]    - 0.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[DEBUG]    - 1.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[DEBUG]    - 2.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[DEBUG]    - 3.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[INFO] - store elements: 4\n" +
-                                    "[INFO]  - pagestore: 1\n" +
-                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]     - /path/first/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]  - sitestore: 3\n" +
-                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]     - /path/first/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]     - /path/second/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]     - /path/third/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]     - /path/third/1.txt\n" +
-                                    "[DEBUG]     - /path/third/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[INFO] - entity types: 2                       ( schemas: 1, entities: 7 )\n" +
-                                    "[INFO]  - Schema: 'deletedSchema'              ( entity types: 2, entities: 7 )\n" +
-                                    "[INFO]   - EntityType: 'deletedType1'          ( entities: 3 )\n" +
-                                    "[DEBUG]     - Created files: 1\n" +
-                                    "[DEBUG]      - /path/deletedSchema#deletedType1/0.txt\n" +
-                                    "[DEBUG]     - Updated files: 2\n" +
-                                    "[DEBUG]      - /path/deletedSchema#deletedType1/0.txt\n" +
-                                    "[DEBUG]      - /path/deletedSchema#deletedType1/1.txt\n" +
-                                    "[DEBUG]     - Deleted files: 3\n" +
-                                    "[DEBUG]      - /path/deletedSchema#deletedType1/0.txt\n" +
-                                    "[DEBUG]      - /path/deletedSchema#deletedType1/1.txt\n" +
-                                    "[DEBUG]      - /path/deletedSchema#deletedType1/2.txt\n" +
-                                    "[DEBUG]     - Moved files: 4\n" +
-                                    "[DEBUG]      - 0.txt ( from '/from/deletedSchema#deletedType1' to '/to/deletedSchema#deletedType1' )\n" +
-                                    "[DEBUG]      - 1.txt ( from '/from/deletedSchema#deletedType1' to '/to/deletedSchema#deletedType1' )\n" +
-                                    "[DEBUG]      - 2.txt ( from '/from/deletedSchema#deletedType1' to '/to/deletedSchema#deletedType1' )\n" +
-                                    "[DEBUG]      - 3.txt ( from '/from/deletedSchema#deletedType1' to '/to/deletedSchema#deletedType1' )\n" +
-                                    "[INFO]   - EntityType: 'deletedType2'          ( entities: 4 )\n" +
-                                    "[DEBUG]     - Created files: 1\n" +
-                                    "[DEBUG]      - /path/deletedSchema#deletedType2/0.txt\n" +
-                                    "[DEBUG]     - Updated files: 2\n" +
-                                    "[DEBUG]      - /path/deletedSchema#deletedType2/0.txt\n" +
-                                    "[DEBUG]      - /path/deletedSchema#deletedType2/1.txt\n" +
-                                    "[DEBUG]     - Deleted files: 3\n" +
-                                    "[DEBUG]      - /path/deletedSchema#deletedType2/0.txt\n" +
-                                    "[DEBUG]      - /path/deletedSchema#deletedType2/1.txt\n" +
-                                    "[DEBUG]      - /path/deletedSchema#deletedType2/2.txt\n" +
-                                    "[DEBUG]     - Moved files: 4\n" +
-                                    "[DEBUG]      - 0.txt ( from '/from/deletedSchema#deletedType2' to '/to/deletedSchema#deletedType2' )\n" +
-                                    "[DEBUG]      - 1.txt ( from '/from/deletedSchema#deletedType2' to '/to/deletedSchema#deletedType2' )\n" +
-                                    "[DEBUG]      - 2.txt ( from '/from/deletedSchema#deletedType2' to '/to/deletedSchema#deletedType2' )\n" +
-                                    "[DEBUG]      - 3.txt ( from '/from/deletedSchema#deletedType2' to '/to/deletedSchema#deletedType2' )\n" +
-                                    "[INFO]   Moved elements: 9\n" +
-                                    "[INFO] - project properties: 1\n" +
-                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]   - Created files: 1\n" +
-                                    "[DEBUG]    - /path/USERS/0.txt\n" +
-                                    "[DEBUG]   - Updated files: 2\n" +
-                                    "[DEBUG]    - /path/USERS/0.txt\n" +
-                                    "[DEBUG]    - /path/USERS/1.txt\n" +
-                                    "[DEBUG]   - Deleted files: 3\n" +
-                                    "[DEBUG]    - /path/USERS/0.txt\n" +
-                                    "[DEBUG]    - /path/USERS/1.txt\n" +
-                                    "[DEBUG]    - /path/USERS/2.txt\n" +
-                                    "[DEBUG]   - Moved files: 4\n" +
-                                    "[DEBUG]    - 0.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[DEBUG]    - 1.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[DEBUG]    - 2.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[DEBUG]    - 3.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[INFO] - store elements: 6\n" +
-                                    "[INFO]  - mediastore: 2\n" +
-                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]     - /path/first/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]     - /path/second/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[INFO]  - templatestore: 4\n" +
-                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]     - /path/first/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/fourth/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/fourth/0.txt\n" +
-                                    "[DEBUG]     - /path/fourth/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/fourth/0.txt\n" +
-                                    "[DEBUG]     - /path/fourth/1.txt\n" +
-                                    "[DEBUG]     - /path/fourth/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/fourth' to '/to/fourth' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/fourth' to '/to/fourth' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/fourth' to '/to/fourth' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/fourth' to '/to/fourth' )\n" +
-                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]     - /path/second/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]     - /path/third/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]     - /path/third/1.txt\n" +
-                                    "[DEBUG]     - /path/third/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[INFO] - entity types: 2                       ( schemas: 2, entities: 3 )\n" +
-                                    "[INFO]  - Schema: 'movedSchema1'               ( entity types: 1, entities: 1 )\n" +
-                                    "[INFO]   - EntityType: 'movedType1'            ( entities: 1 )\n" +
-                                    "[DEBUG]     - Created files: 1\n" +
-                                    "[DEBUG]      - /path/movedSchema1#movedType1/0.txt\n" +
-                                    "[DEBUG]     - Updated files: 2\n" +
-                                    "[DEBUG]      - /path/movedSchema1#movedType1/0.txt\n" +
-                                    "[DEBUG]      - /path/movedSchema1#movedType1/1.txt\n" +
-                                    "[DEBUG]     - Deleted files: 3\n" +
-                                    "[DEBUG]      - /path/movedSchema1#movedType1/0.txt\n" +
-                                    "[DEBUG]      - /path/movedSchema1#movedType1/1.txt\n" +
-                                    "[DEBUG]      - /path/movedSchema1#movedType1/2.txt\n" +
-                                    "[DEBUG]     - Moved files: 4\n" +
-                                    "[DEBUG]      - 0.txt ( from '/from/movedSchema1#movedType1' to '/to/movedSchema1#movedType1' )\n" +
-                                    "[DEBUG]      - 1.txt ( from '/from/movedSchema1#movedType1' to '/to/movedSchema1#movedType1' )\n" +
-                                    "[DEBUG]      - 2.txt ( from '/from/movedSchema1#movedType1' to '/to/movedSchema1#movedType1' )\n" +
-                                    "[DEBUG]      - 3.txt ( from '/from/movedSchema1#movedType1' to '/to/movedSchema1#movedType1' )\n" +
-                                    "[INFO]  - Schema: 'movedSchema2'               ( entity types: 1, entities: 2 )\n" +
-                                    "[INFO]   - EntityType: 'movedType2'            ( entities: 2 )\n" +
-                                    "[DEBUG]     - Created files: 1\n" +
-                                    "[DEBUG]      - /path/movedSchema2#movedType2/0.txt\n" +
-                                    "[DEBUG]     - Updated files: 2\n" +
-                                    "[DEBUG]      - /path/movedSchema2#movedType2/0.txt\n" +
-                                    "[DEBUG]      - /path/movedSchema2#movedType2/1.txt\n" +
-                                    "[DEBUG]     - Deleted files: 3\n" +
-                                    "[DEBUG]      - /path/movedSchema2#movedType2/0.txt\n" +
-                                    "[DEBUG]      - /path/movedSchema2#movedType2/1.txt\n" +
-                                    "[DEBUG]      - /path/movedSchema2#movedType2/2.txt\n" +
-                                    "[DEBUG]     - Moved files: 4\n" +
-                                    "[DEBUG]      - 0.txt ( from '/from/movedSchema2#movedType2' to '/to/movedSchema2#movedType2' )\n" +
-                                    "[DEBUG]      - 1.txt ( from '/from/movedSchema2#movedType2' to '/to/movedSchema2#movedType2' )\n" +
-                                    "[DEBUG]      - 2.txt ( from '/from/movedSchema2#movedType2' to '/to/movedSchema2#movedType2' )\n" +
-                                    "[DEBUG]      - 3.txt ( from '/from/movedSchema2#movedType2' to '/to/movedSchema2#movedType2' )\n" +
-                                    "[INFO] == SUMMARY ==\n" +
-                                    "[INFO] Created elements: 7 | project properties: 1 | store elements: 5 ( pagestore: 1, templatestore: 4 ) | entity types: 1 ( schemas: 1, entities: 1 )\n" +
-                                    "[INFO] Updated elements: 9 | project properties: 1 | store elements: 5 ( mediastore: 2, sitestore: 3 ) | entity types: 3 ( schemas: 2, entities: 6 )\n" +
-                                    "[INFO] Deleted elements: 7 | project properties: 1 | store elements: 4 ( pagestore: 1, sitestore: 3 ) | entity types: 2 ( schemas: 1, entities: 7 )\n" +
-                                    "[INFO]   Moved elements: 9 | project properties: 1 | store elements: 6 ( mediastore: 2, templatestore: 4 ) | entity types: 2 ( schemas: 2, entities: 3 )\n";
+            final String expected = "[INFO] Export done."               + NEW_LINE +
+                                    "[INFO] == DETAILS =="              + NEW_LINE +
+                                    "[INFO] Created elements: 7"        + NEW_LINE +
+                                    "[INFO] - project properties: 1"    + NEW_LINE +
+                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]   - Created files: 1"      + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/0.txt"    + NEW_LINE +
+                                    "[DEBUG]   - Updated files: 2"      + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/0.txt"    + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/1.txt"    + NEW_LINE +
+                                    "[DEBUG]   - Deleted files: 3"      + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/0.txt"    + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/1.txt"    + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/2.txt"    + NEW_LINE +
+                                    "[DEBUG]   - Moved files: 4"        + NEW_LINE +
+                                    "[DEBUG]    - 0.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
+                                    "[DEBUG]    - 1.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
+                                    "[DEBUG]    - 2.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
+                                    "[DEBUG]    - 3.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
+                                    "[INFO] - store elements: 5"        + NEW_LINE +
+                                    "[INFO]  - pagestore: 1"            + NEW_LINE +
+                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[INFO]  - templatestore: 4"        + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/0.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/1.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/1.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/2.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/2.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[INFO] - entity types: 1                       ( schemas: 1, entities: 1 )"        + NEW_LINE +
+                                    "[INFO]  - Schema: 'createdSchema'              ( entity types: 1, entities: 1 )"   + NEW_LINE +
+                                    "[INFO]   - EntityType: 'createdType'           ( entities: 1 )"                    + NEW_LINE +
+                                    "[DEBUG]     - Created files: 1"    + NEW_LINE +
+                                    "[DEBUG]      - /path/createdSchema#createdType/0.txt" + NEW_LINE +
+                                    "[DEBUG]     - Updated files: 2"    + NEW_LINE +
+                                    "[DEBUG]      - /path/createdSchema#createdType/0.txt" + NEW_LINE +
+                                    "[DEBUG]      - /path/createdSchema#createdType/1.txt" + NEW_LINE +
+                                    "[DEBUG]     - Deleted files: 3"    + NEW_LINE +
+                                    "[DEBUG]      - /path/createdSchema#createdType/0.txt" + NEW_LINE +
+                                    "[DEBUG]      - /path/createdSchema#createdType/1.txt" + NEW_LINE +
+                                    "[DEBUG]      - /path/createdSchema#createdType/2.txt" + NEW_LINE +
+                                    "[DEBUG]     - Moved files: 4"      + NEW_LINE +
+                                    "[DEBUG]      - 0.txt ( from '/from/createdSchema#createdType' to '/to/createdSchema#createdType' )" + NEW_LINE +
+                                    "[DEBUG]      - 1.txt ( from '/from/createdSchema#createdType' to '/to/createdSchema#createdType' )" + NEW_LINE +
+                                    "[DEBUG]      - 2.txt ( from '/from/createdSchema#createdType' to '/to/createdSchema#createdType' )" + NEW_LINE +
+                                    "[DEBUG]      - 3.txt ( from '/from/createdSchema#createdType' to '/to/createdSchema#createdType' )" + NEW_LINE +
+                                    "[INFO] Updated elements: 9"        + NEW_LINE +
+                                    "[INFO] - project properties: 1"    + NEW_LINE +
+                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]   - Created files: 1"      + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/0.txt"    + NEW_LINE +
+                                    "[DEBUG]   - Updated files: 2"      + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/0.txt"    + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/1.txt"    + NEW_LINE +
+                                    "[DEBUG]   - Deleted files: 3"      + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/0.txt"    + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/1.txt"    + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/2.txt"    + NEW_LINE +
+                                    "[DEBUG]   - Moved files: 4"        + NEW_LINE +
+                                    "[DEBUG]    - 0.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
+                                    "[DEBUG]    - 1.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
+                                    "[DEBUG]    - 2.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
+                                    "[DEBUG]    - 3.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
+                                    "[INFO] - store elements: 5"        + NEW_LINE +
+                                    "[INFO]  - mediastore: 2"           + NEW_LINE +
+                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/2.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[INFO]  - sitestore: 3"            + NEW_LINE +
+                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/2.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[INFO] - entity types: 3                       ( schemas: 2, entities: 6 )"        + NEW_LINE +
+                                    "[INFO]  - Schema: 'updatedSchema1'             ( entity types: 2, entities: 5 )"   + NEW_LINE +
+                                    "[INFO]   - EntityType: 'updatedType1'          ( entities: 2 )"                    + NEW_LINE +
+                                    "[DEBUG]     - Created files: 1"                            + NEW_LINE +
+                                    "[DEBUG]      - /path/updatedSchema1#updatedType1/0.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Updated files: 2"                            + NEW_LINE +
+                                    "[DEBUG]      - /path/updatedSchema1#updatedType1/0.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/updatedSchema1#updatedType1/1.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Deleted files: 3"                            + NEW_LINE +
+                                    "[DEBUG]      - /path/updatedSchema1#updatedType1/0.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/updatedSchema1#updatedType1/1.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/updatedSchema1#updatedType1/2.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Moved files: 4"                              + NEW_LINE +
+                                    "[DEBUG]      - 0.txt ( from '/from/updatedSchema1#updatedType1' to '/to/updatedSchema1#updatedType1' )" + NEW_LINE +
+                                    "[DEBUG]      - 1.txt ( from '/from/updatedSchema1#updatedType1' to '/to/updatedSchema1#updatedType1' )" + NEW_LINE +
+                                    "[DEBUG]      - 2.txt ( from '/from/updatedSchema1#updatedType1' to '/to/updatedSchema1#updatedType1' )" + NEW_LINE +
+                                    "[DEBUG]      - 3.txt ( from '/from/updatedSchema1#updatedType1' to '/to/updatedSchema1#updatedType1' )" + NEW_LINE +
+                                    "[INFO]   - EntityType: 'updatedType2'          ( entities: 3 )"                                         + NEW_LINE +
+                                    "[DEBUG]     - Created files: 1"                            + NEW_LINE +
+                                    "[DEBUG]      - /path/updatedSchema1#updatedType2/0.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Updated files: 2"                            + NEW_LINE +
+                                    "[DEBUG]      - /path/updatedSchema1#updatedType2/0.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/updatedSchema1#updatedType2/1.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Deleted files: 3"                            + NEW_LINE +
+                                    "[DEBUG]      - /path/updatedSchema1#updatedType2/0.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/updatedSchema1#updatedType2/1.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/updatedSchema1#updatedType2/2.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Moved files: 4"                              + NEW_LINE +
+                                    "[DEBUG]      - 0.txt ( from '/from/updatedSchema1#updatedType2' to '/to/updatedSchema1#updatedType2' )" + NEW_LINE +
+                                    "[DEBUG]      - 1.txt ( from '/from/updatedSchema1#updatedType2' to '/to/updatedSchema1#updatedType2' )" + NEW_LINE +
+                                    "[DEBUG]      - 2.txt ( from '/from/updatedSchema1#updatedType2' to '/to/updatedSchema1#updatedType2' )" + NEW_LINE +
+                                    "[DEBUG]      - 3.txt ( from '/from/updatedSchema1#updatedType2' to '/to/updatedSchema1#updatedType2' )" + NEW_LINE +
+                                    "[INFO]  - Schema: 'updatedSchema2'             ( entity types: 1, entities: 1 )"                        + NEW_LINE +
+                                    "[INFO]   - EntityType: 'updatedType1'          ( entities: 1 )"                                         + NEW_LINE +
+                                    "[DEBUG]     - Created files: 1"                            + NEW_LINE +
+                                    "[DEBUG]      - /path/updatedSchema2#updatedType1/0.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Updated files: 2"                            + NEW_LINE +
+                                    "[DEBUG]      - /path/updatedSchema2#updatedType1/0.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/updatedSchema2#updatedType1/1.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Deleted files: 3"                            + NEW_LINE +
+                                    "[DEBUG]      - /path/updatedSchema2#updatedType1/0.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/updatedSchema2#updatedType1/1.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/updatedSchema2#updatedType1/2.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Moved files: 4"                              + NEW_LINE +
+                                    "[DEBUG]      - 0.txt ( from '/from/updatedSchema2#updatedType1' to '/to/updatedSchema2#updatedType1' )" + NEW_LINE +
+                                    "[DEBUG]      - 1.txt ( from '/from/updatedSchema2#updatedType1' to '/to/updatedSchema2#updatedType1' )" + NEW_LINE +
+                                    "[DEBUG]      - 2.txt ( from '/from/updatedSchema2#updatedType1' to '/to/updatedSchema2#updatedType1' )" + NEW_LINE +
+                                    "[DEBUG]      - 3.txt ( from '/from/updatedSchema2#updatedType1' to '/to/updatedSchema2#updatedType1' )" + NEW_LINE +
+                                    "[INFO] Deleted elements: 7"                                + NEW_LINE +
+                                    "[INFO] - project properties: 1"                            + NEW_LINE +
+                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]   - Created files: 1"                              + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/0.txt"                            + NEW_LINE +
+                                    "[DEBUG]   - Updated files: 2"                              + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/0.txt"                            + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/1.txt"                            + NEW_LINE +
+                                    "[DEBUG]   - Deleted files: 3"                              + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/0.txt"                            + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/1.txt"                            + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/2.txt"                            + NEW_LINE +
+                                    "[DEBUG]   - Moved files: 4"                                + NEW_LINE +
+                                    "[DEBUG]    - 0.txt ( from '/from/USERS' to '/to/USERS' )"  + NEW_LINE +
+                                    "[DEBUG]    - 1.txt ( from '/from/USERS' to '/to/USERS' )"  + NEW_LINE +
+                                    "[DEBUG]    - 2.txt ( from '/from/USERS' to '/to/USERS' )"  + NEW_LINE +
+                                    "[DEBUG]    - 3.txt ( from '/from/USERS' to '/to/USERS' )"  + NEW_LINE +
+                                    "[INFO] - store elements: 4"                                + NEW_LINE +
+                                    "[INFO]  - pagestore: 1"                                    + NEW_LINE +
+                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"                             + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"                           + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"                             + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"                           + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"                           + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"                             + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"                           + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"                           + NEW_LINE +
+                                    "[DEBUG]     - /path/first/2.txt"                           + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"                               + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[INFO]  - sitestore: 3"                                    + NEW_LINE +
+                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"                             + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"                           + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"                             + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"                           + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"                           + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"                             + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"                           + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"                           + NEW_LINE +
+                                    "[DEBUG]     - /path/first/2.txt"                           + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"                               + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"                                 + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"                              + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"                                 + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"                              + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"                              + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"                                 + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"                              + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"                              + NEW_LINE +
+                                    "[DEBUG]     - /path/second/2.txt"                              + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"                                   + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )"   + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )"   + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )"   + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )"   + NEW_LINE +
+                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"                                 + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"                               + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"                                 + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"                               + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"                               + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"                                 + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"                               + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"                               + NEW_LINE +
+                                    "[DEBUG]     - /path/third/2.txt"                               + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"                                   + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/third' to '/to/third' )"     + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/third' to '/to/third' )"     + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )"     + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )"     + NEW_LINE +
+                                    "[INFO] - entity types: 2                       ( schemas: 1, entities: 7 )"        + NEW_LINE +
+                                    "[INFO]  - Schema: 'deletedSchema'              ( entity types: 2, entities: 7 )"   + NEW_LINE +
+                                    "[INFO]   - EntityType: 'deletedType1'          ( entities: 3 )"                    + NEW_LINE +
+                                    "[DEBUG]     - Created files: 1"                                + NEW_LINE +
+                                    "[DEBUG]      - /path/deletedSchema#deletedType1/0.txt"         + NEW_LINE +
+                                    "[DEBUG]     - Updated files: 2"                                + NEW_LINE +
+                                    "[DEBUG]      - /path/deletedSchema#deletedType1/0.txt"         + NEW_LINE +
+                                    "[DEBUG]      - /path/deletedSchema#deletedType1/1.txt"         + NEW_LINE +
+                                    "[DEBUG]     - Deleted files: 3"                                + NEW_LINE +
+                                    "[DEBUG]      - /path/deletedSchema#deletedType1/0.txt"         + NEW_LINE +
+                                    "[DEBUG]      - /path/deletedSchema#deletedType1/1.txt"         + NEW_LINE +
+                                    "[DEBUG]      - /path/deletedSchema#deletedType1/2.txt"         + NEW_LINE +
+                                    "[DEBUG]     - Moved files: 4"                                  + NEW_LINE +
+                                    "[DEBUG]      - 0.txt ( from '/from/deletedSchema#deletedType1' to '/to/deletedSchema#deletedType1' )" + NEW_LINE +
+                                    "[DEBUG]      - 1.txt ( from '/from/deletedSchema#deletedType1' to '/to/deletedSchema#deletedType1' )" + NEW_LINE +
+                                    "[DEBUG]      - 2.txt ( from '/from/deletedSchema#deletedType1' to '/to/deletedSchema#deletedType1' )" + NEW_LINE +
+                                    "[DEBUG]      - 3.txt ( from '/from/deletedSchema#deletedType1' to '/to/deletedSchema#deletedType1' )" + NEW_LINE +
+                                    "[INFO]   - EntityType: 'deletedType2'          ( entities: 4 )"    + NEW_LINE +
+                                    "[DEBUG]     - Created files: 1"                                    + NEW_LINE +
+                                    "[DEBUG]      - /path/deletedSchema#deletedType2/0.txt"             + NEW_LINE +
+                                    "[DEBUG]     - Updated files: 2"                                    + NEW_LINE +
+                                    "[DEBUG]      - /path/deletedSchema#deletedType2/0.txt"             + NEW_LINE +
+                                    "[DEBUG]      - /path/deletedSchema#deletedType2/1.txt"             + NEW_LINE +
+                                    "[DEBUG]     - Deleted files: 3"                                    + NEW_LINE +
+                                    "[DEBUG]      - /path/deletedSchema#deletedType2/0.txt"             + NEW_LINE +
+                                    "[DEBUG]      - /path/deletedSchema#deletedType2/1.txt"             + NEW_LINE +
+                                    "[DEBUG]      - /path/deletedSchema#deletedType2/2.txt"             + NEW_LINE +
+                                    "[DEBUG]     - Moved files: 4"                                      + NEW_LINE +
+                                    "[DEBUG]      - 0.txt ( from '/from/deletedSchema#deletedType2' to '/to/deletedSchema#deletedType2' )" + NEW_LINE +
+                                    "[DEBUG]      - 1.txt ( from '/from/deletedSchema#deletedType2' to '/to/deletedSchema#deletedType2' )" + NEW_LINE +
+                                    "[DEBUG]      - 2.txt ( from '/from/deletedSchema#deletedType2' to '/to/deletedSchema#deletedType2' )" + NEW_LINE +
+                                    "[DEBUG]      - 3.txt ( from '/from/deletedSchema#deletedType2' to '/to/deletedSchema#deletedType2' )" + NEW_LINE +
+                                    "[INFO]   Moved elements: 9"        + NEW_LINE +
+                                    "[INFO] - project properties: 1"                               + NEW_LINE +
+                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]   - Created files: 1"      + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/0.txt"    + NEW_LINE +
+                                    "[DEBUG]   - Updated files: 2"      + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/0.txt"    + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/1.txt"    + NEW_LINE +
+                                    "[DEBUG]   - Deleted files: 3"      + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/0.txt"    + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/1.txt"    + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/2.txt"    + NEW_LINE +
+                                    "[DEBUG]   - Moved files: 4"        + NEW_LINE +
+                                    "[DEBUG]    - 0.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
+                                    "[DEBUG]    - 1.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
+                                    "[DEBUG]    - 2.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
+                                    "[DEBUG]    - 3.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
+                                    "[INFO] - store elements: 6"        + NEW_LINE +
+                                    "[INFO]  - mediastore: 2"           + NEW_LINE +
+                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/2.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[INFO]  - templatestore: 4"        + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/0.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/1.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/1.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/2.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/2.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[INFO] - entity types: 2                       ( schemas: 2, entities: 3 )"        + NEW_LINE +
+                                    "[INFO]  - Schema: 'movedSchema1'               ( entity types: 1, entities: 1 )"   + NEW_LINE +
+                                    "[INFO]   - EntityType: 'movedType1'            ( entities: 1 )"                    + NEW_LINE +
+                                    "[DEBUG]     - Created files: 1"                        + NEW_LINE +
+                                    "[DEBUG]      - /path/movedSchema1#movedType1/0.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Updated files: 2"                        + NEW_LINE +
+                                    "[DEBUG]      - /path/movedSchema1#movedType1/0.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/movedSchema1#movedType1/1.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Deleted files: 3"                        + NEW_LINE +
+                                    "[DEBUG]      - /path/movedSchema1#movedType1/0.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/movedSchema1#movedType1/1.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/movedSchema1#movedType1/2.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Moved files: 4"                          + NEW_LINE +
+                                    "[DEBUG]      - 0.txt ( from '/from/movedSchema1#movedType1' to '/to/movedSchema1#movedType1' )"    + NEW_LINE +
+                                    "[DEBUG]      - 1.txt ( from '/from/movedSchema1#movedType1' to '/to/movedSchema1#movedType1' )"    + NEW_LINE +
+                                    "[DEBUG]      - 2.txt ( from '/from/movedSchema1#movedType1' to '/to/movedSchema1#movedType1' )"    + NEW_LINE +
+                                    "[DEBUG]      - 3.txt ( from '/from/movedSchema1#movedType1' to '/to/movedSchema1#movedType1' )"    + NEW_LINE +
+                                    "[INFO]  - Schema: 'movedSchema2'               ( entity types: 1, entities: 2 )"                   + NEW_LINE +
+                                    "[INFO]   - EntityType: 'movedType2'            ( entities: 2 )"                                    + NEW_LINE +
+                                    "[DEBUG]     - Created files: 1"                        + NEW_LINE +
+                                    "[DEBUG]      - /path/movedSchema2#movedType2/0.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Updated files: 2"                        + NEW_LINE +
+                                    "[DEBUG]      - /path/movedSchema2#movedType2/0.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/movedSchema2#movedType2/1.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Deleted files: 3"                        + NEW_LINE +
+                                    "[DEBUG]      - /path/movedSchema2#movedType2/0.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/movedSchema2#movedType2/1.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/movedSchema2#movedType2/2.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Moved files: 4"                          + NEW_LINE +
+                                    "[DEBUG]      - 0.txt ( from '/from/movedSchema2#movedType2' to '/to/movedSchema2#movedType2' )" + NEW_LINE +
+                                    "[DEBUG]      - 1.txt ( from '/from/movedSchema2#movedType2' to '/to/movedSchema2#movedType2' )" + NEW_LINE +
+                                    "[DEBUG]      - 2.txt ( from '/from/movedSchema2#movedType2' to '/to/movedSchema2#movedType2' )" + NEW_LINE +
+                                    "[DEBUG]      - 3.txt ( from '/from/movedSchema2#movedType2' to '/to/movedSchema2#movedType2' )" + NEW_LINE +
+                                    "[INFO] == SUMMARY ==" + NEW_LINE +
+                                    "[INFO] Created elements: 7 | project properties: 1 | store elements: 5 ( pagestore: 1, templatestore: 4 ) | entity types: 1 ( schemas: 1, entities: 1 )"   + NEW_LINE +
+                                    "[INFO] Updated elements: 9 | project properties: 1 | store elements: 5 ( mediastore: 2, sitestore: 3 ) | entity types: 3 ( schemas: 2, entities: 6 )"      + NEW_LINE +
+                                    "[INFO] Deleted elements: 7 | project properties: 1 | store elements: 4 ( pagestore: 1, sitestore: 3 ) | entity types: 2 ( schemas: 1, entities: 7 )"       + NEW_LINE +
+                                    "[INFO]   Moved elements: 9 | project properties: 1 | store elements: 6 ( mediastore: 2, templatestore: 4 ) | entity types: 2 ( schemas: 2, entities: 3 )"  + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -660,7 +661,7 @@ public class AdvancedLoggerTest {
             final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logElements(logger, Collections.emptyList(), "myDescription");
             // @formatter:off
-            final String expected = "[INFO] myDescription: 0\n";
+            final String expected = "[INFO] myDescription: 0" + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -669,7 +670,7 @@ public class AdvancedLoggerTest {
             final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logElements(logger, Collections.emptyList(), "myDescription");
             // @formatter:off
-            final String expected = "[INFO] myDescription: 0\n";
+            final String expected = "[INFO] myDescription: 0" + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -698,31 +699,31 @@ public class AdvancedLoggerTest {
             }
             AdvancedLogger.logElements(logger, elements, "myDescription");
             // @formatter:off
-            final String expected = "[INFO] myDescription: 15\n" +
-                                    "[INFO] - project properties: 3\n" +
-                                    "[INFO]  - Groups                               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]  - TemplateSets                         ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO] - store elements: 10\n" +
-                                    "[INFO]  - pagestore: 1\n" +
-                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]  - mediastore: 2\n" +
-                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]  - sitestore: 3\n" +
-                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]  - templatestore: 4\n" +
-                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO] - entity types: 2                       ( schemas: 2, entities: 3 )\n" +
-                                    "[INFO]  - Schema: 'myFirstSchema'              ( entity types: 1, entities: 1 )\n" +
-                                    "[INFO]   - EntityType: 'myType'                ( entities: 1 )\n" +
-                                    "[INFO]  - Schema: 'mySecondSchema'             ( entity types: 1, entities: 2 )\n" +
-                                    "[INFO]   - EntityType: 'mySecondType'          ( entities: 2 )\n";
+            final String expected = "[INFO] myDescription: 15"          + NEW_LINE +
+                                    "[INFO] - project properties: 3"    + NEW_LINE +
+                                    "[INFO]  - Groups                               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]  - TemplateSets                         ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO] - store elements: 10"       + NEW_LINE +
+                                    "[INFO]  - pagestore: 1"            + NEW_LINE +
+                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]  - mediastore: 2"           + NEW_LINE +
+                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]  - sitestore: 3"            + NEW_LINE +
+                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]  - templatestore: 4"        + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO] - entity types: 2                       ( schemas: 2, entities: 3 )"        + NEW_LINE +
+                                    "[INFO]  - Schema: 'myFirstSchema'              ( entity types: 1, entities: 1 )"   + NEW_LINE +
+                                    "[INFO]   - EntityType: 'myType'                ( entities: 1 )"                    + NEW_LINE +
+                                    "[INFO]  - Schema: 'mySecondSchema'             ( entity types: 1, entities: 2 )"   + NEW_LINE +
+                                    "[INFO]   - EntityType: 'mySecondType'          ( entities: 2 )"                    + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -751,241 +752,241 @@ public class AdvancedLoggerTest {
             }
             AdvancedLogger.logElements(logger, elements, "myDescription");
             // @formatter:off
-            final String expected = "[INFO] myDescription: 15\n" +
-                                    "[INFO] - project properties: 3\n" +
-                                    "[INFO]  - Groups                               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]   - Created files: 1\n" +
-                                    "[DEBUG]    - /path/GROUPS/0.txt\n" +
-                                    "[DEBUG]   - Updated files: 2\n" +
-                                    "[DEBUG]    - /path/GROUPS/0.txt\n" +
-                                    "[DEBUG]    - /path/GROUPS/1.txt\n" +
-                                    "[DEBUG]   - Deleted files: 3\n" +
-                                    "[DEBUG]    - /path/GROUPS/0.txt\n" +
-                                    "[DEBUG]    - /path/GROUPS/1.txt\n" +
-                                    "[DEBUG]    - /path/GROUPS/2.txt\n" +
-                                    "[DEBUG]   - Moved files: 4\n" +
-                                    "[DEBUG]    - 0.txt ( from '/from/GROUPS' to '/to/GROUPS' )\n" +
-                                    "[DEBUG]    - 1.txt ( from '/from/GROUPS' to '/to/GROUPS' )\n" +
-                                    "[DEBUG]    - 2.txt ( from '/from/GROUPS' to '/to/GROUPS' )\n" +
-                                    "[DEBUG]    - 3.txt ( from '/from/GROUPS' to '/to/GROUPS' )\n" +
-                                    "[INFO]  - TemplateSets                         ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]   - Created files: 1\n" +
-                                    "[DEBUG]    - /path/TEMPLATE_SETS/0.txt\n" +
-                                    "[DEBUG]   - Updated files: 2\n" +
-                                    "[DEBUG]    - /path/TEMPLATE_SETS/0.txt\n" +
-                                    "[DEBUG]    - /path/TEMPLATE_SETS/1.txt\n" +
-                                    "[DEBUG]   - Deleted files: 3\n" +
-                                    "[DEBUG]    - /path/TEMPLATE_SETS/0.txt\n" +
-                                    "[DEBUG]    - /path/TEMPLATE_SETS/1.txt\n" +
-                                    "[DEBUG]    - /path/TEMPLATE_SETS/2.txt\n" +
-                                    "[DEBUG]   - Moved files: 4\n" +
-                                    "[DEBUG]    - 0.txt ( from '/from/TEMPLATE_SETS' to '/to/TEMPLATE_SETS' )\n" +
-                                    "[DEBUG]    - 1.txt ( from '/from/TEMPLATE_SETS' to '/to/TEMPLATE_SETS' )\n" +
-                                    "[DEBUG]    - 2.txt ( from '/from/TEMPLATE_SETS' to '/to/TEMPLATE_SETS' )\n" +
-                                    "[DEBUG]    - 3.txt ( from '/from/TEMPLATE_SETS' to '/to/TEMPLATE_SETS' )\n" +
-                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]   - Created files: 1\n" +
-                                    "[DEBUG]    - /path/USERS/0.txt\n" +
-                                    "[DEBUG]   - Updated files: 2\n" +
-                                    "[DEBUG]    - /path/USERS/0.txt\n" +
-                                    "[DEBUG]    - /path/USERS/1.txt\n" +
-                                    "[DEBUG]   - Deleted files: 3\n" +
-                                    "[DEBUG]    - /path/USERS/0.txt\n" +
-                                    "[DEBUG]    - /path/USERS/1.txt\n" +
-                                    "[DEBUG]    - /path/USERS/2.txt\n" +
-                                    "[DEBUG]   - Moved files: 4\n" +
-                                    "[DEBUG]    - 0.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[DEBUG]    - 1.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[DEBUG]    - 2.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[DEBUG]    - 3.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[INFO] - store elements: 10\n" +
-                                    "[INFO]  - pagestore: 1\n" +
-                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]     - /path/first/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]  - mediastore: 2\n" +
-                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]     - /path/first/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]     - /path/second/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[INFO]  - sitestore: 3\n" +
-                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]     - /path/first/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]     - /path/second/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]     - /path/third/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]     - /path/third/1.txt\n" +
-                                    "[DEBUG]     - /path/third/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[INFO]  - templatestore: 4\n" +
-                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]     - /path/first/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/fourth/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/fourth/0.txt\n" +
-                                    "[DEBUG]     - /path/fourth/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/fourth/0.txt\n" +
-                                    "[DEBUG]     - /path/fourth/1.txt\n" +
-                                    "[DEBUG]     - /path/fourth/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/fourth' to '/to/fourth' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/fourth' to '/to/fourth' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/fourth' to '/to/fourth' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/fourth' to '/to/fourth' )\n" +
-                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]     - /path/second/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]     - /path/third/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]     - /path/third/1.txt\n" +
-                                    "[DEBUG]     - /path/third/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[INFO] - entity types: 2                       ( schemas: 2, entities: 3 )\n" +
-                                    "[INFO]  - Schema: 'myFirstSchema'              ( entity types: 1, entities: 1 )\n" +
-                                    "[INFO]   - EntityType: 'myType'                ( entities: 1 )\n" +
-                                    "[DEBUG]     - Created files: 1\n" +
-                                    "[DEBUG]      - /path/myFirstSchema#myType/0.txt\n" +
-                                    "[DEBUG]     - Updated files: 2\n" +
-                                    "[DEBUG]      - /path/myFirstSchema#myType/0.txt\n" +
-                                    "[DEBUG]      - /path/myFirstSchema#myType/1.txt\n" +
-                                    "[DEBUG]     - Deleted files: 3\n" +
-                                    "[DEBUG]      - /path/myFirstSchema#myType/0.txt\n" +
-                                    "[DEBUG]      - /path/myFirstSchema#myType/1.txt\n" +
-                                    "[DEBUG]      - /path/myFirstSchema#myType/2.txt\n" +
-                                    "[DEBUG]     - Moved files: 4\n" +
-                                    "[DEBUG]      - 0.txt ( from '/from/myFirstSchema#myType' to '/to/myFirstSchema#myType' )\n" +
-                                    "[DEBUG]      - 1.txt ( from '/from/myFirstSchema#myType' to '/to/myFirstSchema#myType' )\n" +
-                                    "[DEBUG]      - 2.txt ( from '/from/myFirstSchema#myType' to '/to/myFirstSchema#myType' )\n" +
-                                    "[DEBUG]      - 3.txt ( from '/from/myFirstSchema#myType' to '/to/myFirstSchema#myType' )\n" +
-                                    "[INFO]  - Schema: 'mySecondSchema'             ( entity types: 1, entities: 2 )\n" +
-                                    "[INFO]   - EntityType: 'mySecondType'          ( entities: 2 )\n" +
-                                    "[DEBUG]     - Created files: 1\n" +
-                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/0.txt\n" +
-                                    "[DEBUG]     - Updated files: 2\n" +
-                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/0.txt\n" +
-                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/1.txt\n" +
-                                    "[DEBUG]     - Deleted files: 3\n" +
-                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/0.txt\n" +
-                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/1.txt\n" +
-                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/2.txt\n" +
-                                    "[DEBUG]     - Moved files: 4\n" +
-                                    "[DEBUG]      - 0.txt ( from '/from/mySecondSchema#mySecondType' to '/to/mySecondSchema#mySecondType' )\n" +
-                                    "[DEBUG]      - 1.txt ( from '/from/mySecondSchema#mySecondType' to '/to/mySecondSchema#mySecondType' )\n" +
-                                    "[DEBUG]      - 2.txt ( from '/from/mySecondSchema#mySecondType' to '/to/mySecondSchema#mySecondType' )\n" +
-                                    "[DEBUG]      - 3.txt ( from '/from/mySecondSchema#mySecondType' to '/to/mySecondSchema#mySecondType' )\n";
+            final String expected = "[INFO] myDescription: 15"          + NEW_LINE +
+                                    "[INFO] - project properties: 3"    + NEW_LINE +
+                                    "[INFO]  - Groups                               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]   - Created files: 1"      + NEW_LINE +
+                                    "[DEBUG]    - /path/GROUPS/0.txt"   + NEW_LINE +
+                                    "[DEBUG]   - Updated files: 2"      + NEW_LINE +
+                                    "[DEBUG]    - /path/GROUPS/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - /path/GROUPS/1.txt"   + NEW_LINE +
+                                    "[DEBUG]   - Deleted files: 3"      + NEW_LINE +
+                                    "[DEBUG]    - /path/GROUPS/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - /path/GROUPS/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - /path/GROUPS/2.txt"   + NEW_LINE +
+                                    "[DEBUG]   - Moved files: 4"        + NEW_LINE +
+                                    "[DEBUG]    - 0.txt ( from '/from/GROUPS' to '/to/GROUPS' )" + NEW_LINE +
+                                    "[DEBUG]    - 1.txt ( from '/from/GROUPS' to '/to/GROUPS' )" + NEW_LINE +
+                                    "[DEBUG]    - 2.txt ( from '/from/GROUPS' to '/to/GROUPS' )" + NEW_LINE +
+                                    "[DEBUG]    - 3.txt ( from '/from/GROUPS' to '/to/GROUPS' )" + NEW_LINE +
+                                    "[INFO]  - TemplateSets                         ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]   - Created files: 1"              + NEW_LINE +
+                                    "[DEBUG]    - /path/TEMPLATE_SETS/0.txt"    + NEW_LINE +
+                                    "[DEBUG]   - Updated files: 2"              + NEW_LINE +
+                                    "[DEBUG]    - /path/TEMPLATE_SETS/0.txt"    + NEW_LINE +
+                                    "[DEBUG]    - /path/TEMPLATE_SETS/1.txt"    + NEW_LINE +
+                                    "[DEBUG]   - Deleted files: 3"              + NEW_LINE +
+                                    "[DEBUG]    - /path/TEMPLATE_SETS/0.txt"    + NEW_LINE +
+                                    "[DEBUG]    - /path/TEMPLATE_SETS/1.txt"    + NEW_LINE +
+                                    "[DEBUG]    - /path/TEMPLATE_SETS/2.txt"    + NEW_LINE +
+                                    "[DEBUG]   - Moved files: 4"                + NEW_LINE +
+                                    "[DEBUG]    - 0.txt ( from '/from/TEMPLATE_SETS' to '/to/TEMPLATE_SETS' )" + NEW_LINE +
+                                    "[DEBUG]    - 1.txt ( from '/from/TEMPLATE_SETS' to '/to/TEMPLATE_SETS' )" + NEW_LINE +
+                                    "[DEBUG]    - 2.txt ( from '/from/TEMPLATE_SETS' to '/to/TEMPLATE_SETS' )" + NEW_LINE +
+                                    "[DEBUG]    - 3.txt ( from '/from/TEMPLATE_SETS' to '/to/TEMPLATE_SETS' )" + NEW_LINE +
+                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]   - Created files: 1"      + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/0.txt"    + NEW_LINE +
+                                    "[DEBUG]   - Updated files: 2"      + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/0.txt"    + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/1.txt"    + NEW_LINE +
+                                    "[DEBUG]   - Deleted files: 3"      + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/0.txt"    + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/1.txt"    + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/2.txt"    + NEW_LINE +
+                                    "[DEBUG]   - Moved files: 4"        + NEW_LINE +
+                                    "[DEBUG]    - 0.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
+                                    "[DEBUG]    - 1.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
+                                    "[DEBUG]    - 2.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
+                                    "[DEBUG]    - 3.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
+                                    "[INFO] - store elements: 10"       + NEW_LINE +
+                                    "[INFO]  - pagestore: 1"            + NEW_LINE +
+                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[INFO]  - mediastore: 2"           + NEW_LINE +
+                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/2.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[INFO]  - sitestore: 3"            + NEW_LINE +
+                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/2.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[INFO]  - templatestore: 4"        + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/0.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/1.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/1.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/2.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/2.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[INFO] - entity types: 2                       ( schemas: 2, entities: 3 )"        + NEW_LINE +
+                                    "[INFO]  - Schema: 'myFirstSchema'              ( entity types: 1, entities: 1 )"   + NEW_LINE +
+                                    "[INFO]   - EntityType: 'myType'                ( entities: 1 )"                    + NEW_LINE +
+                                    "[DEBUG]     - Created files: 1"                  + NEW_LINE +
+                                    "[DEBUG]      - /path/myFirstSchema#myType/0.txt" + NEW_LINE +
+                                    "[DEBUG]     - Updated files: 2"                  + NEW_LINE +
+                                    "[DEBUG]      - /path/myFirstSchema#myType/0.txt" + NEW_LINE +
+                                    "[DEBUG]      - /path/myFirstSchema#myType/1.txt" + NEW_LINE +
+                                    "[DEBUG]     - Deleted files: 3"                  + NEW_LINE +
+                                    "[DEBUG]      - /path/myFirstSchema#myType/0.txt" + NEW_LINE +
+                                    "[DEBUG]      - /path/myFirstSchema#myType/1.txt" + NEW_LINE +
+                                    "[DEBUG]      - /path/myFirstSchema#myType/2.txt" + NEW_LINE +
+                                    "[DEBUG]     - Moved files: 4"                    + NEW_LINE +
+                                    "[DEBUG]      - 0.txt ( from '/from/myFirstSchema#myType' to '/to/myFirstSchema#myType' )" + NEW_LINE +
+                                    "[DEBUG]      - 1.txt ( from '/from/myFirstSchema#myType' to '/to/myFirstSchema#myType' )" + NEW_LINE +
+                                    "[DEBUG]      - 2.txt ( from '/from/myFirstSchema#myType' to '/to/myFirstSchema#myType' )" + NEW_LINE +
+                                    "[DEBUG]      - 3.txt ( from '/from/myFirstSchema#myType' to '/to/myFirstSchema#myType' )" + NEW_LINE +
+                                    "[INFO]  - Schema: 'mySecondSchema'             ( entity types: 1, entities: 2 )"          + NEW_LINE +
+                                    "[INFO]   - EntityType: 'mySecondType'          ( entities: 2 )"                           + NEW_LINE +
+                                    "[DEBUG]     - Created files: 1"                            + NEW_LINE +
+                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/0.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Updated files: 2"                            + NEW_LINE +
+                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/0.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/1.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Deleted files: 3"                            + NEW_LINE +
+                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/0.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/1.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/2.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Moved files: 4"                              + NEW_LINE +
+                                    "[DEBUG]      - 0.txt ( from '/from/mySecondSchema#mySecondType' to '/to/mySecondSchema#mySecondType' )" + NEW_LINE +
+                                    "[DEBUG]      - 1.txt ( from '/from/mySecondSchema#mySecondType' to '/to/mySecondSchema#mySecondType' )" + NEW_LINE +
+                                    "[DEBUG]      - 2.txt ( from '/from/mySecondSchema#mySecondType' to '/to/mySecondSchema#mySecondType' )" + NEW_LINE +
+                                    "[DEBUG]      - 3.txt ( from '/from/mySecondSchema#mySecondType' to '/to/mySecondSchema#mySecondType' )" + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -1199,8 +1200,8 @@ public class AdvancedLoggerTest {
             final Collection<PropertyTypeExportInfo> projectProperties = new ArrayList<>(Collections.singletonList(new MockedPropertyTypeExportInfo(null)));
             AdvancedLogger.logProjectProperties(logger, projectProperties);
             //@formatter:off
-            final String expected = "[INFO] - project properties: 1\n" +
-                                    "[INFO]  - Property fs metadata                 ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n";
+            final String expected = "[INFO] - project properties: 1" + NEW_LINE +
+                                    "[INFO]  - Property fs metadata                 ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE;
             //@formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -1209,9 +1210,9 @@ public class AdvancedLoggerTest {
             final Collection<PropertyTypeExportInfo> projectProperties = new ArrayList<>(Arrays.asList(new MockedPropertyTypeExportInfo(null), new MockedPropertyTypeExportInfo(PropertiesTransportOptions.ProjectPropertyType.USERS)));
             AdvancedLogger.logProjectProperties(logger, projectProperties);
             //@formatter:off
-            final String expected = "[INFO] - project properties: 2\n" +
-                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]  - Property fs metadata                 ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n";
+            final String expected = "[INFO] - project properties: 2" + NEW_LINE +
+                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]  - Property fs metadata                 ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE;
             //@formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -1220,8 +1221,8 @@ public class AdvancedLoggerTest {
             final Collection<PropertyTypeExportInfo> projectProperties = new ArrayList<>(Collections.singletonList(new MockedPropertyTypeExportInfo(PropertiesTransportOptions.ProjectPropertyType.USERS)));
             AdvancedLogger.logProjectProperties(logger, projectProperties);
             //@formatter:off
-            final String expected = "[INFO] - project properties: 1\n" +
-                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n";
+            final String expected = "[INFO] - project properties: 1" + NEW_LINE +
+                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE;
             //@formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -1230,22 +1231,22 @@ public class AdvancedLoggerTest {
             final Collection<PropertyTypeExportInfo> projectProperties = new ArrayList<>(Collections.singletonList(new MockedPropertyTypeExportInfo(PropertiesTransportOptions.ProjectPropertyType.USERS)));
             AdvancedLogger.logProjectProperties(logger, projectProperties);
             //@formatter:off
-            final String expected = "[INFO] - project properties: 1\n" +
-                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]   - Created files: 1\n" +
-                                    "[DEBUG]    - /path/USERS/0.txt\n" +
-                                    "[DEBUG]   - Updated files: 2\n" +
-                                    "[DEBUG]    - /path/USERS/0.txt\n" +
-                                    "[DEBUG]    - /path/USERS/1.txt\n" +
-                                    "[DEBUG]   - Deleted files: 3\n" +
-                                    "[DEBUG]    - /path/USERS/0.txt\n" +
-                                    "[DEBUG]    - /path/USERS/1.txt\n" +
-                                    "[DEBUG]    - /path/USERS/2.txt\n" +
-                                    "[DEBUG]   - Moved files: 4\n" +
-                                    "[DEBUG]    - 0.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[DEBUG]    - 1.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[DEBUG]    - 2.txt ( from '/from/USERS' to '/to/USERS' )\n" +
-                                    "[DEBUG]    - 3.txt ( from '/from/USERS' to '/to/USERS' )\n";
+            final String expected = "[INFO] - project properties: 1"    + NEW_LINE +
+                                    "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]   - Created files: 1"      + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/0.txt"    + NEW_LINE +
+                                    "[DEBUG]   - Updated files: 2"      + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/0.txt"    + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/1.txt"    + NEW_LINE +
+                                    "[DEBUG]   - Deleted files: 3"      + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/0.txt"    + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/1.txt"    + NEW_LINE +
+                                    "[DEBUG]    - /path/USERS/2.txt"    + NEW_LINE +
+                                    "[DEBUG]   - Moved files: 4"        + NEW_LINE +
+                                    "[DEBUG]    - 0.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
+                                    "[DEBUG]    - 1.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
+                                    "[DEBUG]    - 2.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
+                                    "[DEBUG]    - 3.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE;
             //@formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -1262,21 +1263,21 @@ public class AdvancedLoggerTest {
             final MockLogger logger = new MockLogger(false);
             AdvancedLogger.logStoreElements(logger, createMapWithStoreElements());
             // @formatter:off
-            final String expected = "[INFO] - store elements: 10\n" +
-                                    "[INFO]  - pagestore: 1\n" +
-                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]  - mediastore: 2\n" +
-                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]  - sitestore: 3\n" +
-                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]  - templatestore: 4\n" +
-                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n";
+            final String expected = "[INFO] - store elements: 10"   + NEW_LINE +
+                                    "[INFO]  - pagestore: 1"        + NEW_LINE +
+                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]  - mediastore: 2"       + NEW_LINE +
+                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]  - sitestore: 3"        + NEW_LINE +
+                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]  - templatestore: 4"    + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -1284,161 +1285,161 @@ public class AdvancedLoggerTest {
             final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logStoreElements(logger, createMapWithStoreElements());
             // @formatter:off
-            final String expected = "[INFO] - store elements: 10\n" +
-                                    "[INFO]  - pagestore: 1\n" +
-                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]     - /path/first/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]  - mediastore: 2\n" +
-                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]     - /path/first/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]     - /path/second/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[INFO]  - sitestore: 3\n" +
-                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]     - /path/first/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]     - /path/second/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]     - /path/third/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]     - /path/third/1.txt\n" +
-                                    "[DEBUG]     - /path/third/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[INFO]  - templatestore: 4\n" +
-                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/first/0.txt\n" +
-                                    "[DEBUG]     - /path/first/1.txt\n" +
-                                    "[DEBUG]     - /path/first/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )\n" +
-                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/fourth/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/fourth/0.txt\n" +
-                                    "[DEBUG]     - /path/fourth/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/fourth/0.txt\n" +
-                                    "[DEBUG]     - /path/fourth/1.txt\n" +
-                                    "[DEBUG]     - /path/fourth/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/fourth' to '/to/fourth' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/fourth' to '/to/fourth' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/fourth' to '/to/fourth' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/fourth' to '/to/fourth' )\n" +
-                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/second/0.txt\n" +
-                                    "[DEBUG]     - /path/second/1.txt\n" +
-                                    "[DEBUG]     - /path/second/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )\n" +
-                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )\n" +
-                                    "[DEBUG]    - Created files: 1\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]    - Updated files: 2\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]     - /path/third/1.txt\n" +
-                                    "[DEBUG]    - Deleted files: 3\n" +
-                                    "[DEBUG]     - /path/third/0.txt\n" +
-                                    "[DEBUG]     - /path/third/1.txt\n" +
-                                    "[DEBUG]     - /path/third/2.txt\n" +
-                                    "[DEBUG]    - Moved files: 4\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )\n" +
-                                    "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )\n";
+            final String expected = "[INFO] - store elements: 10"       + NEW_LINE +
+                                    "[INFO]  - pagestore: 1"            + NEW_LINE +
+                                    "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[INFO]  - mediastore: 2"           + NEW_LINE +
+                                    "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/2.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[INFO]  - sitestore: 3"            + NEW_LINE +
+                                    "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/2.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[INFO]  - templatestore: 4"        + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/first/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/0.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/1.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/1.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/fourth/2.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/1.txt"  + NEW_LINE +
+                                    "[DEBUG]     - /path/second/2.txt"  + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )" + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -1456,9 +1457,9 @@ public class AdvancedLoggerTest {
             final Collection<EntityTypeExportInfo> entityTypes = new ArrayList<>(Collections.singletonList(new MockedEntityTypeExportInfo("myType", "mySchema", 2)));
             AdvancedLogger.logEntityTypes(logger, entityTypes);
             //@formatter:off
-            final String expected = "[INFO] - entity types: 1                       ( schemas: 1, entities: 2 )\n" +
-                                    "[INFO]  - Schema: 'mySchema'                   ( entity types: 1, entities: 2 )\n" +
-                                    "[INFO]   - EntityType: 'myType'                ( entities: 2 )\n";
+            final String expected = "[INFO] - entity types: 1                       ( schemas: 1, entities: 2 )"        + NEW_LINE +
+                                    "[INFO]  - Schema: 'mySchema'                   ( entity types: 1, entities: 2 )"   + NEW_LINE +
+                                    "[INFO]   - EntityType: 'myType'                ( entities: 2 )"                    + NEW_LINE;
             //@formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -1467,11 +1468,11 @@ public class AdvancedLoggerTest {
             final Collection<EntityTypeExportInfo> entityTypes = new ArrayList<>(Arrays.asList(new MockedEntityTypeExportInfo("myFirstType", "myFirstSchema", 1), new MockedEntityTypeExportInfo("mySecondType", "mySecondSchema", 2)));
             AdvancedLogger.logEntityTypes(logger, entityTypes);
             //@formatter:off
-            final String expected = "[INFO] - entity types: 2                       ( schemas: 2, entities: 3 )\n" +
-                                    "[INFO]  - Schema: 'myFirstSchema'              ( entity types: 1, entities: 1 )\n" +
-                                    "[INFO]   - EntityType: 'myFirstType'           ( entities: 1 )\n" +
-                                    "[INFO]  - Schema: 'mySecondSchema'             ( entity types: 1, entities: 2 )\n" +
-                                    "[INFO]   - EntityType: 'mySecondType'          ( entities: 2 )\n";
+            final String expected = "[INFO] - entity types: 2                       ( schemas: 2, entities: 3 )"        + NEW_LINE +
+                                    "[INFO]  - Schema: 'myFirstSchema'              ( entity types: 1, entities: 1 )"   + NEW_LINE +
+                                    "[INFO]   - EntityType: 'myFirstType'           ( entities: 1 )"                    + NEW_LINE +
+                                    "[INFO]  - Schema: 'mySecondSchema'             ( entity types: 1, entities: 2 )"   + NEW_LINE +
+                                    "[INFO]   - EntityType: 'mySecondType'          ( entities: 2 )"                    + NEW_LINE;
             //@formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -1480,39 +1481,39 @@ public class AdvancedLoggerTest {
             final Collection<EntityTypeExportInfo> entityTypes = new ArrayList<>(Arrays.asList(new MockedEntityTypeExportInfo("myFirstType", "myFirstSchema", 1), new MockedEntityTypeExportInfo("mySecondType", "mySecondSchema", 2)));
             AdvancedLogger.logEntityTypes(logger, entityTypes);
             //@formatter:off
-            final String expected = "[INFO] - entity types: 2                       ( schemas: 2, entities: 3 )\n" +
-                                    "[INFO]  - Schema: 'myFirstSchema'              ( entity types: 1, entities: 1 )\n" +
-                                    "[INFO]   - EntityType: 'myFirstType'           ( entities: 1 )\n" +
-                                    "[DEBUG]     - Created files: 1\n" +
-                                    "[DEBUG]      - /path/myFirstSchema#myFirstType/0.txt\n" +
-                                    "[DEBUG]     - Updated files: 2\n" +
-                                    "[DEBUG]      - /path/myFirstSchema#myFirstType/0.txt\n" +
-                                    "[DEBUG]      - /path/myFirstSchema#myFirstType/1.txt\n" +
-                                    "[DEBUG]     - Deleted files: 3\n" +
-                                    "[DEBUG]      - /path/myFirstSchema#myFirstType/0.txt\n" +
-                                    "[DEBUG]      - /path/myFirstSchema#myFirstType/1.txt\n" +
-                                    "[DEBUG]      - /path/myFirstSchema#myFirstType/2.txt\n" +
-                                    "[DEBUG]     - Moved files: 4\n" +
-                                    "[DEBUG]      - 0.txt ( from '/from/myFirstSchema#myFirstType' to '/to/myFirstSchema#myFirstType' )\n" +
-                                    "[DEBUG]      - 1.txt ( from '/from/myFirstSchema#myFirstType' to '/to/myFirstSchema#myFirstType' )\n" +
-                                    "[DEBUG]      - 2.txt ( from '/from/myFirstSchema#myFirstType' to '/to/myFirstSchema#myFirstType' )\n" +
-                                    "[DEBUG]      - 3.txt ( from '/from/myFirstSchema#myFirstType' to '/to/myFirstSchema#myFirstType' )\n" +
-                                    "[INFO]  - Schema: 'mySecondSchema'             ( entity types: 1, entities: 2 )\n" +
-                                    "[INFO]   - EntityType: 'mySecondType'          ( entities: 2 )\n" +
-                                    "[DEBUG]     - Created files: 1\n" +
-                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/0.txt\n" +
-                                    "[DEBUG]     - Updated files: 2\n" +
-                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/0.txt\n" +
-                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/1.txt\n" +
-                                    "[DEBUG]     - Deleted files: 3\n" +
-                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/0.txt\n" +
-                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/1.txt\n" +
-                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/2.txt\n" +
-                                    "[DEBUG]     - Moved files: 4\n" +
-                                    "[DEBUG]      - 0.txt ( from '/from/mySecondSchema#mySecondType' to '/to/mySecondSchema#mySecondType' )\n" +
-                                    "[DEBUG]      - 1.txt ( from '/from/mySecondSchema#mySecondType' to '/to/mySecondSchema#mySecondType' )\n" +
-                                    "[DEBUG]      - 2.txt ( from '/from/mySecondSchema#mySecondType' to '/to/mySecondSchema#mySecondType' )\n" +
-                                    "[DEBUG]      - 3.txt ( from '/from/mySecondSchema#mySecondType' to '/to/mySecondSchema#mySecondType' )\n";
+            final String expected = "[INFO] - entity types: 2                       ( schemas: 2, entities: 3 )"        + NEW_LINE +
+                                    "[INFO]  - Schema: 'myFirstSchema'              ( entity types: 1, entities: 1 )"   + NEW_LINE +
+                                    "[INFO]   - EntityType: 'myFirstType'           ( entities: 1 )"    + NEW_LINE +
+                                    "[DEBUG]     - Created files: 1"                                    + NEW_LINE +
+                                    "[DEBUG]      - /path/myFirstSchema#myFirstType/0.txt"              + NEW_LINE +
+                                    "[DEBUG]     - Updated files: 2"                                    + NEW_LINE +
+                                    "[DEBUG]      - /path/myFirstSchema#myFirstType/0.txt"              + NEW_LINE +
+                                    "[DEBUG]      - /path/myFirstSchema#myFirstType/1.txt"              + NEW_LINE +
+                                    "[DEBUG]     - Deleted files: 3"                                    + NEW_LINE +
+                                    "[DEBUG]      - /path/myFirstSchema#myFirstType/0.txt"              + NEW_LINE +
+                                    "[DEBUG]      - /path/myFirstSchema#myFirstType/1.txt"              + NEW_LINE +
+                                    "[DEBUG]      - /path/myFirstSchema#myFirstType/2.txt"              + NEW_LINE +
+                                    "[DEBUG]     - Moved files: 4"                                      + NEW_LINE +
+                                    "[DEBUG]      - 0.txt ( from '/from/myFirstSchema#myFirstType' to '/to/myFirstSchema#myFirstType' )"    + NEW_LINE +
+                                    "[DEBUG]      - 1.txt ( from '/from/myFirstSchema#myFirstType' to '/to/myFirstSchema#myFirstType' )"    + NEW_LINE +
+                                    "[DEBUG]      - 2.txt ( from '/from/myFirstSchema#myFirstType' to '/to/myFirstSchema#myFirstType' )"    + NEW_LINE +
+                                    "[DEBUG]      - 3.txt ( from '/from/myFirstSchema#myFirstType' to '/to/myFirstSchema#myFirstType' )"    + NEW_LINE +
+                                    "[INFO]  - Schema: 'mySecondSchema'             ( entity types: 1, entities: 2 )"                       + NEW_LINE +
+                                    "[INFO]   - EntityType: 'mySecondType'          ( entities: 2 )"                                        + NEW_LINE +
+                                    "[DEBUG]     - Created files: 1"                            + NEW_LINE +
+                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/0.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Updated files: 2"                            + NEW_LINE +
+                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/0.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/1.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Deleted files: 3"                            + NEW_LINE +
+                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/0.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/1.txt"    + NEW_LINE +
+                                    "[DEBUG]      - /path/mySecondSchema#mySecondType/2.txt"    + NEW_LINE +
+                                    "[DEBUG]     - Moved files: 4"                              + NEW_LINE +
+                                    "[DEBUG]      - 0.txt ( from '/from/mySecondSchema#mySecondType' to '/to/mySecondSchema#mySecondType' )" + NEW_LINE +
+                                    "[DEBUG]      - 1.txt ( from '/from/mySecondSchema#mySecondType' to '/to/mySecondSchema#mySecondType' )" + NEW_LINE +
+                                    "[DEBUG]      - 2.txt ( from '/from/mySecondSchema#mySecondType' to '/to/mySecondSchema#mySecondType' )" + NEW_LINE +
+                                    "[DEBUG]      - 3.txt ( from '/from/mySecondSchema#mySecondType' to '/to/mySecondSchema#mySecondType' )" + NEW_LINE;
             //@formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -1544,20 +1545,20 @@ public class AdvancedLoggerTest {
             exportInfo.setMovedFileHandles(createMovedFileHandleCollection(exportInfo, 4));
             AdvancedLogger.logFileInfos(logger, exportInfo, "");
             // @formatter:off
-            final String expected = "[DEBUG]   - Created files: 1\n" +
-                                    "[DEBUG]    - /path/testName/0.txt\n" +
-                                    "[DEBUG]   - Updated files: 2\n" +
-                                    "[DEBUG]    - /path/testName/0.txt\n" +
-                                    "[DEBUG]    - /path/testName/1.txt\n" +
-                                    "[DEBUG]   - Deleted files: 3\n" +
-                                    "[DEBUG]    - /path/testName/0.txt\n" +
-                                    "[DEBUG]    - /path/testName/1.txt\n" +
-                                    "[DEBUG]    - /path/testName/2.txt\n" +
-                                    "[DEBUG]   - Moved files: 4\n" +
-                                    "[DEBUG]    - 0.txt ( from '/from/testName' to '/to/testName' )\n" +
-                                    "[DEBUG]    - 1.txt ( from '/from/testName' to '/to/testName' )\n" +
-                                    "[DEBUG]    - 2.txt ( from '/from/testName' to '/to/testName' )\n" +
-                                    "[DEBUG]    - 3.txt ( from '/from/testName' to '/to/testName' )\n";
+            final String expected = "[DEBUG]   - Created files: 1"          + NEW_LINE +
+                                    "[DEBUG]    - /path/testName/0.txt"     + NEW_LINE +
+                                    "[DEBUG]   - Updated files: 2"          + NEW_LINE +
+                                    "[DEBUG]    - /path/testName/0.txt"     + NEW_LINE +
+                                    "[DEBUG]    - /path/testName/1.txt"     + NEW_LINE +
+                                    "[DEBUG]   - Deleted files: 3"          + NEW_LINE +
+                                    "[DEBUG]    - /path/testName/0.txt"     + NEW_LINE +
+                                    "[DEBUG]    - /path/testName/1.txt"     + NEW_LINE +
+                                    "[DEBUG]    - /path/testName/2.txt"     + NEW_LINE +
+                                    "[DEBUG]   - Moved files: 4"            + NEW_LINE +
+                                    "[DEBUG]    - 0.txt ( from '/from/testName' to '/to/testName' )" + NEW_LINE +
+                                    "[DEBUG]    - 1.txt ( from '/from/testName' to '/to/testName' )" + NEW_LINE +
+                                    "[DEBUG]    - 2.txt ( from '/from/testName' to '/to/testName' )" + NEW_LINE +
+                                    "[DEBUG]    - 3.txt ( from '/from/testName' to '/to/testName' )" + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -1569,15 +1570,15 @@ public class AdvancedLoggerTest {
             exportInfo.setDeletedFileHandles(createFileHandleCollection(exportInfo, 3));
             AdvancedLogger.logFileInfos(logger, exportInfo, "");
             // @formatter:off
-            final String expected = "[DEBUG]   - Created files: 1\n" +
-                                    "[DEBUG]    - /path/testName/0.txt\n" +
-                                    "[DEBUG]   - Updated files: 2\n" +
-                                    "[DEBUG]    - /path/testName/0.txt\n" +
-                                    "[DEBUG]    - /path/testName/1.txt\n" +
-                                    "[DEBUG]   - Deleted files: 3\n" +
-                                    "[DEBUG]    - /path/testName/0.txt\n" +
-                                    "[DEBUG]    - /path/testName/1.txt\n" +
-                                    "[DEBUG]    - /path/testName/2.txt\n";
+            final String expected = "[DEBUG]   - Created files: 1"      + NEW_LINE +
+                                    "[DEBUG]    - /path/testName/0.txt" + NEW_LINE +
+                                    "[DEBUG]   - Updated files: 2"      + NEW_LINE +
+                                    "[DEBUG]    - /path/testName/0.txt" + NEW_LINE +
+                                    "[DEBUG]    - /path/testName/1.txt" + NEW_LINE +
+                                    "[DEBUG]   - Deleted files: 3"      + NEW_LINE +
+                                    "[DEBUG]    - /path/testName/0.txt" + NEW_LINE +
+                                    "[DEBUG]    - /path/testName/1.txt" + NEW_LINE +
+                                    "[DEBUG]    - /path/testName/2.txt" + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -1587,9 +1588,9 @@ public class AdvancedLoggerTest {
             exportInfo.setUpdatedFileHandles(createFileHandleCollection(exportInfo, 2));
             AdvancedLogger.logFileInfos(logger, exportInfo, "");
             // @formatter:off
-            final String expected = "[DEBUG]   - Updated files: 2\n" +
-                                    "[DEBUG]    - /path/testName/0.txt\n" +
-                                    "[DEBUG]    - /path/testName/1.txt\n";
+            final String expected = "[DEBUG]   - Updated files: 2"      + NEW_LINE +
+                                    "[DEBUG]    - /path/testName/0.txt" + NEW_LINE +
+                                    "[DEBUG]    - /path/testName/1.txt" + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -1606,8 +1607,8 @@ public class AdvancedLoggerTest {
             final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logFileHandles(logger, createFileHandleCollection(new MockedExportInfo(), 1), "myDescription", "");
             // @formatter:off
-            final String expected = "[DEBUG]   - myDescription: 1\n" +
-                                    "[DEBUG]    - /path/testName/0.txt\n";
+            final String expected = "[DEBUG]   - myDescription: 1"      + NEW_LINE +
+                                    "[DEBUG]    - /path/testName/0.txt" + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -1624,9 +1625,9 @@ public class AdvancedLoggerTest {
             final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logFileHandles(logger, createFileHandleCollection(new MockedExportInfo(), 2), "myDescription", " ");
             // @formatter:off
-            final String expected = "[DEBUG]    - myDescription: 2\n" +
-                                    "[DEBUG]     - /path/testName/0.txt\n" +
-                                    "[DEBUG]     - /path/testName/1.txt\n";
+            final String expected = "[DEBUG]    - myDescription: 2"         + NEW_LINE +
+                                    "[DEBUG]     - /path/testName/0.txt"    + NEW_LINE +
+                                    "[DEBUG]     - /path/testName/1.txt"    + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -1634,10 +1635,10 @@ public class AdvancedLoggerTest {
             final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logFileHandles(logger, createFileHandleCollection(new MockedExportInfo(), 3), "myDescription", "  ");
             // @formatter:off
-            final String expected = "[DEBUG]     - myDescription: 3\n" +
-                                    "[DEBUG]      - /path/testName/0.txt\n" +
-                                    "[DEBUG]      - /path/testName/1.txt\n" +
-                                    "[DEBUG]      - /path/testName/2.txt\n";
+            final String expected = "[DEBUG]     - myDescription: 3"        + NEW_LINE +
+                                    "[DEBUG]      - /path/testName/0.txt"   + NEW_LINE +
+                                    "[DEBUG]      - /path/testName/1.txt"   + NEW_LINE +
+                                    "[DEBUG]      - /path/testName/2.txt"   + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -1654,8 +1655,8 @@ public class AdvancedLoggerTest {
             final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logMovedFileHandles(logger, createMovedFileHandleCollection(new MockedExportInfo(), 1), "");
             // @formatter:off
-            final String expected = "[DEBUG]   - Moved files: 1\n" +
-                                    "[DEBUG]    - 0.txt ( from '/from/testName' to '/to/testName' )\n";
+            final String expected = "[DEBUG]   - Moved files: 1" + NEW_LINE +
+                                    "[DEBUG]    - 0.txt ( from '/from/testName' to '/to/testName' )" + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -1663,9 +1664,9 @@ public class AdvancedLoggerTest {
             final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logMovedFileHandles(logger, createMovedFileHandleCollection(new MockedExportInfo(), 2), " ");
             // @formatter:off
-            final String expected = "[DEBUG]    - Moved files: 2\n" +
-                                    "[DEBUG]     - 0.txt ( from '/from/testName' to '/to/testName' )\n" +
-                                    "[DEBUG]     - 1.txt ( from '/from/testName' to '/to/testName' )\n";
+            final String expected = "[DEBUG]    - Moved files: 2"                                     + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/testName' to '/to/testName' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/testName' to '/to/testName' )" + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -1673,10 +1674,10 @@ public class AdvancedLoggerTest {
             final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logMovedFileHandles(logger, createMovedFileHandleCollection(new MockedExportInfo(), 3), "  ");
             // @formatter:off
-            final String expected = "[DEBUG]     - Moved files: 3\n" +
-                                    "[DEBUG]      - 0.txt ( from '/from/testName' to '/to/testName' )\n" +
-                                    "[DEBUG]      - 1.txt ( from '/from/testName' to '/to/testName' )\n" +
-                                    "[DEBUG]      - 2.txt ( from '/from/testName' to '/to/testName' )\n";
+            final String expected = "[DEBUG]     - Moved files: 3"                                     + NEW_LINE +
+                                    "[DEBUG]      - 0.txt ( from '/from/testName' to '/to/testName' )" + NEW_LINE +
+                                    "[DEBUG]      - 1.txt ( from '/from/testName' to '/to/testName' )" + NEW_LINE +
+                                    "[DEBUG]      - 2.txt ( from '/from/testName' to '/to/testName' )" + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -2077,7 +2078,7 @@ public class AdvancedLoggerTest {
         }
 
         private void append(final String prefix, final String s) {
-            _stringBuilder.append('[').append(prefix).append("] ").append(s).append('\n');
+            _stringBuilder.append('[').append(prefix).append("] ").append(s).append(NEW_LINE);
         }
 
         @Override
