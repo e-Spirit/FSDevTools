@@ -243,8 +243,11 @@ public final class Cli {
         }
     }
 
-    private static void logResult(Result result) {
+    private static void logResult(Result result) throws Exception{
         if (result != null) {
+            if(result.isError()){
+                throw result.getError();
+            }
             result.log();
         } else {
             LOGGER.warn("Command returned a null result, which should be avoided");
