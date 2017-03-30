@@ -20,20 +20,14 @@
  *
  */
 
-package com.espirit.moddev.cli.api.event;
+package com.espirit.moddev.cli.commands;
 
-/**
- * Interface that defines means to receive events from the cli application.
- *
- * @author e-Spirit AG
- */
-@FunctionalInterface
-public interface CliListener {
+import com.espirit.moddev.cli.api.command.Command;
 
-    /**
-     * Notify this listener about an error event.
-     *
-     * @param e the error event
-     */
-    void errorOccurred(final CliErrorEvent e);
+@com.github.rvesse.airline.annotations.Command(name = "throwexception")
+public class CommandWithException implements Command {
+    @Override
+    public Object call() throws Exception {
+        throw new Exception();
+    }
 }

@@ -20,8 +20,31 @@
  *
  */
 
+package com.espirit.moddev.cli.exception;
+
+import com.espirit.moddev.cli.api.event.CliEventHandler;
+import org.slf4j.LoggerFactory;
+
 /**
- * Classes used to parse and access the command line parameters.
+ * Listener that will exit the cli application with {@link System#exit(int)} if an error occurs.
+ *
  * @author e-Spirit AG
  */
-package com.espirit.moddev.cli.configuration;
+public final class SystemExitHandler implements CliEventHandler {
+    protected static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(SystemExitHandler.class);
+
+    @Override
+    @SuppressWarnings("squid:S1147")
+    public final void afterExceptionalTermination(Throwable e) {
+        LOGGER.error("", e);
+        System.exit(1);
+    }
+
+    @Override
+    @SuppressWarnings("squid:S1147")
+    public final void afterTermination() {
+        LOGGER.trace("Execution terminated without exception. Calling System.exit(0).");
+        System.exit(0);
+    }
+
+}

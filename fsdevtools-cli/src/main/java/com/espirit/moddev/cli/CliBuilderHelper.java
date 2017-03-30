@@ -38,24 +38,26 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 /**
- * @author e-Spirit AG
+ * Helper class for configuration retrieval in context of a cli application.
  */
-public class CliBuilderHelper {
+public final class CliBuilderHelper {
 
     private CliBuilderHelper() {}
 
     //TODO: Test these methods
+    @SuppressWarnings("squid:S1905")
     static Map<GroupWrapper, List<Class<Command>>> gatherGroupsFromCommandClasses(Set<Class<? extends Command>> commandClasses,
                                                                                   Set<Class<?>> groupClasses) {
         Map<GroupWrapper, List<Class<Command>>> groupMappings = new HashMap<>();
 
-        for (Class groupClass : groupClasses) {
-            Group annotation = (Group) groupClass.getAnnotation(Group.class);
-            if (annotation != null) {
-                groupMappings.put(new GroupWrapper(annotation), new ArrayList<>());
-            }
-        }
+        initializeGroupMappings(groupClasses, groupMappings);
 
+        addCommandClasses(commandClasses, groupMappings);
+
+        return groupMappings;
+    }
+
+    private static void addCommandClasses(Set<Class<? extends Command>> commandClasses, Map<GroupWrapper, List<Class<Command>>> groupMappings) {
         for (Class<? extends Command> commandClass : commandClasses) {
             com.github.rvesse.airline.annotations.Command
                 annotation =
@@ -83,8 +85,15 @@ public class CliBuilderHelper {
                 }
             }
         }
+    }
 
-        return groupMappings;
+    private static void initializeGroupMappings(Set<Class<?>> groupClasses, Map<GroupWrapper, List<Class<Command>>> groupMappings) {
+        for (Class groupClass : groupClasses) {
+            Group annotation = (Group) groupClass.getAnnotation(Group.class);
+            if (annotation != null) {
+                groupMappings.put(new GroupWrapper(annotation), new ArrayList<>());
+            }
+        }
     }
 
     /**

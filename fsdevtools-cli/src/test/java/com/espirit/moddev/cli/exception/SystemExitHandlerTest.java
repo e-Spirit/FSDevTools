@@ -20,38 +20,26 @@
  *
  */
 
-package com.espirit.moddev.cli.api.parsing.exceptions;
+package com.espirit.moddev.cli.exception;
 
-import com.espirit.moddev.cli.api.event.CliErrorEvent;
-import com.espirit.moddev.cli.exception.SystemExitListener;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
-import static org.junit.Assert.fail;
-
-/**
- * @author e-Spirit AG
- */
-public class SystemExitListenerTest {
-
+public class SystemExitHandlerTest {
     @Rule
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
-    private SystemExitListener tesling;
-
-    @Before
-    public void setUp() throws Exception {
-        tesling = new SystemExitListener();
+    @Test
+    public void handle() throws Exception {
+        exit.expectSystemExitWithStatus(1);
+        new SystemExitHandler().afterExceptionalTermination(new Exception());
     }
 
     @Test
-    public void testErrorOccurred() throws Exception {
-        exit.expectSystemExitWithStatus(1);
-
-        tesling.errorOccurred(new CliErrorEvent(this, new Exception("JUnit")));
-
-        fail("Schould not be called if rule works");
+    public void afterExecution() throws Exception {
+        exit.expectSystemExitWithStatus(0);
+        new SystemExitHandler().afterTermination();
     }
+
 }

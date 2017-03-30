@@ -20,20 +20,26 @@
  *
  */
 
-package com.espirit.moddev.cli.exception;
-
-import com.espirit.moddev.cli.api.event.CliErrorEvent;
-import com.espirit.moddev.cli.api.event.CliListener;
+package com.espirit.moddev.cli.api.event;
 
 /**
- * Listener that will exit the cli application if an error occurs.
- *
- * @author e-Spirit AG
+ * Interface for handler implementations that can be used for Cli event handling.
+ * Is meant to provide an action in case an exception occurs and when the command
+ * execution is finished - whether with or without exception.
  */
-public class SystemExitListener implements CliListener {
+public interface CliEventHandler {
 
-    @Override
-    public void errorOccurred(final CliErrorEvent e) {
-        System.exit(1); //NOSONAR
-    }
+    /**
+     * Place to implement logic that should be executed after every execution
+     * a Cli instance performs. Is called whether or not an exception occurred
+     * before.
+     */
+    default void afterTermination() {}
+
+    /**
+     * Place to implement logic that should be executed when an exception
+     * occurs during command execution.
+     * @param t the throwable instance to handle
+     */
+    default void afterExceptionalTermination(Throwable t) {}
 }

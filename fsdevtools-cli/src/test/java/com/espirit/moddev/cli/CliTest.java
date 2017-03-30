@@ -24,30 +24,43 @@ package com.espirit.moddev.cli;
 
 import com.espirit.moddev.cli.api.command.Command;
 import com.espirit.moddev.cli.commands.HelpCommand;
-import com.espirit.moddev.cli.commands.export.ExportCommand;
 import com.github.rvesse.airline.builder.CliBuilder;
 import com.github.rvesse.airline.model.CommandGroupMetadata;
-
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-/**
- * @author e-Spirit AG
- */
 public class CliTest {
 
+    @Rule
+    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
+
     @Test
-    public void testMain() throws Exception {
-        Cli.main(new String[]{"fs-cli"});
+    public void testDefaultConstructor() {
+        new Cli();
+    }
+
+    @Test
+    public void testMainFromCommandLine() throws Exception {
+        exit.expectSystemExitWithStatus(0);
+        Cli.main(new String[]{"help"});
+    }
+
+    @Test
+    public void testMainFromCommandLineWithException() throws Exception {
+        exit.expectSystemExitWithStatus(1);
+        Cli.main(new String[]{"throwexception"});
+    }
+
+    @Test(expected = Exception.class)
+    public void testMainCalledProgrammatically() throws Exception {
+        new Cli().execute(new String[]{"throwexception"});
     }
 
     @Test(expected = IllegalArgumentException.class)

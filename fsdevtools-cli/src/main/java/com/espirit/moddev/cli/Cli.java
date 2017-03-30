@@ -23,24 +23,17 @@
 package com.espirit.moddev.cli;
 
 import com.espirit.moddev.cli.api.CliContext;
-import com.google.common.base.Stopwatch;
-
 import com.espirit.moddev.cli.api.command.Command;
 import com.espirit.moddev.cli.api.configuration.Config;
-import com.espirit.moddev.cli.api.event.CliErrorEvent;
-import com.espirit.moddev.cli.api.event.CliListener;
 import com.espirit.moddev.cli.api.result.Result;
 import com.espirit.moddev.cli.commands.HelpCommand;
-import com.espirit.moddev.cli.exception.ExceptionHandler;
 import com.espirit.moddev.cli.exception.FsLoggingBridge;
-import com.espirit.moddev.cli.exception.SystemExitListener;
+import com.espirit.moddev.cli.exception.SystemExitHandler;
 import com.espirit.moddev.cli.reflection.CommandUtils;
 import com.espirit.moddev.cli.reflection.GroupUtils;
 import com.github.rvesse.airline.builder.CliBuilder;
-
+import com.google.common.base.Stopwatch;
 import de.espirit.common.base.Logging;
-
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,8 +41,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -58,7 +49,13 @@ import java.util.jar.JarFile;
 
 
 /**
- * Start point of the cli application.
+ * Class to represent a command line interface. Is meant to be used from the command line
+ * or programmatically.
+ * Exceptions during command execution and cli execution can be caught on top level.
+ * The cli closes the optional connection before exceptions are rethrown. The main
+ * method of this class (which is normally used from command line) uses a handler to
+ * call System.exit() with an appropriate error code in case of regular termination or
+ * in case of an exception.
  *
  * @author e-Spirit AG
  */
@@ -77,10 +74,14 @@ public final class Cli {
     private static final Logger LOGGER = LoggerFactory.getLogger(Cli.class);
     private static Set<Class<? extends Command>> commandClasses = CommandUtils.scanForCommandClasses(DEFAULT_COMMAND_PACKAGE_NAME);
     private static Set<Class<?>> groupClasses = GroupUtils.scanForGroupClasses(DEFAULT_GROUP_PACKAGE_NAME);
-    private final List<CliListener> listeners = new LinkedList<>();
+
     private final Properties buildProperties;
     private final Properties gitProperties;
 
+
+    /**
+     * Instantiates a new Cli.
+     */
     public Cli() {
         buildProperties = new Properties();
         gitProperties = new Properties();
@@ -97,31 +98,21 @@ public final class Cli {
     }
 
     /**
-     * The entry point of the cli application.
+     * The entry point of the cli application. Uses a {@link SystemExitHandler}
+     * in order to exit correctly when called from the command line.
+     * If you don't want this behaviour, instantiate a cli application programmatically on your own.
      *
      * @param args the input arguments
      */
     public static void main(final String[] args) {
-        new Cli().execute(args);
-    }
 
-    /**
-     * A getter for command classes from the package specified by {@link #DEFAULT_COMMAND_PACKAGE_NAME} only. The classes are loaded at class-load
-     * time only once.
-     *
-     * @return a reference to the actual list of loaded commands
-     */
-    public static Set<Class<? extends Command>> getCommandClasses() {
-        return Collections.unmodifiableSet(commandClasses);
-    }
-
-    /**
-     * Look up all class that define command classes in the package specified by {@link #DEFAULT_GROUP_PACKAGE_NAME}.
-     *
-     * @return {@link java.util.Set} of all class that define command classes in the package specified by {@link #DEFAULT_GROUP_PACKAGE_NAME}
-     */
-    public static Set<Class<?>> getGroupClasses() {
-        return Collections.unmodifiableSet(groupClasses);
+        SystemExitHandler cliEventHandler = new SystemExitHandler();
+        try {
+            new Cli().execute(args);
+            cliEventHandler.afterTermination();
+        } catch (Exception e) {
+            cliEventHandler.afterExceptionalTermination(e);
+        }
     }
 
     /**
@@ -129,27 +120,27 @@ public final class Cli {
      *
      * @param args the input arguments
      */
-    public void execute(final String[] args) {
+    public void execute(final String[] args) throws Exception {
         setLoggingSystemProperties();
-
-        final ExceptionHandler exceptionHandler = new ExceptionHandler(this, CliConstants.FS_CLI.value(), args);
-
-        //Order of listeners registered is important!
-        listeners.add(exceptionHandler);
-        //Make sure that in case of error there will be a System-exit(1)
-        listeners.add(new SystemExitListener());
 
         try {
             logVersionsAndGitHash();
-            final CliBuilder<Command> builder = getDefaultCliBuilder();
-            final Command command = parseCommandLine(args, builder);
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.start();
-            executeCommand(exceptionHandler, command);
+        } catch (IOException e) {
+            LOGGER.error("Error with version and/or git information, aborting operation...", e);
+            return;
+        }
+
+        final CliBuilder<Command> builder = getDefaultCliBuilder();
+        final Command command = parseCommandLine(args, builder);
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.start();
+        try {
+            executeCommand(command);
+        } catch (Exception e) {
+            throw e;
+        } finally {
             stopwatch.stop();
             logExecutionTime(stopwatch);
-        } catch (Exception e) { //NOSONAR
-            fireErrorOccurredEvent(new CliErrorEvent(this, e));
         }
     }
 
@@ -177,7 +168,6 @@ public final class Cli {
         }
     }
 
-    @NotNull
     private static String normalizePath(String filePath) {
         String jarFilePath = filePath.replace("\"", "");
         final String libPath = new File(jarFilePath).getParentFile().getAbsolutePath();
@@ -218,34 +208,62 @@ public final class Cli {
         Logging.logDebug("FS-Logging initialized!", Cli.class);
     }
 
-    private void executeCommand(ExceptionHandler exceptionHandler, Command<Result> command) {
+    /**
+     * Executes an already instantiated command. First, the command
+     * is used as a configuration object for obtaining a FirstSpirit connection.
+     * Second, the command is executed. Afterwards, the context is closed.
+     *
+     * Exceptions occurring during context creation or command execution
+     * are propagated to registered handlers.
+     *
+     * @param command the command instance to execute
+     */
+    public void executeCommand(Command<Result> command) throws Exception {
         LOGGER.info("Executing " + command.getClass().getSimpleName());
         CliContext context = null;
         try {
-            if (command instanceof Config) {
-                Config commandAsConfig = (Config) command;
-                if (commandAsConfig.needsContext()) {
-                    context = new CliContextImpl(commandAsConfig);
-                    commandAsConfig.setContext(context);
-                }
-            }
+            context = getCliContextOrNull(command);
             Result result = command.call();
-            if (result != null) {
-                result.log();
-            } else {
-                LOGGER.warn("Command returned a null result, which should be avoided");
-            }
+            logResult(result);
         } catch (Exception e) {
-            exceptionHandler.errorOccurred(new CliErrorEvent(this, e));
+            LOGGER.trace("Exception occurred during context initialization or command execution", e);
+            throw e;
         } finally {
-            if(context != null) {
-                try {
-                    context.close();
-                } catch (Exception e) {
-                    LOGGER.error("Closing context caused an exception!", e);
-                }
+            closeContext(context);
+        }
+    }
+
+    static void closeContext(CliContext context) {
+        if(context != null) {
+            try {
+                context.close();
+            } catch (Exception e) {
+                LOGGER.error("Closing context caused an exception!", e);
             }
         }
+    }
+
+    private static void logResult(Result result) throws Exception{
+        if (result != null) {
+            if(result.isError()){
+                throw result.getError();
+            }
+            result.log();
+        } else {
+            LOGGER.warn("Command returned a null result, which should be avoided");
+        }
+    }
+
+    private static CliContext getCliContextOrNull(Command<Result> command) {
+        CliContext context = null;
+        if (command instanceof Config) {
+            Config commandAsConfig = (Config) command;
+            if (commandAsConfig.needsContext()) {
+                context = new CliContextImpl(commandAsConfig);
+                commandAsConfig.setContext(context);
+            }
+        }
+        return context;
     }
 
     private static void addHelpCommand(CliBuilder<Command> builder) {
@@ -276,24 +294,23 @@ public final class Cli {
     }
 
 
+
     /**
-     * Notify all registered listeners of the error event.
+     * A getter for command classes from the package specified by {@link #DEFAULT_COMMAND_PACKAGE_NAME} only. The classes are loaded at class-load
+     * time only once.
      *
-     * @param e the error event
+     * @return a reference to the actual list of loaded commands
      */
-    public void fireErrorOccurredEvent(CliErrorEvent e) {
-        for (CliListener listener : listeners) {
-            listener.errorOccurred(e);
-        }
+    public static Set<Class<? extends Command>> getCommandClasses() {
+        return Collections.unmodifiableSet(commandClasses);
     }
 
     /**
-     * Add a listener to this Cli.
+     * Look up all class that define command classes in the package specified by {@link #DEFAULT_GROUP_PACKAGE_NAME}.
      *
-     * @param listener the listener to add
-     * @return true if the listener was added (see {@link java.util.List#add(Object)})
+     * @return {@link java.util.Set} of all class that define command classes in the package specified by {@link #DEFAULT_GROUP_PACKAGE_NAME}
      */
-    public boolean addListener(CliListener listener) {
-        return listeners.add(listener);
+    public static Set<Class<?>> getGroupClasses() {
+        return Collections.unmodifiableSet(groupClasses);
     }
 }

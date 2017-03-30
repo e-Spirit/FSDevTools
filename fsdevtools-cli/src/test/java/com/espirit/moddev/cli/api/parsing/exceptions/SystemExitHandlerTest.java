@@ -20,45 +20,37 @@
  *
  */
 
-package com.espirit.moddev.cli.api.event;
+package com.espirit.moddev.cli.api.parsing.exceptions;
 
+import com.espirit.moddev.cli.exception.SystemExitHandler;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+
+import static org.junit.Assert.fail;
 
 /**
- * Event used in the cli application to notify about an error.
- *
  * @author e-Spirit AG
  */
-public class CliErrorEvent {
+public class SystemExitHandlerTest {
 
-    private final Object source;
-    private final Throwable error;
+    @Rule
+    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
-    /**
-     * Instantiates a new instance.
-     *
-     * @param source the source of the event
-     * @param error the error that occurred
-     */
-    public CliErrorEvent(Object source, Throwable error) {
-        this.source = source;
-        this.error = error;
+    private SystemExitHandler tesling;
+
+    @Before
+    public void setUp() throws java.lang.Exception {
+        tesling = new SystemExitHandler();
     }
 
-    /**
-     * Get source of the event.
-     *
-     * @return the source
-     */
-    public Object getSource() {
-        return source;
-    }
+    @Test
+    public void testHandlerCallsSystemExit() throws java.lang.Exception {
+        exit.expectSystemExitWithStatus(1);
 
-    /**
-     * Get error that occurred.
-     *
-     * @return the error
-     */
-    public Throwable getError() {
-        return error;
+        tesling.afterExceptionalTermination(new Exception());
+
+        fail("Schould not be called if rule works");
     }
 }
