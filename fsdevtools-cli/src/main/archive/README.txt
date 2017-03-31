@@ -6,12 +6,14 @@ This tool is made to import and export FirstSpirit project content.
 
 It is built for for FirstSpirit version ${firstspirit.version} (fs-access.jar in lib directory).
 To use with an other FirstSpirit version simply exchange the fs-access.jar in the lib directory.
+Keep in mind that '${project.name}' requires at least FirstSpirit Version 5.2.717 since major version 2.0.
 
 
 Prerequisites
 -------------
 
-Java ${java.version} or better. Correct JAVA_HOME environment variable must be set.
+- Java ${java.version} or better. Correct JAVA_HOME environment variable must be set.
+- FirstSpirit 5.2.717 or higher.
 
 
 Help

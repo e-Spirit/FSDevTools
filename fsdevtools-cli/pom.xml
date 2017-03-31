@@ -462,7 +462,7 @@
                         <artifactId>github-release-plugin</artifactId>
                         <version>1.2.0</version>
                         <configuration>
-                            <description>This binary release is without FS Access jar file. Please add fs-access.jar to lib directory.</description>
+                            <description>This binary release is without FS Access jar file. Please add fs-access.jar to lib directory. Since major version **2.0** `FSDevTools` requires at least FirstSpirit Version **5.2.717**.</description>
                             <releaseName>Release ${project.version}</releaseName>
                             <repositoryId>https://github.com/e-Spirit/FSDevTools.git</repositoryId>
                             <tag>${project.version}</tag>

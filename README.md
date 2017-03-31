@@ -4,10 +4,12 @@ Project to support developer experience (DX) with FirstSpirit template developme
 
 ## User Documentation
 
-### Prequisites
+### Prerequisites
 Installation prerequisites are documented inside the zip or tar-gz file of the binary distribution.
 
 In short, a correct `JAVA_HOME` environment variable must be set which points to a **Java 8** installation.
+
+Since major version **2.0** `FSDevTools` requires at least FirstSpirit Version **5.2.717**.  
 
 Some configurations are loaded from your system environment in first instance.
 It is possible to override all default values from the environment by passing actual command line options for them.
