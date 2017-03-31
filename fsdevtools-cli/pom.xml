@@ -126,7 +126,7 @@
                 <configuration>
                     <executable>git</executable>
                     <workingDirectory>${project.basedir}/..</workingDirectory>
-                    <outputFile>${project.basedir}/src/main/resources/CliGit.properties</outputFile>
+                    <outputFile>${project.build.directory}/classes/CliGit.properties</outputFile>
                     <arguments>
                         <argument>log</argument>
                         <argument>--pretty=format:git.hash=%H</argument>
