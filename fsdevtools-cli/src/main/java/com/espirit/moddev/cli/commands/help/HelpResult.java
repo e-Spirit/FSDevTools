@@ -20,7 +20,7 @@
  *
  */
 
-package com.espirit.moddev.cli.commands;
+package com.espirit.moddev.cli.commands.help;
 
 import com.espirit.moddev.cli.results.SimpleResult;
 import com.github.rvesse.airline.model.GlobalMetadata;

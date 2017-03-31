@@ -23,7 +23,7 @@
 package com.espirit.moddev.cli;
 
 import com.espirit.moddev.cli.api.command.Command;
-import com.espirit.moddev.cli.commands.HelpCommand;
+import com.espirit.moddev.cli.commands.help.HelpCommand;
 import com.espirit.moddev.cli.reflection.ReflectionUtils;
 import com.github.rvesse.airline.annotations.Group;
 import com.github.rvesse.airline.builder.CliBuilder;

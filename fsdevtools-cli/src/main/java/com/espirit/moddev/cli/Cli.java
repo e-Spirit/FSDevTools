@@ -22,18 +22,22 @@
 
 package com.espirit.moddev.cli;
 
+import com.google.common.base.Stopwatch;
+
 import com.espirit.moddev.cli.api.CliContext;
 import com.espirit.moddev.cli.api.command.Command;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.api.result.Result;
-import com.espirit.moddev.cli.commands.HelpCommand;
+import com.espirit.moddev.cli.commands.help.HelpCommand;
+import com.espirit.moddev.cli.commands.help.UnknownCommand;
 import com.espirit.moddev.cli.exception.FsLoggingBridge;
 import com.espirit.moddev.cli.exception.SystemExitHandler;
 import com.espirit.moddev.cli.reflection.CommandUtils;
 import com.espirit.moddev.cli.reflection.GroupUtils;
 import com.github.rvesse.airline.builder.CliBuilder;
-import com.google.common.base.Stopwatch;
+
 import de.espirit.common.base.Logging;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -268,7 +272,7 @@ public final class Cli {
 
     private static void addHelpCommand(CliBuilder<Command> builder) {
         builder.withCommand(HelpCommand.class);
-        builder.withDefaultCommand(HelpCommand.class);
+        builder.withDefaultCommand(UnknownCommand.class);
     }
 
     /**
