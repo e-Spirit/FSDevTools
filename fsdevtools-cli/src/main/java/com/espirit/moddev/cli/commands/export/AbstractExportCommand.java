@@ -246,11 +246,14 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
             // no arguments --> call help-command
             final List<Identifier> identifierList = getIdentifiers();
             if (identifierList.isEmpty()) {
-                LOGGER.error("no identifiers found - pass at least 1 identifier --> see 'fs-cli help export' for details\nfs-cli help export");
+                LOGGER.error("no identifiers for export command found - pass at least 1 identifier --> see 'fs-cli help export' for details\nfs-cli help export");
                 final HelpCommand helpCommand = new HelpCommand();
                 helpCommand.addArguments("export");
                 helpCommand.call();
-                return null;
+                // return result with exception to force exit code 1
+                final IllegalArgumentException exception = new IllegalArgumentException("no identifiers for export command found - pass at least 1 identifier --> see help message above");
+                exception.setStackTrace(new StackTraceElement[0]);
+                return new ExportResult(exception);
             }
 
             // create export operation
