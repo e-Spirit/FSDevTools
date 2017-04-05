@@ -201,9 +201,14 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
     "use the configured port" in assert(result.contains("-Dport=1234"))
   }
 
+  def assertNoServerRunning(props: ServerProperties): Unit = {
+    assert(NativeServerRunner.testConnection(NativeServerRunner.getFSConnection(props)))
+  }
+
   "NativeServerRunner.bootFirstSpiritServer" should {
     "boot a server when given minimal server properties" taggedAs IntegrationTest in {
-      val props    = fixture.minimalServerProperties
+      val props = fixture.minimalServerProperties
+      assertNoServerRunning(props)
       val testTask = NativeServerRunner.bootFirstSpiritServer(props, Executors.newCachedThreadPool())
       assert(!testTask.isDone)
       eventually(timeout(60 seconds), interval(2 seconds)) {
@@ -215,13 +220,17 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
 
   "NativeServerRunner.isRunning" should {
     "return false when a server has not been started" taggedAs IntegrationTest in {
-      assert(!new NativeServerRunner(fixture.minimalServerProperties).isRunning)
+      val props = fixture.minimalServerProperties
+      assertNoServerRunning(props)
+      assert(!new NativeServerRunner(props).isRunning)
     }
   }
 
   "NativeServerRunner" should {
     "start a FirstSpirit server, see that it's running, and shut it down afterwards" taggedAs IntegrationTest in {
-      val runner = new NativeServerRunner(fixture.minimalServerProperties)
+      val props = fixture.minimalServerProperties
+      assertNoServerRunning(props)
+      val runner = new NativeServerRunner(props)
       val timer  = Timer()
       assert(!runner.isRunning)
       assert(runner.start())
@@ -233,8 +242,10 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
       info(s"shutdown succeeded after $timer")
     }
     "return true when no server has been started by the runner itself and already a server was running (from another service)" taggedAs IntegrationTest in {
-      val runner1 = new NativeServerRunner(fixture.minimalServerProperties)
-      val runner2 = new NativeServerRunner(fixture.minimalServerProperties)
+      val props = fixture.minimalServerProperties
+      assertNoServerRunning(props)
+      val runner1 = new NativeServerRunner(props)
+      val runner2 = new NativeServerRunner(props)
       assert(!runner1.isRunning)
       assert(!runner2.isRunning)
 
