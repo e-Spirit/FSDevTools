@@ -211,7 +211,13 @@ public class NativeServerRunner implements ServerRunner {
         }
 
         //start FirstSpirit async
-        final FutureTask<Void> task = new FutureTask<>(() -> {
+        /* Construct a cancellable logging task. It will be cancelled in `shutdownFirstSpiritServer`.
+           The inner logTask is necessary since the implicit `readLine()` on the `BufferedReader` has a blocking API that cannot be interrupted. This
+           task is stopped by destroying the process outputting data, which implicitly closes the input stream that is being blocked on. You can view
+           cancellableLogTask as an entity that does the very same job as logTask with the added functionality of gracefully shutting down on server
+           stop.
+         */
+        final FutureTask<Void> cancellableLogTask = new FutureTask<>(() -> {
             final ProcessBuilder builder = new ProcessBuilder(commands);
             builder.redirectErrorStream(true);
             final Process process;
@@ -236,8 +242,8 @@ public class NativeServerRunner implements ServerRunner {
             return null; //that one hurts
         });
 
-        executor.submit(task);
-        return task;
+        executor.submit(cancellableLogTask);
+        return cancellableLogTask;
     }
 
     /**
