@@ -411,6 +411,17 @@
             </properties>
         </profile>
         <profile>
+            <id>FirstSpiritWrapperVersion</id>
+            <activation>
+                <property>
+                    <name>!firstspirit.wrapper.version</name>
+                </property>
+            </activation>
+            <properties>
+                <firstspirit.wrapper.version>3.5.12</firstspirit.wrapper.version>
+            </properties>
+        </profile>
+        <profile>
             <id>ModuleVersion</id>
             <activation>
                 <property>
