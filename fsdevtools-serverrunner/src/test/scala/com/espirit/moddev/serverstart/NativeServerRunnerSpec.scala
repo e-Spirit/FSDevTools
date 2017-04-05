@@ -202,7 +202,7 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
   }
 
   def assertNoServerRunning(props: ServerProperties): Unit = {
-    assert(NativeServerRunner.testConnection(NativeServerRunner.getFSConnection(props)))
+    assert(!NativeServerRunner.testConnection(NativeServerRunner.getFSConnection(props)))
   }
 
   "NativeServerRunner.bootFirstSpiritServer" should {
