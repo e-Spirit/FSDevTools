@@ -95,12 +95,17 @@ public class ServerProperties {
      *
      * If you give one dependency, you need to give all. If you give none, they will be taken from the classpath (if possible).
      */
-    private final List<File> fsServerJars;
+    private final List<File> firstSpiritJars;
 
     private final File lockFile;
-
-    private static final Pattern VERSION_PATTERN = Pattern.compile("\\d+\\..+");
-    private static final Pattern FS_SERVER_JAR_PATTERN = Pattern.compile("de/espirit/firstspirit/.+\\.jar");
+    /**
+     * matches e.g. 5.2.717
+     */
+    static final Pattern VERSION_PATTERN = Pattern.compile("\\d+\\..+");
+    /**
+     * matches de/espirit/firstspirit/anything.jar on both unix and windows
+     */
+    static final Pattern FS_SERVER_JAR_PATTERN = Pattern.compile("de[\\\\/]espirit[\\\\/]firstspirit[\\\\/].+\\.jar");
 
     /**
      * A reference to a supplier for the license file. May come from the file system, or the class path, or anything else.
@@ -113,7 +118,7 @@ public class ServerProperties {
     @Builder
     ServerProperties(final Path serverRoot, final String serverHost, final Integer serverPort, final boolean serverGcLog, final Boolean serverInstall,
                      @Singular final List<String> serverOps, final Duration threadWait, final String serverAdminPw,
-                     final Integer connectionRetryCount, final String version, @Singular final List<File> fsServerJars,
+                     final Integer connectionRetryCount, final String version, @Singular final List<File> firstSpiritJars,
                      final Supplier<InputStream> licenseFileSupplier) {
         assertThatOrNull(serverPort, "serverPort", allOf(greaterThan(0), lessThanOrEqualTo(65536)));
         if (threadWait != null && threadWait.isNegative()) {
@@ -135,9 +140,10 @@ public class ServerProperties {
         this.serverHost = serverHost == null || serverHost.isEmpty() ? "localhost" : serverHost;
         this.connectionRetryCount = connectionRetryCount == null ? 30 : connectionRetryCount;
         this.version = version;
-        this.fsServerJars = fsServerJars == null || fsServerJars.isEmpty() ? getFsJarFiles() : fsServerJars.stream().filter(Objects::nonNull)
-            .collect(Collectors.toCollection(ArrayList::new));
-        assertThat(this.fsServerJars, "fsServerJars", hasSize(greaterThan(0)));
+        this.firstSpiritJars =
+            firstSpiritJars == null || firstSpiritJars.isEmpty() ? getFsJarFiles() : firstSpiritJars.stream().filter(Objects::nonNull)
+                .collect(Collectors.toCollection(ArrayList::new));
+        assertThat(this.firstSpiritJars, "firstSpiritJars", hasSize(greaterThan(0)));
 
         //generate lock file reference, which can be found in the server directory
         this.lockFile = this.serverRoot.resolve(".fs.lock").toFile();

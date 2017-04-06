@@ -5,7 +5,7 @@ import java.time.Duration
 import java.util
 
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
+import org.scalacheck.{Gen, Shrink}
 import org.scalatest.Matchers
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import spec.UnitSpec
@@ -115,5 +115,34 @@ class ServerPropertiesSpec extends UnitSpec with GeneratorDrivenPropertyChecks w
     val listFromServerProps =
       new ServerProperties(Paths.get(""), null, 1, true, true, listWithNulls.asJava, Duration.ofMillis(0), "", 0, "1.0", null, null).getServerOps.asScala
     listFromServerProps should contain inOrderElementsOf listWithNulls.filter(_ != null)
+  }
+
+  def noShrink[T]             = Shrink[T](_ => Stream.empty)
+  implicit val myTypeNoShrink = noShrink[String]
+  def filenameGen(pathSeperator: String) =
+    for { filename <- Gen.alphaNumStr suchThat (_.nonEmpty) } yield
+      s"""de${pathSeperator}espirit${pathSeperator}firstspirit$pathSeperator$filename.jar"""
+  "FS_SERVER_JAR_PATTERN" should "match unix-like paths" in {
+    forAll(filenameGen("/")) { filename =>
+      assert(ServerProperties.FS_SERVER_JAR_PATTERN.matcher(filename).matches)
+    }
+  }
+  it should "match windows-like paths" in {
+    forAll(filenameGen("""\""")) { filename =>
+      assert(ServerProperties.FS_SERVER_JAR_PATTERN.matcher(filename).matches)
+    }
+  }
+
+  "VERSION_PATTERN" should "match typical version strings" in {
+    val versionPatternGen = for {
+      majorVersion <- Gen.choose(0, 9)
+      minorVersion <- Gen.choose(0, 9)
+      build        <- Gen.choose(0, 9999)
+      snapshot     <- Gen.oneOf(Some("SNAPSHOT"), Some("DEV"), None)
+    } yield s"$majorVersion.$minorVersion.$build${snapshot.map(s => s"-$s").getOrElse("")}"
+
+    forAll(versionPatternGen) { version =>
+      assert(ServerProperties.VERSION_PATTERN.matcher(version).matches)
+    }
   }
 }
