@@ -32,6 +32,7 @@
         <module>fsdevtools-cli-api</module>
         <module>fsdevtools-cli</module>
         <module>fsdevtools-core</module>
+        <module>fsdevtools-serverrunner</module>
     </modules>
     <packaging>pom</packaging>
     <name>FirstSpirit Development Tools</name>
@@ -407,6 +408,17 @@
             </activation>
             <properties>
                 <firstspirit.version>5.2.717</firstspirit.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>FirstSpiritWrapperVersion</id>
+            <activation>
+                <property>
+                    <name>!firstspirit.wrapper.version</name>
+                </property>
+            </activation>
+            <properties>
+                <firstspirit.wrapper.version>3.5.12</firstspirit.wrapper.version>
             </properties>
         </profile>
         <profile>
