@@ -1,7 +1,9 @@
-package com.espirit.moddev.serverstart;
+package com.espirit.moddev.serverrunner;
 
 
 import com.google.common.annotations.VisibleForTesting;
+
+import de.espirit.firstspirit.access.ConnectionManager;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
@@ -16,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -34,6 +37,19 @@ import static org.hamcrest.Matchers.notNullValue;
 
 @Getter
 public class ServerProperties {
+
+    public enum ConnectionMode {
+        HTTP_MODE(8000, ConnectionManager.HTTP_MODE),
+        SOCKET_MODE(1088, ConnectionManager.SOCKET_MODE);
+
+        final int defaultPort;
+        int underlyingFSValue;
+
+        ConnectionMode(int defaultPort, int underlyingFSValue) {
+            this.defaultPort = defaultPort;
+            this.underlyingFSValue = underlyingFSValue;
+        }
+    }
 
     /**
      * root of the first spirit server
@@ -111,15 +127,18 @@ public class ServerProperties {
      * A reference to a supplier for the license file. May come from the file system, or the class path, or anything else.
      * Is read from the class path if nothing is given.
      */
-    private final Supplier<InputStream> licenseFileSupplier;
+    private final Supplier<Optional<InputStream>> licenseFileSupplier;
+
+    private final ConnectionMode mode;
 
     @VisibleForTesting
     @SuppressWarnings("squid:S00107")
     @Builder
-    ServerProperties(final Path serverRoot, final String serverHost, final Integer serverPort, final boolean serverGcLog, final Boolean serverInstall,
+    ServerProperties(final Path serverRoot, final String serverHost, final Integer serverPort, final ConnectionMode mode, final boolean serverGcLog,
+                     final Boolean serverInstall,
                      @Singular final List<String> serverOps, final Duration threadWait, final String serverAdminPw,
                      final Integer connectionRetryCount, final String version, @Singular final List<File> firstSpiritJars,
-                     final Supplier<InputStream> licenseFileSupplier) {
+                     final Supplier<Optional<InputStream>> licenseFileSupplier) {
         assertThatOrNull(serverPort, "serverPort", allOf(greaterThan(0), lessThanOrEqualTo(65536)));
         if (threadWait != null && threadWait.isNegative()) {
             throw new IllegalArgumentException("threadWait may not be negative.");
@@ -128,7 +147,6 @@ public class ServerProperties {
         assertThat(version, "version", allOf(notNullValue(), matchesPattern(VERSION_PATTERN)));
 
         this.serverRoot = serverRoot == null ? Paths.get(System.getProperty("user.home"), "opt", "FirstSpirit") : serverRoot;
-        this.serverPort = serverPort == null ? 8000 : serverPort;
         this.serverGcLog = serverGcLog;
         this.serverInstall = serverInstall == null ? true : serverInstall;
         this.serverOps = serverOps == null ? Collections.emptyList() :
@@ -138,6 +156,8 @@ public class ServerProperties {
         this.threadWait = threadWait == null ? Duration.ofSeconds(2) : threadWait;
         this.serverAdminPw = serverAdminPw == null ? "Admin" : serverAdminPw;
         this.serverHost = serverHost == null || serverHost.isEmpty() ? "localhost" : serverHost;
+        this.mode = mode == null ? ConnectionMode.HTTP_MODE : mode;
+        this.serverPort = serverPort == null ? this.mode.defaultPort : serverPort;
         this.connectionRetryCount = connectionRetryCount == null ? 30 : connectionRetryCount;
         this.version = version;
         this.firstSpiritJars =
@@ -148,7 +168,8 @@ public class ServerProperties {
         //generate lock file reference, which can be found in the server directory
         this.lockFile = this.serverRoot.resolve(".fs.lock").toFile();
         this.licenseFileSupplier =
-            licenseFileSupplier == null ? () -> ServerProperties.class.getResourceAsStream("/fs-license.conf") : licenseFileSupplier;
+            licenseFileSupplier == null ? () -> Optional.of(ServerProperties.class.getResourceAsStream("/fs-license.conf")) : licenseFileSupplier;
+
     }
 
     private static <T> void assertThat(final T obj, final String name, final Matcher<T> matcher) {
