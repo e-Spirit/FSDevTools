@@ -1,7 +1,6 @@
 package com.espirit.moddev.serverstart;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
 
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ConnectionManager;
@@ -21,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,7 +44,7 @@ public class NativeServerRunner implements ServerRunner {
     protected ExecutorService executor = Executors.newCachedThreadPool();
 
     public NativeServerRunner(final ServerProperties serverProperties) {
-        Preconditions.checkNotNull(serverProperties);
+        Objects.requireNonNull(serverProperties);
         this.serverProperties = serverProperties;
     }
 
