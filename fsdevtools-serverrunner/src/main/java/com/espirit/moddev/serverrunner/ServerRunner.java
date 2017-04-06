@@ -1,4 +1,4 @@
-package com.espirit.moddev.serverstart;
+package com.espirit.moddev.serverrunner;
 
 /**
  * Interface for a FirstSpirit ServerRunner. Exists to allow instantiation of native or docker versions of the server.

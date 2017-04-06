@@ -1,9 +1,10 @@
-package com.espirit.moddev.serverstart
+package com.espirit.moddev.serverrunner
 
 import java.nio.file.Paths
 import java.time.Duration
 import java.util
 
+import com.espirit.moddev.serverrunner.ServerProperties.ConnectionMode
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Gen, Shrink}
 import org.scalatest.Matchers
@@ -17,7 +18,7 @@ import scala.util.Try
 class ServerPropertiesSpec extends UnitSpec with GeneratorDrivenPropertyChecks with Matchers {
 
   def objWithVersion(version: String) =
-    new ServerProperties(Paths.get(""), null, 1, true, true, new util.ArrayList(), Duration.ofMillis(0), "", 0, version, null, null)
+    new ServerProperties(Paths.get(""), null, 1, null, true, true, new util.ArrayList(), Duration.ofMillis(0), "", 0, version, null, null)
 
   "ServerProperties constructor, parameter version" should "not accept null" in {
     an[IllegalArgumentException] should be thrownBy objWithVersion(null)
@@ -42,15 +43,16 @@ class ServerPropertiesSpec extends UnitSpec with GeneratorDrivenPropertyChecks w
   }
   "ServerProperties constructor, parameter serverRoot" should "use a default parameter if given null" in {
     assert(
-      new ServerProperties(null, null, 1, true, true, new util.ArrayList(), Duration.ofMillis(0), "", 0, "1.0", null, null).getServerRoot != null)
+      new ServerProperties(null, null, 1, null, true, true, new util.ArrayList(), Duration.ofMillis(0), "", 0, "1.0", null, null).getServerRoot !=
+        null)
   }
   "ServerProperties constructor, parameter serverInstall" should "use a default parameter if given null" in {
     noException should be thrownBy
-      new ServerProperties(Paths.get(""), null, 1, true, true, new util.ArrayList(), Duration.ofMillis(0), "", 0, "1.0", null, null).isServerInstall
+      new ServerProperties(Paths.get(""), null, 1, null, true, true, new util.ArrayList(), Duration.ofMillis(0), "", 0, "1.0", null, null).isServerInstall
   }
 
   def objWithPort(port: Int) =
-    new ServerProperties(Paths.get(""), null, port, true, true, new util.ArrayList(), Duration.ofMillis(0), "", 0, "1.0", null, null)
+    new ServerProperties(Paths.get(""), null, port, null, true, true, new util.ArrayList(), Duration.ofMillis(0), "", 0, "1.0", null, null)
 
   "ServerProperties constructor, parameter serverPort" should "accept ports that are strictly positive and smaller than 65536" in {
     forAll(Gen.choose(1, 65536)) { port =>
@@ -68,9 +70,15 @@ class ServerPropertiesSpec extends UnitSpec with GeneratorDrivenPropertyChecks w
       an[IllegalArgumentException] should be thrownBy objWithPort(port)
     }
   }
+  it should "be set to 8000 for connection mode HTTP_MODE if no port is given explicitly" in {
+    assert(ServerProperties.builder().version("5.2").mode(ConnectionMode.HTTP_MODE).build().getServerPort == 8000)
+  }
+  it should "be set to 1088 for connection mode SOCKET_MODE if no port is given explicitly" in {
+    assert(ServerProperties.builder().version("5.2").mode(ConnectionMode.SOCKET_MODE).build().getServerPort == 1088)
+  }
 
   def objWithThreadWait(threadWait: Duration) =
-    new ServerProperties(Paths.get(""), null, 1, true, true, new util.ArrayList(), threadWait, "", 0, "1.0", null, null)
+    new ServerProperties(Paths.get(""), null, 1, null, true, true, new util.ArrayList(), threadWait, "", 0, "1.0", null, null)
 
   "ServerProperties constructor, parameter threadWait" should "accept positive values" in {
     forAll(arbitrary[Long] suchThat (_ >= 0)) { threadWait =>
@@ -87,15 +95,27 @@ class ServerPropertiesSpec extends UnitSpec with GeneratorDrivenPropertyChecks w
   }
   "ServerProperties constructor, parameter serverAdminPw" should "use a default parameter if given null" in {
     assert(
-      new ServerProperties(Paths.get(""), null, 1, true, true, new util.ArrayList(), Duration.ofMillis(0), null, 0, "1.0", null, null).getServerAdminPw != null)
+      new ServerProperties(Paths.get(""), null, 1, null, true, true, new util.ArrayList(), Duration.ofMillis(0), null, 0, "1.0", null, null).getServerAdminPw != null)
   }
   "ServerProperties constructor, parameter serverHost" should "use a default parameter if given null" in {
     assert(
-      new ServerProperties(Paths.get(""), null, 1, true, true, new util.ArrayList(), Duration.ofMillis(0), "", 0, "1.0", null, null).getServerHost != null)
+      new ServerProperties(Paths.get(""), null, 1, null, true, true, new util.ArrayList(), Duration.ofMillis(0), "", 0, "1.0", null, null).getServerHost != null)
   }
 
   def objWithConnectionRetryCount(connectionRetryCount: Int) =
-    new ServerProperties(Paths.get(""), null, 1, true, true, new util.ArrayList(), Duration.ofMillis(0), "", connectionRetryCount, "1.0", null, null)
+    new ServerProperties(Paths.get(""),
+                         null,
+                         1,
+                         null,
+                         true,
+                         true,
+                         new util.ArrayList(),
+                         Duration.ofMillis(0),
+                         "",
+                         connectionRetryCount,
+                         "1.0",
+                         null,
+                         null)
 
   "ServerProperties constructor, parameter connectionRetryCount" should "accept positive values" in {
     forAll(arbitrary[Int] suchThat (_ >= 0)) { connectionRetryCount =>
@@ -108,20 +128,35 @@ class ServerPropertiesSpec extends UnitSpec with GeneratorDrivenPropertyChecks w
     }
   }
   "ServerProperties constructor, parameter serverOps" should "use a default parameter if given null" in {
-    noException should be thrownBy new ServerProperties(Paths.get(""), null, 1, true, true, null, Duration.ofMillis(0), "", 0, "1.0", null, null)
+    noException should be thrownBy new ServerProperties(Paths.get(""),
+                                                        null,
+                                                        1,
+                                                        null,
+                                                        true,
+                                                        true,
+                                                        null,
+                                                        Duration.ofMillis(0),
+                                                        "",
+                                                        0,
+                                                        "1.0",
+                                                        null,
+                                                        null)
   }
   it should "not contain null" in {
     val listWithNulls = Seq("list", null, "null")
     val listFromServerProps =
-      new ServerProperties(Paths.get(""), null, 1, true, true, listWithNulls.asJava, Duration.ofMillis(0), "", 0, "1.0", null, null).getServerOps.asScala
+      new ServerProperties(Paths.get(""), null, 1, null, true, true, listWithNulls.asJava, Duration.ofMillis(0), "", 0, "1.0", null, null).getServerOps.asScala
     listFromServerProps should contain inOrderElementsOf listWithNulls.filter(_ != null)
   }
 
-  def noShrink[T]             = Shrink[T](_ => Stream.empty)
+  def noShrink[T] = Shrink[T](_ => Stream.empty)
+
   implicit val myTypeNoShrink = noShrink[String]
+
   def filenameGen(pathSeperator: String) =
     for { filename <- Gen.alphaNumStr suchThat (_.nonEmpty) } yield
       s"""de${pathSeperator}espirit${pathSeperator}firstspirit$pathSeperator$filename.jar"""
+
   "FS_SERVER_JAR_PATTERN" should "match unix-like paths" in {
     forAll(filenameGen("/")) { filename =>
       assert(ServerProperties.FS_SERVER_JAR_PATTERN.matcher(filename).matches)

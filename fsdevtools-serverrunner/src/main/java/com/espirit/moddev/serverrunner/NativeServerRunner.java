@@ -1,4 +1,4 @@
-package com.espirit.moddev.serverstart;
+package com.espirit.moddev.serverrunner;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -9,6 +9,7 @@ import de.espirit.firstspirit.server.authentication.AuthenticationException;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -22,11 +23,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.function.Supplier;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
@@ -44,8 +45,7 @@ public class NativeServerRunner implements ServerRunner {
     protected ExecutorService executor = Executors.newCachedThreadPool();
 
     public NativeServerRunner(final ServerProperties serverProperties) {
-        Objects.requireNonNull(serverProperties);
-        this.serverProperties = serverProperties;
+        this.serverProperties = Objects.requireNonNull(serverProperties);
     }
 
     /**
@@ -101,7 +101,11 @@ public class NativeServerRunner implements ServerRunner {
         } else {
             Files.write(initFile, Collections.emptyList());
         }
-        Files.copy(serverProperties.getLicenseFileSupplier().get(), confDir.resolve("fs-license.conf"), StandardCopyOption.REPLACE_EXISTING);
+
+        if (serverProperties.getLicenseFileSupplier().get().isPresent()) {
+            Files.copy(serverProperties.getLicenseFileSupplier().get().get(), confDir.resolve("fs-license.conf"), StandardCopyOption.REPLACE_EXISTING);
+        }
+
 
         //either update an existing conf file, or if none exists, use the one from the class path
         try (BufferedReader reader = confFile.toFile().exists() ?
@@ -110,17 +114,13 @@ public class NativeServerRunner implements ServerRunner {
                                          new InputStreamReader(NativeServerRunner.class.getResourceAsStream("/" + confFile.getFileName().toString()),
                                                                StandardCharsets.UTF_8)
                                      )) {
-            //matches HTTP_PORT=123 with whitespace allowed in between
-            final Pattern pattern = Pattern.compile("HTTP_PORT\\s*=\\s*\\d+");
-            final List<String> lines = reader.lines().map(line -> {
-                if (pattern.matcher(line).matches()) {
-                    return "HTTP_PORT=" + serverProperties.getServerPort();
-                } else {
-                    return line;
-                }
-            }).collect(Collectors.toList());
-            reader.close();
-            Files.write(confFile, lines);
+            final Properties properties = new Properties();
+            properties.load(reader);
+            properties.setProperty("HTTP_PORT", String.valueOf(serverProperties.getServerPort()));
+
+            try(FileWriter fileWriter = new FileWriter(confFile.toFile())){
+                properties.store(fileWriter,"");
+            }
         }
         Files.write(policyFile, Arrays.asList(
             "/* policies for CMS-Server */",
@@ -191,7 +191,7 @@ public class NativeServerRunner implements ServerRunner {
 
     static Connection getFSConnection(final ServerProperties serverProperties) {
         return ConnectionManager
-            .getConnection(serverProperties.getServerHost(), serverProperties.getServerPort(), ConnectionManager.HTTP_MODE, "Admin",
+            .getConnection(serverProperties.getServerHost(), serverProperties.getServerPort(), serverProperties.getMode().underlyingFSValue, "Admin",
                            serverProperties.getServerAdminPw());
     }
 

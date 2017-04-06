@@ -1,10 +1,11 @@
-package com.espirit.moddev.serverstart
+package com.espirit.moddev.serverrunner
 
 import java.nio.file.{Files, Path}
 import java.time.Duration
 import java.util.concurrent.Executors
 import java.util.function.Supplier
 
+import com.espirit.moddev.serverrunner.ServerProperties.ConnectionMode
 import de.espirit.firstspirit.access.Connection
 import org.mockito.Mockito._
 import org.scalatest.concurrent.Eventually
@@ -229,6 +230,20 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
   "NativeServerRunner" should {
     "start a FirstSpirit server, see that it's running, and shut it down afterwards" taggedAs IntegrationTest in {
       val props = fixture.minimalServerProperties
+      assertNoServerRunning(props)
+      val runner = new NativeServerRunner(props)
+      val timer  = Timer()
+      assert(!runner.isRunning)
+      assert(runner.start())
+      info(s"starting took $timer.")
+      assert(runner.isRunning)
+      info("shutting down now")
+      assert(runner.stop())
+      assert(!runner.isRunning)
+      info(s"shutdown succeeded after $timer")
+    }
+    "start a FirstSpirit server, see that it's running, and shut it down afterwards also for connection mode SOCKET_MODE" taggedAs IntegrationTest in {
+      val props = fixture.propsWithVersionBuilder.serverInstall(false).mode(ConnectionMode.SOCKET_MODE).build()
       assertNoServerRunning(props)
       val runner = new NativeServerRunner(props)
       val timer  = Timer()
