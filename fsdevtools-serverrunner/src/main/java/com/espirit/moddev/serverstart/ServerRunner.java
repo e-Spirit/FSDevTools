@@ -14,7 +14,8 @@ public interface ServerRunner {
     boolean start();
 
     /**
-     * @return whether the server is running and can be contacted
+     * @return whether the server is running and can be contacted. Should not care about whether the server was started using this class, or
+     * externally.
      */
     boolean isRunning();
 

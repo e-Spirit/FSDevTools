@@ -1,6 +1,7 @@
 package com.espirit.moddev.serverstart;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Preconditions;
 
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ConnectionManager;
@@ -11,7 +12,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,6 +44,7 @@ public class NativeServerRunner implements ServerRunner {
     protected ExecutorService executor = Executors.newCachedThreadPool();
 
     public NativeServerRunner(final ServerProperties serverProperties) {
+        Preconditions.checkNotNull(serverProperties);
         this.serverProperties = serverProperties;
     }
 
@@ -101,6 +102,8 @@ public class NativeServerRunner implements ServerRunner {
             Files.write(initFile, Collections.emptyList());
         }
         Files.copy(serverProperties.getLicenseFileSupplier().get(), confDir.resolve("fs-license.conf"), StandardCopyOption.REPLACE_EXISTING);
+
+        //either update an existing conf file, or if none exists, use the one from the class path
         try (BufferedReader reader = confFile.toFile().exists() ?
                                      Files.newBufferedReader(confFile) :
                                      new BufferedReader(
@@ -143,7 +146,7 @@ public class NativeServerRunner implements ServerRunner {
         args.add("java");
 
         if (serverProperties.isServerGcLog()) {
-            args.add("-Xloggc:" + serverProperties.getServerRoot() + "/log/fs-gc.log");
+            args.add("-Xloggc:" + serverProperties.getServerRoot().resolve("log").resolve("fs-gc.log"));
         }
 
         args.addAll(serverProperties.getServerOps());
@@ -153,7 +156,7 @@ public class NativeServerRunner implements ServerRunner {
         }
         args.add("-Dcmsroot=" + fsServerRoot);
         args.add("-Djava.security.policy=" + fsServerRoot.resolve("conf").resolve("fs-server.policy"));
-        args.addAll(Arrays.asList("-cp", serverProperties.getFsServerJars().stream().map(File::toString).collect(Collectors.joining(":"))));
+        args.addAll(Arrays.asList("-cp", serverProperties.getFirstSpiritJars().stream().map(File::toString).collect(Collectors.joining(":"))));
         args.add("de.espirit.firstspirit.server.CMSServer");
 
         return args;
@@ -172,9 +175,7 @@ public class NativeServerRunner implements ServerRunner {
         }
         try {
             connection.connect();
-            if (connection.isConnected()) {
-                return true;
-            }
+            return connection.isConnected();
         } catch (IOException | MaximumNumberOfSessionsExceededException | AuthenticationException | RuntimeException e) {
             log.debug(PROBLEM_READING, e);
         } finally {
@@ -256,7 +257,7 @@ public class NativeServerRunner implements ServerRunner {
     static List<String> prepareStop(final ServerProperties serverProperties) {
         final List<String> args = new ArrayList<>();
         args.add("java");
-        args.addAll(Arrays.asList("-cp", serverProperties.getFsServerJars().stream().map(File::toString).collect(Collectors.joining(":"))));
+        args.addAll(Arrays.asList("-cp", serverProperties.getFirstSpiritJars().stream().map(File::toString).collect(Collectors.joining(":"))));
         args.add("-Dhost=" + serverProperties.getServerHost());
         args.add("-Dport=" + serverProperties.getServerPort());
         args.add("-Dmode=HTTP");
