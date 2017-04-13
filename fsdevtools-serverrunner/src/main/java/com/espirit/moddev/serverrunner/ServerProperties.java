@@ -167,9 +167,10 @@ public class ServerProperties {
 
         //generate lock file reference, which can be found in the server directory
         this.lockFile = this.serverRoot.resolve(".fs.lock").toFile();
-        this.licenseFileSupplier =
-            licenseFileSupplier == null ? () -> Optional.of(ServerProperties.class.getResourceAsStream("/fs-license.conf")) : licenseFileSupplier;
 
+        //when we do not have fs-license.jar on the class path, we will not find the fs-license.conf and getResourceAsStream will return null
+        this.licenseFileSupplier =
+            licenseFileSupplier == null ? () -> Optional.ofNullable(ServerProperties.class.getResourceAsStream("/fs-license.conf")) : licenseFileSupplier;
     }
 
     private static <T> void assertThat(final T obj, final String name, final Matcher<T> matcher) {

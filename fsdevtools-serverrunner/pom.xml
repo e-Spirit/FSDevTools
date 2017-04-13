@@ -48,13 +48,13 @@
             <groupId>de.espirit.firstspirit</groupId>
             <artifactId>server</artifactId>
             <version>${firstspirit.version}</version>
-            <scope>runtime</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>de.espirit.firstspirit</groupId>
             <artifactId>wrapper</artifactId>
             <version>${firstspirit.wrapper.version}</version>
-            <scope>runtime</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>de.espirit.firstspirit</groupId>
@@ -225,7 +225,9 @@
                 </plugins>
             </build>
         </profile>
+
         <profile>
+            <!--includes a license.conf file in the classpath (if available)-->
             <id>with-fs-license-jar</id>
             <dependencies>
                 <dependency>
