@@ -63,12 +63,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>de.espirit.firstspirit</groupId>
-            <artifactId>fs-license</artifactId>
-            <version>[,${firstspirit.version}]</version> <!-- include license with version not higher than current build version -->
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.16.16</version>
@@ -230,6 +224,17 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>with-fs-license-jar</id>
+            <dependencies>
+                <dependency>
+                    <groupId>de.espirit.firstspirit</groupId>
+                    <artifactId>fs-license</artifactId>
+                    <version>[,${firstspirit.version}]</version> <!-- include license with version not higher than current build version -->
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 </project>
