@@ -29,7 +29,9 @@ During installation, the local Maven repository has been automatically created i
 
 ![Local Maven repository with installed fs-access.jar file](images/local_maven.gif)
 
-To be able to compile the module `fsdevtools-serverrunner`, you also need to locally install `fs-server.jar` and `wrapper-$VERSION.jar` using the same method. They can be found in 
+To be able to run the integration tests for the module `fsdevtools-serverrunner`, you also need to locally install `fs-server.jar` and `wrapper-$VERSION.jar` using the same method.
+To compile it, you will only need the `fs-access.jar` dependency.
+They can be found in 
 
 ```
 <FirstSpirit Server directory>/server/lib

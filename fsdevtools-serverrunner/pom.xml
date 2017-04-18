@@ -46,18 +46,6 @@
         </dependency>
         <dependency>
             <groupId>de.espirit.firstspirit</groupId>
-            <artifactId>server</artifactId>
-            <version>${firstspirit.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.espirit.firstspirit</groupId>
-            <artifactId>wrapper</artifactId>
-            <version>${firstspirit.wrapper.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.espirit.firstspirit</groupId>
             <artifactId>fs-access</artifactId>
             <version>${firstspirit.version}</version>
             <scope>provided</scope>
@@ -74,6 +62,12 @@
         </dependency>
 
         <!-- test dependencies -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_2.12</artifactId>
@@ -224,17 +218,24 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-
-        <profile>
-            <!--includes a license.conf file in the classpath (if available)-->
-            <id>with-fs-license-jar</id>
             <dependencies>
                 <dependency>
                     <groupId>de.espirit.firstspirit</groupId>
                     <artifactId>fs-license</artifactId>
                     <version>[,${firstspirit.version}]</version> <!-- include license with version not higher than current build version -->
-                    <scope>runtime</scope>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>de.espirit.firstspirit</groupId>
+                    <artifactId>server</artifactId>
+                    <version>${firstspirit.version}</version>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>de.espirit.firstspirit</groupId>
+                    <artifactId>wrapper</artifactId>
+                    <version>${firstspirit.wrapper.version}</version>
+                    <scope>provided</scope>
                 </dependency>
             </dependencies>
         </profile>
