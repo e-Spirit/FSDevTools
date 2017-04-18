@@ -154,11 +154,11 @@ public class ServerProperties {
                              .collect(Collectors.toCollection(ArrayList::new));
 
         this.threadWait = threadWait == null ? Duration.ofSeconds(2) : threadWait;
+        this.connectionRetryCount = connectionRetryCount == null ? 45 : connectionRetryCount;
         this.serverAdminPw = serverAdminPw == null ? "Admin" : serverAdminPw;
         this.serverHost = serverHost == null || serverHost.isEmpty() ? "localhost" : serverHost;
         this.mode = mode == null ? ConnectionMode.HTTP_MODE : mode;
         this.serverPort = serverPort == null ? this.mode.defaultPort : serverPort;
-        this.connectionRetryCount = connectionRetryCount == null ? 30 : connectionRetryCount;
         this.version = version;
         this.firstSpiritJars =
             firstSpiritJars == null || firstSpiritJars.isEmpty() ? getFsJarFiles() : firstSpiritJars.stream().filter(Objects::nonNull)
