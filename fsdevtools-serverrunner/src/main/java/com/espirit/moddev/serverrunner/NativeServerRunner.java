@@ -1,17 +1,13 @@
 package com.espirit.moddev.serverrunner;
 
-import com.google.common.annotations.VisibleForTesting;
-
-import de.espirit.firstspirit.access.Connection;
-import de.espirit.firstspirit.access.ConnectionManager;
-import de.espirit.firstspirit.common.MaximumNumberOfSessionsExceededException;
-import de.espirit.firstspirit.server.authentication.AuthenticationException;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -56,7 +52,6 @@ public class NativeServerRunner implements ServerRunner {
      * @param triesLeft the number of tries that should be used at max until the condition needs to be true. Should be larger than 0.
      * @return the value of the last call of `condition`.
      */
-    @VisibleForTesting
     static boolean waitForCondition(final Supplier<Boolean> condition, final Duration waitTime, final int triesLeft) {
         if (triesLeft > 0) {
             if (condition.get()) {
@@ -81,7 +76,6 @@ public class NativeServerRunner implements ServerRunner {
      * @return Commandline arguments that should be added to the startup of the server
      * @throws java.io.IOException on file system access problems
      */
-    @VisibleForTesting
     static List<String> prepareFilesystem(final ServerProperties serverProperties) throws IOException {
         final List<String> args = new ArrayList<>();
         final Path fsServerRoot = serverProperties.getServerRoot();
@@ -96,16 +90,12 @@ public class NativeServerRunner implements ServerRunner {
         Files.createDirectories(serverDir);
         Files.createDirectories(confDir);
 
-        if (serverProperties.getVersion().startsWith("4")) {
-            args.add("-Dinstall=yes"); // commandline param for FS4
-        } else {
-            Files.write(initFile, Collections.emptyList());
-        }
+        Files.write(initFile, Collections.emptyList());
 
         if (serverProperties.getLicenseFileSupplier().get().isPresent()) {
-            Files.copy(serverProperties.getLicenseFileSupplier().get().get(), confDir.resolve("fs-license.conf"), StandardCopyOption.REPLACE_EXISTING);
+            Files
+                .copy(serverProperties.getLicenseFileSupplier().get().get(), confDir.resolve("fs-license.conf"), StandardCopyOption.REPLACE_EXISTING);
         }
-
 
         //either update an existing conf file, or if none exists, use the one from the class path
         try (BufferedReader reader = confFile.toFile().exists() ?
@@ -118,8 +108,8 @@ public class NativeServerRunner implements ServerRunner {
             properties.load(reader);
             properties.setProperty("HTTP_PORT", String.valueOf(serverProperties.getServerPort()));
 
-            try(FileWriter fileWriter = new FileWriter(confFile.toFile())){
-                properties.store(fileWriter,"");
+            try (FileWriter fileWriter = new FileWriter(confFile.toFile())) {
+                properties.store(fileWriter, "");
             }
         }
         Files.write(policyFile, Arrays.asList(
@@ -139,7 +129,6 @@ public class NativeServerRunner implements ServerRunner {
      * @return startup parameter list
      * @throws java.io.IOException on file system access problems
      */
-    @VisibleForTesting
     static List<String> prepareStartup(final ServerProperties serverProperties) throws IOException {
         final Path fsServerRoot = serverProperties.getServerRoot();
         final ArrayList<String> args = new ArrayList<>();
@@ -165,34 +154,16 @@ public class NativeServerRunner implements ServerRunner {
     /**
      * Tests if a connection to the booted FirstSpirit server can be made, or not
      *
-     * @param connection a connection to a FirstSpirit instance
+     * @param serverProperties the server properties to be used
      * @return whether the connection was successfully established
      */
-    @VisibleForTesting
-    static boolean testConnection(final Connection connection) {
-        if (connection == null) {
-            throw new IllegalArgumentException("connection may not be null!");
+    static boolean testConnection(final ServerProperties serverProperties) {
+        //currently HTTP_MODE is the only mode available - just want to point out clearly that this will only work for that mode.
+        if (serverProperties.getMode() == ServerProperties.ConnectionMode.HTTP_MODE) {
+            return HttpConnectionTester.testConnection(serverProperties.getServerUrl());
+        } else {
+            return false;
         }
-        try {
-            connection.connect();
-            return connection.isConnected();
-        } catch (IOException | MaximumNumberOfSessionsExceededException | AuthenticationException | RuntimeException e) {
-            log.debug(PROBLEM_READING, e);
-        } finally {
-            try {
-                connection.disconnect();
-                connection.close();
-            } catch (final IOException | RuntimeException e) {
-                log.debug(PROBLEM_READING, e);
-            }
-        }
-        return false;
-    }
-
-    static Connection getFSConnection(final ServerProperties serverProperties) {
-        return ConnectionManager
-            .getConnection(serverProperties.getServerHost(), serverProperties.getServerPort(), serverProperties.getMode().underlyingFSValue, "Admin",
-                           serverProperties.getServerAdminPw());
     }
 
     /**
@@ -203,16 +174,15 @@ public class NativeServerRunner implements ServerRunner {
      * @return a cancellable task that is already running
      * @throws java.io.IOException on file system access problems
      */
-    @VisibleForTesting
     @SuppressWarnings({"squid:S1141", "squid:S1188"}) //nested try and too long lambda
-    static FutureTask<Void> bootFirstSpiritServer(final ServerProperties serverProperties, final ExecutorService executor) throws IOException {
+    static FutureTask<Void> startFirstSpiritServer(final ServerProperties serverProperties, final ExecutorService executor) throws IOException {
         final List<String> commands = Collections.unmodifiableList(new ArrayList<>(prepareStartup(serverProperties)));
         if (log.isInfoEnabled()) {
             log.info("Execute command " + String.join(" ", commands));
         }
 
         //start FirstSpirit async
-        /* Construct a cancellable logging task. It will be cancelled in `shutdownFirstSpiritServer`.
+        /* Construct a cancellable logging task. It will be cancelled in `stopFirstSpiritServer`.
            The inner logTask is necessary since the implicit `readLine()` on the `BufferedReader` has a blocking API that cannot be interrupted. This
            task is stopped by destroying the process outputting data, which implicitly closes the input stream that is being blocked on. You can view
            cancellableLogTask as an entity that does the very same job as logTask with the added functionality of gracefully shutting down on server
@@ -253,7 +223,6 @@ public class NativeServerRunner implements ServerRunner {
      * @param serverProperties the server properties to be used
      * @return command line arguments to stop the server
      */
-    @VisibleForTesting
     static List<String> prepareStop(final ServerProperties serverProperties) {
         final List<String> args = new ArrayList<>();
         args.add("java");
@@ -265,12 +234,11 @@ public class NativeServerRunner implements ServerRunner {
         return args;
     }
 
-    private static boolean shutdownFirstSpiritServer(final ServerProperties serverProperties, final Optional<FutureTask<Void>> serverTask) {
+    private static boolean stopFirstSpiritServer(final ServerProperties serverProperties, final Optional<FutureTask<Void>> serverTask) {
         final ProcessBuilder builder = new ProcessBuilder(prepareStop(serverProperties));
         builder.redirectErrorStream(true);
-        final Process process;
         try {
-            process = builder.start();
+            final Process process = builder.start();
             new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8)).lines()
                 .forEach(line -> log.info("FirstSpirit shutdown log:" + line));
         } catch (final IOException ioe) {
@@ -285,22 +253,22 @@ public class NativeServerRunner implements ServerRunner {
             Thread.currentThread().interrupt();
         }
         serverTask.ifPresent(x -> x.cancel(true)); //kill running process if it did not die itself
-        return !testConnection(getFSConnection(serverProperties));
+        return !testConnection(serverProperties);
     }
 
     @Override
     public boolean start() {
-        if (!testConnection(getFSConnection(serverProperties))) {
+        if (!testConnection(serverProperties)) {
             log.info("Starting FirstSpirit Server...");
             boolean serverRunning = false;
             try {
                 if (!serverTask.isPresent()) {
-                    serverTask = Optional.of(bootFirstSpiritServer(serverProperties, executor));
+                    serverTask = Optional.of(startFirstSpiritServer(serverProperties, executor));
                 }
 
                 serverRunning = waitForCondition(() -> {
                                                      log.info("Trying to connect to FirstSpirit server...");
-                                                     return testConnection(getFSConnection(serverProperties));
+                                                     return testConnection(serverProperties);
                                                  }, serverProperties.getThreadWait(),
                                                  serverProperties.getConnectionRetryCount()
                                                  + 1); //retry count means we try one more time allover
@@ -321,11 +289,11 @@ public class NativeServerRunner implements ServerRunner {
 
     @Override
     public boolean isRunning() {
-        return testConnection(getFSConnection(serverProperties));
+        return testConnection(serverProperties);
     }
 
     @Override
     public boolean stop() {
-        return shutdownFirstSpiritServer(serverProperties, serverTask);
+        return stopFirstSpiritServer(serverProperties, serverTask);
     }
 }

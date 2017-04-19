@@ -1,15 +1,14 @@
 package com.espirit.moddev.serverrunner;
 
 
-import com.google.common.annotations.VisibleForTesting;
-
-import de.espirit.firstspirit.access.ConnectionManager;
-
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
@@ -39,15 +38,12 @@ import static org.hamcrest.Matchers.notNullValue;
 public class ServerProperties {
 
     public enum ConnectionMode {
-        HTTP_MODE(8000, ConnectionManager.HTTP_MODE),
-        SOCKET_MODE(1088, ConnectionManager.SOCKET_MODE);
+        HTTP_MODE(8000);
 
         final int defaultPort;
-        int underlyingFSValue;
 
-        ConnectionMode(int defaultPort, int underlyingFSValue) {
+        ConnectionMode(final int defaultPort) {
             this.defaultPort = defaultPort;
-            this.underlyingFSValue = underlyingFSValue;
         }
     }
 
@@ -97,12 +93,7 @@ public class ServerProperties {
     private final Duration threadWait;
 
     /**
-     * which version of first spirit should be started?
-     */
-    private final String version;
-
-    /**
-     * Where the FirstSpirit jars are stored. You will need at list these jars to successfully start a server:
+     * Where the FirstSpirit jars are stored. You will need at least these jars to successfully start a server:
      * <ul>
      * <li>server</li>
      * <li>fs-access</li>
@@ -114,10 +105,7 @@ public class ServerProperties {
     private final List<File> firstSpiritJars;
 
     private final File lockFile;
-    /**
-     * matches e.g. 5.2.717
-     */
-    static final Pattern VERSION_PATTERN = Pattern.compile("\\d+\\..+");
+
     /**
      * matches de/espirit/firstspirit/anything.jar on both unix and windows
      */
@@ -129,22 +117,25 @@ public class ServerProperties {
      */
     private final Supplier<Optional<InputStream>> licenseFileSupplier;
 
-    private final ConnectionMode mode;
+    /**
+     * In which mode to connect. Currently only HTTP_MODE is available, SOCKET_MODE might be added in the future.
+     */
+    private final ConnectionMode mode = ConnectionMode.HTTP_MODE;
 
-    @VisibleForTesting
+    private final URL serverUrl;
+
     @SuppressWarnings("squid:S00107")
     @Builder
-    ServerProperties(final Path serverRoot, final String serverHost, final Integer serverPort, final ConnectionMode mode, final boolean serverGcLog,
+    ServerProperties(final Path serverRoot, final String serverHost, final Integer serverPort, final boolean serverGcLog,
                      final Boolean serverInstall,
                      @Singular final List<String> serverOps, final Duration threadWait, final String serverAdminPw,
-                     final Integer connectionRetryCount, final String version, @Singular final List<File> firstSpiritJars,
+                     final Integer connectionRetryCount, @Singular final List<File> firstSpiritJars,
                      final Supplier<Optional<InputStream>> licenseFileSupplier) {
         assertThatOrNull(serverPort, "serverPort", allOf(greaterThan(0), lessThanOrEqualTo(65536)));
         if (threadWait != null && threadWait.isNegative()) {
             throw new IllegalArgumentException("threadWait may not be negative.");
         }
         assertThatOrNull(connectionRetryCount, "connectionRetryCount", greaterThanOrEqualTo(0));
-        assertThat(version, "version", allOf(notNullValue(), matchesPattern(VERSION_PATTERN)));
 
         this.serverRoot = serverRoot == null ? Paths.get(System.getProperty("user.home"), "opt", "FirstSpirit") : serverRoot;
         this.serverGcLog = serverGcLog;
@@ -157,9 +148,7 @@ public class ServerProperties {
         this.connectionRetryCount = connectionRetryCount == null ? 45 : connectionRetryCount;
         this.serverAdminPw = serverAdminPw == null ? "Admin" : serverAdminPw;
         this.serverHost = serverHost == null || serverHost.isEmpty() ? "localhost" : serverHost;
-        this.mode = mode == null ? ConnectionMode.HTTP_MODE : mode;
         this.serverPort = serverPort == null ? this.mode.defaultPort : serverPort;
-        this.version = version;
         this.firstSpiritJars =
             firstSpiritJars == null || firstSpiritJars.isEmpty() ? getFsJarFiles() : firstSpiritJars.stream().filter(Objects::nonNull)
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -171,11 +160,18 @@ public class ServerProperties {
         //when we do not have fs-license.jar on the class path, we will not find the fs-license.conf and getResourceAsStream will return null
         this.licenseFileSupplier =
             licenseFileSupplier == null ? () -> Optional.ofNullable(ServerProperties.class.getResourceAsStream("/fs-license.conf")) : licenseFileSupplier;
+
+        //this value should be lazily calculated
+        try {
+            this.serverUrl = new URL("http://" + this.serverHost + ":" + this.serverPort + "/");
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("either serverHost or serverPort had an illegal format", e);
+        }
     }
 
     private static <T> void assertThat(final T obj, final String name, final Matcher<T> matcher) {
         if (!matcher.matches(obj)) {
-            StringDescription description = new StringDescription();
+            final StringDescription description = new StringDescription();
             description.appendText(name).appendText(" must fulfill this spec: ").appendDescriptionOf(matcher).appendText("\nbut: ");
             matcher.describeMismatch(obj, description);
             throw new IllegalArgumentException(description.toString());
@@ -189,9 +185,18 @@ public class ServerProperties {
     }
 
     private static List<File> getFsJarFiles() {
-        return Arrays.stream(System.getProperty("java.class.path").split(":"))
-            .filter(x -> FS_SERVER_JAR_PATTERN.matcher(x).find())
-            .map(File::new)
-            .collect(Collectors.toList());
+        final ClassLoader cl = ClassLoader.getSystemClassLoader();
+        if (cl instanceof URLClassLoader) {
+            final URL[] urls = ((URLClassLoader) cl).getURLs();
+
+            return Arrays.stream(urls)
+                .map(URL::getFile)
+                .filter(x -> FS_SERVER_JAR_PATTERN.matcher(x).find())
+                .map(File::new)
+                .collect(Collectors.toList());
+        } else {
+            throw new IllegalStateException(
+                "When the system classloader is not an UrlClassLoader, you need to manually specify the FirstSpirit jars.");
+        }
     }
 }
