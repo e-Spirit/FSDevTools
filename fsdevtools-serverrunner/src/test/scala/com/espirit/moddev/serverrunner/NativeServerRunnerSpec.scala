@@ -1,13 +1,12 @@
 package com.espirit.moddev.serverrunner
 
+import java.io.{File, IOException}
 import java.nio.file.{Files, Path}
 import java.time.Duration
 import java.util.concurrent.Executors
 import java.util.function.Supplier
 
-import com.espirit.moddev.serverrunner.ServerProperties.ConnectionMode
-import de.espirit.firstspirit.access.Connection
-import org.mockito.Mockito._
+import org.mockito.Mockito.{mock, when}
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{Matchers, WordSpec}
 import spec.IntegrationTest
@@ -20,9 +19,10 @@ import scala.language.{implicitConversions, postfixOps}
 
 class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
   def fixture = new {
-    lazy val propsWithVersionBuilder = ServerProperties.builder().version("5.2.611")
-    lazy val minimalServerProperties = propsWithVersionBuilder.serverInstall(false).build()
-    lazy val propsWithVersion        = propsWithVersionBuilder.build()
+    lazy val propsWithVersionBuilder        = ServerProperties.builder().firstSpiritJar(new File("foobar"))
+    lazy val minimalServerPropertiesBuilder = propsWithVersionBuilder.serverInstall(false)
+    lazy val minimalServerProperties        = minimalServerPropertiesBuilder.build()
+    lazy val propsWithVersion               = propsWithVersionBuilder.build()
   }
 
   def assertDirExists(path: Path) = {
@@ -106,22 +106,13 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
         assert(Source.fromFile(confFile.toFile).getLines().contains("HTTP_PORT=9000"))
       }
     }
-    "we install the server" when {
-      "we have a FirstSpirit server version 4" should {
-        "add the '-Dinstall=yes' flag to the command options" in {
-          val props    = ServerProperties.builder().version("4.0.0").build()
-          val commands = NativeServerRunner.prepareFilesystem(props).asScala
-          assert(commands.contains("-Dinstall=yes"))
-        }
-      }
-      "we have a FirstSpirit server version != 4" should {
+    "we install the server" should {
         "create the 'fs-init' file" in {
           val props = fixture.propsWithVersion
           NativeServerRunner.prepareFilesystem(props)
           assertFileExists(props.getServerRoot.resolve("server").resolve("fs-init"))
         }
       }
-    }
   }
 
   "NativeServerRunner.prepareStartup" should {
@@ -149,46 +140,41 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
       val argsNoGcLog = NativeServerRunner.prepareStartup(fixture.minimalServerProperties).asScala
       assert(!argsNoGcLog.exists(str => str startsWith "-Xloggc"))
       val argsGcLog =
-        NativeServerRunner.prepareStartup(ServerProperties.builder().serverInstall(false).serverGcLog(true).version("5.2.611").build()).asScala
+        NativeServerRunner
+          .prepareStartup(
+            ServerProperties.builder().serverInstall(false).serverGcLog(true).firstSpiritJar(new File("foobar")).build())
+          .asScala
       assert(argsGcLog.count(str => str startsWith "-Xloggc") == 1)
     }
     "add the server ops" in {
       val commands = NativeServerRunner
-        .prepareStartup(ServerProperties.builder().serverOp("-Dabc=123").serverOp("-Dcde=234").version("5.2.611").build())
+        .prepareStartup(
+          ServerProperties.builder().serverOp("-Dabc=123").serverOp("-Dcde=234").firstSpiritJar(new File("foobar")).build())
       commands should contain inOrder ("-Dabc=123", "-Dcde=234")
     }
     "add the server policy file" in {
-      val props    = fixture.minimalServerProperties
-      val commands = NativeServerRunner.prepareStartup(props)
+      val props = fixture.minimalServerProperties
+      NativeServerRunner.prepareStartup(props)
 
-      assert(
-        Source.fromFile(props.getServerRoot.resolve("conf").resolve("fs-server.policy").toFile).mkString ==
-          """/* policies for CMS-Server */
-               |
-               |grant {
-               |  permission java.security.AllPermission;
-               |};
-               |""".stripMargin)
+      val policyFileRegex   = """(?m).*grant\s*\{\s*permission java.security.AllPermission;\s*\};\s*""".r
+      val policyFileContent = Source.fromFile(props.getServerRoot.resolve("conf").resolve("fs-server.policy").toFile).mkString
+
+      assert(policyFileRegex.findFirstIn(policyFileContent).isDefined)
     }
   }
 
   "NativeServerRunner.testConnection" should {
     "return true" when {
-      "the connection can be made correctly" in {
-        val goodConnection = mock(classOf[Connection])
-        when(goodConnection.isConnected).thenReturn(true)
-        assert(NativeServerRunner.testConnection(goodConnection))
-      }
+      "the connection can be made correctly" in pending //complex to implement because URL class is final and PowerMock did not work
     }
     "return false" when {
       "an exception gets thrown" in {
-        val throwingConnection = mock(classOf[Connection])
-        when(throwingConnection.connect()).thenThrow(classOf[java.io.IOException])
-        assert(!NativeServerRunner.testConnection(throwingConnection))
+        val badConnection = mock(classOf[ServerProperties])
+        when(badConnection.getServerUrl).thenThrow(new RuntimeException)
+
+        assert(!NativeServerRunner.testConnection(badConnection))
       }
-      "the connection is null" in {
-        an[IllegalArgumentException] shouldBe thrownBy(NativeServerRunner.testConnection(null))
-      }
+      "no 200 OK is returned" in pending //complex to implement because URL class is final and PowerMock did not work
     }
   }
 
@@ -205,17 +191,17 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
   }
 
   def assertNoServerRunning(props: ServerProperties): Unit = {
-    assert(!NativeServerRunner.testConnection(NativeServerRunner.getFSConnection(props)))
+    assert(!NativeServerRunner.testConnection(props))
   }
 
-  "NativeServerRunner.bootFirstSpiritServer" should {
+  "NativeServerRunner.startFirstSpiritServer" should {
     "boot a server when given minimal server properties" taggedAs IntegrationTest in {
-      val props = fixture.minimalServerProperties
+      val props = fixture.minimalServerPropertiesBuilder.clearFirstSpiritJars().build()
       assertNoServerRunning(props)
-      val testTask = NativeServerRunner.bootFirstSpiritServer(props, Executors.newCachedThreadPool())
+      val testTask = NativeServerRunner.startFirstSpiritServer(props, Executors.newCachedThreadPool())
       assert(!testTask.isDone)
       eventually(timeout(60 seconds), interval(2 seconds)) {
-        assert(NativeServerRunner.testConnection(NativeServerRunner.getFSConnection(props)))
+        assert(NativeServerRunner.testConnection(props))
       }
       assert(new NativeServerRunner(props).stop())
     }
@@ -223,7 +209,7 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
 
   "NativeServerRunner.isRunning" should {
     "return false when a server has not been started" taggedAs IntegrationTest in {
-      val props = fixture.minimalServerProperties
+      val props = fixture.minimalServerPropertiesBuilder.clearFirstSpiritJars().build()
       assertNoServerRunning(props)
       assert(!new NativeServerRunner(props).isRunning)
     }
@@ -231,7 +217,7 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
 
   "NativeServerRunner" should {
     "start a FirstSpirit server, see that it's running, and shut it down afterwards" taggedAs IntegrationTest in {
-      val props = fixture.minimalServerProperties
+      val props = fixture.minimalServerPropertiesBuilder.clearFirstSpiritJars().build()
       assertNoServerRunning(props)
       val runner = new NativeServerRunner(props)
       val timer  = Timer()
@@ -245,7 +231,7 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
       info(s"shutdown succeeded after $timer")
     }
     "start a FirstSpirit server, see that it's running, and shut it down afterwards also for connection mode SOCKET_MODE" taggedAs IntegrationTest in {
-      val props = fixture.propsWithVersionBuilder.serverInstall(false).mode(ConnectionMode.SOCKET_MODE).build()
+      val props = fixture.propsWithVersionBuilder.serverInstall(false).clearFirstSpiritJars().build()
       assertNoServerRunning(props)
       val runner = new NativeServerRunner(props)
       val timer  = Timer()
@@ -259,7 +245,7 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
       info(s"shutdown succeeded after $timer")
     }
     "return true when no server has been started by the runner itself and already a server was running (from another service)" taggedAs IntegrationTest in {
-      val props = fixture.minimalServerProperties
+      val props = fixture.minimalServerPropertiesBuilder.clearFirstSpiritJars().build()
       assertNoServerRunning(props)
       val runner1 = new NativeServerRunner(props)
       val runner2 = new NativeServerRunner(props)
