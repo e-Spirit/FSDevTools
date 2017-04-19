@@ -14,7 +14,7 @@ To enable the amended source code to be compiled successfully, the fs-access.jar
 It is installed by entering the following command into the command line:
 
 ```
-mvn install:install-file -Dfile=<path-to-acces.jar> -DgroupId=de.espirit.firstspirit -DartifactId=fs-access -Dversion=<fs version e.g. '5.0.0'> -Dpackaging=jar
+mvn install:install-file -Dfile=<path-to-access.jar> -DgroupId=de.espirit.firstspirit -DartifactId=fs-access -Dversion=<fs version e.g. '5.0.0'> -Dpackaging=jar
 ```
 
 Within this command, the parameters for the path to the **fs-access.jar** file and the FirstSpirit version used must be substituted accordingly.
@@ -28,6 +28,16 @@ mvn install:install-file -Dfile=C:\fs-access.jar -DgroupId=de.espirit.firstspiri
 During installation, the local Maven repository has been automatically created in the user directory under **<user's home>.m2/repository**. After the **fs-access.jar** file has been successfully installed, it should be located in this directory (see figure below):
 
 ![Local Maven repository with installed fs-access.jar file](images/local_maven.gif)
+
+To be able to run the integration tests for the module `fsdevtools-serverrunner`, you also need to locally install `fs-server.jar` and `wrapper-$VERSION.jar` using the same method.
+To compile it, you will only need the `fs-access.jar` dependency.
+They can be found in 
+
+```
+<FirstSpirit Server directory>/server/lib
+```
+
+Note that `fs-server.jar` needs to be installed with `-DartifactId=server` with the same version as `fs-access.jar`, while the version of `wrapper-$VERSION.jar` can be found in the file name.
 
 ## Compile with Maven
 Simply type on command line at project root:

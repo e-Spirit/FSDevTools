@@ -91,10 +91,12 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
         NativeServerRunner.prepareFilesystem(props)
         assertFileExists(props.getServerRoot.resolve("conf").resolve("fs-server.policy"))
       }
-      "create 'fs-license.conf'" in {
+      "create 'fs-license.conf' if a supplier for it is available" in {
         val props = fixture.propsWithVersion
         NativeServerRunner.prepareFilesystem(props)
-        assertFileExists(props.getServerRoot.resolve("conf").resolve("fs-license.conf"))
+        if (props.getLicenseFileSupplier.get().isPresent) { //not the case if fs-license.jar is not on the class path
+          assertFileExists(props.getServerRoot.resolve("conf").resolve("fs-license.conf"))
+        }
       }
       "create 'fs-server.conf' with the correct server port" in {
         val props = fixture.propsWithVersionBuilder.serverPort(9000).build()

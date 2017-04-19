@@ -154,11 +154,11 @@ public class ServerProperties {
                              .collect(Collectors.toCollection(ArrayList::new));
 
         this.threadWait = threadWait == null ? Duration.ofSeconds(2) : threadWait;
+        this.connectionRetryCount = connectionRetryCount == null ? 45 : connectionRetryCount;
         this.serverAdminPw = serverAdminPw == null ? "Admin" : serverAdminPw;
         this.serverHost = serverHost == null || serverHost.isEmpty() ? "localhost" : serverHost;
         this.mode = mode == null ? ConnectionMode.HTTP_MODE : mode;
         this.serverPort = serverPort == null ? this.mode.defaultPort : serverPort;
-        this.connectionRetryCount = connectionRetryCount == null ? 30 : connectionRetryCount;
         this.version = version;
         this.firstSpiritJars =
             firstSpiritJars == null || firstSpiritJars.isEmpty() ? getFsJarFiles() : firstSpiritJars.stream().filter(Objects::nonNull)
@@ -167,9 +167,10 @@ public class ServerProperties {
 
         //generate lock file reference, which can be found in the server directory
         this.lockFile = this.serverRoot.resolve(".fs.lock").toFile();
-        this.licenseFileSupplier =
-            licenseFileSupplier == null ? () -> Optional.of(ServerProperties.class.getResourceAsStream("/fs-license.conf")) : licenseFileSupplier;
 
+        //when we do not have fs-license.jar on the class path, we will not find the fs-license.conf and getResourceAsStream will return null
+        this.licenseFileSupplier =
+            licenseFileSupplier == null ? () -> Optional.ofNullable(ServerProperties.class.getResourceAsStream("/fs-license.conf")) : licenseFileSupplier;
     }
 
     private static <T> void assertThat(final T obj, final String name, final Matcher<T> matcher) {
