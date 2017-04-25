@@ -1,32 +1,21 @@
 package com.espirit.moddev.serverrunner;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
-import lombok.extern.slf4j.Slf4j;
+import static java.util.stream.Collectors.joining;
 
 @Slf4j
 public class NativeServerRunner implements ServerRunner {
@@ -145,7 +134,7 @@ public class NativeServerRunner implements ServerRunner {
         }
         args.add("-Dcmsroot=" + fsServerRoot);
         args.add("-Djava.security.policy=" + fsServerRoot.resolve("conf").resolve("fs-server.policy"));
-        args.addAll(Arrays.asList("-cp", serverProperties.getFirstSpiritJars().stream().map(File::toString).collect(Collectors.joining(":"))));
+        args.addAll(Arrays.asList("-cp", serverProperties.getFirstSpiritJars().stream().map(File::toString).collect(joining(String.valueOf(java.io.File.pathSeparatorChar)))));
         args.add("de.espirit.firstspirit.server.CMSServer");
 
         return args;
@@ -226,7 +215,7 @@ public class NativeServerRunner implements ServerRunner {
     static List<String> prepareStop(final ServerProperties serverProperties) {
         final List<String> args = new ArrayList<>();
         args.add("java");
-        args.addAll(Arrays.asList("-cp", serverProperties.getFirstSpiritJars().stream().map(File::toString).collect(Collectors.joining(":"))));
+        args.addAll(Arrays.asList("-cp", serverProperties.getFirstSpiritJars().stream().map(File::toString).collect(joining(String.valueOf(java.io.File.pathSeparatorChar)))));
         args.add("-Dhost=" + serverProperties.getServerHost());
         args.add("-Dport=" + serverProperties.getServerPort());
         args.add("-Dmode=HTTP");
