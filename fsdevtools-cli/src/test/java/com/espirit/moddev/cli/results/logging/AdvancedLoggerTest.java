@@ -1,18 +1,31 @@
 package com.espirit.moddev.cli.results.logging;
 
+import de.espirit.common.util.ElementProvider;
+import de.espirit.common.util.Filter;
+import de.espirit.common.util.Listable;
 import de.espirit.common.util.Pair;
+import de.espirit.firstspirit.access.*;
 import de.espirit.firstspirit.access.database.BasicEntityInfo;
 import de.espirit.firstspirit.access.database.BasicEntityInfoImpl;
-import de.espirit.firstspirit.access.store.BasicElementInfo;
-import de.espirit.firstspirit.access.store.Store;
+import de.espirit.firstspirit.access.project.Group;
+import de.espirit.firstspirit.access.project.Project;
+import de.espirit.firstspirit.access.store.*;
+import de.espirit.firstspirit.access.store.templatestore.Workflow;
+import de.espirit.firstspirit.access.store.templatestore.WorkflowLockException;
+import de.espirit.firstspirit.access.store.templatestore.WorkflowPermission;
+import de.espirit.firstspirit.agency.StoreAgent;
+import de.espirit.firstspirit.forms.FormData;
 import de.espirit.firstspirit.io.FileHandle;
+import de.espirit.firstspirit.storage.Contrast;
+import de.espirit.firstspirit.storage.Revision;
 import de.espirit.firstspirit.store.access.BasicElementInfoImpl;
+import de.espirit.firstspirit.store.access.PermissionMap;
 import de.espirit.firstspirit.store.access.TagNames;
 import de.espirit.firstspirit.store.access.nexport.*;
 import de.espirit.firstspirit.store.access.nexport.io.ExportInfoFileHandle;
 import de.espirit.firstspirit.store.access.nexport.io.ExportInfoFileHandleImpl;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
-import de.espirit.firstspirit.store.access.pagestore.PageImpl;
+import de.espirit.firstspirit.store.access.nexport.operations.ImportOperation;
 import de.espirit.firstspirit.transport.PropertiesTransportOptions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +33,12 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 
+import java.awt.*;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
+import java.util.List;
+import java.util.zip.ZipFile;
 
 import static org.junit.Assert.assertEquals;
 
@@ -29,22 +47,62 @@ public class AdvancedLoggerTest {
     private static final String NEW_LINE = "\n";
 
     @Test
-    public void testLogEmptyResult() throws Exception {
+    public void testInfoLevelDisabled() throws Exception {
+        final MockLogger logger = new MockLogger(false);
+        logger.setInfoEnabled(false);
+        AdvancedLogger.logExportResult(logger, new MockedExportResult(true));
+        assertEquals("Result does not match.", "", logger.toString());
+        AdvancedLogger.logImportResult(logger, new MockedImportResult(true), null);
+        assertEquals("Result does not match.", "", logger.toString());
+    }
+
+    @Test
+    public void testLogEmptyExportResult() throws Exception {
         {
             final MockLogger logger = new MockLogger(false);
-            AdvancedLogger.logResult(logger, new MockedResult(false));
+            AdvancedLogger.logExportResult(logger, new MockedExportResult(false));
+            // @formatter:off
             final String expected =
-                    "[INFO] Export done."               + NEW_LINE +
-                    "[INFO] == DETAILS =="              + NEW_LINE +
-                    "[INFO] Created elements: 0"        + NEW_LINE +
-                    "[INFO] Updated elements: 0"        + NEW_LINE +
-                    "[INFO] Deleted elements: 0"        + NEW_LINE +
-                    "[INFO]   Moved elements: 0"        + NEW_LINE +
-                    "[INFO] == SUMMARY =="              + NEW_LINE +
-                    "[INFO] Created elements: 0"        + NEW_LINE +
-                    "[INFO] Updated elements: 0"        + NEW_LINE +
-                    "[INFO] Deleted elements: 0"        + NEW_LINE +
-                    "[INFO]   Moved elements: 0"        + NEW_LINE;
+                    "[INFO] Export done."                + NEW_LINE +
+                            "[INFO] == DETAILS =="       + NEW_LINE +
+                            "[INFO] Created elements: 0" + NEW_LINE +
+                            "[INFO] Updated elements: 0" + NEW_LINE +
+                            "[INFO] Deleted elements: 0" + NEW_LINE +
+                            "[INFO] Moved elements: 0"   + NEW_LINE +
+                            "[INFO] == SUMMARY =="       + NEW_LINE +
+                            "[INFO] Created elements: 0" + NEW_LINE +
+                            "[INFO] Updated elements: 0" + NEW_LINE +
+                            "[INFO] Deleted elements: 0" + NEW_LINE +
+                            "[INFO]   Moved elements: 0" + NEW_LINE;
+            // @formatter:on
+            assertEquals("Result does not match.", expected, logger.toString());
+        }
+    }
+
+    @Test
+    public void testLogEmptyImportResult() throws Exception {
+        {
+            final MockLogger logger = new MockLogger(true);
+            final MockedStoreAgent storeAgent = new MockedStoreAgent();
+            storeAgent.addStore(Store.Type.PAGESTORE, new MockedStore(Store.Type.PAGESTORE));
+            AdvancedLogger.logImportResult(logger, new MockedImportResult(false), null);
+            // @formatter:off
+            final String expected =
+                    "[INFO] Import done."                + NEW_LINE +
+                            "[INFO] == DETAILS =="       + NEW_LINE +
+                            "[INFO] Created elements: 0" + NEW_LINE +
+                            "[INFO] Updated elements: 0" + NEW_LINE +
+                            "[INFO] Deleted elements: 0" + NEW_LINE +
+                            "[INFO] Moved elements: 0"   + NEW_LINE +
+                            "[INFO] L&Found elements: 0" + NEW_LINE +
+                            "[INFO] Problems: 0"         + NEW_LINE +
+                            "[INFO] == SUMMARY =="       + NEW_LINE +
+                            "[INFO] Created elements: 0" + NEW_LINE +
+                            "[INFO] Updated elements: 0" + NEW_LINE +
+                            "[INFO] Deleted elements: 0" + NEW_LINE +
+                            "[INFO]   Moved elements: 0" + NEW_LINE +
+                            "[INFO] L&Found elements: 0" + NEW_LINE +
+                            "[INFO]         Problems: 0" + NEW_LINE;
 
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
@@ -52,10 +110,10 @@ public class AdvancedLoggerTest {
     }
 
     @Test
-    public void testLogResult() throws Exception {
+    public void testLogExportResult() throws Exception {
         {
             final MockLogger logger = new MockLogger(false);
-            AdvancedLogger.logResult(logger, new MockedResult());
+            AdvancedLogger.logExportResult(logger, new MockedExportResult());
             //@formatter:off
             final String expected = "[INFO] Export done."               + NEW_LINE +
                                     "[INFO] == DETAILS =="              + NEW_LINE +
@@ -104,7 +162,7 @@ public class AdvancedLoggerTest {
                                     "[INFO]  - Schema: 'deletedSchema'              ( entity types: 2, entities: 7 )"   + NEW_LINE +
                                     "[INFO]   - EntityType: 'deletedType1'          ( entities: 3 )"                    + NEW_LINE +
                                     "[INFO]   - EntityType: 'deletedType2'          ( entities: 4 )"                    + NEW_LINE +
-                                    "[INFO]   Moved elements: 9"        + NEW_LINE +
+                                    "[INFO] Moved elements: 9"        + NEW_LINE +
                                     "[INFO] - project properties: 1"    + NEW_LINE +
                                     "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO] - store elements: 6"        + NEW_LINE +
@@ -131,7 +189,7 @@ public class AdvancedLoggerTest {
         }
         {
             final MockLogger logger = new MockLogger(true);
-            AdvancedLogger.logResult(logger, new MockedResult());
+            AdvancedLogger.logExportResult(logger, new MockedExportResult());
             //@formatter:off
             final String expected = "[INFO] Export done."               + NEW_LINE +
                                     "[INFO] == DETAILS =="              + NEW_LINE +
@@ -502,7 +560,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]      - 1.txt ( from '/from/deletedSchema#deletedType2' to '/to/deletedSchema#deletedType2' )" + NEW_LINE +
                                     "[DEBUG]      - 2.txt ( from '/from/deletedSchema#deletedType2' to '/to/deletedSchema#deletedType2' )" + NEW_LINE +
                                     "[DEBUG]      - 3.txt ( from '/from/deletedSchema#deletedType2' to '/to/deletedSchema#deletedType2' )" + NEW_LINE +
-                                    "[INFO]   Moved elements: 9"        + NEW_LINE +
+                                    "[INFO] Moved elements: 9"        + NEW_LINE +
                                     "[INFO] - project properties: 1"                               + NEW_LINE +
                                     "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]   - Created files: 1"      + NEW_LINE +
@@ -650,6 +708,252 @@ public class AdvancedLoggerTest {
                                     "[INFO] Updated elements: 9 | project properties: 1 | store elements: 5 ( mediastore: 2, sitestore: 3 ) | entity types: 3 ( schemas: 2, entities: 6 )"      + NEW_LINE +
                                     "[INFO] Deleted elements: 7 | project properties: 1 | store elements: 4 ( pagestore: 1, sitestore: 3 ) | entity types: 2 ( schemas: 1, entities: 7 )"       + NEW_LINE +
                                     "[INFO]   Moved elements: 9 | project properties: 1 | store elements: 6 ( mediastore: 2, templatestore: 4 ) | entity types: 2 ( schemas: 2, entities: 3 )"  + NEW_LINE;
+            // @formatter:on
+            assertEquals("Result does not match.", expected, logger.toString());
+        }
+    }
+
+    @Test
+    public void testLogImportResult() throws Exception {
+        {
+            final MockLogger logger = new MockLogger(false);
+            final MockedImportResult mockedImportResult = new MockedImportResult(true);
+            AdvancedLogger.logImportResult(logger, mockedImportResult, mockedImportResult.getStoreAgent());
+            //@formatter:off
+            final String expected =
+                    "[INFO] Import done."                                                               + NEW_LINE +
+                    "[INFO] == DETAILS =="                                                              + NEW_LINE +
+                    "[INFO] Created elements: 17"                                                       + NEW_LINE +
+                    "[INFO] - store elements: 7"                                                        + NEW_LINE +
+                    "[INFO]  - pagestore: 1"                                                            + NEW_LINE +
+                    "[INFO]   - Page: 'created_PAGE_1'             "                                    + NEW_LINE +
+                    "[INFO]  - mediastore: 2"                                                           + NEW_LINE +
+                    "[INFO]   - Media: 'created_MEDIUM_2'          "                                    + NEW_LINE +
+                    "[INFO]   - Media: 'created_MEDIUM_3'          "                                    + NEW_LINE +
+                    "[INFO]  - templatestore: 4"                                                        + NEW_LINE +
+                    "[INFO]   - FormatTemplate: 'created_FORMATTEMPLATE_6'"                             + NEW_LINE +
+                    "[INFO]   - FormatTemplate: 'created_FORMATTEMPLATE_7'"                             + NEW_LINE +
+                    "[INFO]   - LinkTemplate: 'created_LINKTEMPLATE_5'"                                 + NEW_LINE +
+                    "[INFO]   - PageTemplates: 'created_PAGETEMPLATES_4'"                               + NEW_LINE +
+                    "[INFO] - entity types: 10                      ( schemas: 3, entities: 12 )"       + NEW_LINE +
+                    "[INFO]  - Schema: 'schema1'                    ( entity types: 4, entities: 6 )"   + NEW_LINE +
+                    "[INFO]   - EntityType: 'created_entityType2'   ( entities: 1 )"                    + NEW_LINE +
+                    "[INFO]   - EntityType: 'created_entityType1'   ( entities: 2 )"                    + NEW_LINE +
+                    "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 2 )"                    + NEW_LINE +
+                    "[INFO]   - EntityType: 'updated_entityType2'   ( entities: 1 )"                    + NEW_LINE +
+                    "[INFO]  - Schema: 'schema2'                    ( entity types: 4, entities: 4 )"   + NEW_LINE +
+                    "[INFO]   - EntityType: 'created_entityType2'   ( entities: 1 )"                    + NEW_LINE +
+                    "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )"                    + NEW_LINE +
+                    "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 1 )"                    + NEW_LINE +
+                    "[INFO]   - EntityType: 'updated_entityType2'   ( entities: 1 )"                    + NEW_LINE +
+                    "[INFO]  - Schema: 'schema3'                    ( entity types: 2, entities: 2 )"   + NEW_LINE +
+                    "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )"                    + NEW_LINE +
+                    "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 1 )"                    + NEW_LINE +
+                    "[INFO] Updated elements: 26"                                                       + NEW_LINE +
+                    "[INFO] - project properties: 9"                                                    + NEW_LINE +
+                    "[INFO]  - Common                              "                                    + NEW_LINE +
+                    "[INFO]  - Resolutions                         "                                    + NEW_LINE +
+                    "[INFO]  - Groups                              "                                    + NEW_LINE +
+                    "[INFO]  - ScheduleEntries                     "                                    + NEW_LINE +
+                    "[INFO]  - TemplateSets                        "                                    + NEW_LINE +
+                    "[INFO]  - Fonts                               "                                    + NEW_LINE +
+                    "[INFO]  - ModuleConfigurations                "                                    + NEW_LINE +
+                    "[INFO]  - Languages                           "                                    + NEW_LINE +
+                    "[INFO]  - Users                               "                                    + NEW_LINE +
+                    "[INFO] - store elements: 7"                                                        + NEW_LINE +
+                    "[INFO]  - pagestore: 1"                                                            + NEW_LINE +
+                    "[INFO]   - Page: 'updated_PAGE_1'             "                                    + NEW_LINE +
+                    "[INFO]  - mediastore: 2"                                                           + NEW_LINE +
+                    "[INFO]   - Media: 'updated_MEDIUM_2'          "                                    + NEW_LINE +
+                    "[INFO]   - Media: 'updated_MEDIUM_3'          "                                    + NEW_LINE +
+                    "[INFO]  - templatestore: 4"                                                        + NEW_LINE +
+                    "[INFO]   - FormatTemplate: 'updated_FORMATTEMPLATE_6'"                             + NEW_LINE +
+                    "[INFO]   - FormatTemplate: 'updated_FORMATTEMPLATE_7'"                             + NEW_LINE +
+                    "[INFO]   - LinkTemplate: 'updated_LINKTEMPLATE_5'"                                 + NEW_LINE +
+                    "[INFO]   - PageTemplates: 'updated_PAGETEMPLATES_4'"                               + NEW_LINE +
+                    "[INFO] - entity types: 10                      ( schemas: 3, entities: 12 )"       + NEW_LINE +
+                    "[INFO]  - Schema: 'schema1'                    ( entity types: 4, entities: 6 )"   + NEW_LINE +
+                    "[INFO]   - EntityType: 'created_entityType2'   ( entities: 1 )"                    + NEW_LINE +
+                    "[INFO]   - EntityType: 'created_entityType1'   ( entities: 2 )"                    + NEW_LINE +
+                    "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 2 )"                    + NEW_LINE +
+                    "[INFO]   - EntityType: 'updated_entityType2'   ( entities: 1 )"                    + NEW_LINE +
+                    "[INFO]  - Schema: 'schema2'                    ( entity types: 4, entities: 4 )"   + NEW_LINE +
+                    "[INFO]   - EntityType: 'created_entityType2'   ( entities: 1 )"                    + NEW_LINE +
+                    "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )"                    + NEW_LINE +
+                    "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 1 )"                    + NEW_LINE +
+                    "[INFO]   - EntityType: 'updated_entityType2'   ( entities: 1 )"                    + NEW_LINE +
+                    "[INFO]  - Schema: 'schema3'                    ( entity types: 2, entities: 2 )"   + NEW_LINE +
+                    "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )"                    + NEW_LINE +
+                    "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 1 )"                    + NEW_LINE +
+                    "[INFO] Deleted elements: 7"                                                        + NEW_LINE +
+                    "[INFO] - store elements: 7"                                                        + NEW_LINE +
+                    "[INFO]  - pagestore: 1"                                                            + NEW_LINE +
+                    "[INFO]   - Page: 'deleted_PAGE_1'             "                                    + NEW_LINE +
+                    "[INFO]  - mediastore: 2"                                                           + NEW_LINE +
+                    "[INFO]   - Media: 'deleted_MEDIUM_2'          "                                    + NEW_LINE +
+                    "[INFO]   - Media: 'deleted_MEDIUM_3'          "                                    + NEW_LINE +
+                    "[INFO]  - templatestore: 4"                                                        + NEW_LINE +
+                    "[INFO]   - FormatTemplate: 'deleted_FORMATTEMPLATE_6'"                             + NEW_LINE +
+                    "[INFO]   - FormatTemplate: 'deleted_FORMATTEMPLATE_7'"                             + NEW_LINE +
+                    "[INFO]   - LinkTemplate: 'deleted_LINKTEMPLATE_5'"                                 + NEW_LINE +
+                    "[INFO]   - PageTemplates: 'deleted_PAGETEMPLATES_4'"                               + NEW_LINE +
+                    "[INFO] Moved elements: 7"                                                          + NEW_LINE +
+                    "[INFO] - store elements: 7"                                                        + NEW_LINE +
+                    "[INFO]  - pagestore: 1"                                                            + NEW_LINE +
+                    "[INFO]   - Page: 'moved_PAGE_1'               "                                    + NEW_LINE +
+                    "[INFO]  - mediastore: 2"                                                           + NEW_LINE +
+                    "[INFO]   - Media: 'moved_MEDIUM_2'            "                                    + NEW_LINE +
+                    "[INFO]   - Media: 'moved_MEDIUM_3'            "                                    + NEW_LINE +
+                    "[INFO]  - templatestore: 4"                                                        + NEW_LINE +
+                    "[INFO]   - FormatTemplate: 'moved_FORMATTEMPLATE_6'"                               + NEW_LINE +
+                    "[INFO]   - FormatTemplate: 'moved_FORMATTEMPLATE_7'"                               + NEW_LINE +
+                    "[INFO]   - LinkTemplate: 'moved_LINKTEMPLATE_5'"                                   + NEW_LINE +
+                    "[INFO]   - PageTemplates: 'moved_PAGETEMPLATES_4'"                                 + NEW_LINE +
+                    "[INFO] L&Found elements: 7"                                                        + NEW_LINE +
+                    "[INFO] - store elements: 7"                                                        + NEW_LINE +
+                    "[INFO]  - pagestore: 1"                                                            + NEW_LINE +
+                    "[INFO]   - Page: 'lostAndFound_PAGE_1'        "                                    + NEW_LINE +
+                    "[INFO]  - mediastore: 2"                                                           + NEW_LINE +
+                    "[INFO]   - Media: 'lostAndFound_MEDIUM_2'     "                                    + NEW_LINE +
+                    "[INFO]   - Media: 'lostAndFound_MEDIUM_3'     "                                    + NEW_LINE +
+                    "[INFO]  - templatestore: 4"                                                        + NEW_LINE +
+                    "[INFO]   - FormatTemplate: 'lostAndFound_FORMATTEMPLATE_6'"                        + NEW_LINE +
+                    "[INFO]   - FormatTemplate: 'lostAndFound_FORMATTEMPLATE_7'"                        + NEW_LINE +
+                    "[INFO]   - LinkTemplate: 'lostAndFound_LINKTEMPLATE_5'"                            + NEW_LINE +
+                    "[INFO]   - PageTemplates: 'lostAndFound_PAGETEMPLATES_4'"                          + NEW_LINE +
+                    "[INFO] Problems: 4"                                                                + NEW_LINE +
+                    "[INFO]  - store: PAGESTORE | uid: pagestore_uid_1337 | reason: IdProvider not found"                                                                                       + NEW_LINE +
+                    "[INFO]  - store: MEDIASTORE | uid: mediastore_uid_123 | reason: Resolution invalid"                                                                                        + NEW_LINE +
+                    "[INFO]  - store: MEDIASTORE | uid: mediastore_uid_1932 | reason: Medium invalid"                                                                                           + NEW_LINE +
+                    "[INFO]  - store: TEMPLATESTORE | name: templatestore_name_1231 | reason: GOM is invalid"                                                                                   + NEW_LINE +
+                    "[INFO] == SUMMARY =="                                                                                                                                                      + NEW_LINE +
+                    "[INFO] Created elements: 17 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 10 ( schemas: 3, entities: 12 )"                         + NEW_LINE +
+                    "[INFO] Updated elements: 26 | project properties: 9 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 10 ( schemas: 3, entities: 12 )" + NEW_LINE +
+                    "[INFO] Deleted elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
+                    "[INFO]   Moved elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
+                    "[INFO] L&Found elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
+                    "[INFO]         Problems: 4"                                                                       + NEW_LINE;
+            // @formatter:on
+            assertEquals("Result does not match.", expected, logger.toString());
+        }
+        {
+            final MockLogger logger = new MockLogger(true);
+            final MockedImportResult mockedImportResult = new MockedImportResult(true);
+            AdvancedLogger.logImportResult(logger, mockedImportResult, mockedImportResult.getStoreAgent());
+            //@formatter:off
+            final String expected =
+                    "[INFO] Import done."                                            + NEW_LINE +
+                    "[INFO] == DETAILS =="                                           + NEW_LINE +
+                    "[INFO] Created elements: 17"                                    + NEW_LINE +
+                    "[INFO] - store elements: 7"                                     + NEW_LINE +
+                    "[INFO]  - pagestore: 1"                                         + NEW_LINE +
+                    "[INFO]   - Page: 'created_PAGE_1'             "                 + NEW_LINE +
+                    "[INFO]  - mediastore: 2"                                        + NEW_LINE +
+                    "[INFO]   - Media: 'created_MEDIUM_2'          "                 + NEW_LINE +
+                    "[INFO]   - Media: 'created_MEDIUM_3'          "                 + NEW_LINE +
+                    "[INFO]  - templatestore: 4"                                     + NEW_LINE +
+                    "[INFO]   - FormatTemplate: 'created_FORMATTEMPLATE_6'"          + NEW_LINE +
+                    "[INFO]   - FormatTemplate: 'created_FORMATTEMPLATE_7'"          + NEW_LINE +
+                    "[INFO]   - LinkTemplate: 'created_LINKTEMPLATE_5'"              + NEW_LINE +
+                    "[INFO]   - PageTemplates: 'created_PAGETEMPLATES_4'"            + NEW_LINE +
+                    "[INFO] - entity types: 10                      ( schemas: 3, entities: 12 )"       + NEW_LINE +
+                    "[INFO]  - Schema: 'schema1'                    ( entity types: 4, entities: 6 )"   + NEW_LINE +
+                    "[INFO]   - EntityType: 'created_entityType2'   ( entities: 1 )" + NEW_LINE +
+                    "[INFO]   - EntityType: 'created_entityType1'   ( entities: 2 )" + NEW_LINE +
+                    "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 2 )" + NEW_LINE +
+                    "[INFO]   - EntityType: 'updated_entityType2'   ( entities: 1 )" + NEW_LINE +
+                    "[INFO]  - Schema: 'schema2'                    ( entity types: 4, entities: 4 )"   + NEW_LINE +
+                    "[INFO]   - EntityType: 'created_entityType2'   ( entities: 1 )" + NEW_LINE +
+                    "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )" + NEW_LINE +
+                    "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 1 )" + NEW_LINE +
+                    "[INFO]   - EntityType: 'updated_entityType2'   ( entities: 1 )" + NEW_LINE +
+                    "[INFO]  - Schema: 'schema3'                    ( entity types: 2, entities: 2 )"   + NEW_LINE +
+                    "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )" + NEW_LINE +
+                    "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 1 )" + NEW_LINE +
+                    "[INFO] Updated elements: 26"                                    + NEW_LINE +
+                    "[INFO] - project properties: 9"                                 + NEW_LINE +
+                    "[INFO]  - Common                              "                 + NEW_LINE +
+                    "[INFO]  - Resolutions                         "                 + NEW_LINE +
+                    "[INFO]  - Groups                              "                 + NEW_LINE +
+                    "[INFO]  - ScheduleEntries                     "                 + NEW_LINE +
+                    "[INFO]  - TemplateSets                        "                 + NEW_LINE +
+                    "[INFO]  - Fonts                               "                 + NEW_LINE +
+                    "[INFO]  - ModuleConfigurations                "                 + NEW_LINE +
+                    "[INFO]  - Languages                           "                 + NEW_LINE +
+                    "[INFO]  - Users                               "                 + NEW_LINE +
+                    "[INFO] - store elements: 7"                                     + NEW_LINE +
+                    "[INFO]  - pagestore: 1"                                         + NEW_LINE +
+                    "[INFO]   - Page: 'updated_PAGE_1'             "                 + NEW_LINE +
+                    "[INFO]  - mediastore: 2"                                        + NEW_LINE +
+                    "[INFO]   - Media: 'updated_MEDIUM_2'          "                 + NEW_LINE +
+                    "[INFO]   - Media: 'updated_MEDIUM_3'          "                 + NEW_LINE +
+                    "[INFO]  - templatestore: 4"                                     + NEW_LINE +
+                    "[INFO]   - FormatTemplate: 'updated_FORMATTEMPLATE_6'"          + NEW_LINE +
+                    "[INFO]   - FormatTemplate: 'updated_FORMATTEMPLATE_7'"          + NEW_LINE +
+                    "[INFO]   - LinkTemplate: 'updated_LINKTEMPLATE_5'"              + NEW_LINE +
+                    "[INFO]   - PageTemplates: 'updated_PAGETEMPLATES_4'"            + NEW_LINE +
+                    "[INFO] - entity types: 10                      ( schemas: 3, entities: 12 )"       + NEW_LINE +
+                    "[INFO]  - Schema: 'schema1'                    ( entity types: 4, entities: 6 )"   + NEW_LINE +
+                    "[INFO]   - EntityType: 'created_entityType2'   ( entities: 1 )" + NEW_LINE +
+                    "[INFO]   - EntityType: 'created_entityType1'   ( entities: 2 )" + NEW_LINE +
+                    "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 2 )" + NEW_LINE +
+                    "[INFO]   - EntityType: 'updated_entityType2'   ( entities: 1 )" + NEW_LINE +
+                    "[INFO]  - Schema: 'schema2'                    ( entity types: 4, entities: 4 )"   + NEW_LINE +
+                    "[INFO]   - EntityType: 'created_entityType2'   ( entities: 1 )" + NEW_LINE +
+                    "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )" + NEW_LINE +
+                    "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 1 )" + NEW_LINE +
+                    "[INFO]   - EntityType: 'updated_entityType2'   ( entities: 1 )" + NEW_LINE +
+                    "[INFO]  - Schema: 'schema3'                    ( entity types: 2, entities: 2 )"   + NEW_LINE +
+                    "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )" + NEW_LINE +
+                    "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 1 )" + NEW_LINE +
+                    "[INFO] Deleted elements: 7"                                     + NEW_LINE +
+                    "[INFO] - store elements: 7"                                     + NEW_LINE +
+                    "[INFO]  - pagestore: 1"                                         + NEW_LINE +
+                    "[INFO]   - Page: 'deleted_PAGE_1'             "                 + NEW_LINE +
+                    "[INFO]  - mediastore: 2"                                        + NEW_LINE +
+                    "[INFO]   - Media: 'deleted_MEDIUM_2'          "                 + NEW_LINE +
+                    "[INFO]   - Media: 'deleted_MEDIUM_3'          "                 + NEW_LINE +
+                    "[INFO]  - templatestore: 4"                                     + NEW_LINE +
+                    "[INFO]   - FormatTemplate: 'deleted_FORMATTEMPLATE_6'"          + NEW_LINE +
+                    "[INFO]   - FormatTemplate: 'deleted_FORMATTEMPLATE_7'"          + NEW_LINE +
+                    "[INFO]   - LinkTemplate: 'deleted_LINKTEMPLATE_5'"              + NEW_LINE +
+                    "[INFO]   - PageTemplates: 'deleted_PAGETEMPLATES_4'"            + NEW_LINE +
+                    "[INFO] Moved elements: 7"                                       + NEW_LINE +
+                    "[INFO] - store elements: 7"                                     + NEW_LINE +
+                    "[INFO]  - pagestore: 1"                                         + NEW_LINE +
+                    "[INFO]   - Page: 'moved_PAGE_1'               "                 + NEW_LINE +
+                    "[INFO]  - mediastore: 2"                                        + NEW_LINE +
+                    "[INFO]   - Media: 'moved_MEDIUM_2'            "                 + NEW_LINE +
+                    "[INFO]   - Media: 'moved_MEDIUM_3'            "                 + NEW_LINE +
+                    "[INFO]  - templatestore: 4"                                     + NEW_LINE +
+                    "[INFO]   - FormatTemplate: 'moved_FORMATTEMPLATE_6'"            + NEW_LINE +
+                    "[INFO]   - FormatTemplate: 'moved_FORMATTEMPLATE_7'"            + NEW_LINE +
+                    "[INFO]   - LinkTemplate: 'moved_LINKTEMPLATE_5'"                + NEW_LINE +
+                    "[INFO]   - PageTemplates: 'moved_PAGETEMPLATES_4'"              + NEW_LINE +
+                    "[INFO] L&Found elements: 7"                                     + NEW_LINE +
+                    "[INFO] - store elements: 7"                                     + NEW_LINE +
+                    "[INFO]  - pagestore: 1"                                         + NEW_LINE +
+                    "[INFO]   - Page: 'lostAndFound_PAGE_1'        "                 + NEW_LINE +
+                    "[INFO]  - mediastore: 2"                                        + NEW_LINE +
+                    "[INFO]   - Media: 'lostAndFound_MEDIUM_2'     "                 + NEW_LINE +
+                    "[INFO]   - Media: 'lostAndFound_MEDIUM_3'     "                 + NEW_LINE +
+                    "[INFO]  - templatestore: 4"                                     + NEW_LINE +
+                    "[INFO]   - FormatTemplate: 'lostAndFound_FORMATTEMPLATE_6'"     + NEW_LINE +
+                    "[INFO]   - FormatTemplate: 'lostAndFound_FORMATTEMPLATE_7'"     + NEW_LINE +
+                    "[INFO]   - LinkTemplate: 'lostAndFound_LINKTEMPLATE_5'"         + NEW_LINE +
+                    "[INFO]   - PageTemplates: 'lostAndFound_PAGETEMPLATES_4'"       + NEW_LINE +
+                    "[INFO] Problems: 4"                                             + NEW_LINE +
+                    "[INFO]  - store: PAGESTORE | uid: pagestore_uid_1337 | reason: IdProvider not found"                                                                                       + NEW_LINE +
+                    "[INFO]  - store: MEDIASTORE | uid: mediastore_uid_123 | reason: Resolution invalid"                                                                                        + NEW_LINE +
+                    "[INFO]  - store: MEDIASTORE | uid: mediastore_uid_1932 | reason: Medium invalid"                                                                                           + NEW_LINE +
+                    "[INFO]  - store: TEMPLATESTORE | name: templatestore_name_1231 | reason: GOM is invalid"                                                                                   + NEW_LINE +
+                    "[INFO] == SUMMARY =="                                                                                                                                                      + NEW_LINE +
+                    "[INFO] Created elements: 17 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 10 ( schemas: 3, entities: 12 )"                         + NEW_LINE +
+                    "[INFO] Updated elements: 26 | project properties: 9 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 10 ( schemas: 3, entities: 12 )" + NEW_LINE +
+                    "[INFO] Deleted elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
+                    "[INFO]   Moved elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
+                    "[INFO] L&Found elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
+                    "[INFO]         Problems: 4"                                                                       + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -992,7 +1296,6 @@ public class AdvancedLoggerTest {
         }
     }
 
-
     @Test
     public void testBuildSummaryEmptyUpdate() throws Exception {
         {
@@ -1004,7 +1307,6 @@ public class AdvancedLoggerTest {
             assertEquals("Result does not match.", expected, result);
         }
     }
-
 
     @Test
     public void testBuildSummary() throws Exception {
@@ -1256,6 +1558,12 @@ public class AdvancedLoggerTest {
     public void testLogStoreElements() throws Exception {
         {
             final MockLogger logger = new MockLogger(true);
+            logger.setInfoEnabled(false);
+            AdvancedLogger.logStoreElements(logger, Collections.emptyMap());
+            assertEquals("Result does not match.", "", logger.toString());
+        }
+        {
+            final MockLogger logger = new MockLogger(true);
             AdvancedLogger.logStoreElements(logger, Collections.emptyMap());
             assertEquals("Result does not match.", "", logger.toString());
         }
@@ -1263,17 +1571,17 @@ public class AdvancedLoggerTest {
             final MockLogger logger = new MockLogger(false);
             AdvancedLogger.logStoreElements(logger, createMapWithStoreElements());
             // @formatter:off
-            final String expected = "[INFO] - store elements: 10"   + NEW_LINE +
-                                    "[INFO]  - pagestore: 1"        + NEW_LINE +
+            final String expected = "[INFO] - store elements: 10"                                                                                             + NEW_LINE +
+                                    "[INFO]  - pagestore: 1"                                                                                                  + NEW_LINE +
                                     "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
-                                    "[INFO]  - mediastore: 2"       + NEW_LINE +
+                                    "[INFO]  - mediastore: 2"                                                                                                 + NEW_LINE +
                                     "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
-                                    "[INFO]  - sitestore: 3"        + NEW_LINE +
+                                    "[INFO]  - sitestore: 3"                                                                                                  + NEW_LINE +
                                     "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]   - PageRef: 'third'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
-                                    "[INFO]  - templatestore: 4"    + NEW_LINE +
+                                    "[INFO]  - templatestore: 4"                                                                                              + NEW_LINE +
                                     "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
@@ -1747,7 +2055,7 @@ public class AdvancedLoggerTest {
     public void testGetFilesStringForElementAllEmpty() throws Exception {
         final MockedExportInfo exportInfo = new MockedExportInfo(ExportInfo.Type.ELEMENT, "storeElement", ExportStatus.CREATED);
         final String result = AdvancedLogger.getFilesStringForElement(exportInfo);
-        final String expected = " ( )";
+        final String expected = "";
         assertEquals("Result does not match.", expected, result);
     }
 
@@ -1964,7 +2272,6 @@ public class AdvancedLoggerTest {
             return _entities;
         }
 
-
         @Override
         public boolean allEntitiesExported() {
             return false;
@@ -2063,6 +2370,7 @@ public class AdvancedLoggerTest {
     private static class MockLogger implements Logger {
         private final StringBuilder _stringBuilder = new StringBuilder();
         private final boolean _debugEnabled;
+        private boolean _infoEnabled;
 
         public MockLogger() {
             this(false);
@@ -2070,6 +2378,11 @@ public class AdvancedLoggerTest {
 
         public MockLogger(final boolean debugEnabled) {
             _debugEnabled = debugEnabled;
+            _infoEnabled = true;
+        }
+
+        public void setInfoEnabled(final boolean infoEnabled) {
+            _infoEnabled = infoEnabled;
         }
 
         @Override
@@ -2203,7 +2516,7 @@ public class AdvancedLoggerTest {
 
         @Override
         public boolean isInfoEnabled() {
-            return true;
+            return _infoEnabled;
         }
 
         @Override
@@ -2387,15 +2700,15 @@ public class AdvancedLoggerTest {
         }
     }
 
-    private static class MockedResult implements ExportOperation.Result {
+    private static class MockedExportResult implements ExportOperation.Result {
 
         private Collection<ExportInfo> _createdElements, _updateElements, _deletedElements, _movedElements;
 
-        MockedResult() {
+        MockedExportResult() {
             this(true);
         }
 
-        MockedResult(boolean fill) {
+        MockedExportResult(boolean fill) {
             if (fill) {
                 fill();
             } else {
@@ -2498,4 +2811,1414 @@ public class AdvancedLoggerTest {
         }
     }
 
+    private static class MockedImportResult implements ImportOperation.Result {
+
+        private Set<BasicElementInfo> _createdElements, _updateElements, _deletedElements, _movedElements, _lostAndFoundElements;
+        private Set<BasicEntityInfo> _createdEntities, _updatedEntities;
+        private EnumSet<PropertiesTransportOptions.ProjectPropertyType> _projectProperties;
+        private List<ImportOperation.Problem> _problems;
+
+        MockedImportResult(boolean fill) {
+            if (fill) {
+                fill();
+            } else {
+                _createdElements = Collections.emptySet();
+                _updateElements = Collections.emptySet();
+                _deletedElements = Collections.emptySet();
+                _movedElements = Collections.emptySet();
+                _lostAndFoundElements = Collections.emptySet();
+                _createdEntities = Collections.emptySet();
+                _updatedEntities = Collections.emptySet();
+                _problems = Collections.emptyList();
+                _projectProperties = EnumSet.noneOf(PropertiesTransportOptions.ProjectPropertyType.class);
+            }
+        }
+
+        void fill() {
+            {
+                _createdElements = new HashSet<>();
+                fillCollection(_createdElements, "created");
+            }
+            {
+                _updateElements = new HashSet<>();
+                fillCollection(_updateElements, "updated");
+            }
+            {
+                _deletedElements = new HashSet<>();
+                fillCollection(_deletedElements, "deleted");
+            }
+            {
+                _movedElements = new HashSet<>();
+                fillCollection(_movedElements, "moved");
+            }
+            {
+                _lostAndFoundElements = new HashSet<>();
+                fillCollection(_lostAndFoundElements, "lostAndFound");
+            }
+            {
+                _lostAndFoundElements = new HashSet<>();
+                fillCollection(_lostAndFoundElements, "lostAndFound");
+            }
+            {
+                _projectProperties = EnumSet.allOf(PropertiesTransportOptions.ProjectPropertyType.class);
+            }
+            {
+                _createdEntities = new HashSet<>();
+                fillEntities(_createdEntities, "created");
+                _updatedEntities = new HashSet<>();
+                fillEntities(_updatedEntities, "updated");
+            }
+            {
+                _problems = new ArrayList<>();
+                _problems.add(createProblem(Store.Type.PAGESTORE, 1337, "IdProvider not found"));
+                _problems.add(createProblem(Store.Type.MEDIASTORE, 1932, "Medium invalid"));
+                _problems.add(createProblem(Store.Type.MEDIASTORE, 123, "Resolution invalid"));
+                _problems.add(createProblem(Store.Type.TEMPLATESTORE, 1231, "GOM is invalid"));
+            }
+        }
+
+        private ImportOperation.Problem createProblem(@NotNull final Store.Type storeType, final long nodeId, @NotNull final String message) {
+            return new ImportOperation.Problem() {
+                @Override
+                public Store.Type getStoreType() {
+                    return storeType;
+                }
+
+                @Override
+                public long getNodeId() {
+                    return nodeId;
+                }
+
+                @Override
+                public String getMessage() {
+                    return message;
+                }
+            };
+        }
+
+        private void fillEntities(final Set<BasicEntityInfo> set, final String description) {
+            set.add(createEntityInfo(4, "entityType1", "schema2", description));
+            set.add(createEntityInfo(1, "entityType1", "schema1", description));
+            set.add(createEntityInfo(6, "entityType1", "schema3", description));
+            set.add(createEntityInfo(3, "entityType2", "schema1", description));
+            set.add(createEntityInfo(2, "entityType1", "schema1", description));
+            set.add(createEntityInfo(5, "entityType2", "schema2", description));
+        }
+
+        private void fillCollection(final Set<BasicElementInfo> set, final String description) {
+            set.add(createElementInfo(4, Store.Type.TEMPLATESTORE, TagNames.PAGETEMPLATES, description));
+            set.add(createElementInfo(3, Store.Type.MEDIASTORE, TagNames.MEDIUM, description));
+            set.add(createElementInfo(1, Store.Type.PAGESTORE, TagNames.PAGE, description));
+            set.add(createElementInfo(5, Store.Type.TEMPLATESTORE, TagNames.LINKTEMPLATE, description));
+            set.add(createElementInfo(2, Store.Type.MEDIASTORE, TagNames.MEDIUM, description));
+            set.add(createElementInfo(6, Store.Type.TEMPLATESTORE, TagNames.FORMATTEMPLATE, description));
+            set.add(createElementInfo(7, Store.Type.TEMPLATESTORE, TagNames.FORMATTEMPLATE, description));
+        }
+
+        @NotNull
+        private BasicElementInfoImpl createElementInfo(final int id, final Store.Type storeType, final String nodeTag, final String description) {
+            return new BasicElementInfoImpl(storeType, nodeTag, id, description + "_" + nodeTag + "_" + id, -1);
+        }
+
+        @NotNull
+        private BasicEntityInfoImpl createEntityInfo(final int id, final String entityType, final String schemaUid, final String description) {
+            return new BasicEntityInfoImpl(UUID.nameUUIDFromBytes((description + "_" + entityType + "_" + schemaUid + "_" + id).getBytes()), description + "_" + entityType, schemaUid);
+        }
+
+        @Override
+        public Set<BasicElementInfo> getCreatedElements() {
+            return _createdElements;
+        }
+
+        @Override
+        public Set<BasicElementInfo> getUpdatedElements() {
+            return _updateElements;
+        }
+
+        @Override
+        public Set<BasicElementInfo> getDeletedElements() {
+            return _deletedElements;
+        }
+
+        @Override
+        public Set<BasicElementInfo> getLostAndFoundElements() {
+            return _lostAndFoundElements;
+        }
+
+        @Override
+        public Set<BasicElementInfo> getMovedElements() {
+            return _movedElements;
+        }
+
+        @Override
+        public Set<BasicEntityInfo> getCreatedEntities() {
+            return _createdEntities;
+        }
+
+        @Override
+        public Set<BasicEntityInfo> getUpdatedEntities() {
+            return _updatedEntities;
+        }
+
+        @Override
+        public EnumSet<PropertiesTransportOptions.ProjectPropertyType> getModifiedProjectProperties() {
+            return _projectProperties;
+        }
+
+        @Override
+        public List<ImportOperation.Problem> getProblems() {
+            return _problems;
+        }
+
+        StoreAgent getStoreAgent() {
+            final MockedStoreAgent storeAgent = new MockedStoreAgent();
+            final List<ImportOperation.Problem> problems = getProblems();
+            for (final ImportOperation.Problem problem : problems) {
+                final MockedStore store = (MockedStore) storeAgent.getStore(problem.getStoreType());
+                store.getOrCreateElement(problem.getNodeId());
+            }
+            return storeAgent;
+        }
+    }
+
+    private static class MockedStoreAgent implements StoreAgent {
+
+        private final Map<Store.Type, Store> _stores = new HashMap<>();
+
+        void addStore(@NotNull final Store.Type type, @NotNull final Store store) {
+            _stores.put(type, store);
+        }
+
+        @Override
+        public Store getStore(@NotNull final Store.Type type) {
+            Store store = _stores.get(type);
+            if (store == null) {
+                store = new MockedStore(type);
+                addStore(type, store);
+            }
+            return store;
+        }
+
+        @Override
+        public Store getStore(@NotNull final Store.Type type, final boolean b) {
+            return getStore(type);
+        }
+    }
+
+    private static class MockedStore implements Store {
+
+        private boolean _release;
+        private Type _type;
+        private Map<Long, IDProvider> _storeElementsById;
+
+        MockedStore(final Type type) {
+            _type = type;
+            _storeElementsById = new HashMap<>();
+            setRelease(false);
+        }
+
+        public void addMockedStoreElement(final IDProvider element) {
+            _storeElementsById.put(element.getId(), element);
+        }
+
+        void setRelease(final boolean release) {
+            _release = release;
+        }
+
+        @Override
+        public Type getType() {
+            return _type;
+        }
+
+        @Override
+        public void addStoreListener(final StoreListener storeListener) {
+            // nothing to do
+        }
+
+        @Override
+        public void removeStoreListener(final StoreListener storeListener) {
+            // nothing to do
+        }
+
+        @Override
+        public boolean isRelease() {
+            return _release;
+        }
+
+        @Override
+        public List<DeletedElementsInfo> getDeletedChilds() {
+            return Collections.EMPTY_LIST;
+        }
+
+        @Override
+        public List<DeletedElementsInfo> getDeletedChildren() {
+            return Collections.EMPTY_LIST;
+        }
+
+        @Override
+        public List<DeletedElementsInfo> getDeletedChilds(final long l, final int i) {
+            return Collections.EMPTY_LIST;
+        }
+
+        @Override
+        public List<DeletedElementsInfo> getDeletedChildren(final long l, final int i) {
+            return Collections.EMPTY_LIST;
+        }
+
+        @Override
+        public StoreElement restore(final ElementInfo elementInfo, final IDProvider idProvider) throws LockException {
+            return null;
+        }
+
+        @Override
+        public boolean isFolder() {
+            return false;
+        }
+
+        @Override
+        public boolean isPermissionSupported() {
+            return false;
+        }
+
+        @Override
+        public boolean hasPermissions() {
+            return false;
+        }
+
+        @Override
+        public Permission getPermission() {
+            return null;
+        }
+
+        @Override
+        public Permission getPermission(final User user) {
+            return null;
+        }
+
+        @Override
+        public Permission getPermission(final Group group) {
+            return null;
+        }
+
+        @Override
+        public void setPermission(final User user, final Permission permission) {
+            // nothing to do
+        }
+
+        @Override
+        public void setPermission(final User[] users, final Permission permission) {
+            // nothing to do
+        }
+
+        @Override
+        public void setPermission(final Group group, final Permission permission) {
+            // nothing to do
+        }
+
+        @Override
+        public void removePermission(final User user) {
+            // nothing to do
+        }
+
+        @Override
+        public void removePermission(final User[] users) {
+            // nothing to do
+        }
+
+        @Override
+        public void removePermission(final Group group) {
+            // nothing to do
+        }
+
+        @Override
+        public PermissionMap getTreePermission() {
+            return null;
+        }
+
+        @Override
+        public List<Principal> getDefinedPrincipalPermissions() {
+            return null;
+        }
+
+        @Override
+        public List<Principal> getInheritedPrincipalPermissions() {
+            return null;
+        }
+
+        @Override
+        public long getLastChanged() {
+            return 0;
+        }
+
+        @Override
+        public User getEditor() {
+            return null;
+        }
+
+        @Override
+        public boolean isWorkflowSupported() {
+            return false;
+        }
+
+        @Override
+        public WorkflowPermission[] getWorkflowPermissions() {
+            return new WorkflowPermission[0];
+        }
+
+        @Override
+        public WorkflowPermission getWorkflowPermission(final Workflow workflow) {
+            return null;
+        }
+
+        @Override
+        public WorkflowPermission getCreateWorkflowPermission(final Workflow workflow) {
+            return null;
+        }
+
+        @Override
+        public void setWorkflowPermission(final WorkflowPermission workflowPermission) {
+            // nothing to do
+        }
+
+        @Override
+        public void setWorkflowPermissions(final WorkflowPermission[] workflowPermissions) {
+            // nothing to do
+        }
+
+        @Override
+        public void removeWorkflowPermission(final Workflow workflow) {
+            // nothing to do
+        }
+
+        @Override
+        public void removeAllWorkflowPermissions() {
+            // nothing to do
+        }
+
+        @Override
+        public boolean isWorkflowAllowed(final Workflow workflow, final User user) {
+            return false;
+        }
+
+        @Override
+        public boolean inheritWorkflowPermission() {
+            return false;
+        }
+
+        @Override
+        public void setInheritWorkflowPermission(final boolean b) {
+            // nothing to do
+        }
+
+        @Override
+        public void setWriteLock(final boolean b) {
+            // nothing to do
+        }
+
+        @Override
+        public boolean getWriteLock() {
+            return false;
+        }
+
+        @Override
+        public boolean isLockSupported() {
+            return false;
+        }
+
+        @Override
+        public void setLock(final boolean b) throws LockException, ElementDeletedException {
+            // nothing to do
+        }
+
+        @Override
+        public void setLock(final boolean b, final boolean b1) throws LockException, ElementDeletedException {
+            // nothing to do
+        }
+
+        @Override
+        public boolean isLocked() {
+            return false;
+        }
+
+        @Override
+        public boolean isLockedOnServer(final boolean b) {
+            return false;
+        }
+
+        @Override
+        public void save() {
+            // nothing to do
+        }
+
+        @Override
+        public void save(final String s) {
+            // nothing to do
+        }
+
+        @Override
+        public void save(final String s, final boolean b) {
+            // nothing to do
+        }
+
+        @Override
+        public boolean hasTask() {
+            return false;
+        }
+
+        @Override
+        public Task getTask() {
+            return null;
+        }
+
+        @Override
+        public void setTask(final Task task) {
+            // nothing to do
+        }
+
+        @Override
+        public void removeTask() {
+            // nothing to do
+        }
+
+        @Override
+        public Color getColor() {
+            return null;
+        }
+
+        @Override
+        public void setColor(final Color color) {
+            // nothing to do
+        }
+
+        @Override
+        public void delete() throws LockException {
+            // nothing to do
+        }
+
+        @Override
+        public void refresh() {
+            // nothing to do
+        }
+
+        @Override
+        public String toXml() {
+            return null;
+        }
+
+        @Override
+        public String toXml(final boolean b) {
+            return null;
+        }
+
+        @Override
+        public String toXml(final boolean b, final boolean b1) {
+            return null;
+        }
+
+        @Override
+        public boolean isImportSupported() {
+            return false;
+        }
+
+        @Override
+        public boolean isExportSupported() {
+            return false;
+        }
+
+        @Override
+        public void exportStoreElement(final OutputStream outputStream, final ExportHandler exportHandler) throws IOException {
+            // nothing to do
+        }
+
+        @Override
+        public StoreElement importStoreElement(final ZipFile zipFile, final ImportHandler importHandler) throws IOException, ElementDeletedException, WorkflowLockException {
+            return null;
+        }
+
+        @Override
+        public Listable<StoreElement> importStoreElements(final ZipFile zipFile, final ImportHandler importHandler) throws IOException, ElementDeletedException, WorkflowLockException {
+            return null;
+        }
+
+        @Override
+        public String getElementType() {
+            return null;
+        }
+
+        @Override
+        public IDProvider getStoreElement(final long id) {
+            return _storeElementsById.get(id);
+        }
+
+        @Override
+        public IDProvider getStoreElement(final Long id) {
+            return getStoreElement((long) id);
+        }
+
+        @Override
+        public List<? extends IDProvider> getElements(final Collection<Long> collection) {
+            return null;
+        }
+
+        @Override
+        public IDProvider getStoreElement(final String s, final UidType uidType) {
+            return null;
+        }
+
+        @Override
+        public IDProvider getStoreElement(final String s, final String s1) {
+            return null;
+        }
+
+        @Override
+        public Project getProject() {
+            return null;
+        }
+
+        @Override
+        public ReferenceEntry[] getIncomingReferences() {
+            return new ReferenceEntry[0];
+        }
+
+        @Override
+        public boolean hasIncomingReferences() {
+            return false;
+        }
+
+        @Override
+        public ReferenceEntry[] getOutgoingReferences() {
+            return new ReferenceEntry[0];
+        }
+
+        @Override
+        public String getReferenceName() {
+            return null;
+        }
+
+        @Override
+        public Set<ReferenceEntry> getReferences() {
+            return null;
+        }
+
+        @Override
+        public boolean isDeleted() {
+            return false;
+        }
+
+        @Override
+        public UserService getUserService() {
+            return null;
+        }
+
+        @Override
+        public boolean isReadOnly() {
+            return false;
+        }
+
+        @Override
+        public Revision getMaxRevision() {
+            return null;
+        }
+
+        @Override
+        public long getId() {
+            return _type.ordinal();
+        }
+
+        @Override
+        public Long getLongID() {
+            return getId();
+        }
+
+        @Override
+        public Revision getRevision() {
+            return null;
+        }
+
+        @Override
+        public Revision getReleaseRevision() {
+            return null;
+        }
+
+        @Override
+        public IDProvider getInRevision(final Revision revision) {
+            return null;
+        }
+
+        @Override
+        public String getUid() {
+            return null;
+        }
+
+        @Override
+        public void setUid(final String s) {
+
+        }
+
+        @Override
+        public UidType getUidType() {
+            return null;
+        }
+
+        @Override
+        public boolean hasUid() {
+            return false;
+        }
+
+        @Override
+        public LanguageInfo getLanguageInfo(final Language language) {
+            return null;
+        }
+
+        @Override
+        public void moveChild(final IDProvider idProvider) throws LockException, ElementMovedException {
+            // nothing to do
+        }
+
+        @Override
+        public void moveChild(final IDProvider idProvider, final int i) throws LockException, ElementMovedException {
+            // nothing to do
+        }
+
+        @Override
+        public String getDisplayName(final Language language) {
+            return null;
+        }
+
+        @Override
+        public void setDisplayName(final Language language, final String s) {
+            // nothing to do
+        }
+
+        @Override
+        public boolean isReleaseSupported() {
+            return false;
+        }
+
+        @Override
+        public int getReleaseStatus() {
+            return 0;
+        }
+
+        @Override
+        public boolean isReleased() {
+            return false;
+        }
+
+        @Override
+        public User getReleasedBy() {
+            return null;
+        }
+
+        @Override
+        public boolean isInReleaseStore() {
+            return false;
+        }
+
+        @Override
+        public void release() {
+            // nothing to do
+        }
+
+        @Override
+        public void release(final boolean b) {
+            // nothing to do
+        }
+
+        @Override
+        public String getName() {
+            return _type.getName();
+        }
+
+        @Override
+        public Listable<StoreElement> getChildren() {
+            return null;
+        }
+
+        @Override
+        public <T extends StoreElement> Listable<T> getChildren(final Class<T> aClass) {
+            return null;
+        }
+
+        @Override
+        public <T extends StoreElement> Listable<T> getChildren(final Class<T> aClass, final boolean b) {
+            return null;
+        }
+
+        @Override
+        public <T extends StoreElement> Listable<T> getChildren(final Filter.TypedFilter<T> typedFilter, final boolean b) {
+            return null;
+        }
+
+        @Override
+        public void appendChild(final StoreElement storeElement) {
+            // nothing to do
+        }
+
+        @Override
+        public void appendChildBefore(final StoreElement storeElement, final StoreElement storeElement1) {
+            // nothing to do
+        }
+
+        @Override
+        public void removeChild(final StoreElement storeElement) {
+            // nothing to do
+        }
+
+        @Override
+        public void replaceChild(final StoreElement storeElement, final StoreElement storeElement1) {
+            // nothing to do
+        }
+
+        @Override
+        public int getChildCount() {
+            return 0;
+        }
+
+        @Override
+        public int getChildIndex(final StoreElement storeElement) {
+            return 0;
+        }
+
+        @Override
+        public IDProvider getParent() {
+            return null;
+        }
+
+        @Override
+        public StoreElement getNextSibling() {
+            return null;
+        }
+
+        @Override
+        public StoreElement getFirstChild() {
+            return null;
+        }
+
+        @Override
+        public Store getStore() {
+            return null;
+        }
+
+        @Override
+        public Set<Contrast> contrastWith(final IDProvider idProvider) {
+            return null;
+        }
+
+        @Override
+        public void revert(final Revision revision, final boolean b, final EnumSet<RevertType> enumSet) throws LockException {
+            // nothing to do
+        }
+
+        @Override
+        public Data getMeta() {
+            return null;
+        }
+
+        @Override
+        public void setMeta(final Data data) {
+            // nothing to do
+        }
+
+        @Override
+        public boolean hasMeta() {
+            return false;
+        }
+
+        @Override
+        public FormData getMetaFormData() {
+            return null;
+        }
+
+        @Override
+        public void setMetaFormData(final FormData formData) {
+            // nothing to do
+        }
+
+        @Override
+        public List<Revision> getHistory() {
+            return null;
+        }
+
+        @Override
+        public List<Revision> getHistory(final Date date, final Date date1, final int i, final Filter<Revision> filter) {
+            return null;
+        }
+
+        @Override
+        public ElementProvider<Revision> asRevisionProvider() {
+            return null;
+        }
+
+        @Override
+        public int compareTo(@NotNull final StoreElement o) {
+            return 0;
+        }
+
+        IDProvider getOrCreateElement(final long nodeId) {
+            IDProvider storeElement = getStoreElement(nodeId);
+            if (storeElement == null) {
+                storeElement = new MockedStoreElement(nodeId, getName() + "_name_" + nodeId, getType() == Store.Type.TEMPLATESTORE ? null : getName() + "_uid_" + nodeId);
+                addMockedStoreElement(storeElement);
+            }
+            return storeElement;
+        }
+    }
+
+    private static class MockedStoreElement implements IDProvider {
+        private long _id;
+        private String _name;
+        private String _uid;
+
+        MockedStoreElement(final long id, final String name, final String uid) {
+            _id = id;
+            _name = name;
+            _uid = uid;
+        }
+
+        @Override
+        public long getId() {
+            return _id;
+        }
+
+        @Override
+        public Long getLongID() {
+            return getId();
+        }
+
+        @Override
+        public Revision getRevision() {
+            return null;
+        }
+
+        @Override
+        public Revision getReleaseRevision() {
+            return null;
+        }
+
+        @Override
+        public IDProvider getInRevision(final Revision revision) {
+            return null;
+        }
+
+        @Override
+        public String getUid() {
+            return _uid;
+        }
+
+        @Override
+        public void setUid(final String uid) {
+            _uid = uid;
+        }
+
+        @Override
+        public UidType getUidType() {
+            return null;
+        }
+
+        @Override
+        public boolean hasUid() {
+            return _uid != null;
+        }
+
+        @Override
+        public LanguageInfo getLanguageInfo(final Language language) {
+            return null;
+        }
+
+        @Override
+        public void moveChild(final IDProvider idProvider) throws LockException, ElementMovedException {
+
+        }
+
+        @Override
+        public void moveChild(final IDProvider idProvider, final int i) throws LockException, ElementMovedException {
+
+        }
+
+        @Override
+        public String getDisplayName(final Language language) {
+            return _name;
+        }
+
+        @Override
+        public void setDisplayName(final Language language, final String s) {
+
+        }
+
+        @Override
+        public boolean isReleaseSupported() {
+            return false;
+        }
+
+        @Override
+        public int getReleaseStatus() {
+            return 0;
+        }
+
+        @Override
+        public boolean isReleased() {
+            return false;
+        }
+
+        @Override
+        public User getReleasedBy() {
+            return null;
+        }
+
+        @Override
+        public boolean isInReleaseStore() {
+            return false;
+        }
+
+        @Override
+        public void release() {
+
+        }
+
+        @Override
+        public void release(final boolean b) {
+
+        }
+
+        @Override
+        public String getName() {
+            return _name;
+        }
+
+        @Override
+        public Listable<StoreElement> getChildren() {
+            return null;
+        }
+
+        @Override
+        public <T extends StoreElement> Listable<T> getChildren(final Class<T> aClass) {
+            return null;
+        }
+
+        @Override
+        public <T extends StoreElement> Listable<T> getChildren(final Class<T> aClass, final boolean b) {
+            return null;
+        }
+
+        @Override
+        public <T extends StoreElement> Listable<T> getChildren(final Filter.TypedFilter<T> typedFilter, final boolean b) {
+            return null;
+        }
+
+        @Override
+        public void appendChild(final StoreElement storeElement) {
+
+        }
+
+        @Override
+        public void appendChildBefore(final StoreElement storeElement, final StoreElement storeElement1) {
+
+        }
+
+        @Override
+        public void removeChild(final StoreElement storeElement) {
+
+        }
+
+        @Override
+        public void replaceChild(final StoreElement storeElement, final StoreElement storeElement1) {
+
+        }
+
+        @Override
+        public int getChildCount() {
+            return 0;
+        }
+
+        @Override
+        public int getChildIndex(final StoreElement storeElement) {
+            return 0;
+        }
+
+        @Override
+        public IDProvider getParent() {
+            return null;
+        }
+
+        @Override
+        public StoreElement getNextSibling() {
+            return null;
+        }
+
+        @Override
+        public StoreElement getFirstChild() {
+            return null;
+        }
+
+        @Override
+        public Store getStore() {
+            return null;
+        }
+
+        @Override
+        public boolean isFolder() {
+            return false;
+        }
+
+        @Override
+        public boolean isPermissionSupported() {
+            return false;
+        }
+
+        @Override
+        public boolean hasPermissions() {
+            return false;
+        }
+
+        @Override
+        public Permission getPermission() {
+            return null;
+        }
+
+        @Override
+        public Permission getPermission(final User user) {
+            return null;
+        }
+
+        @Override
+        public Permission getPermission(final Group group) {
+            return null;
+        }
+
+        @Override
+        public void setPermission(final User user, final Permission permission) {
+
+        }
+
+        @Override
+        public void setPermission(final User[] users, final Permission permission) {
+
+        }
+
+        @Override
+        public void setPermission(final Group group, final Permission permission) {
+
+        }
+
+        @Override
+        public void removePermission(final User user) {
+
+        }
+
+        @Override
+        public void removePermission(final User[] users) {
+
+        }
+
+        @Override
+        public void removePermission(final Group group) {
+
+        }
+
+        @Override
+        public PermissionMap getTreePermission() {
+            return null;
+        }
+
+        @Override
+        public List<Principal> getDefinedPrincipalPermissions() {
+            return null;
+        }
+
+        @Override
+        public List<Principal> getInheritedPrincipalPermissions() {
+            return null;
+        }
+
+        @Override
+        public long getLastChanged() {
+            return 0;
+        }
+
+        @Override
+        public User getEditor() {
+            return null;
+        }
+
+        @Override
+        public boolean isWorkflowSupported() {
+            return false;
+        }
+
+        @Override
+        public WorkflowPermission[] getWorkflowPermissions() {
+            return new WorkflowPermission[0];
+        }
+
+        @Override
+        public WorkflowPermission getWorkflowPermission(final Workflow workflow) {
+            return null;
+        }
+
+        @Override
+        public WorkflowPermission getCreateWorkflowPermission(final Workflow workflow) {
+            return null;
+        }
+
+        @Override
+        public void setWorkflowPermission(final WorkflowPermission workflowPermission) {
+
+        }
+
+        @Override
+        public void setWorkflowPermissions(final WorkflowPermission[] workflowPermissions) {
+
+        }
+
+        @Override
+        public void removeWorkflowPermission(final Workflow workflow) {
+
+        }
+
+        @Override
+        public void removeAllWorkflowPermissions() {
+
+        }
+
+        @Override
+        public boolean isWorkflowAllowed(final Workflow workflow, final User user) {
+            return false;
+        }
+
+        @Override
+        public boolean inheritWorkflowPermission() {
+            return false;
+        }
+
+        @Override
+        public void setInheritWorkflowPermission(final boolean b) {
+
+        }
+
+        @Override
+        public void setWriteLock(final boolean b) {
+
+        }
+
+        @Override
+        public boolean getWriteLock() {
+            return false;
+        }
+
+        @Override
+        public boolean isLockSupported() {
+            return false;
+        }
+
+        @Override
+        public void setLock(final boolean b) throws LockException, ElementDeletedException {
+
+        }
+
+        @Override
+        public void setLock(final boolean b, final boolean b1) throws LockException, ElementDeletedException {
+
+        }
+
+        @Override
+        public boolean isLocked() {
+            return false;
+        }
+
+        @Override
+        public boolean isLockedOnServer(final boolean b) {
+            return false;
+        }
+
+        @Override
+        public void save() {
+
+        }
+
+        @Override
+        public void save(final String s) {
+
+        }
+
+        @Override
+        public void save(final String s, final boolean b) {
+
+        }
+
+        @Override
+        public boolean hasTask() {
+            return false;
+        }
+
+        @Override
+        public Task getTask() {
+            return null;
+        }
+
+        @Override
+        public void setTask(final Task task) {
+
+        }
+
+        @Override
+        public void removeTask() {
+
+        }
+
+        @Override
+        public Color getColor() {
+            return null;
+        }
+
+        @Override
+        public void setColor(final Color color) {
+
+        }
+
+        @Override
+        public void delete() throws LockException {
+
+        }
+
+        @Override
+        public void refresh() {
+
+        }
+
+        @Override
+        public String toXml() {
+            return null;
+        }
+
+        @Override
+        public String toXml(final boolean b) {
+            return null;
+        }
+
+        @Override
+        public String toXml(final boolean b, final boolean b1) {
+            return null;
+        }
+
+        @Override
+        public boolean isImportSupported() {
+            return false;
+        }
+
+        @Override
+        public boolean isExportSupported() {
+            return false;
+        }
+
+        @Override
+        public void exportStoreElement(final OutputStream outputStream, final ExportHandler exportHandler) throws IOException {
+
+        }
+
+        @Override
+        public StoreElement importStoreElement(final ZipFile zipFile, final ImportHandler importHandler) throws IOException, ElementDeletedException, WorkflowLockException {
+            return null;
+        }
+
+        @Override
+        public Listable<StoreElement> importStoreElements(final ZipFile zipFile, final ImportHandler importHandler) throws IOException, ElementDeletedException, WorkflowLockException {
+            return null;
+        }
+
+        @Override
+        public String getElementType() {
+            return null;
+        }
+
+        @Override
+        public Project getProject() {
+            return null;
+        }
+
+        @Override
+        public ReferenceEntry[] getIncomingReferences() {
+            return new ReferenceEntry[0];
+        }
+
+        @Override
+        public boolean hasIncomingReferences() {
+            return false;
+        }
+
+        @Override
+        public ReferenceEntry[] getOutgoingReferences() {
+            return new ReferenceEntry[0];
+        }
+
+        @Override
+        public String getReferenceName() {
+            return null;
+        }
+
+        @Override
+        public Set<ReferenceEntry> getReferences() {
+            return null;
+        }
+
+        @Override
+        public boolean isDeleted() {
+            return false;
+        }
+
+        @Override
+        public Set<Contrast> contrastWith(final IDProvider idProvider) {
+            return null;
+        }
+
+        @Override
+        public void revert(final Revision revision, final boolean b, final EnumSet<RevertType> enumSet) throws LockException {
+
+        }
+
+        @Override
+        public Data getMeta() {
+            return null;
+        }
+
+        @Override
+        public void setMeta(final Data data) {
+
+        }
+
+        @Override
+        public boolean hasMeta() {
+            return false;
+        }
+
+        @Override
+        public FormData getMetaFormData() {
+            return null;
+        }
+
+        @Override
+        public void setMetaFormData(final FormData formData) {
+
+        }
+
+        @Override
+        public List<Revision> getHistory() {
+            return null;
+        }
+
+        @Override
+        public List<Revision> getHistory(final Date date, final Date date1, final int i, final Filter<Revision> filter) {
+            return null;
+        }
+
+        @Override
+        public ElementProvider<Revision> asRevisionProvider() {
+            return null;
+        }
+
+        @Override
+        public int compareTo(@NotNull final StoreElement o) {
+            return 0;
+        }
+    }
 }
