@@ -1,16 +1,27 @@
 package com.espirit.moddev.cli.results.logging;
 
+import com.espirit.moddev.cli.results.imports.ElementImportInfoImpl;
+import com.espirit.moddev.cli.results.imports.EntityTypeImportInfoImpl;
+import com.espirit.moddev.cli.results.imports.PropertyTypeImportInfoImpl;
 import de.espirit.common.util.Pair;
+import de.espirit.firstspirit.access.database.BasicEntityInfo;
+import de.espirit.firstspirit.access.store.BasicElementInfo;
+import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.access.store.Store;
+import de.espirit.firstspirit.access.store.templatestore.Schema;
+import de.espirit.firstspirit.access.store.templatestore.TemplateStoreRoot;
+import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.io.FileHandle;
+import de.espirit.firstspirit.store.access.BasicElementInfoImpl;
 import de.espirit.firstspirit.store.access.StoreElements;
-import de.espirit.firstspirit.store.access.nexport.ElementExportInfo;
-import de.espirit.firstspirit.store.access.nexport.EntityTypeExportInfo;
-import de.espirit.firstspirit.store.access.nexport.ExportInfo;
-import de.espirit.firstspirit.store.access.nexport.PropertyTypeExportInfo;
+import de.espirit.firstspirit.store.access.TagNames;
+import de.espirit.firstspirit.store.access.nexport.*;
 import de.espirit.firstspirit.store.access.nexport.io.ExportInfoFileHandle;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
+import de.espirit.firstspirit.store.access.nexport.operations.ImportOperation;
+import de.espirit.firstspirit.transport.PropertiesTransportOptions;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.Serializable;
@@ -34,7 +45,7 @@ public enum AdvancedLogger {
      * @param logger the logger the export result information will be logged to
      * @param exportResult the result to be loggged
      */
-    public static void logResult(@NotNull final Logger logger, @NotNull final ExportOperation.Result exportResult) {
+    public static void logExportResult(@NotNull final Logger logger, @NotNull final ExportOperation.Result exportResult) {
         if (! logger.isInfoEnabled()) {
             // nothing to do if loglevel is not at least info
             return;
@@ -57,6 +68,41 @@ public enum AdvancedLogger {
     }
 
 
+    /**
+     * Logs the given {@code importResult} to the given logger. Only performed if the log level is at least INFO.
+     * A summary and some minor information will be logged to info. If loglevel DEBUG is enabled, detailed information
+     * including file handles will be logged.
+     * @param logger the logger the import result information will be logged to
+     * @param importResult the result to be logged
+     * @param storeAgent the store agent to use
+     */
+    public static void logImportResult(@NotNull final Logger logger, @NotNull final ImportOperation.Result importResult, @Nullable final StoreAgent storeAgent) {
+        if (!logger.isInfoEnabled()) {
+            // nothing to do if loglevel is not at least info
+            return;
+        }
+        logger.info("Import done.");
+
+        // log details and fetch summary
+        logger.info("== DETAILS ==");
+        final String created = logElements(logger, createElementExportInfo(storeAgent, importResult, importResult.getCreatedElements(), ExportStatus.CREATED, null),                              "Created elements");
+        final String updated = logElements(logger, createElementExportInfo(storeAgent, importResult, importResult.getUpdatedElements(), ExportStatus.UPDATED, importResult.getModifiedProjectProperties()),      "Updated elements");
+        final String deleted = logElements(logger, createElementExportInfo(storeAgent, importResult, importResult.getDeletedElements(), ExportStatus.DELETED, null),                              "Deleted elements");
+        final String moved = logElements(logger, createElementExportInfo(storeAgent, importResult, importResult.getMovedElements(), ExportStatus.MOVED, null),                                    "  Moved elements");
+        final String lostAndFound = logElements(logger, createElementExportInfo(storeAgent, importResult, importResult.getLostAndFoundElements(), ExportStatus.MOVED, null),                      "L&Found elements");
+        final String importProblems = logImportProblems(logger, storeAgent, importResult);
+
+        // log summary
+        logger.info("== SUMMARY ==");
+        logger.info(created);
+        logger.info(updated);
+        logger.info(deleted);
+        logger.info(moved);
+        logger.info(lostAndFound);
+        logger.info(importProblems);
+    }
+
+    @NotNull
     static String logElements(@NotNull final Logger logger, @NotNull final Collection<ExportInfo> elements, @NotNull final String description) {
         if (logger.isInfoEnabled()) {
             // re-organize result
@@ -71,7 +117,7 @@ public enum AdvancedLogger {
             }
             headline.append(count);
 
-            logger.info(headline.toString());
+            logger.info(headline.toString().trim());
 
             // log elements
             logProjectProperties(logger, reorganizedResult.getProjectProperties());
@@ -80,6 +126,37 @@ public enum AdvancedLogger {
             return buildSummary(elements, description, reorganizedResult);
         }
         return "";
+    }
+
+    @SuppressWarnings("squid:S134")
+    @NotNull
+    static String logImportProblems(@NotNull final Logger logger, @Nullable final StoreAgent storeAgent, @NotNull final ImportOperation.Result importResult) {
+        // sort problems and create text
+        final List<ImportOperation.Problem> problems = getSortedProblems(importResult);
+        final StringBuilder builder = new StringBuilder();
+        final String description = new StringBuilder("Problems: ").append(problems.size()).toString();
+        logger.info(description);
+        for (final ImportOperation.Problem problem : problems) {
+            builder.setLength(0);
+            builder.append(" - store: ").append(problem.getStoreType());
+            // we need a store agent
+            if(storeAgent != null) {
+                final Store store = storeAgent.getStore(problem.getStoreType());
+                final IDProvider storeElement = store.getStoreElement(problem.getNodeId());
+                // we need a store element
+                if (storeElement != null) {
+                    if (storeElement.hasUid()) {
+                        builder.append(" | uid: ").append(storeElement.getUid());
+                    } else {
+                        builder.append(" | name: ").append(storeElement.getName());
+                    }
+                }
+            }
+            builder.append(" | reason: ").append(problem.getMessage());
+            final String text = builder.toString();
+            logger.info(text);
+        }
+        return getSpacedString(8) + "Problems: " + importResult.getProblems().size();
     }
 
     @NotNull
@@ -368,7 +445,6 @@ public enum AdvancedLogger {
 
     static String getFilesStringForElement(@NotNull final ExportInfo element) {
         final StringBuilder builder = new StringBuilder();
-        builder.append(" (");
         String fileString = getFilesString("created files", element.getCreatedFileHandles());
         fileString += getFilesString("updated files", element.getUpdatedFileHandles());
         fileString += getFilesString("deleted files", element.getDeletedFileHandles());
@@ -376,8 +452,11 @@ public enum AdvancedLogger {
         if (!fileString.isEmpty()) {
             fileString = fileString.substring(0, fileString.length() - 1);
         }
-        builder.append(fileString);
-        builder.append(" )");
+        if(!fileString.isEmpty()) {
+            builder.append(" (");
+            builder.append(fileString);
+            builder.append(" )");
+        }
         return builder.toString();
     }
 
@@ -394,6 +473,87 @@ public enum AdvancedLogger {
             stringBuilder.append(" ");
         }
         return stringBuilder.toString();
+    }
+
+    @SuppressWarnings("squid:S1166")
+    @NotNull
+    private static Collection<ExportInfo> createElementExportInfo(@Nullable final StoreAgent storeAgent, @NotNull final ImportOperation.Result importResult, @NotNull final Collection<BasicElementInfo> elements, @NotNull final ExportStatus status, @Nullable final EnumSet<PropertiesTransportOptions.ProjectPropertyType> projectProperties) {
+        final Collection<ExportInfo> result = new ArrayList<>();
+        // add store elements to result
+        for (final BasicElementInfo element : elements) {
+            result.add(new ElementImportInfoImpl(status, element));
+        }
+        // add project properties to result
+        if (projectProperties != null) {
+            for (final PropertiesTransportOptions.ProjectPropertyType property : projectProperties) {
+                result.add(new PropertyTypeImportInfoImpl(ExportStatus.UPDATED, property));
+            }
+        }
+        // add entities to result
+        if (status == ExportStatus.CREATED || status == ExportStatus.UPDATED) {
+            addEntitiesToResult(storeAgent, ExportStatus.CREATED, result, importResult.getCreatedEntities());
+            try {
+                addEntitiesToResult(storeAgent, ExportStatus.UPDATED, result, importResult.getUpdatedEntities());
+            } catch (final Exception ignore) {
+                // ignore
+                // -> we need to catch this because of 5.2.R8
+                // --> ImportOperation.Result#getUpdatedEntities() does not exist in versions < 5.2.800
+            }
+        }
+        return result;
+    }
+
+    private static void addEntitiesToResult(@Nullable final StoreAgent storeAgent, @NotNull final ExportStatus status, final Collection<ExportInfo> result, final Set<BasicEntityInfo> entities) {
+        final Map<String, Collection<BasicEntityInfo>> schema2EntityMap = new HashMap<>();
+        // add all entities to a map with key: SchemaUid#EntityType
+        for (final BasicEntityInfo entity : entities) {
+            final String key = entity.getSchemaUid() + "#" + entity.getEntityType();
+            final Collection<BasicEntityInfo> collection = schema2EntityMap.computeIfAbsent(key, k -> new ArrayList<>());
+            collection.add(entity);
+        }
+        // create EntityTypeImportInfos based on the collection
+        for (final Collection<BasicEntityInfo> collection : schema2EntityMap.values()) {
+            // ignore empty collections
+            if (collection.isEmpty()) {
+                continue;
+            }
+            // get the first entity
+            final BasicEntityInfo firstEntity = collection.iterator().next();
+            if (storeAgent != null) {
+                // get the schema ... (if the store is a templateStore --> may not be the case in tests)
+                final Store store = storeAgent.getStore(Store.Type.TEMPLATESTORE);
+                Schema schema = null;
+                if (store instanceof TemplateStoreRoot) {
+                    final TemplateStoreRoot templateStore = (TemplateStoreRoot) store;
+                    schema = templateStore.getSchemes().getSchemaByName(firstEntity.getSchemaUid());
+                }
+                final EntityTypeImportInfoImpl entityTypeImportInfo;
+                // ... and create a new EntityTypeImportInfo
+                if (schema != null) {
+                    entityTypeImportInfo = new EntityTypeImportInfoImpl(status, new BasicElementInfoImpl(Store.Type.TEMPLATESTORE, TagNames.SCHEMA, schema.getId(), schema.getUid(), schema.getRevision().getId()), firstEntity.getEntityType(), collection);
+                } else {
+                    entityTypeImportInfo = new EntityTypeImportInfoImpl(status, new BasicElementInfoImpl(Store.Type.TEMPLATESTORE, TagNames.SCHEMA, -1, firstEntity.getSchemaUid(), -1), firstEntity.getEntityType(), collection);
+                }
+                result.add(entityTypeImportInfo);
+            } else {
+                // fallback --> used for tests only
+                final EntityTypeImportInfoImpl entityTypeImportInfo = new EntityTypeImportInfoImpl(status, new BasicElementInfoImpl(Store.Type.TEMPLATESTORE, TagNames.SCHEMA, -1, firstEntity.getSchemaUid(), -1), firstEntity.getEntityType(), collection);
+                result.add(entityTypeImportInfo);
+            }
+        }
+    }
+
+    @NotNull
+    private static List<ImportOperation.Problem> getSortedProblems(@NotNull final ImportOperation.Result importResult) {
+        final List<ImportOperation.Problem> problems = new ArrayList<>(importResult.getProblems());
+        problems.sort((problem1, problem2) -> {
+            int result = problem1.getStoreType().compareTo(problem2.getStoreType());
+            if (result == 0) {
+                result = (int) (problem1.getNodeId() - problem2.getNodeId());
+            }
+            return result;
+        });
+        return problems;
     }
 
     private static class ElementExportInfoComparator implements Comparator<ElementExportInfo>, Serializable {

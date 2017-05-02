@@ -79,7 +79,7 @@ public class ExportResult extends SimpleResult<ExportOperation.Result> {
      * @see de.espirit.firstspirit.store.access.nexport.ExportInfo
      */
     private void logElementBasedResult(@NotNull final ExportOperation.Result exportResult) {
-        AdvancedLogger.logResult(LOGGER, exportResult);
+        AdvancedLogger.logExportResult(LOGGER, exportResult);
     }
 
 
