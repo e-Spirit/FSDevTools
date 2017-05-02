@@ -54,20 +54,15 @@ import static com.espirit.moddev.IntegrationTest.PROJECT_NAME_WITH_DB;
 public class ExportCommandIT extends AbstractIntegrationTest {
 
     @Test
-    public void parameterLessCommandCreatesFiles() throws Exception {
+    public void parameterLessCommandDoesntExport() throws Exception {
         ExportCommand command = new ExportCommand();
         command.setProject(PROJECT_NAME);
         initContextWithDefaultConfiguration(command);
 
         ExportResult result = command.call();
 
-        // This value depends on the used test project
-        Assert.assertTrue(result.get().getCreatedFiles().size() > 0);
-        Assert.assertTrue("Export folder TemplateStore not found.", containsSubDirectory(getFirstSpiritFileSyncFolder(testFolder.getRoot()), "TemplateStore"));
-        Assert.assertTrue("Export folder PageStore not found.", containsSubDirectory(getFirstSpiritFileSyncFolder(testFolder.getRoot()), "PageStore"));
-        Assert.assertTrue("Export folder MediaStore not found.", containsSubDirectory(getFirstSpiritFileSyncFolder(testFolder.getRoot()), "MediaStore"));
-        Assert.assertTrue("Export folder GlobalStore not found.", containsSubDirectory(getFirstSpiritFileSyncFolder(testFolder.getRoot()), "GlobalStore"));
-        Assert.assertTrue("Export folder SiteStore not found.", containsSubDirectory(getFirstSpiritFileSyncFolder(testFolder.getRoot()), "SiteStore"));
+        Assert.assertTrue("Exporting with an empty identifier list is permitted", result.isError());
+        Assert.assertTrue(result.getError() instanceof IllegalArgumentException);
     }
 
     @Test

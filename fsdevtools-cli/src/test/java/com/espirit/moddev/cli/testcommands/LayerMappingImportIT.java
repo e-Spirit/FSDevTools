@@ -24,12 +24,14 @@ package com.espirit.moddev.cli.testcommands;
 
 import com.espirit.moddev.IntegrationTest;
 import com.espirit.moddev.cli.CliContextImpl;
+import com.espirit.moddev.cli.api.parsing.identifier.RootNodeIdentifier;
 import com.espirit.moddev.cli.commands.ImportCommand;
 import com.espirit.moddev.cli.commands.export.ExportCommand;
 import com.espirit.moddev.cli.results.ImportResult;
 
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.access.project.ProjectScriptContext;
+import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.store.access.nexport.operations.ImportOperation;
 
 import org.junit.Rule;
@@ -162,6 +164,7 @@ public class LayerMappingImportIT extends AbstractIntegrationTest {
         exportCommand.setContext(context);
         exportCommand.setSynchronizationDirectory(exportSyncDirectory.getPath());
         exportCommand.setIncludeProjectProperties(true);
+        exportCommand.addIdentifier(new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE).toString());
         final com.espirit.moddev.cli.results.ExportResult exportResult = exportCommand.call();
         assertFalse("Export not successful! Take a look at " + exportSyncDirectory.getPath(), exportResult.isError());
 

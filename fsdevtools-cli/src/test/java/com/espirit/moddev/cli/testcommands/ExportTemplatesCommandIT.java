@@ -61,6 +61,7 @@ public class ExportTemplatesCommandIT extends AbstractIntegrationTest {
         ExportCommand command = new ExportCommand();
 
         command.addIdentifier("page:homepage");
+        command.setProject(PROJECT_NAME);
         initContextWithDefaultConfiguration(command);
 
         Assert.assertTrue(command.getIdentifiers().contains(new UidIdentifier(UidMapping.PAGE, "homepage")));
