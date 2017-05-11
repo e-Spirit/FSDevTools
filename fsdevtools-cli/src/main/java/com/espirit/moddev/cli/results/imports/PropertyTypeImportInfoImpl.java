@@ -4,8 +4,6 @@ import de.espirit.common.util.HashCodeBuilder;
 import de.espirit.firstspirit.store.access.nexport.ExportStatus;
 import de.espirit.firstspirit.store.access.nexport.PropertyTypeExportInfo;
 import de.espirit.firstspirit.transport.PropertiesTransportOptions.ProjectPropertyType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * ImportInfo for project properties. This class <b>may</b> be included in newer versions of FirstSpirit.
@@ -15,12 +13,16 @@ public class PropertyTypeImportInfoImpl extends ImportInfoImpl implements Proper
 
     private final ProjectPropertyType _propertyType;
 
-    public PropertyTypeImportInfoImpl(@NotNull final ExportStatus exportStatus, @Nullable final ProjectPropertyType propertyType) {
-        super(Type.PROJECT_PROPERTY, exportStatus);
+    /**
+     * Constructor
+     * @param status the status
+     * @param propertyType the property type
+     */
+    public PropertyTypeImportInfoImpl(final ExportStatus status, final ProjectPropertyType propertyType) {
+        super(Type.PROJECT_PROPERTY, status);
         _propertyType = propertyType;
     }
 
-    @Nullable
     @Override
     public ProjectPropertyType getPropertyType() {
         return _propertyType;

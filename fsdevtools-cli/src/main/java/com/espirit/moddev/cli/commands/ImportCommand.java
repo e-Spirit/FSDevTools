@@ -112,7 +112,7 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
             LOGGER.info("importing from directory '{}'", syncDirStr);
             final ImportOperation.Result result = importOperation.perform(getSynchronizationDirectory(syncDirStr));
             return new ImportResult(getContext().requireSpecialist(StoreAgent.TYPE), result);
-        } catch (final Exception e) { //NOSONAR
+        } catch (@SuppressWarnings("squid:S2221") final Exception e) {
             return new ImportResult(e);
         }
     }
