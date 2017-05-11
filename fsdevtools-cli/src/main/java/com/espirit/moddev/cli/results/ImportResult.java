@@ -28,7 +28,6 @@ import de.espirit.firstspirit.access.store.BasicElementInfo;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.common.TsFeatures;
 import de.espirit.firstspirit.store.access.nexport.operations.ImportOperation;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Set;
@@ -47,7 +46,7 @@ public class ImportResult extends SimpleResult<ImportOperation.Result> {
      * @param storeAgent a store agent
      * @param result Result produced by the command
      */
-    public ImportResult(@NotNull final StoreAgent storeAgent, ImportOperation.Result result) {
+    public ImportResult(final StoreAgent storeAgent, ImportOperation.Result result) {
         super(result);
         _storeAgent = storeAgent;
     }

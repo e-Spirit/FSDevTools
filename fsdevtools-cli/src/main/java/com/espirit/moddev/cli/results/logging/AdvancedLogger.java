@@ -20,8 +20,6 @@ import de.espirit.firstspirit.store.access.nexport.io.ExportInfoFileHandle;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 import de.espirit.firstspirit.store.access.nexport.operations.ImportOperation;
 import de.espirit.firstspirit.transport.PropertiesTransportOptions;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.Serializable;
@@ -45,7 +43,7 @@ public enum AdvancedLogger {
      * @param logger the logger the export result information will be logged to
      * @param exportResult the result to be loggged
      */
-    public static void logExportResult(@NotNull final Logger logger, @NotNull final ExportOperation.Result exportResult) {
+    public static void logExportResult(final Logger logger, final ExportOperation.Result exportResult) {
         if (! logger.isInfoEnabled()) {
             // nothing to do if loglevel is not at least info
             return;
@@ -76,7 +74,7 @@ public enum AdvancedLogger {
      * @param importResult the result to be logged
      * @param storeAgent the store agent to use
      */
-    public static void logImportResult(@NotNull final Logger logger, @NotNull final ImportOperation.Result importResult, @Nullable final StoreAgent storeAgent) {
+    public static void logImportResult(final Logger logger, final ImportOperation.Result importResult, final StoreAgent storeAgent) {
         if (!logger.isInfoEnabled()) {
             // nothing to do if loglevel is not at least info
             return;
@@ -102,8 +100,7 @@ public enum AdvancedLogger {
         logger.info(importProblems);
     }
 
-    @NotNull
-    static String logElements(@NotNull final Logger logger, @NotNull final Collection<ExportInfo> elements, @NotNull final String description) {
+    static String logElements(final Logger logger, final Collection<ExportInfo> elements, final String description) {
         if (logger.isInfoEnabled()) {
             // re-organize result
             final ReorganizedResult reorganizedResult = new ReorganizedResult(elements);
@@ -128,9 +125,7 @@ public enum AdvancedLogger {
         return "";
     }
 
-    @SuppressWarnings("squid:S134")
-    @NotNull
-    static String logImportProblems(@NotNull final Logger logger, @Nullable final StoreAgent storeAgent, @NotNull final ImportOperation.Result importResult) {
+    static String logImportProblems(final Logger logger, final StoreAgent storeAgent, final ImportOperation.Result importResult) {
         // sort problems and create text
         final List<ImportOperation.Problem> problems = getSortedProblems(importResult);
         final StringBuilder builder = new StringBuilder();
@@ -139,19 +134,7 @@ public enum AdvancedLogger {
         for (final ImportOperation.Problem problem : problems) {
             builder.setLength(0);
             builder.append(" - store: ").append(problem.getStoreType());
-            // we need a store agent
-            if(storeAgent != null) {
-                final Store store = storeAgent.getStore(problem.getStoreType());
-                final IDProvider storeElement = store.getStoreElement(problem.getNodeId());
-                // we need a store element
-                if (storeElement != null) {
-                    if (storeElement.hasUid()) {
-                        builder.append(" | uid: ").append(storeElement.getUid());
-                    } else {
-                        builder.append(" | name: ").append(storeElement.getName());
-                    }
-                }
-            }
+            problemAppendUidOrName(builder, storeAgent, problem);
             builder.append(" | reason: ").append(problem.getMessage());
             final String text = builder.toString();
             logger.info(text);
@@ -159,8 +142,23 @@ public enum AdvancedLogger {
         return getSpacedString(8) + "Problems: " + importResult.getProblems().size();
     }
 
-    @NotNull
-    static String buildSummary(@NotNull final Collection<ExportInfo> allElements, @NotNull final String description, @NotNull final ReorganizedResult reorganizedResult) {
+    private static void problemAppendUidOrName(final StringBuilder builder, final StoreAgent storeAgent, final ImportOperation.Problem problem) {
+        // we need a store agent
+        if (storeAgent != null) {
+            final Store store = storeAgent.getStore(problem.getStoreType());
+            final IDProvider storeElement = store.getStoreElement(problem.getNodeId());
+            // we need a store element
+            if (storeElement != null) {
+                if (storeElement.hasUid()) {
+                    builder.append(" | uid: ").append(storeElement.getUid());
+                } else {
+                    builder.append(" | name: ").append(storeElement.getName());
+                }
+            }
+        }
+    }
+
+    static String buildSummary(final Collection<ExportInfo> allElements, final String description, final ReorganizedResult reorganizedResult) {
         final StringBuilder summaryOutput = new StringBuilder();
         summaryOutput.append(description);
         summaryOutput.append(": ");
@@ -182,14 +180,14 @@ public enum AdvancedLogger {
         return summaryOutput.toString();
     }
 
-    static void appendProjectPropertySummary(@NotNull final StringBuilder stringBuilder, @NotNull final Collection<PropertyTypeExportInfo> projectProperties) {
+    static void appendProjectPropertySummary(final StringBuilder stringBuilder, final Collection<PropertyTypeExportInfo> projectProperties) {
         if (!projectProperties.isEmpty()) {
             stringBuilder.append(" | project properties: ");
             stringBuilder.append(projectProperties.size());
         }
     }
 
-    static void appendStoreElementSummary(@NotNull final StringBuilder stringBuilder, @NotNull final Map<Store.Type, List<ElementExportInfo>> storeElements) {
+    static void appendStoreElementSummary(final StringBuilder stringBuilder, final Map<Store.Type, List<ElementExportInfo>> storeElements) {
         if (!storeElements.isEmpty()) {
             // count total elements
             int totalStoreElements = 0;
@@ -215,7 +213,7 @@ public enum AdvancedLogger {
         }
     }
 
-    static void appendEntityTypeSummary(@NotNull final StringBuilder stringBuilder, @NotNull final Collection<EntityTypeExportInfo> entityTypes) {
+    static void appendEntityTypeSummary(final StringBuilder stringBuilder, final Collection<EntityTypeExportInfo> entityTypes) {
         if (!entityTypes.isEmpty()) {
             // count total entities
             int totalEntityCount = 0;
@@ -237,7 +235,7 @@ public enum AdvancedLogger {
     }
 
 
-    static void logProjectProperties(Logger logger, @NotNull final Collection<PropertyTypeExportInfo> projectProperties) {
+    static void logProjectProperties(Logger logger, final Collection<PropertyTypeExportInfo> projectProperties) {
         if (logger.isInfoEnabled()) {
             // ignore empty properties
             if (projectProperties.isEmpty()) {
@@ -264,7 +262,7 @@ public enum AdvancedLogger {
     }
 
     @SuppressWarnings("squid:S2629")
-    static void logStoreElements(Logger logger, @NotNull final Map<Store.Type, List<ElementExportInfo>> storeElements) {
+    static void logStoreElements(Logger logger, final Map<Store.Type, List<ElementExportInfo>> storeElements) {
         if (! logger.isInfoEnabled()) {
             // nothing to do if loglevel is not at least info
             return;
@@ -303,7 +301,7 @@ public enum AdvancedLogger {
 
 
     @SuppressWarnings("squid:S2629")
-    static void logEntityTypes(Logger logger, @NotNull final Collection<EntityTypeExportInfo> entityTypes) {
+    static void logEntityTypes(Logger logger, final Collection<EntityTypeExportInfo> entityTypes) {
         if (! logger.isInfoEnabled()) {
             return;
         }
@@ -348,7 +346,7 @@ public enum AdvancedLogger {
     }
 
 
-    static void logFileInfos(Logger logger, @NotNull final ExportInfo exportInfo, @NotNull final String extraIndent) {
+    static void logFileInfos(Logger logger, final ExportInfo exportInfo, final String extraIndent) {
         if (!logger.isDebugEnabled()) {
             return;
         }
@@ -367,7 +365,7 @@ public enum AdvancedLogger {
     /**
      * Logging file handles will only be performed in LogLevel DEBUG.
      */
-    static void logFileHandles(Logger logger, @NotNull final Collection<ExportInfoFileHandle> fileHandles, @NotNull final String description, @NotNull final String extraIndent) {
+    static void logFileHandles(Logger logger, final Collection<ExportInfoFileHandle> fileHandles, final String description, final String extraIndent) {
        if (logger.isDebugEnabled()) {
             // ignore empty sets
             if (fileHandles.isEmpty()) {
@@ -391,7 +389,7 @@ public enum AdvancedLogger {
     /**
      * Logging file handles will only be performed in LogLevel DEBUG.
      */
-    static void logMovedFileHandles(Logger logger, @NotNull final Collection<Pair<ExportInfoFileHandle, ExportInfoFileHandle>> fileHandles, @NotNull final String extraIndent) {
+    static void logMovedFileHandles(final Logger logger, final Collection<Pair<ExportInfoFileHandle, ExportInfoFileHandle>> fileHandles, final String extraIndent) {
         if (logger.isDebugEnabled()) {
             // ignore empty sets
             if (fileHandles.isEmpty()) {
@@ -420,7 +418,7 @@ public enum AdvancedLogger {
      * @param string the split to convert
      * @return the converted string in camel-case-notation (e.g. PAGE_STORE --> PageStore)
      */
-    static String toCamelCase(@NotNull final String regex, @NotNull final String string) {
+    static String toCamelCase(final String regex, final String string) {
         final String[] split = string.split(regex);
         StringBuilder nameBuf = new StringBuilder();
         for (final String text : split) {
@@ -436,14 +434,14 @@ public enum AdvancedLogger {
         return nameBuf.toString();
     }
 
-    static String getDirectoryForFile(@NotNull final ExportInfoFileHandle fileHandle) {
+    static String getDirectoryForFile(final ExportInfoFileHandle fileHandle) {
         final String path = fileHandle.getPath();
         final String name = fileHandle.getName();
         final int lastIndexOf = path.lastIndexOf(name);
         return path.isEmpty() || lastIndexOf < 1 ? path : path.substring(0, lastIndexOf - 1);
     }
 
-    static String getFilesStringForElement(@NotNull final ExportInfo element) {
+    static String getFilesStringForElement(final ExportInfo element) {
         final StringBuilder builder = new StringBuilder();
         String fileString = getFilesString("created files", element.getCreatedFileHandles());
         fileString += getFilesString("updated files", element.getUpdatedFileHandles());
@@ -460,7 +458,7 @@ public enum AdvancedLogger {
         return builder.toString();
     }
 
-    static String getFilesString(@NotNull final String description, @NotNull final Collection<?> collection) {
+    static String getFilesString(final String description, final Collection<?> collection) {
         if (collection.isEmpty()) {
             return "";
         }
@@ -475,9 +473,8 @@ public enum AdvancedLogger {
         return stringBuilder.toString();
     }
 
-    @SuppressWarnings("squid:S1166")
-    @NotNull
-    private static Collection<ExportInfo> createElementExportInfo(@Nullable final StoreAgent storeAgent, @NotNull final ImportOperation.Result importResult, @NotNull final Collection<BasicElementInfo> elements, @NotNull final ExportStatus status, @Nullable final EnumSet<PropertiesTransportOptions.ProjectPropertyType> projectProperties) {
+
+    private static Collection<ExportInfo> createElementExportInfo(final StoreAgent storeAgent, final ImportOperation.Result importResult, final Collection<BasicElementInfo> elements, final ExportStatus status, final EnumSet<PropertiesTransportOptions.ProjectPropertyType> projectProperties) {
         final Collection<ExportInfo> result = new ArrayList<>();
         // add store elements to result
         for (final BasicElementInfo element : elements) {
@@ -494,7 +491,7 @@ public enum AdvancedLogger {
             addEntitiesToResult(storeAgent, ExportStatus.CREATED, result, importResult.getCreatedEntities());
             try {
                 addEntitiesToResult(storeAgent, ExportStatus.UPDATED, result, importResult.getUpdatedEntities());
-            } catch (final Exception ignore) {
+            } catch (@SuppressWarnings("squid:S1166") final Exception ignore) {
                 // ignore
                 // -> we need to catch this because of 5.2.R8
                 // --> ImportOperation.Result#getUpdatedEntities() does not exist in versions < 5.2.800
@@ -503,7 +500,7 @@ public enum AdvancedLogger {
         return result;
     }
 
-    private static void addEntitiesToResult(@Nullable final StoreAgent storeAgent, @NotNull final ExportStatus status, final Collection<ExportInfo> result, final Set<BasicEntityInfo> entities) {
+    private static void addEntitiesToResult(final StoreAgent storeAgent, final ExportStatus status, final Collection<ExportInfo> result, final Set<BasicEntityInfo> entities) {
         final Map<String, Collection<BasicEntityInfo>> schema2EntityMap = new HashMap<>();
         // add all entities to a map with key: SchemaUid#EntityType
         for (final BasicEntityInfo entity : entities) {
@@ -543,8 +540,7 @@ public enum AdvancedLogger {
         }
     }
 
-    @NotNull
-    private static List<ImportOperation.Problem> getSortedProblems(@NotNull final ImportOperation.Result importResult) {
+    private static List<ImportOperation.Problem> getSortedProblems(final ImportOperation.Result importResult) {
         final List<ImportOperation.Problem> problems = new ArrayList<>(importResult.getProblems());
         problems.sort((problem1, problem2) -> {
             int result = problem1.getStoreType().compareTo(problem2.getStoreType());

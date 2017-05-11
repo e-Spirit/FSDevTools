@@ -5,7 +5,6 @@ import de.espirit.firstspirit.access.database.BasicEntityInfo;
 import de.espirit.firstspirit.access.store.BasicElementInfo;
 import de.espirit.firstspirit.store.access.nexport.EntityTypeExportInfo;
 import de.espirit.firstspirit.store.access.nexport.ExportStatus;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -20,8 +19,15 @@ public class EntityTypeImportInfoImpl extends ImportInfoImpl implements EntityTy
     private final String _entityType;
     private final Collection<BasicEntityInfo> _entities;
 
-    public EntityTypeImportInfoImpl(@NotNull final ExportStatus exportStatus, @NotNull final BasicElementInfo schema, @NotNull final String entityType, @NotNull final Collection<BasicEntityInfo> entities) {
-        super(Type.ENTITY_TYPE, exportStatus);
+    /**
+     * Constructor
+     * @param status the status
+     * @param schema the schema
+     * @param entityType the entity type
+     * @param entities the collection of entities
+     */
+    public EntityTypeImportInfoImpl(final ExportStatus status, final BasicElementInfo schema, final String entityType, final Collection<BasicEntityInfo> entities) {
+        super(Type.ENTITY_TYPE, status);
         _schema = schema;
         _entityType = entityType;
         _entities = Collections.unmodifiableCollection(entities);
@@ -32,7 +38,6 @@ public class EntityTypeImportInfoImpl extends ImportInfoImpl implements EntityTy
         return _schema.getUid() + '#' + getEntityType();
     }
 
-    @NotNull
     @Override
     public BasicElementInfo getSchema() {
         return _schema;
@@ -43,8 +48,8 @@ public class EntityTypeImportInfoImpl extends ImportInfoImpl implements EntityTy
         return _entityType;
     }
 
-    @NotNull
     @Override
+    @SuppressWarnings("squid:S2384")
     public Collection<BasicEntityInfo> getEntities() {
         return _entities;
     }

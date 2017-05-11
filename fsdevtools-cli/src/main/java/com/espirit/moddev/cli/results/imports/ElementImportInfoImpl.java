@@ -4,7 +4,6 @@ import de.espirit.common.util.HashCodeBuilder;
 import de.espirit.firstspirit.access.store.BasicElementInfo;
 import de.espirit.firstspirit.store.access.nexport.ElementExportInfo;
 import de.espirit.firstspirit.store.access.nexport.ExportStatus;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * ImportInfo for store elements. This class <b>may</b> be included in newer versions of FirstSpirit.
@@ -14,12 +13,16 @@ public class ElementImportInfoImpl extends ImportInfoImpl implements ElementExpo
 
     private final BasicElementInfo _elementInfo;
 
-    public ElementImportInfoImpl(@NotNull final ExportStatus exportStatus, @NotNull final BasicElementInfo elementInfo) {
-        super(Type.ELEMENT, exportStatus);
+    /**
+     * Constructor
+     * @param status the status
+     * @param elementInfo the element info
+     */
+    public ElementImportInfoImpl(final ExportStatus status, final BasicElementInfo elementInfo) {
+        super(Type.ELEMENT, status);
         _elementInfo = elementInfo;
     }
 
-    @NotNull
     @Override
     public BasicElementInfo getElementInfo() {
         return _elementInfo;

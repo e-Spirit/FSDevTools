@@ -26,7 +26,6 @@ import com.espirit.moddev.cli.results.logging.AdvancedLogger;
 import de.espirit.firstspirit.common.TsFeatures;
 import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
@@ -78,7 +77,7 @@ public class ExportResult extends SimpleResult<ExportOperation.Result> {
      *
      * @see de.espirit.firstspirit.store.access.nexport.ExportInfo
      */
-    private void logElementBasedResult(@NotNull final ExportOperation.Result exportResult) {
+    private void logElementBasedResult(final ExportOperation.Result exportResult) {
         AdvancedLogger.logExportResult(LOGGER, exportResult);
     }
 
@@ -86,7 +85,7 @@ public class ExportResult extends SimpleResult<ExportOperation.Result> {
     /**
      * Logs a result based on file handles.
      */
-    private void logFileHandleBasedResult(@NotNull final ExportOperation.Result exportResult) {
+    private void logFileHandleBasedResult(final ExportOperation.Result exportResult) {
         logFileChanges(exportResult.getUpdatedFiles(), "updated files");
         logFileChanges(exportResult.getCreatedFiles(), "created files");
         logFileChanges(exportResult.getDeletedFiles(), "deleted files");
