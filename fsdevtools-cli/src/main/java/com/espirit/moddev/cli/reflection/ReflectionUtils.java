@@ -26,7 +26,6 @@ import com.espirit.moddev.cli.api.annotations.Description;
 import com.espirit.moddev.cli.api.command.Command;
 
 import org.apache.log4j.Logger;
-import org.jetbrains.annotations.Nullable;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
@@ -144,7 +143,6 @@ public final class ReflectionUtils {
      * @param commandClass the class to retrieve the method from
      * @return the description method, or null if none is found
      */
-    @Nullable
     static Method getStaticDescriptionMethod(Class<? extends Command> commandClass) {
         Reflections reflections = new Reflections(new ConfigurationBuilder()
                                                       .setUrls(ClasspathHelper.forClass(commandClass))

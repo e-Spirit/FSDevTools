@@ -6,7 +6,6 @@ import de.espirit.firstspirit.store.access.nexport.EntityTypeExportInfo;
 import de.espirit.firstspirit.store.access.nexport.ExportInfo;
 import de.espirit.firstspirit.store.access.nexport.PropertyTypeExportInfo;
 import de.espirit.firstspirit.transport.PropertiesTransportOptions;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -21,14 +20,14 @@ class ReorganizedResult {
      */
     private boolean _containsFsMeta;
 
-    ReorganizedResult(@NotNull final Collection<ExportInfo> elements) {
+    ReorganizedResult(final Collection<ExportInfo> elements) {
         _projectProperties = new HashMap<>();
         _storeElements = new TreeMap<>();
         _entityTypes = new ArrayList<>();
         reorganize(elements);
     }
 
-    private void reorganize(@NotNull final Collection<ExportInfo> elements) {
+    private void reorganize(final Collection<ExportInfo> elements) {
         for (final ExportInfo element : elements) {
             switch (element.getType()) {
                 case PROJECT_PROPERTY: {
@@ -63,17 +62,14 @@ class ReorganizedResult {
         }
     }
 
-    @NotNull
     Collection<PropertyTypeExportInfo> getProjectProperties() {
         return _projectProperties.values();
     }
 
-    @NotNull
     Map<Store.Type, List<ElementExportInfo>> getStoreElements() {
         return _storeElements;
     }
 
-    @NotNull
     Collection<EntityTypeExportInfo> getEntityTypes() {
         return Collections.unmodifiableCollection(_entityTypes);
     }

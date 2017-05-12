@@ -33,6 +33,7 @@ import com.github.rvesse.airline.annotations.OptionType;
 import com.github.rvesse.airline.annotations.help.Examples;
 
 import de.espirit.firstspirit.agency.OperationAgent;
+import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ImportOperation;
 import de.espirit.firstspirit.transport.LayerMapper;
 
@@ -102,16 +103,16 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
     public ImportResult call() {
         LOGGER.info("Importing...");
         try {
-            final OperationAgent opertionAgent = getContext().requireSpecialist(OperationAgent.TYPE);
-            final ImportOperation importOperation = opertionAgent.getOperation(ImportOperation.TYPE);
+            final OperationAgent operationAgent = getContext().requireSpecialist(OperationAgent.TYPE);
+            final ImportOperation importOperation = operationAgent.getOperation(ImportOperation.TYPE);
             importOperation.setIgnoreEntities(dontCreateEntities);
             importOperation.setRevisionComment(getImportComment());
             importOperation.setLayerMapper(configureLayerMapper());
             final String syncDirStr = getSynchronizationDirectoryString();
             LOGGER.info("importing from directory '{}'", syncDirStr);
             final ImportOperation.Result result = importOperation.perform(getSynchronizationDirectory(syncDirStr));
-            return new ImportResult(result);
-        } catch (final Exception e) { //NOSONAR
+            return new ImportResult(getContext().requireSpecialist(StoreAgent.TYPE), result);
+        } catch (@SuppressWarnings("squid:S2221") final Exception e) {
             return new ImportResult(e);
         }
     }
