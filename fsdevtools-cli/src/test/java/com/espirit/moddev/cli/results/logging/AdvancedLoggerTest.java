@@ -689,7 +689,7 @@ public class AdvancedLoggerTest {
             final String expected =
                     "[INFO] Import done."                                                               + NEW_LINE +
                     "[INFO] == DETAILS =="                                                              + NEW_LINE +
-                    "[INFO] Created elements: 17"                                                       + NEW_LINE +
+                    "[INFO] Created elements: 12"                                                       + NEW_LINE +
                     "[INFO] - store elements: 7"                                                        + NEW_LINE +
                     "[INFO]  - pagestore: 1"                                                            + NEW_LINE +
                     "[INFO]   - Page: 'created_PAGE_1'             "                                    + NEW_LINE +
@@ -701,21 +701,16 @@ public class AdvancedLoggerTest {
                     "[INFO]   - FormatTemplate: 'created_FORMATTEMPLATE_7'"                             + NEW_LINE +
                     "[INFO]   - LinkTemplate: 'created_LINKTEMPLATE_5'"                                 + NEW_LINE +
                     "[INFO]   - PageTemplates: 'created_PAGETEMPLATES_4'"                               + NEW_LINE +
-                    "[INFO] - entity types: 10                      ( schemas: 3, entities: 12 )"       + NEW_LINE +
-                    "[INFO]  - Schema: 'schema1'                    ( entity types: 4, entities: 6 )"   + NEW_LINE +
+                    "[INFO] - entity types: 5                       ( schemas: 3, entities: 6 )"        + NEW_LINE +
+                    "[INFO]  - Schema: 'schema1'                    ( entity types: 2, entities: 3 )"   + NEW_LINE +
                     "[INFO]   - EntityType: 'created_entityType2'   ( entities: 1 )"                    + NEW_LINE +
                     "[INFO]   - EntityType: 'created_entityType1'   ( entities: 2 )"                    + NEW_LINE +
-                    "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 2 )"                    + NEW_LINE +
-                    "[INFO]   - EntityType: 'updated_entityType2'   ( entities: 1 )"                    + NEW_LINE +
-                    "[INFO]  - Schema: 'schema2'                    ( entity types: 4, entities: 4 )"   + NEW_LINE +
+                    "[INFO]  - Schema: 'schema2'                    ( entity types: 2, entities: 2 )"   + NEW_LINE +
                     "[INFO]   - EntityType: 'created_entityType2'   ( entities: 1 )"                    + NEW_LINE +
                     "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )"                    + NEW_LINE +
-                    "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 1 )"                    + NEW_LINE +
-                    "[INFO]   - EntityType: 'updated_entityType2'   ( entities: 1 )"                    + NEW_LINE +
-                    "[INFO]  - Schema: 'schema3'                    ( entity types: 2, entities: 2 )"   + NEW_LINE +
+                    "[INFO]  - Schema: 'schema3'                    ( entity types: 1, entities: 1 )"   + NEW_LINE +
                     "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )"                    + NEW_LINE +
-                    "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 1 )"                    + NEW_LINE +
-                    "[INFO] Updated elements: 26"                                                       + NEW_LINE +
+                    "[INFO] Updated elements: 21"                                                       + NEW_LINE +
                     "[INFO] - project properties: 9"                                                    + NEW_LINE +
                     "[INFO]  - Common                              "                                    + NEW_LINE +
                     "[INFO]  - Resolutions                         "                                    + NEW_LINE +
@@ -737,19 +732,14 @@ public class AdvancedLoggerTest {
                     "[INFO]   - FormatTemplate: 'updated_FORMATTEMPLATE_7'"                             + NEW_LINE +
                     "[INFO]   - LinkTemplate: 'updated_LINKTEMPLATE_5'"                                 + NEW_LINE +
                     "[INFO]   - PageTemplates: 'updated_PAGETEMPLATES_4'"                               + NEW_LINE +
-                    "[INFO] - entity types: 10                      ( schemas: 3, entities: 12 )"       + NEW_LINE +
-                    "[INFO]  - Schema: 'schema1'                    ( entity types: 4, entities: 6 )"   + NEW_LINE +
-                    "[INFO]   - EntityType: 'created_entityType2'   ( entities: 1 )"                    + NEW_LINE +
-                    "[INFO]   - EntityType: 'created_entityType1'   ( entities: 2 )"                    + NEW_LINE +
+                    "[INFO] - entity types: 5                       ( schemas: 3, entities: 6 )"        + NEW_LINE +
+                    "[INFO]  - Schema: 'schema1'                    ( entity types: 2, entities: 3 )"   + NEW_LINE +
                     "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 2 )"                    + NEW_LINE +
                     "[INFO]   - EntityType: 'updated_entityType2'   ( entities: 1 )"                    + NEW_LINE +
-                    "[INFO]  - Schema: 'schema2'                    ( entity types: 4, entities: 4 )"   + NEW_LINE +
-                    "[INFO]   - EntityType: 'created_entityType2'   ( entities: 1 )"                    + NEW_LINE +
-                    "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )"                    + NEW_LINE +
+                    "[INFO]  - Schema: 'schema2'                    ( entity types: 2, entities: 2 )"   + NEW_LINE +
                     "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 1 )"                    + NEW_LINE +
                     "[INFO]   - EntityType: 'updated_entityType2'   ( entities: 1 )"                    + NEW_LINE +
-                    "[INFO]  - Schema: 'schema3'                    ( entity types: 2, entities: 2 )"   + NEW_LINE +
-                    "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )"                    + NEW_LINE +
+                    "[INFO]  - Schema: 'schema3'                    ( entity types: 1, entities: 1 )"   + NEW_LINE +
                     "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 1 )"                    + NEW_LINE +
                     "[INFO] Deleted elements: 7"                                                        + NEW_LINE +
                     "[INFO] - store elements: 7"                                                        + NEW_LINE +
@@ -793,8 +783,8 @@ public class AdvancedLoggerTest {
                     "[INFO]  - store: MEDIASTORE | uid: mediastore_uid_1932 | reason: Medium invalid"                                                                                           + NEW_LINE +
                     "[INFO]  - store: TEMPLATESTORE | name: templatestore_name_1231 | reason: GOM is invalid"                                                                                   + NEW_LINE +
                     "[INFO] == SUMMARY =="                                                                                                                                                      + NEW_LINE +
-                    "[INFO] Created elements: 17 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 10 ( schemas: 3, entities: 12 )"                         + NEW_LINE +
-                    "[INFO] Updated elements: 26 | project properties: 9 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 10 ( schemas: 3, entities: 12 )" + NEW_LINE +
+                    "[INFO] Created elements: 12 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 5 ( schemas: 3, entities: 6 )"                           + NEW_LINE +
+                    "[INFO] Updated elements: 21 | project properties: 9 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 5 ( schemas: 3, entities: 6 )"   + NEW_LINE +
                     "[INFO] Deleted elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
                     "[INFO]   Moved elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
                     "[INFO] L&Found elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
@@ -810,7 +800,7 @@ public class AdvancedLoggerTest {
             final String expected =
                     "[INFO] Import done."                                            + NEW_LINE +
                     "[INFO] == DETAILS =="                                           + NEW_LINE +
-                    "[INFO] Created elements: 17"                                    + NEW_LINE +
+                    "[INFO] Created elements: 12"                                    + NEW_LINE +
                     "[INFO] - store elements: 7"                                     + NEW_LINE +
                     "[INFO]  - pagestore: 1"                                         + NEW_LINE +
                     "[INFO]   - Page: 'created_PAGE_1'             "                 + NEW_LINE +
@@ -822,21 +812,16 @@ public class AdvancedLoggerTest {
                     "[INFO]   - FormatTemplate: 'created_FORMATTEMPLATE_7'"          + NEW_LINE +
                     "[INFO]   - LinkTemplate: 'created_LINKTEMPLATE_5'"              + NEW_LINE +
                     "[INFO]   - PageTemplates: 'created_PAGETEMPLATES_4'"            + NEW_LINE +
-                    "[INFO] - entity types: 10                      ( schemas: 3, entities: 12 )"       + NEW_LINE +
-                    "[INFO]  - Schema: 'schema1'                    ( entity types: 4, entities: 6 )"   + NEW_LINE +
+                    "[INFO] - entity types: 5                       ( schemas: 3, entities: 6 )"       + NEW_LINE +
+                    "[INFO]  - Schema: 'schema1'                    ( entity types: 2, entities: 3 )"   + NEW_LINE +
                     "[INFO]   - EntityType: 'created_entityType2'   ( entities: 1 )" + NEW_LINE +
                     "[INFO]   - EntityType: 'created_entityType1'   ( entities: 2 )" + NEW_LINE +
-                    "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 2 )" + NEW_LINE +
-                    "[INFO]   - EntityType: 'updated_entityType2'   ( entities: 1 )" + NEW_LINE +
-                    "[INFO]  - Schema: 'schema2'                    ( entity types: 4, entities: 4 )"   + NEW_LINE +
+                    "[INFO]  - Schema: 'schema2'                    ( entity types: 2, entities: 2 )"   + NEW_LINE +
                     "[INFO]   - EntityType: 'created_entityType2'   ( entities: 1 )" + NEW_LINE +
                     "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )" + NEW_LINE +
-                    "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 1 )" + NEW_LINE +
-                    "[INFO]   - EntityType: 'updated_entityType2'   ( entities: 1 )" + NEW_LINE +
-                    "[INFO]  - Schema: 'schema3'                    ( entity types: 2, entities: 2 )"   + NEW_LINE +
+                    "[INFO]  - Schema: 'schema3'                    ( entity types: 1, entities: 1 )"   + NEW_LINE +
                     "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )" + NEW_LINE +
-                    "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 1 )" + NEW_LINE +
-                    "[INFO] Updated elements: 26"                                    + NEW_LINE +
+                    "[INFO] Updated elements: 21"                                    + NEW_LINE +
                     "[INFO] - project properties: 9"                                 + NEW_LINE +
                     "[INFO]  - Common                              "                 + NEW_LINE +
                     "[INFO]  - Resolutions                         "                 + NEW_LINE +
@@ -858,19 +843,14 @@ public class AdvancedLoggerTest {
                     "[INFO]   - FormatTemplate: 'updated_FORMATTEMPLATE_7'"          + NEW_LINE +
                     "[INFO]   - LinkTemplate: 'updated_LINKTEMPLATE_5'"              + NEW_LINE +
                     "[INFO]   - PageTemplates: 'updated_PAGETEMPLATES_4'"            + NEW_LINE +
-                    "[INFO] - entity types: 10                      ( schemas: 3, entities: 12 )"       + NEW_LINE +
-                    "[INFO]  - Schema: 'schema1'                    ( entity types: 4, entities: 6 )"   + NEW_LINE +
-                    "[INFO]   - EntityType: 'created_entityType2'   ( entities: 1 )" + NEW_LINE +
-                    "[INFO]   - EntityType: 'created_entityType1'   ( entities: 2 )" + NEW_LINE +
+                    "[INFO] - entity types: 5                       ( schemas: 3, entities: 6 )"        + NEW_LINE +
+                    "[INFO]  - Schema: 'schema1'                    ( entity types: 2, entities: 3 )"   + NEW_LINE +
                     "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 2 )" + NEW_LINE +
                     "[INFO]   - EntityType: 'updated_entityType2'   ( entities: 1 )" + NEW_LINE +
-                    "[INFO]  - Schema: 'schema2'                    ( entity types: 4, entities: 4 )"   + NEW_LINE +
-                    "[INFO]   - EntityType: 'created_entityType2'   ( entities: 1 )" + NEW_LINE +
-                    "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )" + NEW_LINE +
+                    "[INFO]  - Schema: 'schema2'                    ( entity types: 2, entities: 2 )"   + NEW_LINE +
                     "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 1 )" + NEW_LINE +
                     "[INFO]   - EntityType: 'updated_entityType2'   ( entities: 1 )" + NEW_LINE +
-                    "[INFO]  - Schema: 'schema3'                    ( entity types: 2, entities: 2 )"   + NEW_LINE +
-                    "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )" + NEW_LINE +
+                    "[INFO]  - Schema: 'schema3'                    ( entity types: 1, entities: 1 )"   + NEW_LINE +
                     "[INFO]   - EntityType: 'updated_entityType1'   ( entities: 1 )" + NEW_LINE +
                     "[INFO] Deleted elements: 7"                                     + NEW_LINE +
                     "[INFO] - store elements: 7"                                     + NEW_LINE +
@@ -914,8 +894,8 @@ public class AdvancedLoggerTest {
                     "[INFO]  - store: MEDIASTORE | uid: mediastore_uid_1932 | reason: Medium invalid"                                                                                           + NEW_LINE +
                     "[INFO]  - store: TEMPLATESTORE | name: templatestore_name_1231 | reason: GOM is invalid"                                                                                   + NEW_LINE +
                     "[INFO] == SUMMARY =="                                                                                                                                                      + NEW_LINE +
-                    "[INFO] Created elements: 17 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 10 ( schemas: 3, entities: 12 )"                         + NEW_LINE +
-                    "[INFO] Updated elements: 26 | project properties: 9 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 10 ( schemas: 3, entities: 12 )" + NEW_LINE +
+                    "[INFO] Created elements: 12 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 5 ( schemas: 3, entities: 6 )"                           + NEW_LINE +
+                    "[INFO] Updated elements: 21 | project properties: 9 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 5 ( schemas: 3, entities: 6 )"   + NEW_LINE +
                     "[INFO] Deleted elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
                     "[INFO]   Moved elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
                     "[INFO] L&Found elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
