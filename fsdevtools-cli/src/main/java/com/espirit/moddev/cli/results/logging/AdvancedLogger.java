@@ -487,8 +487,9 @@ public enum AdvancedLogger {
             }
         }
         // add entities to result
-        if (status == ExportStatus.CREATED || status == ExportStatus.UPDATED) {
+        if (status == ExportStatus.CREATED) {
             addEntitiesToResult(storeAgent, ExportStatus.CREATED, result, importResult.getCreatedEntities());
+        } else if (status == ExportStatus.UPDATED) {
             try {
                 addEntitiesToResult(storeAgent, ExportStatus.UPDATED, result, importResult.getUpdatedEntities());
             } catch (@SuppressWarnings("squid:S1166") final Exception ignore) {
