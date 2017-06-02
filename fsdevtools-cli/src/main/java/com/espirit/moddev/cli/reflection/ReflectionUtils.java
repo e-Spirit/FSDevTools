@@ -146,6 +146,7 @@ public final class ReflectionUtils {
     static Method getStaticDescriptionMethod(Class<? extends Command> commandClass) {
         Reflections reflections = new Reflections(new ConfigurationBuilder()
                                                       .setUrls(ClasspathHelper.forClass(commandClass))
+                                                      .filterInputsBy(in -> in.endsWith("java") || in.endsWith("class"))
                                                       .setScanners(new MethodAnnotationsScanner())
         );
 
