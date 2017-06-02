@@ -19,8 +19,8 @@ import scala.language.{implicitConversions, postfixOps}
 
 class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
   def fixture = new {
-    lazy val propsWithVersionBuilder        = ServerProperties.builder().firstSpiritJar(new File("foobar"))
-    lazy val minimalServerPropertiesBuilder = propsWithVersionBuilder.serverInstall(false)
+    lazy val propsWithVersionBuilder        = ServerProperties.builder().serverRoot(new File(System.getProperty("fsServerRoot")).toPath).firstSpiritJar(new File("foobar"))
+    lazy val minimalServerPropertiesBuilder = propsWithVersionBuilder
     lazy val minimalServerProperties        = minimalServerPropertiesBuilder.build()
     lazy val propsWithVersion               = propsWithVersionBuilder.build()
   }
@@ -191,7 +191,7 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
   }
 
   def assertNoServerRunning(props: ServerProperties): Unit = {
-    assert(!NativeServerRunner.testConnection(props))
+    assert(new NativeServerRunner(props).stop())
   }
 
   "NativeServerRunner.startFirstSpiritServer" should {
@@ -218,20 +218,6 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
   "NativeServerRunner" should {
     "start a FirstSpirit server, see that it's running, and shut it down afterwards" taggedAs IntegrationTest in {
       val props = fixture.minimalServerPropertiesBuilder.clearFirstSpiritJars().build()
-      assertNoServerRunning(props)
-      val runner = new NativeServerRunner(props)
-      val timer  = Timer()
-      assert(!runner.isRunning)
-      assert(runner.start())
-      info(s"starting took $timer.")
-      assert(runner.isRunning)
-      info("shutting down now")
-      assert(runner.stop())
-      assert(!runner.isRunning)
-      info(s"shutdown succeeded after $timer")
-    }
-    "start a FirstSpirit server, see that it's running, and shut it down afterwards also for connection mode SOCKET_MODE" taggedAs IntegrationTest in {
-      val props = fixture.propsWithVersionBuilder.serverInstall(false).clearFirstSpiritJars().build()
       assertNoServerRunning(props)
       val runner = new NativeServerRunner(props)
       val timer  = Timer()

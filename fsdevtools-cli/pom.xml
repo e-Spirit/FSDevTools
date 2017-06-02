@@ -27,7 +27,6 @@
         <artifactId>fsdevtools-parent</artifactId>
         <groupId>com.espirit.moddev.fsdevtools</groupId>
         <version>${ci.version}</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <name>Command Line Interface</name>
@@ -43,6 +42,16 @@
         <dependency>
             <groupId>com.espirit.moddev.fsdevtools</groupId>
             <artifactId>fsdevtools-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.espirit.moddev.fsdevtools</groupId>
+            <artifactId>fsdevtools-serverrunner</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>de.espirit.firstspirit</groupId>
+            <artifactId>fs-access</artifactId>
         </dependency>
 
         <dependency>
@@ -271,7 +280,6 @@
         <profile>
             <id>integration-test</id>
             <properties>
-                <fsServerRoot>${project.build.directory}/firstspirit-server</fsServerRoot>
                 <fsServerPort>8000</fsServerPort>
                 <fsServerGcLog>true</fsServerGcLog>
                 <fsServerInstall>true</fsServerInstall>
@@ -405,10 +413,10 @@
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <version>2.11</version>
                         <configuration>
+                            <systemPropertyVariables>
+                                <fsServerRoot>${fsServerRoot}</fsServerRoot>
+                            </systemPropertyVariables>
                             <groups>com.espirit.moddev.IntegrationTest</groups>
-                            <!--<includes> -->
-                            <!--<include>**/*Test.java</include> -->
-                            <!--</includes> -->
                             <excludes>
                                 <exclude>**/*Test.java</exclude>
                             </excludes>
@@ -435,6 +443,11 @@
                 <dependency>
                     <groupId>de.espirit.firstspirit</groupId>
                     <artifactId>server</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>de.espirit.firstspirit</groupId>
+                    <artifactId>wrapper</artifactId>
                     <scope>provided</scope>
                 </dependency>
                 <dependency>

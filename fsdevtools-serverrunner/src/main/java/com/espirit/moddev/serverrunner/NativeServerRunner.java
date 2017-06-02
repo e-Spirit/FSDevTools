@@ -1,9 +1,11 @@
 package com.espirit.moddev.serverrunner;
 
-
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,6 +19,11 @@ import java.util.function.Supplier;
 
 import static java.util.stream.Collectors.joining;
 
+/**
+ * This class is an implementation of a ServerRunner. It provides the functionality to control a FirstSpirit Server
+ *
+ * @author e-Spirit AG
+ */
 @Slf4j
 public class NativeServerRunner implements ServerRunner {
 
@@ -29,6 +36,12 @@ public class NativeServerRunner implements ServerRunner {
     protected Optional<FutureTask<Void>> serverTask = Optional.empty();
     protected ExecutorService executor = Executors.newCachedThreadPool();
 
+    /**
+     * Creates and initializes the ServerRunner with given ServerProperties.
+     *
+     * @param serverProperties needed to determine, which server to start/stop. May not be null!
+     * @throws NullPointerException
+     */
     public NativeServerRunner(final ServerProperties serverProperties) {
         this.serverProperties = Objects.requireNonNull(serverProperties);
     }
@@ -37,7 +50,7 @@ public class NativeServerRunner implements ServerRunner {
      * Waits for a given condition, retrying if necessary, blocking the thread in between.
      *
      * @param condition the condition to be checked
-     * @param waitTime  the time to wait between queries to `condition`
+     * @param waitTime the time to wait between queries to `condition`
      * @param triesLeft the number of tries that should be used at max until the condition needs to be true. Should be larger than 0.
      * @return the value of the last call of `condition`.
      */
@@ -87,12 +100,12 @@ public class NativeServerRunner implements ServerRunner {
         }
 
         //either update an existing conf file, or if none exists, use the one from the class path
-        try (BufferedReader reader = confFile.toFile().exists() ?
-                                     Files.newBufferedReader(confFile) :
-                                     new BufferedReader(
-                                         new InputStreamReader(NativeServerRunner.class.getResourceAsStream("/" + confFile.getFileName().toString()),
-                                                               StandardCharsets.UTF_8)
-                                     )) {
+        try (BufferedReader reader = confFile.toFile().exists()
+            ? Files.newBufferedReader(confFile)
+            : new BufferedReader(
+                new InputStreamReader(NativeServerRunner.class.getResourceAsStream("/" + confFile.getFileName().toString()),
+                    StandardCharsets.UTF_8)
+            )) {
             final Properties properties = new Properties();
             properties.load(reader);
             properties.setProperty("HTTP_PORT", String.valueOf(serverProperties.getServerPort()));
@@ -159,7 +172,7 @@ public class NativeServerRunner implements ServerRunner {
      * Boots a FirstSpirit server, according to configuration
      *
      * @param serverProperties The server properties to be used
-     * @param executor         The executor where tasks should be run on. Needs to supply at least 2 threads at the same time.
+     * @param executor The executor where tasks should be run on. Needs to supply at least 2 threads at the same time.
      * @return a cancellable task that is already running
      * @throws java.io.IOException on file system access problems
      */
@@ -226,6 +239,7 @@ public class NativeServerRunner implements ServerRunner {
     private static boolean stopFirstSpiritServer(final ServerProperties serverProperties, final Optional<FutureTask<Void>> serverTask) {
         final ProcessBuilder builder = new ProcessBuilder(prepareStop(serverProperties));
         builder.redirectErrorStream(true);
+        log.info("Stopping FirstSpirit Server...");
         try {
             final Process process = builder.start();
             new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8)).lines()
@@ -235,7 +249,11 @@ public class NativeServerRunner implements ServerRunner {
             return false;
         }
         //ensure the FS lock file is removed (indicates that the server is still running if the lock file is still there)
-        waitForCondition(() -> !serverProperties.getLockFile().exists(), Duration.ofSeconds(1), 15);
+        if (isServerLocal(serverProperties)) {
+            waitForCondition(() -> !serverProperties.getLockFile().exists(), serverProperties.getRetryWait(), serverProperties.getRetryCount());
+        } else {
+            log.warn("WARNING: ", "Server is not local! After stopping it the server may still be running for some time.");
+        }
         try {
             Thread.sleep(500);
         } catch (final InterruptedException ie) {
@@ -243,6 +261,41 @@ public class NativeServerRunner implements ServerRunner {
         }
         serverTask.ifPresent(x -> x.cancel(true)); //kill running process if it did not die itself
         return !testConnection(serverProperties);
+    }
+
+    private static boolean isServerLocal(final ServerProperties serverProperties) {
+        if ("localhost".equals(serverProperties.getServerHost())) {
+            return true;
+        }
+
+        return getAllLocalAddresses().stream().anyMatch(
+            (localAddress) -> serverProperties.getServerHost().equals(localAddress.getHostAddress())
+            || serverProperties.getServerHost().equals(localAddress.getHostName()));
+    }
+
+    private static List<InetAddress> getAllLocalAddresses() {
+        final List<InetAddress> addresses = new ArrayList<>();
+        try {
+            final Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+            while (networkInterfaces.hasMoreElements()) {
+                final NetworkInterface currentInterface = networkInterfaces.nextElement();
+                if (currentInterface.isUp()) { //interface must be up to get addresses
+                    Enumeration<InetAddress> interfaceAddresses = currentInterface.getInetAddresses();
+                    getLocalAddressesFromInterface(interfaceAddresses, addresses);
+                }
+            }
+            return addresses;
+        } catch (final SocketException ex) {
+            log.debug("Error while working with network interfaces " + ex);
+        }
+        return addresses;
+    }
+
+    private static void getLocalAddressesFromInterface(final Enumeration<InetAddress> interfaceAddresses, final List<InetAddress> addresses) {
+        while (interfaceAddresses.hasMoreElements()) {
+            final InetAddress addr = interfaceAddresses.nextElement();
+            addresses.add(addr);
+        }
     }
 
     @Override
@@ -256,11 +309,11 @@ public class NativeServerRunner implements ServerRunner {
                 }
 
                 serverRunning = waitForCondition(() -> {
-                                                     log.info("Trying to connect to FirstSpirit server...");
-                                                     return testConnection(serverProperties);
-                                                 }, serverProperties.getThreadWait(),
-                                                 serverProperties.getConnectionRetryCount()
-                                                 + 1); //retry count means we try one more time allover
+                    log.info("Trying to connect to FirstSpirit server...");
+                    return testConnection(serverProperties);
+                }, serverProperties.getRetryWait(),
+                    serverProperties.getRetryCount()
+                    + 1); //retry count means we try one more time allover
             } catch (final IOException ioe) {
                 //nothing to do, server will not be running in this case, normal behaviour following
                 log.error(PROBLEM_READING, ioe);

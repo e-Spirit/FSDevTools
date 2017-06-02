@@ -27,7 +27,7 @@ class ServerPropertiesSpec extends UnitSpec with GeneratorDrivenPropertyChecks w
   }
   "ServerProperties constructor, parameter serverInstall" should "use a default parameter if given null" in {
     noException should be thrownBy
-      new ServerProperties(Paths.get(""), null, 1, true, true, new util.ArrayList(), Duration.ofMillis(0), "", 0, fakeJars, null).isServerInstall
+      new ServerProperties(Paths.get(""), null, 1, true, null, new util.ArrayList(), Duration.ofMillis(0), "", 0, fakeJars, null).isServerInstall
   }
 
   def objWithPort(port: Int) =
@@ -53,21 +53,21 @@ class ServerPropertiesSpec extends UnitSpec with GeneratorDrivenPropertyChecks w
     assert(ServerProperties.builder().firstSpiritJar(new File("foobar")).build().getServerPort == 8000)
   }
 
-  def objWithThreadWait(threadWait: Duration) =
-    new ServerProperties(Paths.get(""), null, 1, true, true, new util.ArrayList(), threadWait, "", 0, fakeJars, null)
+  def objWithRetryWait(retryWait: Duration) =
+    new ServerProperties(Paths.get(""), null, 1, true, true, new util.ArrayList(), retryWait, "", 0, fakeJars, null)
 
-  "ServerProperties constructor, parameter threadWait" should "accept positive values" in {
-    forAll(arbitrary[Long] suchThat (_ >= 0)) { threadWait =>
-      objWithThreadWait(Duration.ofMillis(threadWait))
+  "ServerProperties constructor, parameter retryWait" should "accept positive values" in {
+    forAll(arbitrary[Long] suchThat (_ >= 0)) { retryWait =>
+      objWithRetryWait(Duration.ofMillis(retryWait))
     }
   }
   it should "reject a negative duration" in {
-    forAll(arbitrary[Long] suchThat (_ < 0)) { threadWait =>
-      an[IllegalArgumentException] should be thrownBy objWithThreadWait(Duration.ofMillis(threadWait))
+    forAll(arbitrary[Long] suchThat (_ < 0)) { retryWait =>
+      an[IllegalArgumentException] should be thrownBy objWithRetryWait(Duration.ofMillis(retryWait))
     }
   }
   it should "use a default parameter if given null" in {
-    assert(objWithThreadWait(null).getThreadWait > 0.milliseconds)
+    assert(objWithRetryWait(null).getRetryWait > 0.milliseconds)
   }
   "ServerProperties constructor, parameter serverAdminPw" should "use a default parameter if given null" in {
     assert(
@@ -78,17 +78,17 @@ class ServerPropertiesSpec extends UnitSpec with GeneratorDrivenPropertyChecks w
       new ServerProperties(Paths.get(""), null, 1, true, true, new util.ArrayList(), Duration.ofMillis(0), "", 0, fakeJars, null).getServerHost != null)
   }
 
-  def objWithConnectionRetryCount(connectionRetryCount: Int) =
-    new ServerProperties(Paths.get(""), null, 1, true, true, new util.ArrayList(), Duration.ofMillis(0), "", connectionRetryCount, fakeJars, null)
+  def objWithRetryCount(retryCount: Int) =
+    new ServerProperties(Paths.get(""), null, 1, true, true, new util.ArrayList(), Duration.ofMillis(0), "", retryCount, fakeJars, null)
 
-  "ServerProperties constructor, parameter connectionRetryCount" should "accept positive values" in {
-    forAll(arbitrary[Int] suchThat (_ >= 0)) { connectionRetryCount =>
-      assert(objWithConnectionRetryCount(connectionRetryCount).getConnectionRetryCount >= 0)
+  "ServerProperties constructor, parameter retryCount" should "accept positive values" in {
+    forAll(arbitrary[Int] suchThat (_ >= 0)) { retryCount =>
+      assert(objWithRetryCount(retryCount).getRetryCount >= 0)
     }
   }
   it should "reject negative values" in {
-    forAll(arbitrary[Int] suchThat (_ < 0)) { connectionRetryCount =>
-      an[IllegalArgumentException] should be thrownBy objWithConnectionRetryCount(connectionRetryCount)
+    forAll(arbitrary[Int] suchThat (_ < 0)) { retryCount =>
+      an[IllegalArgumentException] should be thrownBy objWithRetryCount(retryCount)
     }
   }
   "ServerProperties constructor, parameter serverOps" should "use a default parameter if given null" in {

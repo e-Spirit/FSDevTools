@@ -135,6 +135,9 @@
                             <junitxml>.</junitxml>
                             <filereports>WDF TestSuite.txt</filereports>
                             <tagsToExclude>IntegrationTest</tagsToExclude>
+                            <systemProperties>
+                                <fsServerRoot>${fsServerRoot}</fsServerRoot>
+                            </systemProperties>
                         </configuration>
                     </execution>
                 </executions>
@@ -210,12 +213,13 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.scalatest</groupId>
                         <artifactId>scalatest-maven-plugin</artifactId>
+                        <groupId>org.scalatest</groupId>
                         <version>1.0</version>
                         <executions>
                             <execution>
                                 <id>itest</id>
+                                <phase>integration-test</phase>
                                 <goals>
                                     <goal>test</goal>
                                 </goals>

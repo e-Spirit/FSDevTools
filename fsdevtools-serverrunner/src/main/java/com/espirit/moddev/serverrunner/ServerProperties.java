@@ -1,41 +1,34 @@
 package com.espirit.moddev.serverrunner;
 
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Singular;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.CodeSource;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Singular;
-
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
-import static org.hamcrest.Matchers.matchesPattern;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 @Getter
 public class ServerProperties {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerProperties.class);
 
     public enum ConnectionMode {
         HTTP_MODE(8000);
@@ -83,14 +76,14 @@ public class ServerProperties {
     private final String serverHost;
 
     /**
-     * how often should connections be retried?
+     * how often should action be retried?
      */
-    private final int connectionRetryCount;
+    private final int retryCount;
 
     /**
-     * how long should we wait for the first spirit server thread before we consider it dead (tried `connectionRetry` times)
+     * how long should we wait for the first spirit server before we consider it dead (tried `retryCount` times)
      */
-    private final Duration threadWait;
+    private final Duration retryWait;
 
     /**
      * Where the FirstSpirit jars are stored. You will need at least these jars to successfully start a server:
@@ -105,7 +98,7 @@ public class ServerProperties {
     private final List<File> firstSpiritJars;
 
     private final File lockFile;
-
+      
     /**
      * matches de/espirit/firstspirit/anything.jar on both unix and windows
      */
@@ -129,13 +122,13 @@ public class ServerProperties {
     ServerProperties(final Path serverRoot, final String serverHost, final Integer serverPort, final boolean serverGcLog,
                      final Boolean serverInstall,
                      @Singular final List<String> serverOps, final Duration threadWait, final String serverAdminPw,
-                     final Integer connectionRetryCount, @Singular final List<File> firstSpiritJars,
+                     final Integer retryCount, @Singular final List<File> firstSpiritJars,
                      final Supplier<Optional<InputStream>> licenseFileSupplier) {
         assertThatOrNull(serverPort, "serverPort", allOf(greaterThan(0), lessThanOrEqualTo(65536)));
         if (threadWait != null && threadWait.isNegative()) {
             throw new IllegalArgumentException("threadWait may not be negative.");
         }
-        assertThatOrNull(connectionRetryCount, "connectionRetryCount", greaterThanOrEqualTo(0));
+        assertThatOrNull(retryCount, "retryCount", greaterThanOrEqualTo(0));
 
         this.serverRoot = serverRoot == null ? Paths.get(System.getProperty("user.home"), "opt", "FirstSpirit") : serverRoot;
         this.serverGcLog = serverGcLog;
@@ -144,8 +137,8 @@ public class ServerProperties {
                          serverOps.stream().filter(Objects::nonNull)
                              .collect(Collectors.toCollection(ArrayList::new));
 
-        this.threadWait = threadWait == null ? Duration.ofSeconds(2) : threadWait;
-        this.connectionRetryCount = connectionRetryCount == null ? 45 : connectionRetryCount;
+        this.retryWait = threadWait == null ? Duration.ofSeconds(2) : threadWait;
+        this.retryCount = retryCount == null ? 45 : retryCount;
         this.serverAdminPw = serverAdminPw == null ? "Admin" : serverAdminPw;
         this.serverHost = serverHost == null || serverHost.isEmpty() ? "localhost" : serverHost;
         this.serverPort = serverPort == null ? this.mode.defaultPort : serverPort;
@@ -168,7 +161,7 @@ public class ServerProperties {
             throw new IllegalArgumentException("either serverHost or serverPort had an illegal format", e);
         }
     }
-
+    
     private static <T> void assertThat(final T obj, final String name, final Matcher<T> matcher) {
         if (!matcher.matches(obj)) {
             final StringDescription description = new StringDescription();
@@ -198,5 +191,71 @@ public class ServerProperties {
             throw new IllegalStateException(
                 "When the system classloader is not an UrlClassLoader, you need to manually specify the FirstSpirit jars.");
         }
+    }
+
+    /**
+     * Tries to get the FirstSpirit server jar and wrapper jar from the classpath.
+     * @return a list with one or two jar files or an empty list, if none of them can be found
+     */
+    public static List<File> getFirstSpiritJarsFromClasspath() {
+        List<File> result = new ArrayList<>();
+        getServerJarFileFromClasspath().ifPresent(result::add);
+        getWrapperJarFileFromClasspath().ifPresent(result::add);
+        getAccessJarFileFromClasspath().ifPresent(result::add);
+        return result;
+    }
+
+    public static Optional<File> getJarFileFromClasspath(String name, String classname) {
+    try {
+        File jarFile = getJarFileForClass(classname);
+        LOGGER.info("FirstSpirit "+name+" jar found in classpath: " + jarFile.getPath());
+        return Optional.of(jarFile);
+    } catch (ClassNotFoundException e) {
+        LOGGER.info("FirstSpirit "+name+" class not found! Is the "+name+" jar file on the classpath?", e);
+    } catch (URISyntaxException e) {
+        LOGGER.info("FirstSpirit "+name+" jar location couldn't be translated to an URI!", e);
+    }
+    return Optional.empty();
+}
+    
+    
+    /**
+     * Optionally gets the jar file of the FirstSpirit server, if the CMSServer class can be loaded
+     * with the current classpath.
+     * @return the server jar file or an empty {@link Optional}
+     */
+    public static Optional<File> getServerJarFileFromClasspath() {
+        return getJarFileFromClasspath("server", "de.espirit.firstspirit.server.CMSServer");
+    }
+
+    /**
+     * Optionally returns the jar file of the FirstSpirit wrapper, if the WrapperManager class can be
+     * loaded with the current classpath.
+     * @return the wrapper jar file or an empty {@link Optional}
+     */
+    public static Optional<File> getWrapperJarFileFromClasspath() {
+        return getJarFileFromClasspath("wrapper", "org.tanukisoftware.wrapper.WrapperManager");
+    }
+
+    /**
+     * Optionally returns the jar file of the FirstSpirit access API, if the ShutdownServer class can be
+     * loaded with the current classpath.
+     * @return the access jar file or an empty {@link Optional}
+     */
+    public static Optional<File> getAccessJarFileFromClasspath() {
+        return getJarFileFromClasspath("access", "de.espirit.firstspirit.server.ShutdownServer");
+    }
+
+    /**
+     * Tries to get the jar file of the class with the given fullQualifiedClassName string.
+     * @param fullQualifiedClassName the name of the class the jar file should be located for
+     * @return the corresponding jar file
+     * @throws ClassNotFoundException if the given class couldn't be found
+     * @throws URISyntaxException if the location of the class can not be converted to an URI
+     */
+    private static File getJarFileForClass(String fullQualifiedClassName) throws ClassNotFoundException, URISyntaxException {
+        Class<?> serverClass = Class.forName(fullQualifiedClassName);
+        CodeSource serverCodeSource = serverClass.getProtectionDomain().getCodeSource();
+        return new File(serverCodeSource.getLocation().toURI().getPath());
     }
 }

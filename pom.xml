@@ -59,6 +59,7 @@
         <asciidoctor.version>1.5.0</asciidoctor.version>
         <slf4j.version>1.7.12</slf4j.version>
         <modevtest.version>1.0.86</modevtest.version>
+        <fsServerRoot>${java.io.tmpdir}/FirstSpirit</fsServerRoot>
     </properties>
 
     <build>
@@ -321,6 +322,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.espirit.moddev.fsdevtools</groupId>
+                <artifactId>fsdevtools-serverrunner</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>de.espirit.firstspirit</groupId>
                 <artifactId>fs-access</artifactId>
                 <version>${firstspirit.version}</version>
@@ -329,6 +335,13 @@
                 <groupId>de.espirit.firstspirit</groupId>
                 <artifactId>server</artifactId>
                 <version>${firstspirit.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>de.espirit.firstspirit</groupId>
+                <artifactId>wrapper</artifactId>
+                <version>${firstspirit.wrapper.version}</version>
+                <scope>runtime</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
