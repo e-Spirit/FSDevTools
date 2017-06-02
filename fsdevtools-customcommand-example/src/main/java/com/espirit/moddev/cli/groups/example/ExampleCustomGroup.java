@@ -20,19 +20,14 @@
  *
  */
 
-package com.espirit.moddev.cli.testgroups.reflectiontest;
+package com.espirit.moddev.cli.groups.example;
 
-import com.espirit.moddev.cli.api.annotations.Description;
-import com.espirit.moddev.cli.commands.help.UnknownCommand;
+import com.espirit.moddev.cli.commands.example.ExampleCustomCommand;
 import com.github.rvesse.airline.annotations.Group;
 
 /**
- * @author e-Spirit AG
+ * Caution: Please provide a default command always for custom group classes.
  */
-@Group(name = "groupwithdescriptionannotation", defaultCommand = UnknownCommand.class)
-public final class GroupWithDescriptionAnnotation {
-    @Description
-    public static String getMyCustomDescription() {
-        return "xyz";
-    }
+@Group(name = "example-custom-group", defaultCommand = ExampleCustomCommand.class)
+public class ExampleCustomGroup {
 }

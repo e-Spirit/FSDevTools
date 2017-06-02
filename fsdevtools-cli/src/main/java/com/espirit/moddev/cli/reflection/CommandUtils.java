@@ -23,11 +23,15 @@
 package com.espirit.moddev.cli.reflection;
 
 import com.espirit.moddev.cli.api.command.Command;
-
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 
 import java.lang.reflect.Modifier;
+import java.net.URL;
+import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -43,19 +47,40 @@ public final class CommandUtils {
     private static final Logger LOGGER = Logger.getLogger(CommandUtils.class);
 
     private CommandUtils() {
-        // Not used
     }
 
     /**
-     * Scans the given package for classes that implement the {@link Command} interface. Ignores abstract classes.
+     * Scans the whole classpath for classes that implement the {@link Command} interface. Ignores abstract classes.
+     * Ignores furthermore everything that is not a .class file. Ignores every artifact from the Java runtime.
+     * Ingores the package com.github.rvesse.airline.annotations, because it contains malformed classes.
      *
-     * @param packageToScan the package, that should be scanned recursively
      * @return a set of matching classes
      */
-    public static Set<Class<? extends Command>> scanForCommandClasses(String packageToScan) {
-        String packageToScanForCommands = packageToScan;
-        LOGGER.debug("Scanning for command classes in package " + packageToScanForCommands);
-        Reflections reflections = new Reflections(packageToScanForCommands);
+    public static Set<Class<? extends Command>> scanForCommandClasses() {
+        FilterBuilder filter = new FilterBuilder().add(input -> input.endsWith(".class")).excludePackage("com.github.rvesse.airline.annotations");
+        Collection<URL> classPathUrls = ClasspathHelper.forJavaClassPath();
+        Collection<URL> classPathUrlsExceptJre = classPathUrls.stream().filter(url -> !url.toString().contains("/jre/lib")).collect(Collectors.toList());
+        ConfigurationBuilder configuration = new ConfigurationBuilder().addUrls(classPathUrlsExceptJre).filterInputsBy(filter);
+        return scanForCommandClasses(new Reflections(configuration));
+    }
+    /**
+     * Scans the given package for classes that implement the {@link Command} interface. Ignores abstract classes.
+     *
+     * @param packageToScanForCommands the package, that should be scanned recursively
+     * @return a set of matching classes
+     * @throws IllegalArgumentException if null or empty package string is passed
+     */
+    public static Set<Class<? extends Command>> scanForCommandClasses(String packageToScanForCommands) {
+        if(packageToScanForCommands == null || packageToScanForCommands.isEmpty()) {
+            throw new IllegalArgumentException("Don't pass a null or empty string! Use scanForCommandClasses() if you don't want to define a package");
+        }
+        FilterBuilder inputsFilter = new FilterBuilder().includePackage(packageToScanForCommands);
+        ConfigurationBuilder configuration = new ConfigurationBuilder().forPackages(packageToScanForCommands).filterInputsBy(inputsFilter);
+        Reflections reflections = new Reflections(configuration);
+        return scanForCommandClasses(reflections);
+    }
+
+    private static Set<Class<? extends Command>> scanForCommandClasses(Reflections reflections) {
         Set<Class<? extends Command>> commandClasses = reflections.getSubTypesOf(Command.class);
         commandClasses = commandClasses
             .stream()

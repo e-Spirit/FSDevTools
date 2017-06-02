@@ -65,19 +65,9 @@ import java.util.jar.JarFile;
  */
 public final class Cli {
 
-    /**
-     * Default package for classes that define cli command groups.
-     */
-    public static final String DEFAULT_GROUP_PACKAGE_NAME = "com.espirit.moddev.cli.groups";
-
-    /**
-     * Default package for classes that define cli commands.
-     */
-    public static final String DEFAULT_COMMAND_PACKAGE_NAME = "com.espirit.moddev.cli.commands";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(Cli.class);
-    private static Set<Class<? extends Command>> commandClasses = CommandUtils.scanForCommandClasses(DEFAULT_COMMAND_PACKAGE_NAME);
-    private static Set<Class<?>> groupClasses = GroupUtils.scanForGroupClasses(DEFAULT_GROUP_PACKAGE_NAME);
+    private static final Set<Class<? extends Command>> commandClasses = CommandUtils.scanForCommandClasses();
+    private static final Set<Class<?>> groupClasses = GroupUtils.scanForGroupClasses();
 
     private final Properties buildProperties;
     private final Properties gitProperties;
@@ -124,6 +114,7 @@ public final class Cli {
      *
      * @param args the input arguments
      */
+    @SuppressWarnings("squid:S1162")
     public void execute(final String[] args) throws Exception {
         setLoggingSystemProperties();
 
@@ -222,6 +213,7 @@ public final class Cli {
      *
      * @param command the command instance to execute
      */
+    @SuppressWarnings("squid:S1162")
     public void executeCommand(Command<Result> command) throws Exception {
         LOGGER.info("Executing " + command.getClass().getSimpleName());
         CliContext context = null;
@@ -229,6 +221,8 @@ public final class Cli {
             context = getCliContextOrNull(command);
             Result result = command.call();
             logResult(result);
+        } catch (ClassCastException e) {
+            LOGGER.trace("Cannot perform a cast - most likely because the command's call method returns Object as a result, instead of Result.", e);
         } catch (Exception e) {
             LOGGER.trace("Exception occurred during context initialization or command execution", e);
             throw e;
@@ -247,6 +241,7 @@ public final class Cli {
         }
     }
 
+    @SuppressWarnings("squid:S1162")
     private static void logResult(Result result) throws Exception{
         if (result != null) {
             if(result.isError()){
@@ -300,7 +295,7 @@ public final class Cli {
 
 
     /**
-     * A getter for command classes from the package specified by {@link #DEFAULT_COMMAND_PACKAGE_NAME} only. The classes are loaded at class-load
+     * A getter for command classes that can be found on the classpath. The classes are loaded at class-load
      * time only once.
      *
      * @return a reference to the actual list of loaded commands
@@ -310,9 +305,9 @@ public final class Cli {
     }
 
     /**
-     * Look up all class that define command classes in the package specified by {@link #DEFAULT_GROUP_PACKAGE_NAME}.
+     * Look up all class that define command classes in the classpath.
      *
-     * @return {@link java.util.Set} of all class that define command classes in the package specified by {@link #DEFAULT_GROUP_PACKAGE_NAME}
+     * @return {@link java.util.Set} of all class that define command classes in the classpath
      */
     public static Set<Class<?>> getGroupClasses() {
         return Collections.unmodifiableSet(groupClasses);

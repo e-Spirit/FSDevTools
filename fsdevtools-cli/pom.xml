@@ -96,6 +96,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.espirit.moddev.fsdevtools</groupId>
+            <artifactId>fsdevtools-customcommand-example</artifactId>
+            <version>${ci.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
