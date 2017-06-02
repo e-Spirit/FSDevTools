@@ -23,10 +23,14 @@
 package com.espirit.moddev.cli.reflection;
 
 import com.github.rvesse.airline.annotations.Group;
-
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 
+import java.net.URL;
+import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,6 +49,24 @@ public final class GroupUtils {
     }
 
     /**
+     * Scans the classpath for classes that are annotated with airline's {@link Group} annotation.
+     * Excludes the package com.github.rvesse.airline.annotations, because it contains a malformed
+     * command class that causes an exception when loaded.
+     *
+     * @return a set of matching classes
+     */
+    public static Set<Class<?>> scanForGroupClasses() {
+        FilterBuilder filter = new FilterBuilder().add(input -> input.endsWith(".class")).excludePackage("com.github.rvesse.airline.annotations");
+        Collection<URL> classPathUrls = ClasspathHelper.forJavaClassPath();
+        Collection<URL> classPathUrlsExceptJre = classPathUrls.stream().filter(url -> !url.toString().contains("/jre/lib")).collect(Collectors.toList());
+        ConfigurationBuilder configuration = new ConfigurationBuilder()
+                .addUrls(classPathUrlsExceptJre)
+                .filterInputsBy(filter);
+
+        return scanForGroupClasses(new Reflections(configuration));
+    }
+
+    /**
      * Scans the given package for classes that are annotated with airline's {@link Group} annotation.
      *
      * @param packageToScan the package, that should be scanned recursively
@@ -52,7 +74,10 @@ public final class GroupUtils {
      */
     public static Set<Class<?>> scanForGroupClasses(String packageToScan) {
         LOGGER.debug("Scanning for group classes in package " + packageToScan);
-        Reflections reflections = new Reflections(packageToScan);
+        return scanForGroupClasses(new Reflections(packageToScan));
+    }
+
+    private static Set<Class<?>> scanForGroupClasses(Reflections reflections) {
         Set<Class<?>> groupClasses = reflections.getTypesAnnotatedWith(Group.class);
 
         String commaSeparatedGroups = groupClasses.stream()

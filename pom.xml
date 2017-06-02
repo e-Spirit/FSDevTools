@@ -33,6 +33,7 @@
         <module>fsdevtools-cli</module>
         <module>fsdevtools-core</module>
         <module>fsdevtools-serverrunner</module>
+        <module>fsdevtools-customcommand-example</module>
     </modules>
     <packaging>pom</packaging>
     <name>FirstSpirit Development Tools</name>
