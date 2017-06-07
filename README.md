@@ -17,7 +17,7 @@ The following values are read from your environment with the corresponding key.
 
 - **fshost** - The FirstSpirit host address
 - **fsport** - The FirstSpirit port number.
-- **fsmode** - The FirstSpirit connection mode, either `HTTP` or `SOCKET`.
+- **fsmode** - The FirstSpirit connection mode, either `HTTP`, `HTTPS` or `SOCKET`.
 - **fsuser** - The FirstSpirit user account to authenticate the connection.
 - **fspwd** - The FirstSpirit user's password.
 - **fsproject** - The FirstSpirit project name.

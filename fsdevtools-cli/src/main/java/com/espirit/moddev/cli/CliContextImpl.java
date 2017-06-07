@@ -23,6 +23,7 @@
 package com.espirit.moddev.cli;
 
 import com.espirit.moddev.cli.api.CliContext;
+import com.espirit.moddev.cli.api.FsConnectionMode;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.exception.CliError;
 import com.espirit.moddev.cli.exception.CliException;
@@ -114,6 +115,10 @@ public class CliContextImpl implements CliContext {
      * @return a connection to a FirstSpirit server
      */
     protected Connection obtainConnection() {
+        if(FsConnectionMode.HTTPS == clientConfig.getConnectionMode()) {
+            ConnectionManager.setUseHttps(true);
+        }
+
         return ConnectionManager
             .getConnection(clientConfig.getHost(), clientConfig.getPort(), clientConfig.getConnectionMode().getCode(), clientConfig.getUser(),
                            clientConfig.getPassword());
