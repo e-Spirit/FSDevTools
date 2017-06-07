@@ -66,7 +66,7 @@ public class GlobalConfig implements Config {
     private String host;
 
     @Option(type = OptionType.GLOBAL, name = {"-c", "--conn-mode"}, description = "FirstSpirit connection mode. Default is HTTP.")
-    @AllowedRawValues(allowedValues = {"HTTP", "SOCKET"})
+    @AllowedRawValues(allowedValues = {"HTTP", "HTTPS", "SOCKET"})
     private FsConnectionMode fsMode;
 
     @Option(type = OptionType.GLOBAL, name = {"-port"}, description = "FirstSpirit host's port. Default is 8000.")

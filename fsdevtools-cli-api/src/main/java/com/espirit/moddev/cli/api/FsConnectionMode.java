@@ -38,6 +38,12 @@ public enum FsConnectionMode {
     HTTP(ConnectionManager.HTTP_MODE, Constants.DEFAULT_HTTP_PORT),
 
     /**
+     * Https connection mode.
+     * Uses {@link com.espirit.moddev.cli.api.FsConnectionMode.Constants#DEFAULT_HTTP_PORT} as default port.
+     */
+    HTTPS(ConnectionManager.HTTP_MODE, Constants.DEFAULT_HTTP_PORT),
+
+    /**
      * Socket connection mode.
      * Uses {@link com.espirit.moddev.cli.api.FsConnectionMode.Constants#DEFAULT_SOCKET_PORT} as default port.
      */

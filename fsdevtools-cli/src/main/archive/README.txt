@@ -24,7 +24,7 @@ For help about the usage please type 'fs-cli help' at command line.
 There is a possibility to override default FirstSpirit connection parameters with environment variables:
 - fshost:    The FirstSpirit host address. Default is localhost.
 - fsport:    The FirstSpirit port number. Default is 8000.
-- fsmode:    The FirstSpirit connection mode, either HTTP or SOCKET. Default is HTTP.
+- fsmode:    The FirstSpirit connection mode, either HTTP, HTTPS or SOCKET. Default is HTTP.
 - fsuser:    The FirstSpirit user account to authenticate the connection.
 - fspwd:     The FirstSpirit user's password.
 - fsproject: The FirstSpirit project name.
