@@ -66,7 +66,7 @@ public class Voilation {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Voilation)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         Voilation voilation = (Voilation) o;
