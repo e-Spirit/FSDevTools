@@ -23,13 +23,13 @@
 package com.espirit.moddev.cli.testgroups.reflectiontest;
 
 import com.espirit.moddev.cli.api.annotations.Description;
-import com.espirit.moddev.cli.commands.help.UnknownCommand;
+import com.espirit.moddev.cli.commands.help.DefaultCommand;
 import com.github.rvesse.airline.annotations.Group;
 
 /**
  * @author e-Spirit AG
  */
-@Group(name = "groupwithdescriptionannotation", defaultCommand = UnknownCommand.class)
+@Group(name = "groupwithdescriptionannotation", defaultCommand = DefaultCommand.class)
 public final class GroupWithDescriptionAnnotation {
     @Description
     public static String getMyCustomDescription() {

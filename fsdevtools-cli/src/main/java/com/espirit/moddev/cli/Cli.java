@@ -29,7 +29,7 @@ import com.espirit.moddev.cli.api.command.Command;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.api.result.Result;
 import com.espirit.moddev.cli.commands.help.HelpCommand;
-import com.espirit.moddev.cli.commands.help.UnknownCommand;
+import com.espirit.moddev.cli.commands.help.DefaultCommand;
 import com.espirit.moddev.cli.exception.FsLoggingBridge;
 import com.espirit.moddev.cli.exception.SystemExitHandler;
 import com.espirit.moddev.cli.reflection.CommandUtils;
@@ -267,7 +267,7 @@ public final class Cli {
 
     private static void addHelpCommand(CliBuilder<Command> builder) {
         builder.withCommand(HelpCommand.class);
-        builder.withDefaultCommand(UnknownCommand.class);
+        builder.withDefaultCommand(DefaultCommand.class);
     }
 
     /**
