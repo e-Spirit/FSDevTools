@@ -22,10 +22,10 @@
 
 package com.espirit.moddev.cli.commands.test;
 
+import com.espirit.moddev.cli.CliContextImpl;
 import com.espirit.moddev.cli.api.command.Command;
 import com.espirit.moddev.cli.api.result.Result;
 import com.espirit.moddev.cli.configuration.GlobalConfig;
-import com.espirit.moddev.cli.CliContextImpl;
 import com.espirit.moddev.cli.results.TestResult;
 
 
@@ -40,10 +40,20 @@ public class TestProjectCommand extends GlobalConfig implements Command {
     @Override
     @SuppressWarnings("squid:S2221")
     public Result call() {
-        try(CliContextImpl cliContext = new CliContextImpl(this)) {
+        try(final AutoCloseable context = create()) {
             return new TestResult(this);
         } catch (Exception e) {
             return new TestResult(this, e);
         }
+    }
+
+    protected AutoCloseable create() {
+        // Will open implicitly a FirstSpirit Connection 
+        return new CliContextImpl(this);
+    }
+
+    @Override
+    public boolean needsContext() {
+        return false;
     }
 }

@@ -53,6 +53,12 @@ public enum CliError {
     GENERAL_IO(CliErrorSevereness.MINOR),
 
     /**
+     * Indicates a configuration error.
+     * This error has a {@link com.espirit.moddev.cli.exception.CliErrorSevereness#MINOR} severity.
+     */
+    CONFIGURATION(CliErrorSevereness.MINOR),
+
+    /**
      * Indicates an unexpected error.
      *This error has a {@link com.espirit.moddev.cli.exception.CliErrorSevereness#FATAL} severity.
      */

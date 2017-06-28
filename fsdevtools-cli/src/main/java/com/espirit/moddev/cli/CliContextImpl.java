@@ -23,14 +23,12 @@
 package com.espirit.moddev.cli;
 
 import com.espirit.moddev.cli.api.CliContext;
-import com.espirit.moddev.cli.api.FsConnectionMode;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.exception.CliError;
 import com.espirit.moddev.cli.exception.CliException;
 
 import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.Connection;
-import de.espirit.firstspirit.access.ConnectionManager;
 import de.espirit.firstspirit.access.UserService;
 import de.espirit.firstspirit.access.admin.ProjectStorage;
 import de.espirit.firstspirit.access.project.Project;
@@ -65,10 +63,13 @@ public class CliContextImpl implements CliContext {
     private SpecialistsBroker projectBroker;
 
     /**
-     * Create a new instance that uses the given {@link com.espirit.moddev.cli.api.configuration.Config}.
+     * Create a new instance that uses the given {@link com.espirit.moddev.cli.api.configuration.Config}
+     * and established a FirstSpirit connection. Afterwards, a ProjectSpecificBroker is required.
      *
      * @param clientConfig the configuration to be used
-     * @throws java.lang.IllegalArgumentException if clientConfig is null
+     * @throws IllegalArgumentException if clientConfig is null
+     * @throws IllegalStateException    if requiring a ProjectSpecificBroker causes one. In this case, an already established connection is being
+     *                                  closed
      */
     public CliContextImpl(final Config clientConfig) {
         if (clientConfig == null) {
@@ -76,19 +77,30 @@ public class CliContextImpl implements CliContext {
         }
         this.clientConfig = clientConfig;
         properties = new HashMap<>();
-        initializeFirstSpiritConnection();
-    }
-
-    private void initializeFirstSpiritConnection() {
         openConnection();
-        requireProjectSpecificBroker();
+        try {
+            requireProjectSpecificBroker();
+        } catch (IllegalStateException ise) {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (IOException e) {
+                    LOGGER.info("Couldn't close connection", e);
+                }
+            }
+            throw ise;
+        }
     }
 
     protected void openConnection() {
         try {
             connection = obtainConnection();
-            Object[] args = {clientConfig.getHost(), clientConfig.getPort(), clientConfig.getUser()};
-            LOGGER.debug("Connect to FirstSpirit server '{}:{}' with user '{}'...", args);
+        } catch (NullPointerException | IllegalArgumentException e) {
+            throw new CliException(CliError.CONFIGURATION, clientConfig, e);
+        } catch (RuntimeException e) {
+            throw new CliException(CliError.UNEXPECTED, clientConfig, e);
+        }
+        try {
             connection.connect();
             final ServerInformationAgent serverInformationAgent = connection.getBroker().requestSpecialist(ServerInformationAgent.TYPE);
             if (serverInformationAgent != null) {
@@ -104,24 +116,13 @@ public class CliContextImpl implements CliContext {
             throw new CliException(CliError.GENERAL_IO, clientConfig, e);
         } catch (IOError e) {
             throw new CliException(e);
-        } catch (Exception e) { //NOSONAR
+        } catch (RuntimeException e) {
             throw new CliException(CliError.UNEXPECTED, clientConfig, e);
         }
     }
 
-    /**
-     * Connect to the FirstSpirit server using the configuration of this instance.
-     *
-     * @return a connection to a FirstSpirit server
-     */
     protected Connection obtainConnection() {
-        if(FsConnectionMode.HTTPS == clientConfig.getConnectionMode()) {
-            ConnectionManager.setUseHttps(true);
-        }
-
-        return ConnectionManager
-            .getConnection(clientConfig.getHost(), clientConfig.getPort(), clientConfig.getConnectionMode().getCode(), clientConfig.getUser(),
-                           clientConfig.getPassword());
+        return ConnectionBuilder.with(clientConfig).build();
     }
 
     private void requireProjectSpecificBroker() {
@@ -154,7 +155,7 @@ public class CliContextImpl implements CliContext {
     @Override
     public Project getProject() {
         final String projectName = clientConfig.getProject();
-        if(StringUtils.isBlank(projectName)) {
+        if (StringUtils.isBlank(projectName)) {
             return null;
         }
         Project project = connection.getProjectByName(projectName);

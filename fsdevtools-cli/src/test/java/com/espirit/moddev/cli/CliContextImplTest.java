@@ -34,7 +34,6 @@ import de.espirit.firstspirit.access.BaseContext;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.admin.ProjectStorage;
 import de.espirit.firstspirit.access.project.Project;
-import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.agency.BrokerAgent;
 import de.espirit.firstspirit.agency.LanguageAgent;
 import de.espirit.firstspirit.agency.SpecialistsBroker;
@@ -73,7 +72,6 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(Theories.class)
 public class CliContextImplTest {
-
 
     @DataPoints
     public static BaseContext.Env[]

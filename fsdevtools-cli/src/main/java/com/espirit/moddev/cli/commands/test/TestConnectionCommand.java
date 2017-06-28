@@ -22,11 +22,13 @@
 
 package com.espirit.moddev.cli.commands.test;
 
-import com.espirit.moddev.cli.CliContextImpl;
+import com.espirit.moddev.cli.ConnectionBuilder;
 import com.espirit.moddev.cli.api.command.Command;
 import com.espirit.moddev.cli.api.result.Result;
 import com.espirit.moddev.cli.configuration.GlobalConfig;
 import com.espirit.moddev.cli.results.TestResult;
+
+import de.espirit.firstspirit.access.Connection;
 
 
 /**
@@ -40,19 +42,20 @@ public class TestConnectionCommand extends GlobalConfig implements Command {
     @Override
     @SuppressWarnings("squid:S2221")
     public Result call() {
-        try(CliContextImpl cliContext = new CliContextImpl(this)) {
+        try(final Connection connection = create()) {
+            connection.connect();
             return new TestResult(this);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return new TestResult(this, e);
         }
     }
 
+    protected Connection create() {
+        return ConnectionBuilder.with(this).build();
+    }
+
     @Override
     public boolean needsContext() {
-        /*
-         super class returns {@code true} by default which leads CliContextImpl initialization and connecting of FS connection
-         --> this command creates his own context to initialize connection --> return true to disable default behaviour
-         */
         return false;
     }
 }
