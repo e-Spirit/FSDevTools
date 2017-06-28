@@ -39,24 +39,30 @@ import java.util.Set;
 /**
  * Default builder for FirstSpirit {@link Connection}s.
  *
- * @author e-Spirit AG
+ * @author e -Spirit AG
  */
 public class ConnectionBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionBuilder.class);
 
-    public static ConnectionBuilder with(Config config){
-        return new ConnectionBuilder(config);
-    }
+    private final Config config;
 
-    private Config config;
-
-    private ConnectionBuilder(Config config){
+    private ConnectionBuilder(final Config config){
         this.config = Objects.requireNonNull(config, "Config is null!");
     }
 
     /**
-     * Build a FirstSpirit connection.
+     * Creates a builder with a config.
+     *
+     * @param config the config
+     * @return the connection builder
+     */
+    public static ConnectionBuilder with(Config config){
+        return new ConnectionBuilder(config);
+    }
+
+    /**
+     * Build a FirstSpirit connection based on the initial config which is checked first.
      *
      * @return the FirstSpirit connection
      */
@@ -89,9 +95,7 @@ public class ConnectionBuilder {
             StringBuilder errorMessage = new StringBuilder("The configuration is invalid:");
             errorMessage.append(System.lineSeparator());
             for (Voilation voilation : voilations) {
-                final String voilationMessage = voilation.toString();
-                LOGGER.error(voilationMessage);
-                errorMessage.append(voilationMessage)
+                errorMessage.append(voilation.toString())
                     .append(System.lineSeparator());
             }
             final String message = errorMessage.toString();
