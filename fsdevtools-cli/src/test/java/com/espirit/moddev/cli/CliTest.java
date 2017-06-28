@@ -23,7 +23,7 @@
 package com.espirit.moddev.cli;
 
 import com.espirit.moddev.cli.api.command.Command;
-import com.espirit.moddev.cli.commands.help.UnknownCommand;
+import com.espirit.moddev.cli.commands.help.DefaultCommand;
 import com.github.rvesse.airline.builder.CliBuilder;
 import com.github.rvesse.airline.model.CommandGroupMetadata;
 import org.junit.Rule;
@@ -76,7 +76,7 @@ public class CliTest {
     @Test
     public void defaultCliHasHelpAsDefaultCommand() {
         CliBuilder<Command> builder = Cli.getDefaultCliBuilder();
-        assertEquals(builder.build().getMetadata().getDefaultCommand().getType(), UnknownCommand.class);
+        assertEquals(builder.build().getMetadata().getDefaultCommand().getType(), DefaultCommand.class);
     }
 
     @Test

@@ -23,13 +23,13 @@
 package com.espirit.moddev.cli.testgroups.reflectiontest;
 
 import com.espirit.moddev.cli.api.annotations.Description;
-import com.espirit.moddev.cli.commands.help.UnknownCommand;
+import com.espirit.moddev.cli.commands.help.DefaultCommand;
 import com.github.rvesse.airline.annotations.Group;
 
 /**
  * @author e-Spirit AG
  */
-@Group(name = "command_with_description_but_void_returntype", defaultCommand = UnknownCommand.class)
+@Group(name = "command_with_description_but_void_returntype", defaultCommand = DefaultCommand.class)
 public final class GroupWithNonStringDescriptionMethod {
     @Description
     public static StringBuilder getDescription() { return new StringBuilder("1234"); }

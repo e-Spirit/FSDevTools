@@ -25,6 +25,8 @@ package com.espirit.moddev.cli.commands.help;
 import com.espirit.moddev.cli.api.command.Command;
 import com.github.rvesse.airline.annotations.Arguments;
 
+import com.github.rvesse.airline.help.Help;
+import com.github.rvesse.airline.model.GlobalMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,26 +38,32 @@ import java.util.List;
  *
  * @author e-Spirit AG
  */
-@com.github.rvesse.airline.annotations.Command(name = "UnknownCommand", hidden = true)
-public class UnknownCommand implements Command<HelpResult> {
+@com.github.rvesse.airline.annotations.Command(name = "DefaultCommand", hidden = true)
+public class DefaultCommand implements Command<HelpResult> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UnknownCommand.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCommand.class);
 
     @Arguments
     protected List<String> args = new ArrayList<>();
 
     @Override
     public HelpResult call() throws Exception {
-        callStandardHelpCommand();
-        // enforce exit code 1 with error
-        final String unknownCommand = args.stream().reduce((t, u) -> t + " " + u).orElse("");
-        final Exception error = new UnknownCommandException(unknownCommand);
-        return new HelpResult(error);
+        HelpResult result = callStandardHelpCommand();
+
+        if(args.isEmpty()) {
+            GlobalMetadata<Object> metadata = result.get();
+            return new HelpResult(metadata);
+        } else {
+            // enforce exit code 1 with error
+            final String unknownCommand = args.stream().reduce((t, u) -> t + " " + u).orElse("");
+            final Exception error = new UnknownCommandException(unknownCommand);
+            return new HelpResult(error);
+        }
     }
 
-    private static void callStandardHelpCommand() {
+    private static HelpResult callStandardHelpCommand() {
         LOGGER.info("\nSee help for more information:\n");
         final HelpCommand helpCommand = new HelpCommand();
-        helpCommand.call();
+        return helpCommand.call();
     }
 }

@@ -22,13 +22,13 @@
 
 package com.espirit.moddev.cli.testgroups.reflectiontest;
 
-import com.espirit.moddev.cli.commands.help.UnknownCommand;
+import com.espirit.moddev.cli.commands.help.DefaultCommand;
 import com.github.rvesse.airline.annotations.Group;
 
 /**
  * @author e-Spirit AG
  */
-@Group(name = "group_with_description_but_void_returntype", defaultCommand = UnknownCommand.class)
+@Group(name = "group_with_description_but_void_returntype", defaultCommand = DefaultCommand.class)
 public final class GroupWithoutDescriptionAnnotationAndVoidDescriptionMethod {
     public static void getDescription() {
     }
