@@ -48,6 +48,10 @@
             <groupId>com.espirit.moddev.fsdevtools</groupId>
             <artifactId>fsdevtools-serverrunner</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.espirit.moddev.fsdevtools</groupId>
+            <artifactId>fsdevtools-projectservice</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>de.espirit.firstspirit</groupId>
