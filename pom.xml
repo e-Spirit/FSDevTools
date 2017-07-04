@@ -34,6 +34,7 @@
         <module>fsdevtools-core</module>
         <module>fsdevtools-serverrunner</module>
         <module>fsdevtools-customcommand-example</module>
+        <module>fsdevtools-projectservice</module>
     </modules>
     <packaging>pom</packaging>
     <name>FirstSpirit Development Tools</name>
@@ -319,12 +320,22 @@
             </dependency>
             <dependency>
                 <groupId>com.espirit.moddev.fsdevtools</groupId>
+                <artifactId>fsdevtools-cli</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.espirit.moddev.fsdevtools</groupId>
                 <artifactId>fsdevtools-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.espirit.moddev.fsdevtools</groupId>
                 <artifactId>fsdevtools-serverrunner</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.espirit.moddev.fsdevtools</groupId>
+                <artifactId>fsdevtools-projectservice</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
