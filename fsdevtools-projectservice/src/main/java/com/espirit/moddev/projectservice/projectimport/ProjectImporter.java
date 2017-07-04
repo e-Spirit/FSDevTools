@@ -149,6 +149,7 @@ public class ProjectImporter {
                     Thread.sleep(250);
                 } catch (InterruptedException e) {
                     LOGGER.error("Thread sleep failed!", e);
+                    Thread.currentThread().interrupt();
                 }
             }
         }
