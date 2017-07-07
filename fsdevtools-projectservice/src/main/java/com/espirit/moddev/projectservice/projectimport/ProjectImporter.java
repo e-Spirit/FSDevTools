@@ -103,7 +103,7 @@ public class ProjectImporter {
             Project fsProject = connection.getProjectByName(projectImportParameters.getProjectName());
             boolean projectIsPresent = fsProject != null;
             if (projectIsPresent) {
-                activeProjectIfNecessary(projectImportParameters, fsProject);
+                activateProjectIfNecessary(projectImportParameters, fsProject);
             }
 
             return projectIsPresent;
@@ -113,7 +113,7 @@ public class ProjectImporter {
         }
     }
 
-    private void activeProjectIfNecessary(ProjectImportParameters projectImportParameters, Project fsProject) {
+    private void activateProjectIfNecessary(ProjectImportParameters projectImportParameters, Project fsProject) {
         boolean projectIsActive = fsProject.isActive();
         if (projectImportParameters.isFsForceProjectActivation()) {
             if (!projectIsActive) {
