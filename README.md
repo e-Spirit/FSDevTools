@@ -1,19 +1,18 @@
-# FSDevTools
+# FSDevTools - User Documentation
 
-Project to support developer experience (DX) with FirstSpirit template development by offering a connection between a VCS like Git and FirstSpirit.
-
-## User Documentation
+FSDevTools is a project to optimize the developer experience (DX) with FirstSpirit.
 
 ### Prerequisites
-Installation prerequisites are documented inside the zip or tar-gz file of the binary distribution.
 
-In short, a correct `JAVA_HOME` environment variable must be set which points to a **Java 8** installation.
+In order to use FSDevTools various prerequisites must be considered.
+They are described in detail inside the zip or tar.gz file of the binary distribution.
+The following list is just a short overview.
 
-Since major version **2.0** `FSDevTools` requires at least FirstSpirit Version **5.2.717**.  
+Since major version **2.0** `FSDevTools` requires at least FirstSpirit Version **5.2.717**. 
 
-Some configurations are loaded from your system environment in first instance.
-It is possible to override all default values from the environment by passing actual command line options for them.
-The following values are read from your environment with the corresponding key.
+Furthermore a correct `JAVA_HOME` environment variable, which points to a **Java 8** installation, must be set.
+
+In first instance the following configurations are loaded from your system environment with the corresponding key.
 
 - **fshost** - The FirstSpirit host address
 - **fsport** - The FirstSpirit port number.
@@ -22,26 +21,27 @@ The following values are read from your environment with the corresponding key.
 - **fspwd** - The FirstSpirit user's password.
 - **fsproject** - The FirstSpirit project name.
 
-Additionally the properties host, port, connection mode, user and password have default values, that are used if neither an environment
-variable nor an option is given. The project property doesn't have a default value, so it has to be configured somehow to avoid exceptions
-with project context specific operations.
+In contrast to the other properties only the project property does not have a default value.
+Due to this it has to be configured somehow to avoid exceptions with project context specific operations.
+The default values of the other properties are used if neither an environment variable nor an option is given.
+
+It is possible to override all default values from the environment by passing actual command line options for them.
 
 ### Usage
-Most of the information you need in order to use the command line tool can be found via the integrated help command.
-See `fs-cli help` for more information on how to use the help command.
+Most of the information you need in order to use the command line tool can be found via the integrated help command `fs-cli help`.
 
-For more information and examples how to use the command line interface see the [command line interface usage page](documentation/CLI_USAGE.md).
+Additional information and examples are provided via the [command line interface usage page](documentation/CLI_USAGE.md).
 
 ### Logging
 
-By default, every command gives you a more or less detailed, printed result. Use the Log4J logging properties
-file `/conf/log4j.properties`, to set a finer logging level as needed.
+By default no log file will be written.
+Instead every command provides a more or less detailed, printed result in the command line.
+Both, a finer logging level and the generation of a log file can be configured in the Log4J logging properties file `/conf/log4j.properties`.
 
-If you need an even more detailed error logging, you can use the global option **-e**. With **-e**, you get
-an additional exception stacktrace in some cases.
+If you need an even more detailed error logging, you can use the global option **-e**. 
+With **-e**, you get an additional exception stacktrace in some cases.
 
-By default no log file will be written  - To change this, configure the `log4j.properties` file in `/conf` directory.
-You need to set `logfile` as additional parameter for `log4j.rootLogger` and add following lines to this file:
+To generate a log file you need to set `logfile` as an additional parameter for `log4j.rootLogger` and add the following lines to the properties file:
 
 ```
 ### Log to file
@@ -57,11 +57,22 @@ For more information about the Log4J configuration please consult the [Log4J man
 
 ## Developer Documentation
 
-Information about how to compile and extend this project is described in the  [developer documentation](documentation/DEV_DOC.md).
+Information about how to compile and extend this project is described in the [developer documentation](documentation/DEV_DOC.md).
+
+## Legal Notices
+
+FSDevTools is a product of [e-Spirit AG](http://www.e-spirit.com), Dortmund, Germany.
+
+Only a license agreed upon with e-Spirit AG is valid with respect to the user for using FSDevTools.
+
+<!-- 
+Details regarding any third-party software products in use but not created by e-Spirit AG, as well as the third-party licenses and, if applicable, update information can be found in the file THIRD-PARTY.txt included with the module.
+-->
 
 ## Disclaimer
 
-FirstSpirit and this project are developed by the [e-Spirit AG](http://www.e-spirit.com).
-The head office of the e-Spirit AG is in Dortmund, Germany.
-
-Use this project and provided binaries at your own risk.
+This document is provided for information purposes only. 
+e-Spirit may change the contents hereof without notice. 
+This document is not warranted to be error-free, nor subject to any other warranties or conditions, whether expressed orally or implied in law, including implied warranties and conditions of merchantability or fitness for a particular purpose.
+e-Spirit specifically disclaims any liability with respect to this document and no contractual obligations are formed either directly or indirectly by this document.
+The technologies, functionality, services, and processes described herein are subject to change without notice.
