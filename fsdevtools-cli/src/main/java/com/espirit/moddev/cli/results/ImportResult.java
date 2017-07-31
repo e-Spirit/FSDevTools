@@ -69,7 +69,7 @@ public class ImportResult extends SimpleResult<ImportOperation.Result> {
             LOGGER.info("Import operation successful");
             if (TsFeatures.TS_194654.isEnabled()) {
                 // new logging
-                AdvancedLogger.logImportResult(LOGGER, get(), _storeAgent);
+                AdvancedLogger.logImportResult(LOGGER, _storeAgent, get());
             } else {
                 // old logging
                 logElementChanges(get().getUpdatedElements(), "updated elements");
