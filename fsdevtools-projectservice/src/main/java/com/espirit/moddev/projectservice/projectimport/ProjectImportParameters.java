@@ -22,24 +22,31 @@
 
 package com.espirit.moddev.projectservice.projectimport;
 
+import java.io.File;
 import java.util.Map;
 
 public class ProjectImportParameters {
     private final String projectName;
-    private final String projectFile;
+    private final File projectFile;
     private final Map<String, String> databases;
     private final String projectDescription;
     private final boolean fsForceProjectActivation;
 
-    public ProjectImportParameters(String projectName, String projectDescription, String projectFilePath, Map<String, String> databases, boolean forceProjectActivation) {
+    public ProjectImportParameters(String projectName, String projectDescription, File projectFile, Map<String, String> databases, boolean forceProjectActivation) {
         validateStringInput(projectName, "Project name should not be null or empty");
-        validateStringInput(projectFilePath, "Project file path should not be null or empty");
+        validateFile(projectFile, "Project file is null, absent, or not a file");
 
         this.projectName = projectName;
-        this.projectFile = projectFilePath;
+        this.projectFile = projectFile;
         this.databases = databases;
         this.projectDescription = projectDescription;
         this.fsForceProjectActivation = forceProjectActivation;
+    }
+
+    private void validateFile(File file, String message) {
+        if(file == null || !file.exists() || !file.isFile()) {
+            throw new IllegalArgumentException(message);
+        }
     }
 
     private void validateStringInput(String projectName, String message) {
@@ -52,7 +59,7 @@ public class ProjectImportParameters {
         return projectName;
     }
 
-    public String getProjectFilePath() {
+    public File getProjectFile() {
         return projectFile;
     }
 

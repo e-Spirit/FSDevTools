@@ -22,6 +22,7 @@
 
 package com.espirit.moddev.projectservice.projectimport;
 
+import java.io.File;
 import java.util.Map;
 
 /**
@@ -30,7 +31,7 @@ import java.util.Map;
  */
 public class ProjectImportParametersBuilder {
     private String projectName;
-    private String projectFile;
+    private File projectFile;
     private Map<String, String> databases;
     private String projectDescription;
     private boolean fsForceProjectActivation;
@@ -50,7 +51,7 @@ public class ProjectImportParametersBuilder {
      * @param projectFile the export file that should be imported
      * @return this
      */
-    public ProjectImportParametersBuilder setProjectFile(String projectFile) {
+    public ProjectImportParametersBuilder setProjectFile(File projectFile) {
         this.projectFile = projectFile;
         return this;
     }

@@ -35,6 +35,7 @@
         <module>fsdevtools-serverrunner</module>
         <module>fsdevtools-customcommand-example</module>
         <module>fsdevtools-projectservice</module>
+        <module>fsdevtools-moduleservice</module>
     </modules>
     <packaging>pom</packaging>
     <name>FirstSpirit Development Tools</name>
@@ -336,6 +337,11 @@
             <dependency>
                 <groupId>com.espirit.moddev.fsdevtools</groupId>
                 <artifactId>fsdevtools-projectservice</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.espirit.moddev.fsdevtools</groupId>
+                <artifactId>fsdevtools-moduleservice</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -23,23 +23,20 @@
 package com.espirit.moddev.projectservice.projectimport;
 
 import de.espirit.firstspirit.access.AdminService;
+import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ServerActionHandle;
 import de.espirit.firstspirit.access.UserService;
+import de.espirit.firstspirit.access.admin.ProjectStorage;
 import de.espirit.firstspirit.access.export.ExportFile;
 import de.espirit.firstspirit.access.export.ImportParameters;
 import de.espirit.firstspirit.access.export.ImportProgress;
 import de.espirit.firstspirit.access.export.ProjectInfo;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.access.script.ExecutionException;
-import de.espirit.firstspirit.io.ServerConnection;
-import de.espirit.firstspirit.manager.ExportManager;
-import de.espirit.firstspirit.manager.ProjectManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -50,8 +47,9 @@ import java.util.Properties;
  */
 public class ProjectImporter {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProjectImporter.class);
-
+    private static final int WAIT_MS_UNTIL_CHECK_FOR_IMPORT = 250;
     public ProjectImporter() {
+        // Nothing to do here
     }
 
     /**
@@ -59,12 +57,12 @@ public class ProjectImporter {
      * Uses the given connection to obtain all necessary managers.
      *
      * @param connection              the connection that is used to access the FirstSpirit server
-     * @param projectImportParameters
+     * @param projectImportParameters the parameters for the project import
      * @return true if the project was imported successfully, false otherwise
      * @throws IllegalStateException if the given connection is null or not connected
      * @throws ExecutionException    if a project with the given name already exists on the server
      */
-    public boolean importProject(ServerConnection connection, ProjectImportParameters projectImportParameters) {
+    public boolean importProject(Connection connection, ProjectImportParameters projectImportParameters) {
         if(connection == null || !connection.isConnected()) {
             throw new IllegalStateException("Please provide a connected connection");
         }
@@ -77,26 +75,23 @@ public class ProjectImporter {
         return performImport(connection, projectImportParameters);
     }
 
-    private boolean performImport(ServerConnection connection, ProjectImportParameters projectImportParameters) {
+    private static boolean performImport(Connection connection, ProjectImportParameters projectImportParameters) {
+        ProjectStorage projectStorage = connection.getService(AdminService.class).getProjectStorage();
         try {
-            final ExportManager exportManager = connection.getManager(ExportManager.class);
-            removeExportFileFromServerIfExists(projectImportParameters, exportManager);
-
-            final File projectFile = new File(projectImportParameters.getProjectFilePath());
-            FileInputStream fileInputStream = getResourceOrFileBasedInputStream(projectImportParameters);
-
-            final ExportFile exportFile = exportManager.uploadExportFile(projectFile.getName(), fileInputStream);
-            final ProjectInfo info = exportManager.getProjectInfo(exportFile);
+            removeExportFileFromServerIfExists(projectImportParameters, projectStorage);
+            ExportFile exportFile;
+            try (FileInputStream fileInputStream = new FileInputStream(projectImportParameters.getProjectFile())) {
+                exportFile = projectStorage.uploadExportFile(projectImportParameters.getProjectFile().getName(), fileInputStream);
+            }
+            ProjectInfo info = projectStorage.getProjectInfo(exportFile);
 
             HashMap<String, String> layerMapping = getLayerMappingDefinition(projectImportParameters, info);
 
-            final ImportParameters importParameters = new ImportParameters(
-                    exportFile, info,
+            ImportParameters importParameters = new ImportParameters(exportFile, info,
                     projectImportParameters.getProjectName(), projectImportParameters.getProjectDescription(), layerMapping,
                     new HashMap<>());
             importParameters.getLayerMapping();
-            final ServerActionHandle<ImportProgress, Boolean> importHandle = exportManager.startImport(importParameters);
-
+            ServerActionHandle<ImportProgress, Boolean> importHandle = projectStorage.startImport(importParameters);
             waitUntilImportFinished(importHandle);
             refreshProjects(connection);
 
@@ -113,7 +108,7 @@ public class ProjectImporter {
         }
     }
 
-    private void activateProjectIfNecessary(ProjectImportParameters projectImportParameters, Project fsProject) {
+    private static void activateProjectIfNecessary(ProjectImportParameters projectImportParameters, Project fsProject) {
         boolean projectIsActive = fsProject.isActive();
         if (projectImportParameters.isFsForceProjectActivation()) {
             if (!projectIsActive) {
@@ -130,14 +125,12 @@ public class ProjectImporter {
         }
     }
 
-    private void refreshProjects(ServerConnection connection) {
-        // TODO: Remove this call to refreshProjects() after the logic is implemented
-        // by core somehow. Further information, see ts 186956
+    private static void refreshProjects(Connection connection) {
         AdminService as = connection.getService(AdminService.class);
         as.getProjectStorage().refreshProjects();
     }
 
-    private void waitUntilImportFinished(ServerActionHandle<ImportProgress, Boolean> importHandle) {
+    private static void waitUntilImportFinished(ServerActionHandle<ImportProgress, Boolean> importHandle) {
         ImportProgress progress;
         while (true) {
             progress = importHandle.getProgress(true);
@@ -146,7 +139,7 @@ public class ProjectImporter {
                 break;
             } else {
                 try {
-                    Thread.sleep(250);
+                    Thread.sleep(WAIT_MS_UNTIL_CHECK_FOR_IMPORT);
                 } catch (InterruptedException e) {
                     LOGGER.error("Thread sleep failed!", e);
                     Thread.currentThread().interrupt();
@@ -156,7 +149,7 @@ public class ProjectImporter {
         LOGGER.info("ImportProgress finished");
     }
 
-    private HashMap<String, String> getLayerMappingDefinition(ProjectImportParameters projectImportParameters, ProjectInfo info) {
+    private static HashMap<String, String> getLayerMappingDefinition(ProjectImportParameters projectImportParameters, ProjectInfo info) {
         HashMap<String, String> layerMapping = new HashMap<>();
         List<Properties> usedLayers = info.getUsedLayers();
         for (Properties prop : usedLayers) {
@@ -167,21 +160,13 @@ public class ProjectImporter {
         return layerMapping;
     }
 
-    private FileInputStream getResourceOrFileBasedInputStream(ProjectImportParameters projectImportParameters) throws FileNotFoundException {
-        FileInputStream fileInputStream = (FileInputStream) ProjectImporter.class
-                .getClassLoader().getResourceAsStream(projectImportParameters.getProjectFilePath());
-        if (fileInputStream == null) {
-            fileInputStream = new FileInputStream(projectImportParameters.getProjectFilePath());
-        }
-        return fileInputStream;
-    }
+    private static void removeExportFileFromServerIfExists(ProjectImportParameters projectImportParameters, ProjectStorage projectStorage) {
 
-    private void removeExportFileFromServerIfExists(ProjectImportParameters projectImportParameters, ExportManager exportManager) {
         try {
-            final List<ExportFile> exportFiles = exportManager.listExportFiles();
+            final List<ExportFile> exportFiles = projectStorage.listExportFiles();
             for (final ExportFile exportFile : exportFiles) {
-                if (exportFile.getName().equals(projectImportParameters.getProjectFilePath())) {
-                    exportManager.deleteExportFile(exportFile);
+                if (exportFile.getName().equals(projectImportParameters.getProjectFile().getName())) {
+                    projectStorage.deleteExportFile(exportFile);
                 }
             }
         } catch (IOException e) {
@@ -189,8 +174,19 @@ public class ProjectImporter {
         }
     }
 
-    private boolean projectExistsOnServer(ServerConnection connection, ProjectImportParameters projectImportParameters) {
-        final ProjectManager projectManager = connection.getManager(ProjectManager.class);
-        return projectManager.getProjectByName(projectImportParameters.getProjectName()) != null;
+    private static boolean projectExistsOnServer(Connection connection, ProjectImportParameters projectImportParameters) {
+        Project[] projects = connection.getProjects();
+        if (projects == null || projects.length < 1) {
+            LOGGER.debug("Could not find any projects on the server.");
+            return false;
+        }
+        for (Project project: connection.getProjects()) {
+            LOGGER.debug("Found project: "+project.getName());
+            if (project.getName().equals(projectImportParameters.getProjectName())) {
+                return true;
+            }
+        }
+        LOGGER.debug("Could not find project "+ projectImportParameters.getProjectName());
+        return false;
     }
 }
