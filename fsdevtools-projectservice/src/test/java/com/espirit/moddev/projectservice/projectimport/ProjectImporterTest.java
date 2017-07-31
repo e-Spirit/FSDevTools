@@ -22,29 +22,35 @@
 
 package com.espirit.moddev.projectservice.projectimport;
 
-import de.espirit.firstspirit.io.ServerConnection;
+import de.espirit.firstspirit.access.Connection;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ProjectImporterTest {
+    private File fileMock;
 
     ProjectImporter testling;
 
     @Before
     public void setUp() {
         testling = new ProjectImporter();
+
+        fileMock = mock(File.class);
+        when(fileMock.exists()).thenReturn(true);
+        when(fileMock.isFile()).thenReturn(true);
     }
 
     @Test(expected = IllegalStateException.class)
     public void testExceptionWhenNotConnected() throws IOException {
-        ServerConnection connectionMock = mock(ServerConnection.class);
+        Connection connectionMock = mock(Connection.class);
         when(connectionMock.isConnected()).thenReturn(false);
-        ProjectImportParameters importParameters = new ProjectImportParametersBuilder().setProjectName("asd").setProjectFile("asd").create();
+        ProjectImportParameters importParameters = new ProjectImportParametersBuilder().setProjectName("asd").setProjectFile(fileMock).create();
         testling.importProject(connectionMock, importParameters);
     }
 
