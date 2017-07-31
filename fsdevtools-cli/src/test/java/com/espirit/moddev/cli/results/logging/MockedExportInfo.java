@@ -108,6 +108,7 @@ public class MockedExportInfo implements ExportInfo {
             final List<ElementExportInfo> list = new ArrayList<>();
             list.add(new MockedElementExportInfo(storeType, "second", TagNames.MEDIUM, status));
             list.add(new MockedElementExportInfo(storeType, "first", TagNames.MEDIUM, status));
+            list.add(new MockedElementExportInfo(storeType, "third", TagNames.MEDIANODE, status));
             storeElements.put(storeType, list);
         }
         if (siteStore) {
@@ -121,9 +122,9 @@ public class MockedExportInfo implements ExportInfo {
         if (templateStore) {
             final Store.Type storeType = Store.Type.TEMPLATESTORE;
             final List<ElementExportInfo> list = new ArrayList<>();
-            list.add(new MockedElementExportInfo(storeType, "second", TagNames.TEMPLATE, status));
+            list.add(new MockedElementExportInfo(storeType, "second", TagNames.WORKFLOW, status));
             list.add(new MockedElementExportInfo(storeType, "fourth", TagNames.TEMPLATE, status));
-            list.add(new MockedElementExportInfo(storeType, "third", TagNames.TEMPLATE, status));
+            list.add(new MockedElementExportInfo(storeType, "third", TagNames.LINKTEMPLATE, status));
             list.add(new MockedElementExportInfo(storeType, "first", TagNames.TEMPLATE, status));
             storeElements.put(storeType, list);
         }

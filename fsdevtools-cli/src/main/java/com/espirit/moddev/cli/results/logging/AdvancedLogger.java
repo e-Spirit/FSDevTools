@@ -8,8 +8,7 @@ import de.espirit.firstspirit.access.database.BasicEntityInfo;
 import de.espirit.firstspirit.access.store.BasicElementInfo;
 import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.access.store.Store;
-import de.espirit.firstspirit.access.store.templatestore.Schema;
-import de.espirit.firstspirit.access.store.templatestore.TemplateStoreRoot;
+import de.espirit.firstspirit.access.store.templatestore.*;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.store.access.BasicElementInfoImpl;
@@ -41,9 +40,10 @@ public enum AdvancedLogger {
      * A summary and some minor information will be logged to info. If loglevel DEBUG is enabled, detailed information
      * including file handles will be logged.
      * @param logger the logger the export result information will be logged to
+     * @param storeAgent the store agent to use
      * @param exportResult the result to be loggged
      */
-    public static void logExportResult(final Logger logger, final ExportOperation.Result exportResult) {
+    public static void logExportResult(final Logger logger, final StoreAgent storeAgent, final ExportOperation.Result exportResult) {
         if (! logger.isInfoEnabled()) {
             // nothing to do if loglevel is not at least info
             return;
@@ -52,10 +52,10 @@ public enum AdvancedLogger {
 
         // log details and fetch summary
         logger.info("== DETAILS ==");
-        final String created = logElements(logger, exportResult.getCreatedElements(), "Created elements");
-        final String updated = logElements(logger, exportResult.getUpdatedElements(), "Updated elements");
-        final String deleted = logElements(logger, exportResult.getDeletedElements(), "Deleted elements");
-        final String moved = logElements(logger, exportResult.getMovedElements(), "  Moved elements");
+        final String created = logElements(logger, storeAgent, exportResult.getCreatedElements(), "Created elements");
+        final String updated = logElements(logger, storeAgent, exportResult.getUpdatedElements(), "Updated elements");
+        final String deleted = logElements(logger, storeAgent, exportResult.getDeletedElements(), "Deleted elements");
+        final String moved = logElements(logger, storeAgent, exportResult.getMovedElements(), "  Moved elements");
 
         // log summary
         logger.info("== SUMMARY ==");
@@ -65,16 +65,15 @@ public enum AdvancedLogger {
         logger.info(moved);
     }
 
-
     /**
      * Logs the given {@code importResult} to the given logger. Only performed if the log level is at least INFO.
      * A summary and some minor information will be logged to info. If loglevel DEBUG is enabled, detailed information
      * including file handles will be logged.
      * @param logger the logger the import result information will be logged to
-     * @param importResult the result to be logged
      * @param storeAgent the store agent to use
+     * @param importResult the result to be logged
      */
-    public static void logImportResult(final Logger logger, final ImportOperation.Result importResult, final StoreAgent storeAgent) {
+    public static void logImportResult(final Logger logger, final StoreAgent storeAgent, final ImportOperation.Result importResult) {
         if (!logger.isInfoEnabled()) {
             // nothing to do if loglevel is not at least info
             return;
@@ -83,11 +82,11 @@ public enum AdvancedLogger {
 
         // log details and fetch summary
         logger.info("== DETAILS ==");
-        final String created = logElements(logger, createElementExportInfo(storeAgent, importResult, importResult.getCreatedElements(), ExportStatus.CREATED, null),                              "Created elements");
-        final String updated = logElements(logger, createElementExportInfo(storeAgent, importResult, importResult.getUpdatedElements(), ExportStatus.UPDATED, importResult.getModifiedProjectProperties()),      "Updated elements");
-        final String deleted = logElements(logger, createElementExportInfo(storeAgent, importResult, importResult.getDeletedElements(), ExportStatus.DELETED, null),                              "Deleted elements");
-        final String moved = logElements(logger, createElementExportInfo(storeAgent, importResult, importResult.getMovedElements(), ExportStatus.MOVED, null),                                    "  Moved elements");
-        final String lostAndFound = logElements(logger, createElementExportInfo(storeAgent, importResult, importResult.getLostAndFoundElements(), ExportStatus.MOVED, null),                      "L&Found elements");
+        final String created = logElements(logger, storeAgent, createElementExportInfo(storeAgent, importResult, importResult.getCreatedElements(), ExportStatus.CREATED, null),                              "Created elements");
+        final String updated = logElements(logger, storeAgent, createElementExportInfo(storeAgent, importResult, importResult.getUpdatedElements(), ExportStatus.UPDATED, importResult.getModifiedProjectProperties()),      "Updated elements");
+        final String deleted = logElements(logger, storeAgent, createElementExportInfo(storeAgent, importResult, importResult.getDeletedElements(), ExportStatus.DELETED, null),                              "Deleted elements");
+        final String moved = logElements(logger, storeAgent, createElementExportInfo(storeAgent, importResult, importResult.getMovedElements(), ExportStatus.MOVED, null),                                    "  Moved elements");
+        final String lostAndFound = logElements(logger, storeAgent, createElementExportInfo(storeAgent, importResult, importResult.getLostAndFoundElements(), ExportStatus.MOVED, null),                      "L&Found elements");
         final String importProblems = logImportProblems(logger, storeAgent, importResult);
 
         // log summary
@@ -100,7 +99,7 @@ public enum AdvancedLogger {
         logger.info(importProblems);
     }
 
-    static String logElements(final Logger logger, final Collection<ExportInfo> elements, final String description) {
+    static String logElements(final Logger logger, final StoreAgent storeAgent, final Collection<ExportInfo> elements, final String description) {
         if (logger.isInfoEnabled()) {
             // re-organize result
             final ReorganizedResult reorganizedResult = new ReorganizedResult(elements);
@@ -118,7 +117,7 @@ public enum AdvancedLogger {
 
             // log elements
             logProjectProperties(logger, reorganizedResult.getProjectProperties());
-            logStoreElements(logger, reorganizedResult.getStoreElements());
+            logStoreElements(logger, storeAgent, reorganizedResult.getStoreElements());
             logEntityTypes(logger, reorganizedResult.getEntityTypes());
             return buildSummary(elements, description, reorganizedResult);
         }
@@ -234,7 +233,6 @@ public enum AdvancedLogger {
         }
     }
 
-
     static void logProjectProperties(Logger logger, final Collection<PropertyTypeExportInfo> projectProperties) {
         if (logger.isInfoEnabled()) {
             // ignore empty properties
@@ -262,7 +260,7 @@ public enum AdvancedLogger {
     }
 
     @SuppressWarnings("squid:S2629")
-    static void logStoreElements(Logger logger, final Map<Store.Type, List<ElementExportInfo>> storeElements) {
+    static void logStoreElements(Logger logger, final StoreAgent storeAgent, final Map<Store.Type, List<ElementExportInfo>> storeElements) {
         if (! logger.isInfoEnabled()) {
             // nothing to do if loglevel is not at least info
             return;
@@ -285,10 +283,10 @@ public enum AdvancedLogger {
         final List<ElementExportInfo> sortedElements = new ArrayList<>();
         for (final Map.Entry<Store.Type, List<ElementExportInfo>> entry : storeElements.entrySet()) {
             sortedElements.addAll(entry.getValue());
-            sortedElements.sort(new ElementExportInfoComparator());
+            sortedElements.sort(new ExportInfoComparator());
             logger.info(" - " + entry.getKey().getName() + ": " + sortedElements.size());
             for (final ElementExportInfo element : sortedElements) {
-                String identifier = StoreElements.determineElementType(element.getElementInfo().getNodeTag());
+                String identifier = getStoreElementIdentifier(storeAgent, element);
                 identifier += ": '" + element.getName() + "'";
                 final String spacedString = getSpacedString(SPACE_INDENT - identifier.length());
                 final String files = getFilesStringForElement(element);
@@ -298,7 +296,6 @@ public enum AdvancedLogger {
             sortedElements.clear();
         }
     }
-
 
     @SuppressWarnings("squid:S2629")
     static void logEntityTypes(Logger logger, final Collection<EntityTypeExportInfo> entityTypes) {
@@ -344,7 +341,6 @@ public enum AdvancedLogger {
             }
         }
     }
-
 
     static void logFileInfos(Logger logger, final ExportInfo exportInfo, final String extraIndent) {
         if (!logger.isDebugEnabled()) {
@@ -411,6 +407,35 @@ public enum AdvancedLogger {
         }
     }
 
+    static String getStoreElementIdentifier(final StoreAgent storeAgent, final ElementExportInfo element) {
+        String identifier = "";
+        final BasicElementInfo elementInfo = element.getElementInfo();
+
+        // workaround for duplicate TagNames
+        if (TagNames.TEMPLATE.equals(elementInfo.getNodeTag()) && storeAgent != null) {
+            final Store store = storeAgent.getStore(elementInfo.getStoreType());
+            final IDProvider storeElement = store.getStoreElement(elementInfo.getNodeId());
+            if (storeElement != null) {
+                // equal tag for PageTemplate & SectionTemplate
+                final Class<? extends IDProvider> clazz = storeElement.getClass();
+                if (SectionTemplate.class.isAssignableFrom(clazz)) {
+                    identifier = StoreElements.determineElementType(SectionTemplate.class, null);
+                } else if (PageTemplate.class.isAssignableFrom(clazz)) {
+                    identifier = StoreElements.determineElementType(PageTemplate.class, null);
+                }
+            } else {
+                // element not found in store --> fallback to "Template"
+                identifier = StoreElements.determineElementType(Template.class, null);
+            }
+        }
+
+        // identify by type
+        if(identifier.isEmpty()) {
+            identifier = StoreElements.determineElementType(elementInfo.getNodeTag());
+        }
+        return identifier;
+    }
+
     /**
      * Converts the given string into a string with camel-case-notation (e.g. PAGE_STORE --> PageStore).
      *
@@ -472,7 +497,6 @@ public enum AdvancedLogger {
         }
         return stringBuilder.toString();
     }
-
 
     private static Collection<ExportInfo> createElementExportInfo(final StoreAgent storeAgent, final ImportOperation.Result importResult, final Collection<BasicElementInfo> elements, final ExportStatus status, final EnumSet<PropertiesTransportOptions.ProjectPropertyType> projectProperties) {
         final Collection<ExportInfo> result = new ArrayList<>();
@@ -553,7 +577,7 @@ public enum AdvancedLogger {
         return problems;
     }
 
-    private static class ElementExportInfoComparator implements Comparator<ElementExportInfo>, Serializable {
+    private static class ExportInfoComparator implements Comparator<ElementExportInfo>, Serializable {
 
         private static final long serialVersionUID = -2121789213L;
 

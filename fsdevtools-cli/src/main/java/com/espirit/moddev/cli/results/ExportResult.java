@@ -23,6 +23,7 @@
 package com.espirit.moddev.cli.results;
 
 import com.espirit.moddev.cli.results.logging.AdvancedLogger;
+import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.common.TsFeatures;
 import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
@@ -36,14 +37,17 @@ import java.util.Set;
  */
 public class ExportResult extends SimpleResult<ExportOperation.Result> {
 
+    private final StoreAgent _storeAgent;
+
     /**
      * Creates a new instance using the given command result.
      *
      * @param result Result produced by the command
      * @see com.espirit.moddev.cli.results.SimpleResult#SimpleResult(Object)
      */
-    public ExportResult(ExportOperation.Result result) {
+    public ExportResult(final StoreAgent storeAgent, ExportOperation.Result result) {
         super(result);
+        _storeAgent = storeAgent;
     }
 
     /**
@@ -54,6 +58,7 @@ public class ExportResult extends SimpleResult<ExportOperation.Result> {
      */
     public ExportResult(Exception exception) {
         super(exception);
+        _storeAgent = null;
     }
 
     @Override
@@ -78,7 +83,7 @@ public class ExportResult extends SimpleResult<ExportOperation.Result> {
      * @see de.espirit.firstspirit.store.access.nexport.ExportInfo
      */
     private void logElementBasedResult(final ExportOperation.Result exportResult) {
-        AdvancedLogger.logExportResult(LOGGER, exportResult);
+        AdvancedLogger.logExportResult(LOGGER, _storeAgent, exportResult);
     }
 
 
