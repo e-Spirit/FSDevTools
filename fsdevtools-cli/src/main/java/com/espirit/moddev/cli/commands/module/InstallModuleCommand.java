@@ -30,8 +30,8 @@ import static java.util.stream.Collectors.toList;
  */
 @Command(name = "install", groupNames = {"module"}, description = "Installs a FirstSpirit module into a FirstSpirit Server. If a given component is already installed, it is updated.")
 @Examples(examples = "module install -mpn \"Mithras Energy\" -fsm \"folder\\videomanagementpro.fsm\" -pacf \"resources\\projectApp.ini\" " +
-        "-scf \"MyServiceName=resources\\serviceConfig.ini\" -wacf \"preview=resources\\previewAppConfig.ini\"",
-        descriptions = "module install -mpn \"module.fsm\" -pac \"user:myUserName,password:secret,alwaysLogin:true\"")
+        "-wacf \"preview=resources\\previewAppConfig.ini\"",
+        descriptions = "module install -mpn \"Mithras Energy\" -fsm \"module.fsm\" -pacf \"resources\\projectApp.ini\"")
 public class InstallModuleCommand extends SimpleCommand<SimpleResult<Boolean>> {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(InstallModuleCommand.class);
@@ -44,7 +44,8 @@ public class InstallModuleCommand extends SimpleCommand<SimpleResult<Boolean>> {
     @Required
     private String projectName;
 
-    @Option(type = OptionType.COMMAND, name = {"-scf", "--serviceConfigurationFiles"}, description = "Define a map-like configuration for services of the given module - comma-separated value paris with service name and configuration path file.")
+    //FIXME: will be fixed in DEVEX-109
+    //@Option(type = OptionType.COMMAND, name = {"-scf", "--serviceConfigurationFiles"}, description = "Define a map-like configuration file for services of the given module - comma-separated value paris with service name and configuration path file.")
     private String serviceConfigurationsFiles;
     @Option(type = OptionType.COMMAND, name = {"-pacf", "--projectAppConfigurationFile"}, description = "Configuration file path for project app")
     private String projectAppConfigurationFile;
