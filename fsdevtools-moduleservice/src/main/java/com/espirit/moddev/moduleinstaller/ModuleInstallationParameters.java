@@ -57,7 +57,7 @@ public class ModuleInstallationParameters {
     }
 
     public List<WebScope> getWebAppScopes() {
-        return webAppScopes;
+        return Collections.unmodifiableList(webAppScopes);
     }
 
     public Map<WebScope, File> getWebAppConfigurations() {
