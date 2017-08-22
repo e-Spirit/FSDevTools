@@ -180,6 +180,7 @@ public class ProjectExporter {
                 Thread.sleep(2500);
             } catch (InterruptedException e) {
                 LOGGER.error("Thread sleep failed!", e);
+                Thread.currentThread().interrupt();
             }
         }
 
