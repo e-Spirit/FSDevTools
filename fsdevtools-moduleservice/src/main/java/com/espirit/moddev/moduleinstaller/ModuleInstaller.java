@@ -153,10 +153,7 @@ public class ModuleInstaller {
         FileSystem<?> fs = null;
 
         if (type.equals(SERVICE)) {
-//          TODO: replace exception with uncommented function - uncomment when available
-            throw new IllegalStateException("Service configuration not yet implemented.");
-//            fs = moduleAdminAgent.getServiceConfig(componentDescriptor.getName());
-
+            fs = moduleAdminAgent.getServiceConfig(componentDescriptor.getName());
         } else if (type.equals(ComponentDescriptor.Type.PROJECTAPP)) {
             fs = moduleAdminAgent.getProjectAppConfig(moduleName, componentDescriptor.getName(), projectStorage.getProject(projectId));
         } else if (type.equals(ComponentDescriptor.Type.WEBAPP)) {
