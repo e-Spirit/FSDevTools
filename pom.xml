@@ -446,7 +446,7 @@
                 </property>
             </activation>
             <properties>
-                <firstspirit.version>5.2.802</firstspirit.version>
+                <firstspirit.version>5.2.1204</firstspirit.version>
             </properties>
         </profile>
         <profile>
