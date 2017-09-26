@@ -4,6 +4,7 @@ import com.espirit.moddev.cli.ConnectionBuilder;
 import com.espirit.moddev.cli.commands.SimpleCommand;
 import com.espirit.moddev.cli.results.SimpleResult;
 import com.espirit.moddev.moduleinstaller.ModuleInstallationParameters;
+import com.espirit.moddev.moduleinstaller.ModuleInstallationParametersBuilder;
 import com.espirit.moddev.moduleinstaller.ModuleInstaller;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
@@ -12,17 +13,11 @@ import com.github.rvesse.airline.annotations.help.Examples;
 import com.github.rvesse.airline.annotations.restrictions.Required;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.common.MaximumNumberOfSessionsExceededException;
-import de.espirit.firstspirit.module.WebEnvironment.WebScope;
 import de.espirit.firstspirit.server.authentication.AuthenticationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Installs a module on a FirstSpirit server. Provides mechanisms to configure project apps, webapps
@@ -64,78 +59,18 @@ public class InstallModuleCommand extends SimpleCommand<SimpleResult<Boolean>> {
     }
 
     private SimpleResult<Boolean> installModule(Connection connection) {
-        File projectAppConfigurationFile = getAndValidateOptionalProjectAppConfigurationFile();
-        List<WebScope> splittedWebAppScopes = extractWebScopes();
-        Map<WebScope, File> webappConfigurationFilesForWebScopes = getAndValidateWebScopeFileMap();
-        Map<String, File> configurationFileForServiceName = getAndValidateStringFilesMap(serviceConfigurationsFiles);
+        ModuleInstallationParametersBuilder parameterBuilder = new ModuleInstallationParametersBuilder();
 
-        final ModuleInstallationParameters parameters = new ModuleInstallationParameters(projectName, new File(fsm), configurationFileForServiceName, projectAppConfigurationFile, splittedWebAppScopes, webappConfigurationFilesForWebScopes);
+        parameterBuilder.setFirstSpiritModule(fsm)
+            .setProjectAppConfigurationFile(projectAppConfigurationFile)
+            .setProjectName(projectName)
+            .setServiceConfigurationFiles(serviceConfigurationsFiles)
+            .setWebAppConfigurationFiles(webAppConfigurationFiles)
+            .setWebAppScopes(webAppScopes);
+
+        final ModuleInstallationParameters parameters = parameterBuilder.build();
         boolean installed = new ModuleInstaller().install(connection, parameters);
         return new SimpleResult<>(installed);
-    }
-
-    private File getAndValidateOptionalProjectAppConfigurationFile() {
-        File result = getOptionalProjectAppConfigurationFile();
-        if(result != null && (!result.isFile() || !result.exists())) {
-            throw new IllegalArgumentException("Project app configuration file doesn't exist or is not a file!");
-        }
-        return result;
-    }
-
-    private Map<String, File> getAndValidateStringFilesMap(String configurations) {
-        Map<String, File> result = getStringFilesMap(configurations);
-        for(Map.Entry<String, File> entry : result.entrySet()) {
-            if(!entry.getValue().exists() || !entry.getValue().isFile()) {
-                throw new IllegalArgumentException("File doesn't exist for key " + entry.getKey());
-            }
-        }
-        return result;
-    }
-
-    private Map<WebScope, File> getAndValidateWebScopeFileMap() {
-        Map<WebScope, File> webScopeFileMap = getWebScopeFileMap();
-        for(Map.Entry<WebScope, File> entry : webScopeFileMap.entrySet()) {
-            if(!entry.getValue().isFile() || !entry.getValue().exists()) {
-                throw new IllegalArgumentException("File for webapp configuration with scope " + entry.getKey() + " doesn't exist or is not a file.");
-            }
-        }
-        return webScopeFileMap;
-    }
-
-    protected Map<WebScope, File> getWebScopeFileMap() {
-        return getStringFilesMap(webAppConfigurationFiles).entrySet().stream().collect(Collectors.toMap(entry -> WebScope.valueOf(entry.getKey().trim().toUpperCase()), Map.Entry::getValue));
-    }
-
-    protected File getOptionalProjectAppConfigurationFile() {
-        File projectAppConfigurationFile = null;
-        if(this.projectAppConfigurationFile != null) {
-            projectAppConfigurationFile = new File(this.projectAppConfigurationFile);
-        }
-        return projectAppConfigurationFile;
-    }
-
-    protected Map<String, File> getStringFilesMap(String webAppConfigurations) {
-        if(webAppConfigurations == null) {
-            return new HashMap<>();
-        }
-        return Arrays.stream(webAppConfigurations.split(","))
-                .map(propertyString -> propertyString.split("="))
-                .collect(Collectors.toMap(entry -> entry[0], entry -> new File(entry[1])));
-    }
-
-    protected List<WebScope> extractWebScopes() {
-        if (webAppScopes == null) {
-            return new ArrayList<>();
-        }
-        try {
-            return Arrays.stream(webAppScopes.split(","))
-                .map(scope -> scope.trim().toUpperCase())
-                .map(WebScope::valueOf)
-                .collect(toList());
-        } catch (IllegalArgumentException e) {
-            LOGGER.error("You passed an illegal argument as webapp scope", e);
-        }
-        return new ArrayList<>();
     }
 
 
