@@ -1,13 +1,10 @@
 package com.espirit.moddev.moduleinstaller;
 
 import com.espirit.moddev.moduleinstaller.ModuleInstallationRawParameters.ModuleInstallationRawParametersBuilder;
-
 import de.espirit.firstspirit.module.WebEnvironment.WebScope;
 
 import java.io.File;
 import java.util.*;
-
-import lombok.Builder;
 
 public class ModuleInstallationParameters {
     private final String projectName;
@@ -37,7 +34,6 @@ public class ModuleInstallationParameters {
      * @param webAppScopes             scope configurations for the module's webapp
      * @param webAppConfigurations     configurations for the module's webapps per scope
      */
-    @Builder
     public ModuleInstallationParameters(String projectName, File fsm, Map<String, File> serviceConfigurations, File projectAppConfiguration, List<WebScope> webAppScopes, Map<WebScope, File> webAppConfigurations) {
         this.projectName = projectName;
         this.fsm = fsm;
@@ -45,6 +41,10 @@ public class ModuleInstallationParameters {
         this.projectAppConfiguration = projectAppConfiguration;
         this.webAppScopes = webAppScopes != null ? webAppScopes : new ArrayList<>();
         this.webAppConfigurations = webAppConfigurations != null ? webAppConfigurations : new HashMap<>();
+    }
+
+    public static ModuleInstallationParametersBuilder builder() {
+        return new ModuleInstallationParametersBuilder();
     }
 
     public String getProjectName() {
@@ -69,5 +69,55 @@ public class ModuleInstallationParameters {
 
     public Map<WebScope, File> getWebAppConfigurations() {
         return webAppConfigurations;
+    }
+
+    public static class ModuleInstallationParametersBuilder {
+        private String projectName;
+        private File fsm;
+        private Map<String, File> serviceConfigurations;
+        private File projectAppConfiguration;
+        private List<WebScope> webAppScopes;
+        private Map<WebScope, File> webAppConfigurations;
+
+        ModuleInstallationParametersBuilder() {
+        }
+
+        public ModuleInstallationParametersBuilder projectName(String projectName) {
+            this.projectName = projectName;
+            return this;
+        }
+
+        public ModuleInstallationParametersBuilder fsm(File fsm) {
+            this.fsm = fsm;
+            return this;
+        }
+
+        public ModuleInstallationParametersBuilder serviceConfigurations(Map<String, File> serviceConfigurations) {
+            this.serviceConfigurations = serviceConfigurations;
+            return this;
+        }
+
+        public ModuleInstallationParametersBuilder projectAppConfiguration(File projectAppConfiguration) {
+            this.projectAppConfiguration = projectAppConfiguration;
+            return this;
+        }
+
+        public ModuleInstallationParametersBuilder webAppScopes(List<WebScope> webAppScopes) {
+            this.webAppScopes = webAppScopes;
+            return this;
+        }
+
+        public ModuleInstallationParametersBuilder webAppConfigurations(Map<WebScope, File> webAppConfigurations) {
+            this.webAppConfigurations = webAppConfigurations;
+            return this;
+        }
+
+        public ModuleInstallationParameters build() {
+            return new ModuleInstallationParameters(projectName, fsm, serviceConfigurations, projectAppConfiguration, webAppScopes, webAppConfigurations);
+        }
+
+        public String toString() {
+            return "ModuleInstallationParameters.ModuleInstallationParametersBuilder(projectName=" + this.projectName + ", fsm=" + this.fsm + ", serviceConfigurations=" + this.serviceConfigurations + ", projectAppConfiguration=" + this.projectAppConfiguration + ", webAppScopes=" + this.webAppScopes + ", webAppConfigurations=" + this.webAppConfigurations + ")";
+        }
     }
 }
