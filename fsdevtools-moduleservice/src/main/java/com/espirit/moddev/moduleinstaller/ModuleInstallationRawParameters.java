@@ -1,24 +1,12 @@
 package com.espirit.moddev.moduleinstaller;
 
 import com.google.common.annotations.VisibleForTesting;
-
 import de.espirit.firstspirit.module.WebEnvironment;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import lombok.Builder;
-import lombok.Getter;
+import java.util.*;
 
 import static de.espirit.firstspirit.module.WebEnvironment.WebScope.valueOf;
 import static java.util.stream.Collectors.toList;
@@ -28,8 +16,6 @@ import static java.util.stream.Collectors.toMap;
  * This class provides utility methods to parse String parameters
  * to correctly typed @see com.espirit.moddev.moduleinstaller.ModuleInstallationParameters.
  */
-@Builder
-@Getter
 public class ModuleInstallationRawParameters {
     private static final Logger LOGGER = LoggerFactory.getLogger(ModuleInstallationRawParameters.class);
     private String webAppConfigurationFiles;
@@ -43,7 +29,45 @@ public class ModuleInstallationRawParameters {
         // I'm just sitting here, doing nothing but wasting lines.
     }
 
+    public static ModuleInstallationRawParametersBuilder builder() {
+        return new ModuleInstallationRawParametersBuilder();
+    }
+
+    public String getWebAppConfigurationFiles() {
+        return this.webAppConfigurationFiles;
+    }
+
+    public String getWebAppScopes() {
+        return this.webAppScopes;
+    }
+
+    public String getProjectAppConfigurationFile() {
+        return this.projectAppConfigurationFile;
+    }
+
+    public String getServiceConfigurationFile() {
+        return this.serviceConfigurationFile;
+    }
+
+    public String getFsm() {
+        return this.fsm;
+    }
+
+    public String getProjectName() {
+        return this.projectName;
+    }
+
     public static class ModuleInstallationRawParametersBuilder {
+        private String webAppConfigurationFiles;
+        private String webAppScopes;
+        private String projectAppConfigurationFile;
+        private String serviceConfigurationFile;
+        private String fsm;
+        private String projectName;
+
+        ModuleInstallationRawParametersBuilder() {
+        }
+
         /**
          * This method creates a new instance of @see com.espirit.moddev.moduleinstaller.ModuleInstallationParameters
          * based on all setted parameters.
@@ -136,6 +160,40 @@ public class ModuleInstallationRawParameters {
                 }
             }
             return result;
+        }
+
+        public ModuleInstallationRawParametersBuilder webAppConfigurationFiles(String webAppConfigurationFiles) {
+            this.webAppConfigurationFiles = webAppConfigurationFiles;
+            return this;
+        }
+
+        public ModuleInstallationRawParametersBuilder webAppScopes(String webAppScopes) {
+            this.webAppScopes = webAppScopes;
+            return this;
+        }
+
+        public ModuleInstallationRawParametersBuilder projectAppConfigurationFile(String projectAppConfigurationFile) {
+            this.projectAppConfigurationFile = projectAppConfigurationFile;
+            return this;
+        }
+
+        public ModuleInstallationRawParametersBuilder serviceConfigurationFile(String serviceConfigurationFile) {
+            this.serviceConfigurationFile = serviceConfigurationFile;
+            return this;
+        }
+
+        public ModuleInstallationRawParametersBuilder fsm(String fsm) {
+            this.fsm = fsm;
+            return this;
+        }
+
+        public ModuleInstallationRawParametersBuilder projectName(String projectName) {
+            this.projectName = projectName;
+            return this;
+        }
+
+        public String toString() {
+            return "ModuleInstallationRawParameters.ModuleInstallationRawParametersBuilder(webAppConfigurationFiles=" + this.webAppConfigurationFiles + ", webAppScopes=" + this.webAppScopes + ", projectAppConfigurationFile=" + this.projectAppConfigurationFile + ", serviceConfigurationFile=" + this.serviceConfigurationFile + ", fsm=" + this.fsm + ", projectName=" + this.projectName + ")";
         }
     }
 }
