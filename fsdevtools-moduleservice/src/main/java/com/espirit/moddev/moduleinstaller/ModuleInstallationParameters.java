@@ -1,9 +1,13 @@
 package com.espirit.moddev.moduleinstaller;
 
+import com.espirit.moddev.moduleinstaller.ModuleInstallationRawParameters.ModuleInstallationRawParametersBuilder;
+
 import de.espirit.firstspirit.module.WebEnvironment.WebScope;
 
 import java.io.File;
 import java.util.*;
+
+import lombok.Builder;
 
 public class ModuleInstallationParameters {
     private final String projectName;
@@ -18,7 +22,9 @@ public class ModuleInstallationParameters {
      *
      * @param projectName the name of the FirstSpirit project the module's components should be installed to
      * @param fsm         the module file (fsm)
+     * @deprecated please use the {@link ModuleInstallationRawParametersBuilder} instead.
      */
+    @Deprecated
     public ModuleInstallationParameters(String projectName, File fsm) {
         this(projectName, fsm, new HashMap(), null, new ArrayList<>(), new HashMap<>());
     }
@@ -31,11 +37,12 @@ public class ModuleInstallationParameters {
      * @param webAppScopes             scope configurations for the module's webapp
      * @param webAppConfigurations     configurations for the module's webapps per scope
      */
+    @Builder
     public ModuleInstallationParameters(String projectName, File fsm, Map<String, File> serviceConfigurations, File projectAppConfiguration, List<WebScope> webAppScopes, Map<WebScope, File> webAppConfigurations) {
         this.projectName = projectName;
         this.fsm = fsm;
         this.serviceConfigurations = serviceConfigurations != null ? serviceConfigurations : new HashMap<>();
-        this.projectAppConfiguration = projectAppConfiguration != null ? projectAppConfiguration : null;
+        this.projectAppConfiguration = projectAppConfiguration;
         this.webAppScopes = webAppScopes != null ? webAppScopes : new ArrayList<>();
         this.webAppConfigurations = webAppConfigurations != null ? webAppConfigurations : new HashMap<>();
     }
