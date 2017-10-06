@@ -4,7 +4,7 @@ import com.espirit.moddev.cli.ConnectionBuilder;
 import com.espirit.moddev.cli.commands.SimpleCommand;
 import com.espirit.moddev.cli.results.SimpleResult;
 import com.espirit.moddev.moduleinstaller.ModuleInstallationParameters;
-import com.espirit.moddev.moduleinstaller.ModuleInstallationParametersBuilder;
+import com.espirit.moddev.moduleinstaller.ModuleInstallationRawParameters;
 import com.espirit.moddev.moduleinstaller.ModuleInstaller;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
@@ -59,16 +59,17 @@ public class InstallModuleCommand extends SimpleCommand<SimpleResult<Boolean>> {
     }
 
     private SimpleResult<Boolean> installModule(Connection connection) {
-        ModuleInstallationParametersBuilder parameterBuilder = new ModuleInstallationParametersBuilder();
+        ModuleInstallationRawParameters parameterBuilder = new ModuleInstallationRawParameters();
 
-        parameterBuilder.setFirstSpiritModule(fsm)
-            .setProjectAppConfigurationFile(projectAppConfigurationFile)
-            .setProjectName(projectName)
-            .setServiceConfigurationFiles(serviceConfigurationsFiles)
-            .setWebAppConfigurationFiles(webAppConfigurationFiles)
-            .setWebAppScopes(webAppScopes);
+        final ModuleInstallationParameters parameters = ModuleInstallationRawParameters.builder()
+            .fsm(fsm)
+            .projectAppConfigurationFile(projectAppConfigurationFile)
+            .projectName(projectName)
+            .webAppConfigurationFiles(webAppConfigurationFiles)
+            .serviceConfigurationFile(serviceConfigurationsFiles)
+            .webAppScopes(webAppScopes)
+            .build();
 
-        final ModuleInstallationParameters parameters = parameterBuilder.build();
         boolean installed = new ModuleInstaller().install(connection, parameters);
         return new SimpleResult<>(installed);
     }
