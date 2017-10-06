@@ -101,7 +101,8 @@ public class ModuleInstallationParameters {
             this.projectAppConfiguration = projectAppConfiguration;
             return this;
         }
-
+        
+        @SuppressWarnings("squid:S2384")
         public ModuleInstallationParametersBuilder webAppScopes(List<WebScope> webAppScopes) {
             this.webAppScopes = webAppScopes;
             return this;
