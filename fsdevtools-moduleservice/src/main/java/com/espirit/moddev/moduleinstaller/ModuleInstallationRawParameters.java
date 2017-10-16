@@ -76,7 +76,7 @@ public class ModuleInstallationRawParameters {
         public ModuleInstallationParameters build() {
             File firstSpiritModule = new File(this.fsm);
             if (!firstSpiritModule.isFile() || !firstSpiritModule.exists()) {
-                throw new IllegalArgumentException("Could not open .fsm file");
+                throw new IllegalArgumentException("Could not open .fsm file: " + firstSpiritModule.getPath());
             }
             if (projectName == null || projectName.trim().length() <= 0) {
                 throw new IllegalArgumentException("Project name must be set");
