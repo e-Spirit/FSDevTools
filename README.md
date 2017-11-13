@@ -65,9 +65,7 @@ FSDevTools is a product of [e-Spirit AG](http://www.e-spirit.com), Dortmund, Ger
 
 Only a license agreed upon with e-Spirit AG is valid with respect to the user for using FSDevTools.
 
-<!-- 
 Details regarding any third-party software products in use but not created by e-Spirit AG, as well as the third-party licenses and, if applicable, update information can be found in the file THIRD-PARTY.txt included with the module.
--->
 
 ## Disclaimer
 

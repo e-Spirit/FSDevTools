@@ -513,6 +513,41 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>license-aggregate</id>
+            <!-- used to generate a file containing all third party licenses in target folder usage: mvn -Plicense-aggregate -->
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>license-maven-plugin</artifactId>
+                        <version>1.8</version>
+                        <configuration>
+                            <failIfWarning>true</failIfWarning>
+                            <useMissingFile>true</useMissingFile>
+                            <excludedGroups>com\.espirit.moddev*|de\.espirit\.firstspirit*</excludedGroups>
+                            <excludedScopes>test,provided</excludedScopes>
+                            <verbose>true</verbose>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>download-licenses</id>
+                                <goals>
+                                    <goal>download-licenses</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>aggregate-add-third-party</id>
+                                <goals>
+                                    <goal>aggregate-add-third-party</goal>
+                                </goals>
+                                <phase>process-resources</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
 </project>
