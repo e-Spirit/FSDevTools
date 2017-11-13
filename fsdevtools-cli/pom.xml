@@ -263,6 +263,8 @@
 						<configuration>
 							<sourceFile>${project.build.directory}/pom-install-deploy-fix/pom.xml</sourceFile>
 							<destinationFile>${project.build.directory}/pom-install-deploy-fix/${artifactId}-${project.version}.pom</destinationFile>
+                            <sourceFile>${project.build.directory}/generated-sources/license/THIRD-PARTY.txt</sourceFile>
+							<destinationFile>${project.build.directory}/THIRD-PARTY.txt</destinationFile>
 						</configuration>
 					</execution>
 				</executions>
