@@ -119,17 +119,21 @@ public class UidIdentifier implements Identifier {
      */
     @Override
     public void addToExportOperation(StoreAgent storeAgent, boolean useReleaseState, ExportOperation exportOperation) {
-        final IDProvider storeElement = storeAgent.getStore(getUidMapping().getStoreType(), useReleaseState).getStoreElement(getUid(), getUidMapping().getUidType());
+        final IDProvider.UidType uidType = getUidMapping().getUidType();
+        final Store.Type storeType = getUidMapping().getStoreType();
+        final IDProvider storeElement = storeAgent.getStore(storeType, useReleaseState).getStoreElement(getUid(), uidType);
         if(storeElement != null) {
             if(isAssignableFrom(storeElement)) {
                 LOGGER.debug("Adding store element: {}", storeElement);
                 exportOperation.addElement(storeElement);
             } else {
-                String errorMessage = "IDProvider of class " + storeElement.getClass().getSimpleName() + " found, but expected to find one of class " + getUidMapping().getCorrespondingType().getSimpleName() + " for uid " + uid;
+                final String errorMessage = "IDProvider of class " + storeElement.getClass().getSimpleName() +
+                        " found, but expected to find one of class " + getUidMapping().getCorrespondingType().getSimpleName() +
+                        " for uid=" + getUid() + ", uidType=" + uidType + ", store=" + storeType + ", release=" + useReleaseState;
                 throw new IDProviderNotFoundException(errorMessage);
             }
         } else {
-            throw new IDProviderNotFoundException("IDProvider cannot be retrieved for " + uid);
+            throw new IDProviderNotFoundException("IDProvider cannot be retrieved for uid=" + getUid() + ", uidType=" + uidType + ", store=" + storeType + ", release=" + useReleaseState);
         }
     }
 
