@@ -1,7 +1,8 @@
 package com.espirit.moddev.moduleinstaller;
 
+import com.espirit.moddev.moduleinstaller.webapp.WebAppIdentifierParser;
 import com.google.common.annotations.VisibleForTesting;
-import de.espirit.firstspirit.module.WebEnvironment;
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,11 +10,10 @@ import java.io.File;
 import java.util.*;
 
 import static de.espirit.firstspirit.module.WebEnvironment.WebScope.valueOf;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 /**
- * This class provides utility methods to parse String parameters
+ * This class provides utility methods to parseMultiple String parameters
  * to correctly typed @see com.espirit.moddev.moduleinstaller.ModuleInstallationParameters.
  */
 public class ModuleInstallationRawParameters {
@@ -78,27 +78,22 @@ public class ModuleInstallationRawParameters {
             if (!firstSpiritModule.isFile() || !firstSpiritModule.exists()) {
                 throw new IllegalArgumentException("Could not open .fsm file: " + firstSpiritModule.getPath());
             }
-            if (projectName == null || projectName.trim().length() <= 0) {
-                throw new IllegalArgumentException("Project name must be set");
-            }
 
             File projectAppConfigFile = createAndValidateOptionalProjectAppConfigurationFile(this.projectAppConfigurationFile);
             Map<String, File> configurationFileForServiceName = getAndValidateStringFilesMap(this.serviceConfigurationFile);
-            List<WebEnvironment.WebScope> splittedWebAppScopes = extractWebScopes(webAppScopes);
-            Map<WebEnvironment.WebScope, File> webAppConfigurationFilesForWebScopes = getAndValidateWebScopeFileMap(this.webAppConfigurationFiles);
+            List<WebAppIdentifier> splittedWebAppScopes = extractWebScopes(webAppScopes);
+            Map<WebAppIdentifier, File> webAppConfigurationFilesForWebScopes = getAndValidateWebScopeFileMap(this.webAppConfigurationFiles);
             return new ModuleInstallationParameters(projectName, firstSpiritModule, configurationFileForServiceName, projectAppConfigFile, splittedWebAppScopes, webAppConfigurationFilesForWebScopes);
         }
 
         @VisibleForTesting
-        List<WebEnvironment.WebScope> extractWebScopes(String webAppScopes) {
-            if (webAppScopes == null) {
+        List<WebAppIdentifier> extractWebScopes(String webAppScopes) {
+            if (Strings.isNullOrEmpty(webAppScopes)) {
                 return new ArrayList<>();
             }
             try {
-                return Arrays.stream(webAppScopes.split(","))
-                    .map(scope -> scope.trim().toUpperCase(Locale.getDefault()))
-                    .map(WebEnvironment.WebScope::valueOf)
-                    .collect(toList());
+                WebAppIdentifierParser webAppIdentifierParser = new WebAppIdentifierParser();
+                return webAppIdentifierParser.parseMultiple(webAppScopes);
             } catch (IllegalArgumentException e) {
                 LOGGER.error("You passed an illegal argument as webapp scope", e);
             }
@@ -121,14 +116,14 @@ public class ModuleInstallationRawParameters {
                 .orElse(null);
         }
 
-        private Map<WebEnvironment.WebScope, File> getAndValidateWebScopeFileMap(String webAppConfigurationFiles) {
-            Map<WebEnvironment.WebScope, File> webScopeFileMap = getWebScopeFileMap(webAppConfigurationFiles);
+        private Map<WebAppIdentifier, File> getAndValidateWebScopeFileMap(String webAppConfigurationFiles) {
+            Map<WebAppIdentifier, File> webScopeFileMap = getWebScopeFileMap(webAppConfigurationFiles);
             validateWebScopeFileMap(webScopeFileMap);
             return webScopeFileMap;
         }
 
-        private void validateWebScopeFileMap(Map<WebEnvironment.WebScope, File> webScopeFileMap) {
-            for(Map.Entry<WebEnvironment.WebScope, File> entry : webScopeFileMap.entrySet()) {
+        private void validateWebScopeFileMap(Map<WebAppIdentifier, File> webScopeFileMap) {
+            for(Map.Entry<WebAppIdentifier, File> entry : webScopeFileMap.entrySet()) {
                 if(!entry.getValue().isFile() || !entry.getValue().exists()) {
                     throw new IllegalArgumentException("File for webapp configuration with scope " + entry.getKey() + " doesn't exist or is not a file.");
                 }
@@ -136,15 +131,15 @@ public class ModuleInstallationRawParameters {
         }
 
         @VisibleForTesting
-        Map<WebEnvironment.WebScope, File> getWebScopeFileMap(String webAppConfigurationFiles) {
+        Map<WebAppIdentifier, File> getWebScopeFileMap(String webAppConfigurationFiles) {
             Set<Map.Entry<String, File>> entries = getStringFilesMap(webAppConfigurationFiles).entrySet();
             return entries.stream().collect(
-                toMap(entry -> valueOf(entry.getKey().trim().toUpperCase(Locale.getDefault())), Map.Entry::getValue));
+                toMap(entry -> new WebAppIdentifierParser().parseSingle(entry.getKey()), Map.Entry::getValue));
         }
 
         @VisibleForTesting
         Map<String, File> getStringFilesMap(String webAppConfigurations) {
-            if(webAppConfigurations == null) {
+            if(Strings.isNullOrEmpty(webAppConfigurations)) {
                 return new HashMap<>();
             }
             return Arrays.stream(webAppConfigurations.split(","))

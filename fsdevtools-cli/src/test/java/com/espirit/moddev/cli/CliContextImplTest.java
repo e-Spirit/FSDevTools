@@ -46,6 +46,7 @@ import org.apache.log4j.spi.ErrorHandler;
 import org.apache.log4j.spi.Filter;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.varia.FallbackErrorHandler;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -56,15 +57,13 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 /**
@@ -131,7 +130,7 @@ public class CliContextImplTest {
         new CliContextImpl(null);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testObtainConnectionExceptionOnEmptyProject() throws Exception {
         when(clientConfig.getProject()).thenReturn(null);
         when(clientConfig.getHost()).thenReturn("localhost");
@@ -164,16 +163,25 @@ public class CliContextImplTest {
 
     @Test
     public void testRequireSpecialist() throws Exception {
+        when(testling.getSpecialistsBroker()).thenReturn(specialistsBroker);
         final LanguageAgent languageAgent = testling.requireSpecialist(LanguageAgent.TYPE);
         assertThat("Expected a non-null value", languageAgent, is(notNullValue()));
         verify(specialistsBroker, times(1)).requireSpecialist(LanguageAgent.TYPE);
     }
+    @Test(expected = IllegalStateException.class)
+    public void testRequireSpecialistWithNullBroker() throws Exception {
+        testling = spy(new TestContext(clientConfig));
+        when(testling.getSpecialistsBroker()).thenReturn(null);
+        final LanguageAgent languageAgent = testling.requireSpecialist(LanguageAgent.TYPE);
+        assertThat("Expected a null value for a null specialistBroker", languageAgent, is(nullValue()));
+    }
 
     @Test
     public void testRequestSpecialist() throws Exception {
-        final LanguageAgent languageAgent = testling.requestSpecialist(LanguageAgent.TYPE);
-        assertThat("Expected a non-null value", languageAgent, is(notNullValue()));
-        verify(specialistsBroker, times(1)).requestSpecialist(LanguageAgent.TYPE);
+        when(clientConfig.getProject()).thenReturn(null);
+        testling = new TestContext(clientConfig);
+        Assert.assertNull(testling.getSpecialistsBroker());
+        testling.requestSpecialist(LanguageAgent.TYPE);
     }
 
     @Test
