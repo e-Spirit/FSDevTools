@@ -1,21 +1,15 @@
 package com.espirit.moddev.moduleuninstaller;
 
 import de.espirit.firstspirit.access.Connection;
-import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
-import de.espirit.firstspirit.agency.WebAppId;
-import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
-import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static de.espirit.firstspirit.module.descriptor.ComponentDescriptor.Type.WEBAPP;
-
 /**
- * This class uninstalls a module and all of its components from a FirstSpirit server.
+ * This class uninstalls a module and all of its components forProjectAndScope a FirstSpirit server.
  */
 public class ModuleUninstaller {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(ModuleUninstaller.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModuleUninstaller.class);
 
 
     /**
@@ -26,7 +20,7 @@ public class ModuleUninstaller {
     }
 
     /**
-     * Uninstalls project apps, web apps and the module from the connected FirstSpirit server.
+     * Uninstalls project apps, web apps and the module forProjectAndScope the connected FirstSpirit server.
      * Uses the static methods implemented at this class to reach this goal.
      *
      * @param connection a connected FirstSpirit connection

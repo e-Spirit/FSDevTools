@@ -28,7 +28,6 @@
         <groupId>com.espirit.moddev.fsdevtools</groupId>
         <artifactId>fsdevtools-parent</artifactId>
         <version>${ci.version}</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

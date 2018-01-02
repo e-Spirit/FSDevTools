@@ -12,6 +12,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import static de.espirit.firstspirit.module.WebEnvironment.WebScope.PREVIEW;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -28,14 +29,14 @@ public class ModuleInstallationRawParametersBuilderTest {
     @Test
     public void getWebScopeFileMap() throws Exception {
         String testWebAppConfigurationFiles ="staging=temp/myConfig.ini,preview=temp/myConfig2.ini";
-        assertThat(builder.getWebScopeFileMap(testWebAppConfigurationFiles).get(WebEnvironment.WebScope.STAGING), is(new File("temp/myConfig.ini")));
-        assertThat(builder.getWebScopeFileMap(testWebAppConfigurationFiles).get(WebEnvironment.WebScope.PREVIEW), is(new File("temp/myConfig2.ini")));
+        assertThat(builder.getWebScopeFileMap(testWebAppConfigurationFiles).get(WebAppIdentifier.STAGING), is(new File("temp/myConfig.ini")));
+        assertThat(builder.getWebScopeFileMap(testWebAppConfigurationFiles).get(WebAppIdentifier.PREVIEW), is(new File("temp/myConfig2.ini")));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getWebScopeFileMapWithNonExistentWebScope() throws Exception {
         String testWebAppConfigurationFiles ="staging=temp/myConfig.ini, XXX=temp/myConfig2.ini";
-        builder.getWebScopeFileMap(testWebAppConfigurationFiles).get(WebEnvironment.WebScope.STAGING);
+        builder.getWebScopeFileMap(testWebAppConfigurationFiles).get(WebAppIdentifier.STAGING);
     }
 
     @Test
@@ -54,7 +55,7 @@ public class ModuleInstallationRawParametersBuilderTest {
     @Test
     public void extractWebScopes() throws Exception {
         String testWebAppScopes ="preview,staging";
-        List<WebEnvironment.WebScope> extractedScopes = builder.extractWebScopes(testWebAppScopes);
-        assertThat(extractedScopes, contains(WebEnvironment.WebScope.PREVIEW, WebEnvironment.WebScope.STAGING));
+        List<WebAppIdentifier> extractedScopes = builder.extractWebScopes(testWebAppScopes);
+        assertThat(extractedScopes, contains(WebAppIdentifier.PREVIEW, WebAppIdentifier.STAGING));
     }
 }

@@ -11,13 +11,17 @@ import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;
 import com.github.rvesse.airline.annotations.help.Examples;
 import com.github.rvesse.airline.annotations.restrictions.Required;
+import com.google.common.base.Strings;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.common.MaximumNumberOfSessionsExceededException;
 import de.espirit.firstspirit.server.authentication.AuthenticationException;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+
+import static com.google.common.base.Strings.*;
 
 /**
  * Installs a module on a FirstSpirit server. Provides mechanisms to configure project apps, webapps
@@ -35,15 +39,21 @@ public class InstallModuleCommand extends SimpleCommand<SimpleResult<Boolean>> {
     @Required
     private String fsm;
 
-    @Option(type = OptionType.COMMAND, name = {"-mpn", "--moduleProjectName"}, description = "Name of the FirstSpirit target project where the application's components should be installed to")
-    @Required
+    @Option(type = OptionType.COMMAND, name = {"-mpn", "--moduleProjectName"}, description = "Name of the FirstSpirit target project where the application's components should be installed to. Optional.")
     private String projectName;
 
     @Option(type = OptionType.COMMAND, name = {"-scf", "--serviceConfigurationFiles"}, description = "Define a map-like configuration file for services of the given module - comma-separated value pairs with service name and configuration path file.")
     private String serviceConfigurationsFiles;
     @Option(type = OptionType.COMMAND, name = {"-pacf", "--projectAppConfigurationFile"}, description = "Configuration file path for project app")
     private String projectAppConfigurationFile;
-    @Option(type = OptionType.COMMAND, name = {"-was", "--webAppScopes"}, description = "Define a map-like configuration for webapp scopes of the given module - comma-separated values from the FirstSpirit WebScope enum.")
+    @Option(type = OptionType.COMMAND, name = {"-was", "--webAppScopes"}, description = "Define a map-like configuration for webapp scopes of the given module - comma-separated values from the FirstSpirit WebScope enum."
+                                                                                        + " The FS WebScope enum contains the following keys:\n"
+                                                                                        + "'GLOBAL'\n"
+                                                                                        + "'LIVE'\n"
+                                                                                        + "'PREVIEW'\n"
+                                                                                        + "'STAGING'\n"
+                                                                                        + "'WEBEDIT'\n"
+                                                                                        + " For global webapps, use 'global(WebAppId)'.")
     private String webAppScopes;
     @Option(type = OptionType.COMMAND, name = {"-wacf", "--webAppConfigurationFiles"}, description = "Define a map-like configuration for the webapps of the given module - with comma-separated key-values.")
     private String webAppConfigurationFiles;
@@ -59,7 +69,7 @@ public class InstallModuleCommand extends SimpleCommand<SimpleResult<Boolean>> {
     }
 
     private SimpleResult<Boolean> installModule(Connection connection) {
-        ModuleInstallationRawParameters parameterBuilder = new ModuleInstallationRawParameters();
+        String projectName = retrieveProjectNameOrFallback();
 
         final ModuleInstallationParameters parameters = ModuleInstallationRawParameters.builder()
             .fsm(fsm)
@@ -72,6 +82,21 @@ public class InstallModuleCommand extends SimpleCommand<SimpleResult<Boolean>> {
 
         boolean installed = new ModuleInstaller().install(connection, parameters);
         return new SimpleResult<>(installed);
+    }
+
+    private String retrieveProjectNameOrFallback() {
+        String projectName = this.projectName;
+        if(isNullOrEmpty(projectName)) {
+            LOGGER.warn("No --moduleProjectName parameter given for module installation.");
+            if(!isNullOrEmpty(getProject())) {
+                projectName = getProject();
+                LOGGER.warn("Using global --project parameter of value \"" + getProject() +  "\"");
+            } else {
+                LOGGER.debug("No project name given as --moduleProjectName or --project parameter. " +
+                        "Going on without project, so module installation with project specific components could fail.");
+            }
+        }
+        return projectName;
     }
 
 

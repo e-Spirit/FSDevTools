@@ -1,8 +1,7 @@
 package com.espirit.moddev.moduleinstaller;
 
-import de.espirit.firstspirit.access.AdminService;
+import com.google.common.base.Strings;
 import de.espirit.firstspirit.access.Connection;
-import de.espirit.firstspirit.access.admin.ProjectStorage;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.access.store.LockException;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
@@ -10,24 +9,30 @@ import de.espirit.firstspirit.agency.ModuleAdminAgent.ModuleResult;
 import de.espirit.firstspirit.agency.WebAppId;
 import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.io.FileSystem;
-import de.espirit.firstspirit.io.ServerConnection;
-import de.espirit.firstspirit.manager.*;
-import de.espirit.firstspirit.module.*;
-import de.espirit.firstspirit.module.WebEnvironment.WebScope;
-import de.espirit.firstspirit.module.descriptor.*;
+import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
+import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
+import de.espirit.firstspirit.module.descriptor.ProjectAppDescriptor;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
-import static de.espirit.firstspirit.module.WebEnvironment.WebScope.PREVIEW;
-import static de.espirit.firstspirit.module.WebEnvironment.WebScope.STAGING;
-import static de.espirit.firstspirit.module.WebEnvironment.WebScope.WEBEDIT;
+import static com.espirit.moddev.moduleinstaller.WebAppIdentifier.isFs5RootWebApp;
+import static de.espirit.firstspirit.access.ConnectionManager.SOCKET_MODE;
 import static de.espirit.firstspirit.module.descriptor.ComponentDescriptor.Type.SERVICE;
+import static de.espirit.firstspirit.module.descriptor.ComponentDescriptor.Type.WEBAPP;
+import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 
 /**
  * This class can install modules and module configurations.
  */
+@SuppressWarnings("squid:S1200")
 public class ModuleInstaller {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ModuleInstaller.class);
@@ -69,14 +74,6 @@ public class ModuleInstaller {
      * @param descriptor the module descriptor
      */
     private static void activateServices(final Connection connection, ModuleInstallationParameters parameters, ModuleDescriptor descriptor) {
-        ProjectStorage projectStorage = connection.getService(AdminService.class).getProjectStorage();
-
-        Project project = projectStorage.getProject(parameters.getProjectName());
-        if(project == null) {
-            throw new IllegalArgumentException("Project " + parameters.getProjectName() + " not found!");
-        }
-        long projectId = project.getId();
-        LOGGER.info("ModuleInstaller activateServices ...");
 
         ModuleAdminAgent moduleAdminAgent = connection.getBroker().requireSpecialist(ModuleAdminAgent.TYPE);
         String moduleName = descriptor.getModuleName();
@@ -90,11 +87,15 @@ public class ModuleInstaller {
         if (componentDescriptors == null) {
             LOGGER.error("No components found for module: {}", moduleName);
         } else {
-            Arrays.stream(componentDescriptors).filter(it -> it.getType().equals(SERVICE)).forEach(serviceDescriptor -> {
+            List<ComponentDescriptor> serviceDescriptors = stream(componentDescriptors).filter(it -> it.getType().equals(SERVICE)).collect(toList());
+            if(!serviceDescriptors.isEmpty()) {
+                LOGGER.info("ModuleInstaller activateServices ...");
+            }
+            serviceDescriptors.forEach(serviceDescriptor -> {
                 LOGGER.info("Found service " + serviceDescriptor.getName());
                 File configuration = parameters.getServiceConfigurations().get(serviceDescriptor.getName());
                 if(configuration != null) {
-                    createConfigurationFile(SERVICE, connection, serviceDescriptor, configuration, moduleName, projectId, null);
+                    createConfigurationFile(SERVICE, connection, serviceDescriptor, configuration, moduleName, parameters.getProjectName(), null);
                     setAutostartAndRestartService(moduleAdminAgent, serviceDescriptor);
                 } else {
                     LOGGER.info("No configuration found for service " + serviceDescriptor.getName());
@@ -115,13 +116,13 @@ public class ModuleInstaller {
     }
 
     /**
-     * Convenience method for copying the configuration files from the module to the server-dirs
+     * Convenience method for copying the configuration files forProjectAndScope the module to the server-dirs
      * @param type                  Type of the module whose configuration should be written e.g. Service, ProjectApp
      * @param connection            A {@link Connection} to the server
-     * @param componentDescriptor   The component from the module.xml to use
-     * @param configurationFile The map from the pom.xml that includes the configuration files
+     * @param componentDescriptor   The component forProjectAndScope the module.xml to use
+     * @param configurationFile The map forProjectAndScope the pom.xml that includes the configuration files
      * @param moduleName            The name of the module whose configuration should be written (nullable)
-     * @param projectId             The id of the project the project applications shall be installed to
+     * @param projectName           The optional project name applications shall be installed to
      * @param webAppId              The webAppId to use - only used by webapp configurations
      */
     private static void createConfigurationFile(ComponentDescriptor.Type type,
@@ -129,14 +130,13 @@ public class ModuleInstaller {
                                                 ComponentDescriptor componentDescriptor,
                                                 File configurationFile,
                                                 String moduleName,
-                                                long projectId, WebAppId webAppId) {
+                                                String projectName, WebAppId webAppId) {
         LOGGER.info("Config created, preparing for saving");
-        Optional<FileSystem<?>> fsOptional = getFileSystemForConfigurationType(type, connection, componentDescriptor, moduleName, projectId, webAppId);
+        Optional<FileSystem<?>> fsOptional = getFileSystemForConfigurationType(type, connection, componentDescriptor, moduleName, projectName, webAppId);
         fsOptional.ifPresent(fs -> {
             LOGGER.info("Obtaining handle");
-            FileHandle handle = null;
             try {
-                handle = fs.obtain(getConfigFileName(componentDescriptor) + ".ini");
+                FileHandle handle = fs.obtain(getConfigFileName(componentDescriptor) + ".ini");
                 LOGGER.info("Saving handle to " + handle.getPath());
                 handle.save(new FileInputStream(configurationFile));
             } catch (IOException e) {
@@ -147,16 +147,18 @@ public class ModuleInstaller {
         LOGGER.info("Configuration files created");
     }
 
-    private static Optional<FileSystem<?>> getFileSystemForConfigurationType(ComponentDescriptor.Type type, Connection connection, ComponentDescriptor componentDescriptor, String moduleName, long projectId, WebAppId webAppId) {
+    private static Optional<FileSystem<?>> getFileSystemForConfigurationType(ComponentDescriptor.Type type, Connection connection, ComponentDescriptor componentDescriptor, String moduleName, String projectName, WebAppId webAppId) {
         ModuleAdminAgent moduleAdminAgent = connection.getBroker().requestSpecialist(ModuleAdminAgent.TYPE);
-        ProjectStorage projectStorage = connection.getService(AdminService.class).getProjectStorage();
         FileSystem<?> fs = null;
 
         if (type.equals(SERVICE)) {
             fs = moduleAdminAgent.getServiceConfig(componentDescriptor.getName());
         } else if (type.equals(ComponentDescriptor.Type.PROJECTAPP)) {
-            fs = moduleAdminAgent.getProjectAppConfig(moduleName, componentDescriptor.getName(), projectStorage.getProject(projectId));
-        } else if (type.equals(ComponentDescriptor.Type.WEBAPP)) {
+            if(Strings.isNullOrEmpty(projectName)) {
+                throw new IllegalArgumentException("No project given, can't get a project app configuration!");
+            }
+            fs = moduleAdminAgent.getProjectAppConfig(moduleName, componentDescriptor.getName(), connection.getProjectByName(projectName));
+        } else if (type.equals(WEBAPP)) {
             LOGGER.info("ComponentDescriptor: " + componentDescriptor.getName());
             fs = moduleAdminAgent.getWebAppConfig(moduleName, componentDescriptor.getName(),  webAppId);
         }
@@ -171,35 +173,49 @@ public class ModuleInstaller {
      * @param parameters
      */
     private static void installProjectApps(final Connection connection, final String moduleName, final ModuleInstallationParameters parameters) {
-        Project project = connection.getProjectByName(parameters.getProjectName());
-        LOGGER.info("Installing project apps for {} project {}", moduleName, project.getName());
+
         ModuleAdminAgent moduleAdminAgent = connection.getBroker().requireSpecialist(ModuleAdminAgent.TYPE);
         Optional<ModuleDescriptor> moduleDescriptor = getModuleDescriptor(moduleAdminAgent, moduleName);
-        if (moduleDescriptor.isPresent()) {
-            Arrays.asList(moduleDescriptor.get().getComponents()).stream().filter(it -> it instanceof ProjectAppDescriptor).forEach(projectAppDescriptor -> {
-                LOGGER.info("ProjectDescriptor {} is processed", projectAppDescriptor.getName());
-
-                FileSystem<?> projectAppConfig = null;
-                try {
-                    projectAppConfig = getFileSystemForConfigurationType(projectAppDescriptor.getType(), connection, projectAppDescriptor, moduleName, project.getId(), null).get();
-                } catch (IllegalArgumentException e) {
-                    LOGGER.info("projectAppConfig can not be obtained so it is created");
-                    LOGGER.debug("", e);
-                }
-                if (projectAppConfig != null) {
-                    LOGGER.info("Existing project: {} app config - updating with the given configuration!", project.getName(), moduleName);
-                }
-                LOGGER.info("Install ProjectApp");
-                moduleAdminAgent.installProjectApp(moduleName, projectAppDescriptor.getName(), project);
-                LOGGER.info("Create configuration files");
-                parameters.getProjectAppConfiguration().ifPresent(projectAppFile -> {
-                    createConfigurationFile(ComponentDescriptor.Type.PROJECTAPP, connection, projectAppDescriptor, projectAppFile, moduleName, project.getId(), null);
-                });
-            });
-        } else {
-            LOGGER.error("No descriptor for {} found!", moduleName);
+        if (!moduleDescriptor.isPresent()) {
+            LOGGER.debug("No module descriptor found, not going to install project apps.");
+            return;
         }
-        LOGGER.info("Installing project apps finished");
+
+        List<ComponentDescriptor> projectAppDescriptors = stream(moduleDescriptor.get().getComponents()).filter(it -> it instanceof ProjectAppDescriptor).collect(toList());
+
+        String projectName = parameters.getProjectName();
+        if(Strings.isNullOrEmpty(projectName)) {
+            if(!projectAppDescriptors.isEmpty()) {
+                LOGGER.warn("Found project app descriptors, but can't install project apps without a project name given!");
+            }
+        } else {
+            if(!projectAppDescriptors.isEmpty()) {
+                LOGGER.info("Installing project apps for {} project {}", moduleName, projectName);
+
+                projectAppDescriptors.forEach(projectAppDescriptor -> {
+
+                    LOGGER.info("ProjectDescriptor {} is processed", projectAppDescriptor.getName());
+
+                    FileSystem<?> projectAppConfig = null;
+                    try {
+                        projectAppConfig = getFileSystemForConfigurationType(projectAppDescriptor.getType(), connection, projectAppDescriptor, moduleName, projectName, null).get();
+                    } catch (IllegalArgumentException e) {
+                        LOGGER.info("projectAppConfig can not be obtained so it is created");
+                        LOGGER.debug("", e);
+                    }
+                    if (projectAppConfig != null) {
+                        LOGGER.info("Existing project: {} app config - updating with the given configuration!", projectName, moduleName);
+                    }
+                    LOGGER.info("Install ProjectApp");
+                    moduleAdminAgent.installProjectApp(moduleName, projectAppDescriptor.getName(), connection.getProjectByName(projectName));
+                    LOGGER.info("Create configuration files");
+                    parameters.getProjectAppConfiguration().ifPresent(projectAppFile -> {
+                        createConfigurationFile(ComponentDescriptor.Type.PROJECTAPP, connection, projectAppDescriptor, projectAppFile, moduleName, projectName, null);
+                    });
+                });
+                LOGGER.info("Installing project apps finished");
+            }
+        }
     }
 
     protected static Optional<ModuleDescriptor> getModuleDescriptor(ModuleAdminAgent moduleAdminAgent, String moduleName) {
@@ -213,88 +229,131 @@ public class ModuleInstaller {
 
     /**
      * Method for installing the web applications of a given module into a given project
-     *  @param connection A {@link Connection} to the server
-     * @param parameters parameters containing the specific entries from the config files
+     * @param connection A {@link Connection} to the server
+     * @param moduleDescriptor A {@link ModuleDescriptor} to describe FirstSpirit module components
+     * @param parameters parameters containing the specific entries forProjectAndScope the config files
      * @param moduleName The name of the module whose web applications shall be installed
      * @return success indicator
      */
     public static boolean installProjectWebApps(final Connection connection, ModuleDescriptor moduleDescriptor, ModuleInstallationParameters parameters, final String moduleName) {
-        ProjectStorage projectStorage = connection.getService(AdminService.class).getProjectStorage();
         ModuleAdminAgent moduleAdminAgent = connection.getBroker().requestSpecialist(ModuleAdminAgent.TYPE);
 
-        long projectId = projectStorage.getProject(parameters.getProjectName()).getId();
-        installWebAppsAndCreateConfig(connection, moduleName, projectId, moduleAdminAgent, moduleDescriptor.getComponents(), parameters.getWebAppScopes(), parameters.getWebAppConfigurations());
+        installWebAppsAndCreateConfig(connection, moduleName, parameters.getProjectName(), moduleAdminAgent,
+                moduleDescriptor.getComponents(), parameters.getWebAppScopes(), parameters.getWebAppConfigurations());
 
-        return deployWebAppsForScopes(connection, moduleName, projectId, moduleAdminAgent, moduleDescriptor.getComponents());
+        return deployWebAppsForScopes(connection, parameters.getProjectName(), moduleDescriptor.getComponents(), parameters.getWebAppScopes());
     }
 
-    private static boolean deployWebAppsForScopes(Connection connection, String moduleName, long projectId, ModuleAdminAgent moduleAdminAgent, ComponentDescriptor[] componentDescriptors) {
-        LOGGER.info("Installing Project WebApps");
-        WebScope[] webScopes = {PREVIEW, STAGING, WEBEDIT};
-        for (ComponentDescriptor componentDescriptor : componentDescriptors) {
-            if (ComponentDescriptor.Type.WEBAPP.equals(componentDescriptor.getType())
-                && !deployWebApps(connection, moduleName, projectId, moduleAdminAgent, webScopes, componentDescriptor)) {
+    private static boolean deployWebAppsForScopes(Connection connection, String projectName, ComponentDescriptor[] componentDescriptors, List<WebAppIdentifier> webScopes) {
+        List<ComponentDescriptor> webAppDescriptors = asList(componentDescriptors).stream().filter(descriptor -> WEBAPP.equals(descriptor.getType())).collect(toList());
+        if(!webAppDescriptors.isEmpty() && !webScopes.isEmpty()) {
+            LOGGER.info("Installing Project WebApps");
+        }
+        for (ComponentDescriptor componentDescriptor : webAppDescriptors) {
+            if (!deployWebApps(connection, projectName, webScopes, componentDescriptor)) {
 
                 return false;
+
             }
         }
         return true;
     }
 
-    private static boolean deployWebApps(Connection connection, String moduleName, long projectId, ModuleAdminAgent moduleAdminAgent,
-                                         WebScope[] webScopes, ComponentDescriptor componentDescriptor) {
-        for (WebAppId webAppId: moduleAdminAgent.getWebAppUsages(moduleName, componentDescriptor.getName())) {
-            Optional<Boolean>
-                failed = Arrays.stream(webScopes).map(scope -> installWebAppAndActivateWebServer(scope, projectId, connection, webAppId)).filter(it -> !it).findAny();
-            if (!failed.isPresent()) {
-                LOGGER.error("Cannot install WebApp for specific scope!  ID: {}", webAppId );
-                return false;
-            }
-        }
-        return true;
-    }
+    private static boolean deployWebApps(Connection connection, String projectName,
+                                         List<WebAppIdentifier> webScopes, ComponentDescriptor componentDescriptor) {
 
-    private static boolean installWebAppAndActivateWebServer(final WebScope webScope, final long projectId,
-                                                             final Connection connection, final WebAppId webAppId) {
+        LOGGER.info("Going to install and activate component {} with webAppIds: {}", componentDescriptor.getName(), webScopes);
+        Optional<Boolean> failed = webScopes
+                .stream()
+                .map(it -> installWebAppAndActivateWebServer(it, projectName, connection))
+                .filter(it -> !it)
+                .findAny();
 
-        final Project project = connection.getProjectById(projectId);
-
-        try {
-            ModuleAdminAgent moduleAdminAgent = connection.getBroker().requireSpecialist(ModuleAdminAgent.TYPE);
-            boolean successfullyDeployed = moduleAdminAgent.deployWebApp(webAppId);
-            if (!setActiveWebServerForProject(webScope, project) || !successfullyDeployed){
-                return false;
-            }
-
-        } catch (IllegalStateException ise) {
-            LOGGER.error("Cannot deploy war file!", ise);
+        if (failed.isPresent()) {
+            LOGGER.error("Cannot install WebApp for specific scope!  IDs: {}", webScopes );
             return false;
         }
         return true;
     }
 
-    private static void installWebAppsAndCreateConfig(Connection connection, String moduleName, long projectId, ModuleAdminAgent moduleAdminAgent, ComponentDescriptor[] componentDescriptors, List<WebScope> webAppScopes, Map<WebScope, File> webAppConfigurations) {
-        LOGGER.info("Creating WebApp configuration files");
-        Arrays.stream(componentDescriptors).filter(it -> ComponentDescriptor.Type.WEBAPP.equals(it.getType())).forEach(componentDescriptor -> {
-            for (WebScope scope : webAppScopes) {
-                if (webAppConfigurations.containsKey(scope) && !scope.equals(WebScope.GLOBAL)) {
-                    try {
-                        WebAppId id = WebAppId.Factory.create(connection.getProjectById(projectId), scope);
-                        moduleAdminAgent.installWebApp(moduleName, componentDescriptor.getName(), id);
-                        createConfigurationFile(ComponentDescriptor.Type.WEBAPP,
-                                                connection,
-                                                componentDescriptor,
-                                                webAppConfigurations.get(scope),
-                                                moduleName, projectId,
-                                                id);
+    private static boolean installWebAppAndActivateWebServer(final WebAppIdentifier webScope, final String projectName,
+                                                             final Connection connection) {
+        try {
 
-                        LOGGER.info("WebAppScope: " + scope);
-                    } catch (IllegalArgumentException e) {
-                        LOGGER.error("Invalid Scope " + scope, e);
-                    }
-                }
+            Project projectOrNull = null;
+            if(!Strings.isNullOrEmpty(projectName)) {
+                projectOrNull = connection.getProjectByName(projectName);
+            }
+
+            LOGGER.info("Setting active webserver for project scope: {}", webScope);
+            boolean activeServerForProjectSet = setActiveWebServer(webScope, projectOrNull);
+            LOGGER.info(activeServerForProjectSet ? "Setting active webserver was successful." : "Setting active webserver wasn't successful.");
+            if(!activeServerForProjectSet){
+                return false;
+            }
+
+            WebAppId webAppId = webScope.createWebAppId(projectOrNull);
+
+            boolean isRootWebAppAndNonSocketConnection = isFs5RootWebApp(webAppId) && SOCKET_MODE != connection.getMode();
+            boolean successfullyDeployed = false;
+            if(isRootWebAppAndNonSocketConnection) {
+                LOGGER.error("Cannot use a non socket connection to deploy a web component to the FirstSpirit root WebApp. Use SOCKET as connection mode!");
+            } else {
+
+                LOGGER.info("Deploying WebApp {}", webAppId);
+                successfullyDeployed = connection.getBroker().requireSpecialist(ModuleAdminAgent.TYPE).deployWebApp(webAppId);
+                LOGGER.info("Successfully deployed: {}", successfullyDeployed);
+
+            }
+            return successfullyDeployed;
+
+        } catch (IllegalStateException ise) {
+            LOGGER.error("Cannot deploy war file!", ise);
+            return false;
+        }
+    }
+
+    private static void installWebAppsAndCreateConfig(Connection connection, String moduleName, String projectName,
+                                                      ModuleAdminAgent moduleAdminAgent,
+                                                      ComponentDescriptor[] componentDescriptors,
+                                                      List<WebAppIdentifier> webAppScopeDefinitions,
+                                                      Map<WebAppIdentifier, File> webAppConfigurations) {
+        List<ComponentDescriptor> webappDescriptors = stream(componentDescriptors).filter(it -> WEBAPP.equals(it.getType())).collect(toList());
+        if(!webappDescriptors.isEmpty() && !webAppScopeDefinitions.isEmpty()) {
+            LOGGER.info("Creating WebApp configuration files");
+        }
+        webappDescriptors.forEach(componentDescriptor -> {
+            for (WebAppIdentifier scope : webAppScopeDefinitions) {
+                createWebAppAndConfigurations(connection, moduleName, projectName, moduleAdminAgent, webAppConfigurations, componentDescriptor, scope);
             }
         });
+    }
+
+    private static void createWebAppAndConfigurations(Connection connection,
+                                                      String moduleName,
+                                                      String projectName,
+                                                      ModuleAdminAgent moduleAdminAgent,
+                                                      Map<WebAppIdentifier, File> webAppConfigurations,
+                                                      ComponentDescriptor componentDescriptor,
+                                                      WebAppIdentifier scope) {
+        Project projectOrNull = Strings.isNullOrEmpty(projectName) ? null : connection.getProjectByName(projectName);
+        try {
+            WebAppId id = scope.createWebAppId(projectOrNull);
+            moduleAdminAgent.installWebApp(moduleName, componentDescriptor.getName(), id);
+
+            if (webAppConfigurations.containsKey(scope)) {
+                createConfigurationFile(WEBAPP,
+                        connection,
+                        componentDescriptor,
+                        webAppConfigurations.get(scope),
+                        moduleName, projectName,
+                        id);
+
+            }
+            LOGGER.info("WebAppScope: {}", scope);
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("Invalid Scope " + scope, e);
+        }
     }
 
     private static String getConfigFileName(ComponentDescriptor componentDescriptor) {
@@ -305,17 +364,29 @@ public class ModuleInstaller {
         return componentDescriptorName;
     }
 
-    private static boolean setActiveWebServerForProject(WebScope webScope, Project project) {
-        try {
-            project.lock();
-            project.setActiveWebServer(webScope.toString(), project.getSelectedWebServer(webScope.toString()));
-            project.save();
-            project.unlock();
-            return true;
-        } catch (LockException e) {
-            LOGGER.error("Cannot lock and save project!", e);
-            return false;
+    private static boolean setActiveWebServer(WebAppIdentifier webScope, Project project) {
+        String webAppId = webScope.createWebAppId(project).toString();
+
+        if(!webScope.isGlobal()) {
+            try {
+                project.lock();
+                String selectedWebServer = project.getSelectedWebServer(webScope.toString());
+                if(Strings.isNullOrEmpty(selectedWebServer)) {
+                    LOGGER.warn("Project has no webserver selected. Setting usage of InternalJetty.");
+                    selectedWebServer = "InternalJetty";
+                    project.setSelectedWebServer(webAppId, selectedWebServer);
+                }
+                LOGGER.warn("Setting active webserver for project.");
+                project.setActiveWebServer(webAppId, selectedWebServer);
+                project.save();
+                project.unlock();
+                return true;
+            } catch (LockException e) {
+                LOGGER.error("Cannot lock and save project!", e);
+                return false;
+            }
         }
+        return true;
     }
 
     /**
@@ -329,9 +400,6 @@ public class ModuleInstaller {
     public boolean install(Connection connection, ModuleInstallationParameters parameters) {
         if (connection == null || !connection.isConnected()) {
             throw new IllegalStateException("Connection is null or not connected!");
-        }
-        if (parameters.getProjectName() == null || parameters.getProjectName().isEmpty()) {
-            throw new IllegalArgumentException("Project name is null or empty!");
         }
 
         Optional<ModuleResult> moduleResultOption = installModule(parameters.getFsm(), connection);
@@ -352,9 +420,8 @@ public class ModuleInstaller {
             boolean webAppsSuccessfullyInstalled = installProjectWebApps(connection, moduleDescriptor.get(), parameters, moduleName);
             if(!webAppsSuccessfullyInstalled) {
                 LOGGER.error("WebApp installation and activation not successful for module {}", moduleName);
-                return false;
             }
-            return true;
+            return webAppsSuccessfullyInstalled;
         }
         return false;
     }
