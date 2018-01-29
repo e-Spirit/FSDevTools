@@ -44,7 +44,7 @@ public class GroupUtilsTest {
     }
     @Test
     public void classpathScanRetrievesExampleGroup() {
-        final Set<Class<?>> groupClassesInPackage = GroupUtils.scanForGroupClasses();
+        final Set<Class<?>> groupClassesInPackage = GroupUtils.scanForGroupClasses("");
         Assert.assertTrue("Expected example group class to be found", groupClassesInPackage.contains(ExampleCustomGroup.class));
     }
 
