@@ -55,7 +55,6 @@ public class ImportProjectCommand extends SimpleCommand<SimpleResult<Boolean>>{
     @Required
     private String projectName;
     @Option(type = OptionType.COMMAND, name = {"-ipd", "--importProjectDescription"}, description = "Description of the FirstSpirit target project")
-    @Required
     private String projectDescription;
     @Option(type = OptionType.COMMAND, name = {"-pf", "--projectFile"}, description = "Path to the project export file that should be imported")
     @Required
