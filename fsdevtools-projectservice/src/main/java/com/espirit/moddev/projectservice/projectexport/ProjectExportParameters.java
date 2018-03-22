@@ -26,11 +26,13 @@ package com.espirit.moddev.projectservice.projectexport;
  * Class that represents a FirstSpirit project export.
  */
 public class ProjectExportParameters {
+
+    private final boolean deleteExportFiles;
     private String projectName;
     private String projectExportPath;
     private final boolean fsForceProjectActivation;
 
-    public ProjectExportParameters(String projectName, String projectExportPath, boolean fsForceProjectActivation) {
+    public ProjectExportParameters(String projectName, String projectExportPath, boolean fsForceProjectActivation, boolean deleteExportFiles) {
         if(projectName == null || projectName.isEmpty()) {
             throw new IllegalArgumentException("Project name should not be null or empty");
         }
@@ -41,6 +43,7 @@ public class ProjectExportParameters {
         this.projectName = projectName;
         this.projectExportPath = projectExportPath;
         this.fsForceProjectActivation = fsForceProjectActivation;
+        this.deleteExportFiles = deleteExportFiles;
     }
 
     /**
@@ -62,5 +65,12 @@ public class ProjectExportParameters {
      */
     public boolean isFsForceProjectActivation() {
         return fsForceProjectActivation;
+    }
+
+    /**
+     * @return Whether to delete the export files on the server after they have been downloaded.
+     */
+    public boolean isDeleteExportFiles() {
+        return deleteExportFiles;
     }
 }

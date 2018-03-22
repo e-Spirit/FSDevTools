@@ -29,6 +29,7 @@ public class ProjectExportParametersBuilder {
     private String projectName;
     private String projectExportPath;
     private boolean fsForceProjectActivation;
+    private boolean deleteExportFiles;
 
     /**
      * @param projectName The name of the project. Note: Not a reference name.
@@ -61,6 +62,11 @@ public class ProjectExportParametersBuilder {
      * @return A ProjectExportParameters instance
      */
     public ProjectExportParameters build() {
-        return new ProjectExportParameters(projectName, projectExportPath, fsForceProjectActivation);
+        return new ProjectExportParameters(projectName, projectExportPath, fsForceProjectActivation, deleteExportFiles);
+    }
+
+    public ProjectExportParametersBuilder setDeleteExportFiles(boolean deleteExportFiles) {
+        this.deleteExportFiles = deleteExportFiles;
+        return this;
     }
 }

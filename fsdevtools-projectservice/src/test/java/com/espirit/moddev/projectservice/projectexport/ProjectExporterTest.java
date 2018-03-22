@@ -31,19 +31,27 @@ import de.espirit.firstspirit.access.export.ExportProgress;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.access.script.ExecutionException;
 import de.espirit.firstspirit.io.ServerConnection;
-import de.espirit.firstspirit.manager.ExportManager;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.io.IOException;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for ProjectExporterTest.
@@ -236,7 +244,7 @@ public class ProjectExporterTest {
      * Test that a deactivated project is activated by force when flag is set.
      */
     @Test
-    public void testPerformExportCallsActivateProjectByForce() {
+    public void testPerformExportCallsActivateProjectByForce() throws Exception {
         // Arrange
         final Project mockProject = mock(Project.class);
         when(mockProject.isActive()).thenReturn(false);
@@ -246,19 +254,22 @@ public class ProjectExporterTest {
         when(mockProjectExportParameters.getProjectExportPath()).thenReturn("validProjectExportPath");
 
         final ServerActionHandle mockExportHandle = mock(ServerActionHandle.class);
-        final ExportManager mockExportManager = mock(ExportManager.class);
-        when(mockExportManager.startExport(any(ExportParameters.class))).thenReturn(mockExportHandle);
-
         final ServerConnection mockConnection = mock(ServerConnection.class);
         when(mockConnection.getProjectByName(mockProjectExportParameters.getProjectName())).thenReturn(mockProject);
-        when(mockConnection.getManager(ExportManager.class)).thenReturn(mockExportManager);
+
+        final ProjectStorage mockProjectStorage = mock(ProjectStorage.class);
+        when(mockProjectStorage.startExport(any(ExportParameters.class))).thenReturn(mockExportHandle);
+
+        final AdminService mockAdminService = mock(AdminService.class);
+        when(mockAdminService.getProjectStorage()).thenReturn(mockProjectStorage);
+        when(mockConnection.getService(AdminService.class)).thenReturn(mockAdminService);
 
         final List mockExportFiles = mock(List.class);
 
         final ProjectExporter spyProjectExporter = spy(testling);
         doReturn(true).when(spyProjectExporter).activateProjectByForce(mockConnection, mockProject);
         doReturn(mockExportFiles).when(spyProjectExporter).waitUntilExportFinished(mockExportHandle);
-        doReturn(true).when(spyProjectExporter).downloadExportFilesToFileSystem("validProjectExportPath", mockExportManager, mockExportFiles);
+        doReturn(true).when(spyProjectExporter).downloadExportFilesToFileSystem("validProjectExportPath", mockProjectStorage, mockExportFiles);
 
         // Act
         spyProjectExporter.performExport(mockConnection, mockProjectExportParameters);
@@ -317,14 +328,27 @@ public class ProjectExporterTest {
     public void testDownloadExportFilesIsFalseWhenExportFilesAreEmpty() {
         // Arrange
         final String projectExportPath = "validPath";
-        final ExportManager mockExportManager = mock(ExportManager.class);
+        final ProjectStorage projectStorage = mock(ProjectStorage.class);
         final List mockExportFiles = mock(List.class);
         when(mockExportFiles.isEmpty()).thenReturn(true);
 
         // Act
-        final boolean downloaded = testling.downloadExportFilesToFileSystem(projectExportPath, mockExportManager, mockExportFiles);
+        final boolean downloaded = testling.downloadExportFilesToFileSystem(projectExportPath, projectStorage, mockExportFiles);
 
         // Assert
         assertThat("Expect equals", downloaded, is(false));
+    }
+
+    /**
+     * Test that the IOException potentially thrown by projectStorage.startExport is handled.
+     */
+    @Test
+    public void testTriggerExportReturnsEmptyListIfExportThrowsIOException() throws Exception {
+        final ProjectStorage mockProjectStorage = mock(ProjectStorage.class);
+        when(mockProjectStorage.startExport(any())).thenThrow(IOException.class);
+
+        List<ExportFile> exportFiles = testling.triggerExport(mockProjectStorage, null);
+
+        assertThat("Expected an empty list", exportFiles, hasSize(0));
     }
 }
