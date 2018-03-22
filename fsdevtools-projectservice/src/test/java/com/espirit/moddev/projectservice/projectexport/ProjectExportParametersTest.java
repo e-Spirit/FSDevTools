@@ -46,7 +46,7 @@ public class ProjectExportParametersTest {
         final String validProjectName = "validProjectName";
         final String validProjectExportPath = "valid/Project/Export/Path";
 
-        testling = new ProjectExportParameters(validProjectName, validProjectExportPath, true);
+        testling = new ProjectExportParameters(validProjectName, validProjectExportPath, true, false);
 
         assertThat("Expect equal.", testling, is(notNullValue()));
     }
@@ -61,7 +61,7 @@ public class ProjectExportParametersTest {
 
         exception.expect(IllegalArgumentException.class);
 
-        testling = new ProjectExportParameters(emptyProjectName, validProjectExportPath, true);
+        testling = new ProjectExportParameters(emptyProjectName, validProjectExportPath, true, false);
     }
 
     /**
@@ -74,7 +74,7 @@ public class ProjectExportParametersTest {
 
         exception.expect(IllegalArgumentException.class);
 
-        testling = new ProjectExportParameters(nullProjectName, validProjectExportPath, true);
+        testling = new ProjectExportParameters(nullProjectName, validProjectExportPath, true, false);
     }
 
     /**
@@ -87,7 +87,7 @@ public class ProjectExportParametersTest {
 
         exception.expect(IllegalArgumentException.class);
 
-        testling = new ProjectExportParameters(validProjectName, emptyProjectExportPath, true);
+        testling = new ProjectExportParameters(validProjectName, emptyProjectExportPath, true, false);
     }
 
     /**
@@ -100,7 +100,7 @@ public class ProjectExportParametersTest {
 
         exception.expect(IllegalArgumentException.class);
 
-        testling = new ProjectExportParameters(validProjectName, nullProjectExportPath, true);
+        testling = new ProjectExportParameters(validProjectName, nullProjectExportPath, true, false);
     }
 
     /**
@@ -111,7 +111,7 @@ public class ProjectExportParametersTest {
         final String validProjectName = "validProjectName";
         final String validProjectExportPath = "valid/Project/Export/Path";
 
-        testling = new ProjectExportParameters(validProjectName, validProjectExportPath, true);
+        testling = new ProjectExportParameters(validProjectName, validProjectExportPath, true, false);
 
         assertThat("Expect equal.", testling.getProjectName(), equalTo(validProjectName));
     }
@@ -124,7 +124,7 @@ public class ProjectExportParametersTest {
         final String validProjectName = "validProjectName";
         final String validProjectExportPath = "valid/Project/Export/Path";
 
-        testling = new ProjectExportParameters(validProjectName, validProjectExportPath, true);
+        testling = new ProjectExportParameters(validProjectName, validProjectExportPath, true, false);
 
         assertThat("Expect equal.", testling.getProjectExportPath(), equalTo(validProjectExportPath));
     }
@@ -137,7 +137,7 @@ public class ProjectExportParametersTest {
         final String validProjectName = "validProjectName";
         final String validProjectExportPath = "valid/Project/Export/Path";
 
-        testling = new ProjectExportParameters(validProjectName, validProjectExportPath, true);
+        testling = new ProjectExportParameters(validProjectName, validProjectExportPath, true, false);
 
         assertThat("Expect equal.", testling.isFsForceProjectActivation(), is(true));
     }

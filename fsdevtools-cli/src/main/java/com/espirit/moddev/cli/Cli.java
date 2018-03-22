@@ -244,10 +244,10 @@ public final class Cli {
     @SuppressWarnings("squid:S1162")
     private static void logResult(Result result) throws Exception{
         if (result != null) {
+            result.log();
             if(result.isError()){
                 throw result.getError();
             }
-            result.log();
         } else {
             LOGGER.warn("Command returned a null result, which should be avoided");
         }

@@ -50,6 +50,8 @@ public class ExportProjectCommand extends SimpleCommand<SimpleResult<Boolean>> {
     private String projectExportPath;
     @Option(type = OptionType.COMMAND, name = {"-fpa", "--fsForceProjectActivation"}, description = "Whether to force the project activation if the project is deactivated before export somehow. Default is false.")
     private boolean fsForceProjectActivation;
+    @Option(type = OptionType.COMMAND, name = {"-def", "--deleteExportFiles"}, description = "Whether to delete the export files on the server after they have been downloaded.")
+    private boolean deleteExportFiles;
 
     @Override
     public SimpleResult<Boolean> call() {
@@ -60,7 +62,8 @@ public class ExportProjectCommand extends SimpleCommand<SimpleResult<Boolean>> {
                 ProjectExportParametersBuilder exportParametersBuilder = new ProjectExportParametersBuilder()
                         .setProjectName(projectName)
                         .setProjectExportPath(projectExportPath)
-                        .setFsForceProjectActivation(fsForceProjectActivation);
+                        .setFsForceProjectActivation(fsForceProjectActivation)
+                        .setDeleteExportFiles(deleteExportFiles);
 
                 final ProjectExporter projectExporter = new ProjectExporter();
                 boolean exported = callExportProject(projectExporter, (ServerConnection) connection, getProjectExportParameters(exportParametersBuilder));

@@ -1,5 +1,6 @@
 package com.espirit.moddev.cli.commands.test;
 
+import com.espirit.moddev.cli.CliContextImpl;
 import com.espirit.moddev.cli.api.result.Result;
 
 import org.junit.Before;
@@ -10,7 +11,8 @@ import static java.lang.Boolean.TRUE;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 
 public class TestProjectCommandTest {
@@ -21,8 +23,8 @@ public class TestProjectCommandTest {
     public void setUp() throws Exception {
         testling = new TestProjectCommand(){
             @Override
-            protected AutoCloseable create() {
-                return mock(AutoCloseable.class);
+            protected CliContextImpl create() {
+                return mock(CliContextImpl.class, RETURNS_DEEP_STUBS);
             }
         };
     }
@@ -39,7 +41,7 @@ public class TestProjectCommandTest {
     public void testCallError() throws Exception {
         testling = new TestProjectCommand(){
             @Override
-            protected AutoCloseable create() {
+            protected CliContextImpl create() {
                 throw new RuntimeException("JUnit");
             }
         };

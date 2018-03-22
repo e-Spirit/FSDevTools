@@ -132,7 +132,7 @@ public class CliContextImpl implements CliContext {
                 final BrokerAgent brokerAgent = broker.requireSpecialist(BrokerAgent.TYPE);
                 projectBroker = brokerAgent.getBrokerByProjectName(project.getName());
             } else {
-                LOGGER.info("No project name given, so no project specific broker is required");
+                LOGGER.info("Project not available, so no project specific broker is required");
             }
         }
     }

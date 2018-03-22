@@ -24,17 +24,23 @@ package com.espirit.moddev.projectservice.projectexport;
 
 import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.ServerActionHandle;
+import de.espirit.firstspirit.access.admin.ProjectStorage;
 import de.espirit.firstspirit.access.export.ExportFile;
 import de.espirit.firstspirit.access.export.ExportParameters;
 import de.espirit.firstspirit.access.export.ExportProgress;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.access.script.ExecutionException;
 import de.espirit.firstspirit.io.ServerConnection;
-import de.espirit.firstspirit.manager.ExportManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -134,19 +140,31 @@ public class ProjectExporter {
             }
 
             // Project must be active at this point
-            final ExportManager exportManager = serverConnection.getManager(ExportManager.class);
+            final ProjectStorage projectStorage = serverConnection.getService(AdminService.class).getProjectStorage();
             final ExportParameters exportParameters = new ExportParameters(
                     fsProject.getId(),
                     projectName
             );
 
-            final ServerActionHandle<ExportProgress, Boolean> exportHandle = exportManager.startExport(exportParameters);
-            final List<ExportFile> exportFiles = waitUntilExportFinished(exportHandle);
-
-            return downloadExportFilesToFileSystem(projectExportParameters.getProjectExportPath(), exportManager, exportFiles);
+            final List<ExportFile> exportFiles = triggerExport(projectStorage, exportParameters);
+            final boolean downloadSuccessful = downloadExportFilesToFileSystem(projectExportParameters.getProjectExportPath(), projectStorage, exportFiles);
+            if (downloadSuccessful && projectExportParameters.isDeleteExportFiles()) {
+                deleteExportFiles(projectStorage, exportFiles);
+            }
+            return downloadSuccessful;
         } else {
             LOGGER.error("Project '" + projectName + "' not found on server.");
             return false;
+        }
+    }
+
+    private void deleteExportFiles(ProjectStorage projectStorage, List<ExportFile> exportFiles) {
+        try {
+            for (ExportFile exportFile : exportFiles) {
+                projectStorage.deleteExportFile(exportFile);
+            }
+        } catch (FileNotFoundException e) {
+            LOGGER.warn("Export files could not be deleted.", e);
         }
     }
 
@@ -164,6 +182,16 @@ public class ProjectExporter {
 
         fsProject.refresh();
         return fsProject.isActive();
+    }
+
+    protected List<ExportFile> triggerExport(final ProjectStorage projectStorage, final ExportParameters exportParameters) {
+        try {
+            final ServerActionHandle<ExportProgress, Boolean> exportHandle = projectStorage.startExport(exportParameters);
+            return waitUntilExportFinished(exportHandle);
+        } catch (IOException e) {
+            LOGGER.error("Export failed due to an i/o exception.", e);
+            return Collections.emptyList();
+        }
     }
 
     /**
@@ -193,11 +221,11 @@ public class ProjectExporter {
      * Ensures that the export directory exists beforehand.
      *
      * @param projectExportPath The download directory for the exported project.
-     * @param exportManager     Manager who processed the export.
+     * @param projectStorage     ProjectStorage who processed the export.
      * @param exportFiles       List of all exported files.
      * @return true if the whole process was successful, false otherwise.
      */
-    protected boolean downloadExportFilesToFileSystem(String projectExportPath, ExportManager exportManager, List<ExportFile> exportFiles) {
+    protected boolean downloadExportFilesToFileSystem(String projectExportPath, ProjectStorage projectStorage, List<ExportFile> exportFiles) {
         if(exportFiles.isEmpty()) {
             LOGGER.error("No exported files found.");
             return false;
@@ -216,7 +244,7 @@ public class ProjectExporter {
         for(ExportFile exportFile : exportFiles) {
             File projectExportFile = new File(projectParentDir + File.separator + exportFile.getName());
 
-            try(InputStream downloadInputStream = exportManager.downloadExportFile(exportFile); FileOutputStream exportFileOutputStream = new FileOutputStream(projectExportFile)) {
+            try(InputStream downloadInputStream = projectStorage.downloadExportFile(exportFile); FileOutputStream exportFileOutputStream = new FileOutputStream(projectExportFile)) {
 
                 int read;
                 byte[] bytes = new byte[8192];
