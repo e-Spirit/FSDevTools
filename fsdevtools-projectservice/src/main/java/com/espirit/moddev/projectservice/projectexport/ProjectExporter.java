@@ -146,6 +146,10 @@ public class ProjectExporter {
                     projectName
             );
 
+            exportParameters.setExportDeletedElements(projectExportParameters.isExportDeletedElements());
+            exportParameters.setMaxRevisionCount(projectExportParameters.getMaxRevisionCount());
+
+
             final List<ExportFile> exportFiles = triggerExport(projectStorage, exportParameters);
             final boolean downloadSuccessful = downloadExportFilesToFileSystem(projectExportParameters.getProjectExportPath(), projectStorage, exportFiles);
             if (downloadSuccessful && projectExportParameters.isDeleteExportFiles()) {

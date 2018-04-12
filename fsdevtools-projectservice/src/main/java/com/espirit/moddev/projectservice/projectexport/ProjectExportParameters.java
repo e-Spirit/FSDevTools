@@ -27,12 +27,31 @@ package com.espirit.moddev.projectservice.projectexport;
  */
 public class ProjectExportParameters {
 
-    private final boolean deleteExportFiles;
-    private String projectName;
-    private String projectExportPath;
-    private final boolean fsForceProjectActivation;
+    /**
+     * This constant value used as maxRevisionCount for the FirstSpirit export
+     * means that all revisions should be part of the export.
+     */
+    public static long UNLIMITED_REVISIONS = -1L;
 
-    public ProjectExportParameters(String projectName, String projectExportPath, boolean fsForceProjectActivation, boolean deleteExportFiles) {
+    private final boolean deleteExportFiles;
+    private final String projectName;
+    private final String projectExportPath;
+    private final boolean fsForceProjectActivation;
+    private final long maxRevisionCount;
+    private final boolean exportDeletedElements;
+
+    /**
+     * Creates a parameter object that describes how a project export should happen.
+     *
+     * @param projectName the project's name that should be exported
+     * @param projectExportPath the path where the project should be exported into
+     * @param fsForceProjectActivation whether the project's activation should be forced or not
+     * @param deleteExportFiles whether internal export files should be deleted after export
+     * @param maxRevisionCount states how many revisions should be part of the export. Pass @{value UNLIMITED_REVISIONS} for unlimited revisions.
+     * @param exportDeletedElements whether deleted elements should be part of the export or not
+     */
+    public ProjectExportParameters(String projectName, String projectExportPath, boolean fsForceProjectActivation, boolean deleteExportFiles,
+                                   long maxRevisionCount, boolean exportDeletedElements) {
         if(projectName == null || projectName.isEmpty()) {
             throw new IllegalArgumentException("Project name should not be null or empty");
         }
@@ -44,6 +63,8 @@ public class ProjectExportParameters {
         this.projectExportPath = projectExportPath;
         this.fsForceProjectActivation = fsForceProjectActivation;
         this.deleteExportFiles = deleteExportFiles;
+        this.maxRevisionCount = maxRevisionCount;
+        this.exportDeletedElements = exportDeletedElements;
     }
 
     /**
@@ -72,5 +93,19 @@ public class ProjectExportParameters {
      */
     public boolean isDeleteExportFiles() {
         return deleteExportFiles;
+    }
+
+    /**
+     * @return the maximum number of revisions to export or -1 if all revisions should be exported.
+     */
+    public long getMaxRevisionCount() {
+        return maxRevisionCount;
+    }
+
+    /**
+     * @return {@code true} if deleted elements should also be exported, {@code false} otherwise.
+     */
+    public boolean isExportDeletedElements() {
+        return exportDeletedElements;
     }
 }
