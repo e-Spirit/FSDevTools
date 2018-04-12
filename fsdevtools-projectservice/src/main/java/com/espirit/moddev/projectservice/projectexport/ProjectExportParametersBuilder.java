@@ -22,6 +22,8 @@
 
 package com.espirit.moddev.projectservice.projectexport;
 
+import static com.espirit.moddev.projectservice.projectexport.ProjectExportParameters.UNLIMITED_REVISIONS;
+
 /**
  * Class that build ProjectExportParameters
  */
@@ -30,6 +32,8 @@ public class ProjectExportParametersBuilder {
     private String projectExportPath;
     private boolean fsForceProjectActivation;
     private boolean deleteExportFiles;
+    private long maxRevisionCount = UNLIMITED_REVISIONS;
+    private boolean exportDeletedElements;
 
     /**
      * @param projectName The name of the project. Note: Not a reference name.
@@ -59,10 +63,38 @@ public class ProjectExportParametersBuilder {
     }
 
     /**
+     * @param maxRevisionCount Number of revisions to export. Use "1" to export only the current state.
+     * @return The builder
+     */
+    public ProjectExportParametersBuilder setMaxRevisionCount(long maxRevisionCount) {
+        this.maxRevisionCount = maxRevisionCount;
+        return this;
+    }
+
+    /**
+     * Add deleted elements to the export.
+     * @return The builder
+     */
+    public ProjectExportParametersBuilder exportDeletedElements() {
+        this.exportDeletedElements = true;
+        return this;
+    }
+
+    /**
+     * Do not add deleted elements to the export.
+     * @return The builder
+     */
+    public ProjectExportParametersBuilder skipDeletedElements() {
+        this.exportDeletedElements = false;
+        return this;
+    }
+
+    /**
      * @return A ProjectExportParameters instance
      */
     public ProjectExportParameters build() {
-        return new ProjectExportParameters(projectName, projectExportPath, fsForceProjectActivation, deleteExportFiles);
+        return new ProjectExportParameters(projectName, projectExportPath, fsForceProjectActivation, deleteExportFiles,
+                                           maxRevisionCount, exportDeletedElements);
     }
 
     public ProjectExportParametersBuilder setDeleteExportFiles(boolean deleteExportFiles) {

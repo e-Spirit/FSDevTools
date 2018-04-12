@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 @Command(name = "export", groupNames = {"project"}, description = "Exports an existing FirstSpirit project from a FirstSpirit Server.")
 @Examples(
-        examples = {"fs-cli -h localhost -p 8000 project export --epn \"Mithras Energy\" -epp \"D:\\my-server-exports\" -fpa"},
+        examples = {"fs-cli -h localhost -p 8000 project export -epn \"Mithras Energy\" -epp \"D:\\my-server-exports\" -fpa"},
         descriptions = {"Imports the project export into a new project that is named newProjectName"})
 public class ExportProjectCommand extends SimpleCommand<SimpleResult<Boolean>> {
     protected static final Logger LOGGER = LoggerFactory.getLogger(ExportProjectCommand.class);
@@ -52,6 +52,12 @@ public class ExportProjectCommand extends SimpleCommand<SimpleResult<Boolean>> {
     private boolean fsForceProjectActivation;
     @Option(type = OptionType.COMMAND, name = {"-def", "--deleteExportFiles"}, description = "Whether to delete the export files on the server after they have been downloaded.")
     private boolean deleteExportFiles;
+    @Option(type = OptionType.COMMAND, name = {"-mrc", "--maxRevisionCount"}, description = "Maximum number of revisions to export.")
+    private long maxRevisionCount = -1;
+    @Option(type = OptionType.COMMAND, name = {"-sde", "--skipDeletedElements"}, description = "Do not add deleted elements to the export.")
+    private boolean skipDeletedElements;
+
+
 
     @Override
     public SimpleResult<Boolean> call() {
@@ -63,7 +69,14 @@ public class ExportProjectCommand extends SimpleCommand<SimpleResult<Boolean>> {
                         .setProjectName(projectName)
                         .setProjectExportPath(projectExportPath)
                         .setFsForceProjectActivation(fsForceProjectActivation)
-                        .setDeleteExportFiles(deleteExportFiles);
+                        .setDeleteExportFiles(deleteExportFiles)
+                        .setMaxRevisionCount(maxRevisionCount);
+
+                if (skipDeletedElements) {
+                    exportParametersBuilder.skipDeletedElements();
+                } else {
+                    exportParametersBuilder.exportDeletedElements();
+                }
 
                 final ProjectExporter projectExporter = new ProjectExporter();
                 boolean exported = callExportProject(projectExporter, (ServerConnection) connection, getProjectExportParameters(exportParametersBuilder));
@@ -87,6 +100,36 @@ public class ExportProjectCommand extends SimpleCommand<SimpleResult<Boolean>> {
     protected Connection createConnection() {
         return ConnectionBuilder.with(this).build();
     }
+
+    /**
+     * Sets the name of the FirstSpirit project to export from.
+     *
+     * @param projectName the name of the FirstSpirit project to export
+     */
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    /**
+     * Sets the maximum number of revisions to export or -1 if all
+     * revisions should be exported.
+     *
+     * @param maxRevisionCount the maximum number of revisions to export
+     */
+    public void setMaxRevisionCount(long maxRevisionCount) {
+        this.maxRevisionCount = maxRevisionCount;
+    }
+
+    /**
+     * If set to {@code false} if deleted elements should be added to the export or
+     * {@code true} if deleted elements should be skipped.
+     *
+     * @param skipDeletedElements if deleted elements should be added
+     */
+    public void setSkipDeletedElements(boolean skipDeletedElements) {
+        this.skipDeletedElements = skipDeletedElements;
+    }
+
 
     /**
      * Creates ProjectExportParameters from a builder.
