@@ -250,7 +250,7 @@ public class ServerProperties {
             LOGGER.debug("Trying to resolve {}.", className);
             return Optional.of(Class.forName(className, false, classLoader));
         } catch (ClassNotFoundException e) {
-            LOGGER.debug("Class {} could not be resolved.", className);
+            LOGGER.error("Class " + className + " could not be resolved.", e);
             return Optional.empty();
         }
     }
