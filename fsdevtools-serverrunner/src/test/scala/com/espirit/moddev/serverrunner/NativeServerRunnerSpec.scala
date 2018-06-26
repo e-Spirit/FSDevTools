@@ -122,7 +122,7 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
     }
     "call the FirstSpirit server main class as last argument" in {
       val args = NativeServerRunner.prepareStartup(fixture.minimalServerProperties).asScala
-      assert(args.last == "de.espirit.firstspirit.server.CMSServer")
+      assert(args.last == "de.espirit.common.bootstrap.Bootstrap")
     }
     "define a java security policy" in {
       val props      = fixture.minimalServerProperties
@@ -176,18 +176,6 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
       }
       "no 200 OK is returned" in pending //complex to implement because URL class is final and PowerMock did not work
     }
-  }
-
-  "NativeServerRunner.prepareStop" should {
-    lazy val props  = fixture.propsWithVersionBuilder.serverHost("rainbow.unicorn").serverPort(1234).build()
-    lazy val result = NativeServerRunner.prepareStop(props).asScala
-
-    "have 'java' as the first element" in assert(result.head == "java")
-    "have 'de.espirit.firstspirit.server.ShutdownServer' as the last argument" in assert(
-      result.last == "de.espirit.firstspirit.server.ShutdownServer")
-    "contain mode HTTP" in assert(result.contains("-Dmode=HTTP"))
-    "use the configured host" in assert(result.contains("-Dhost=rainbow.unicorn"))
-    "use the configured port" in assert(result.contains("-Dport=1234"))
   }
 
   def assertNoServerRunning(props: ServerProperties): Unit = {

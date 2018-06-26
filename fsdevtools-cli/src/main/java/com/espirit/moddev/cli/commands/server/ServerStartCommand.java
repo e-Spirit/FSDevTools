@@ -27,6 +27,7 @@ import com.espirit.moddev.serverrunner.NativeServerRunner;
 import com.espirit.moddev.serverrunner.ServerProperties;
 import com.espirit.moddev.serverrunner.ServerProperties.ServerPropertiesBuilder;
 import com.espirit.moddev.serverrunner.ServerRunner;
+import com.espirit.moddev.serverrunner.ServerType;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.help.Examples;
@@ -40,6 +41,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -52,7 +54,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
  *
  * @author e-Spirit AG
  */
-@Command(name = "start", groupNames = "server", description = "Starts a FirstSpirit server. You have to provide at least the fs-server.jar and the wrapper jar, in order to boot a server."+
+@Command(name = "start", groupNames = "server", description = "Starts a FirstSpirit server. You have to provide at least the fs-server.jar / fs-isolated-server.jar and the wrapper jar, in order to boot a server."+
         "WARNING: If you execute commands asynchronously, you may end up in unpredictable behavior.")
 @Examples(examples =
         {
@@ -162,12 +164,17 @@ public class ServerStartCommand extends AbstractServerCommand implements com.esp
 
     private void addServerJarsToBuilder(ServerPropertiesBuilder serverPropertiesBuilder) {
         if(useServerInstallationDirectory()) {
-            LOGGER.info(String.format("Server installation directory given: %s", serverInstallationDirectory));
-            Path serverJarInInstallationDir = Paths.get(serverInstallationDirectory, "server", "lib", "fs-server.jar");
-            Path wrapperJarInInstallationDir = Paths.get(serverInstallationDirectory, "server", "lib", "wrapper.jar");
-            if(serverJarInInstallationDir.toFile().exists() && wrapperJarInInstallationDir.toFile().exists()) {
-                LOGGER.warn("Server and wrapper jar found in server installation directory.");
-                serverPropertiesBuilder.firstSpiritJar(serverJarInInstallationDir.toFile()).firstSpiritJar(wrapperJarInInstallationDir.toFile());
+            LOGGER.info("Server installation directory given: {}", serverInstallationDirectory);
+            Path serverInstallationDir = Paths.get(serverInstallationDirectory);
+
+            Optional<List<File>> jars = Arrays.stream(ServerType.values())
+                .map(serverType -> serverType.resolveJars(serverInstallationDir))
+                .filter(jarsByServerType -> jarsByServerType.stream().allMatch(File::exists))
+                .findFirst();
+
+            if (jars.isPresent()) {
+                LOGGER.info("Server and wrapper jar found in server installation directory.");
+                serverPropertiesBuilder.firstSpiritJars(jars.get());
             } else {
                 LOGGER.warn("Server and/or wrapper jar couldn't be retrieved from the given server installation directory. Fallback to jar parameters.");
                 addServerJarsFromOptionsOrClasspath(serverPropertiesBuilder);
@@ -185,7 +192,7 @@ public class ServerStartCommand extends AbstractServerCommand implements com.esp
             if(!jars.isEmpty()) {
                 serverPropertiesBuilder.firstSpiritJars(jars);
             } else {
-                LOGGER.warn("Server and/or wrapper jar couldn't be retrieved from classpath.");
+                throw new IllegalStateException("Server and/or wrapper jar couldn't be retrieved from classpath.");
             }
         }
     }
@@ -229,13 +236,5 @@ public class ServerStartCommand extends AbstractServerCommand implements com.esp
 
     public void setWaitTimeInSeconds(long waitTimeInSeconds) {
         this.waitTimeInSeconds = waitTimeInSeconds;
-    }
-
-    @Override
-    public void initializeFromProperties(ServerProperties serverProperties) {
-        super.initializeFromProperties(serverProperties);
-        setServerJar(serverProperties.getFirstSpiritJars().get(0).getPath());
-        setWrapperJar(serverProperties.getFirstSpiritJars().get(1).getPath());
-        setServerRoot(serverProperties.getServerRoot().toString());
     }
 }

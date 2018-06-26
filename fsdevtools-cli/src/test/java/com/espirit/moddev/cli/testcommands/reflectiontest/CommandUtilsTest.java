@@ -83,7 +83,7 @@ public class CommandUtilsTest {
         }
         @Test
         public void readsCommandDescriptionExportCommand() {
-            final String expectedMsgPart = "ALL, COMMON, RESOLUTIONS, GROUPS, SCHEDULE_ENTRIES, TEMPLATE_SETS, FONTS, MODULE_CONFIGURATIONS, LANGUAGES, USERS";
+            final String expectedMsgPart = "ALL, COMMON, CUSTOM_PROPERTIES, RESOLUTIONS, GROUPS, SCHEDULE_ENTRIES, TEMPLATE_SETS, FONTS, MODULE_CONFIGURATIONS, LANGUAGES, USERS";
             final String msg = ReflectionUtils.getDescriptionFromClass(ExportCommand.class);
             Assert.assertTrue("wrong project properties msg. was=\n" + msg, msg.contains(expectedMsgPart));
         }

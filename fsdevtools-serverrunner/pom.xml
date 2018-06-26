@@ -86,6 +86,12 @@
             <version>1.13.4</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>de.espirit.firstspirit</groupId>
+            <artifactId>fs-isolated-runtime</artifactId>
+            <version>${firstspirit.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -250,7 +256,7 @@
                 </dependency>
                 <dependency>
                     <groupId>de.espirit.firstspirit</groupId>
-                    <artifactId>server</artifactId>
+                    <artifactId>fs-server</artifactId>
                     <version>${firstspirit.version}</version>
                     <scope>provided</scope>
                 </dependency>

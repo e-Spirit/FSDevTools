@@ -28,15 +28,16 @@ After the **fs-access.jar** file has been installed successfully, it should be l
 
 ![Local Maven repository with installed fs-access.jar file](images/local_maven.gif)
 
-Install the `fs-server.jar` and `wrapper-$VERSION.jar` files, too, by following the steps described above. 
+Install the `fs-server.jar`, `fs-isolated-runtime.jar` and `wrapper-$VERSION.jar` files, too, by following the steps described above. 
 They enable the execution of the integration tests for the module `fsdevtools-serverrunner`.
-To compile it, you will only need the `fs-access.jar` dependency, which can be found in the following directory:
+The files can be found in the following directories:
 
 ```
 <FirstSpirit Server directory>/server/lib
+<FirstSpirit Server directory>/server/lib-isolated
 ```
 
-Note that the `fs-server.jar` file needs to be installed with `-DartifactId=server` with the same version as the `fs-access.jar` file, while the version of the `wrapper-$VERSION.jar` file can be found in the file name.
+Note that the `fs-server.jar` and the `fs-isolated-runtime.jar` file need to be installed with the same version as the `fs-access.jar` file, while the version of the `wrapper-$VERSION.jar` file can be found in the file name.
 
 ## Compile with Maven
 

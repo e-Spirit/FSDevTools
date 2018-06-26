@@ -175,7 +175,7 @@
                     <dependency>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>extra-enforcer-rules</artifactId>
-                        <version>1.0-beta-4</version>
+                        <version>1.0-beta-7</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -348,10 +348,11 @@
                 <groupId>de.espirit.firstspirit</groupId>
                 <artifactId>fs-access</artifactId>
                 <version>${firstspirit.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>de.espirit.firstspirit</groupId>
-                <artifactId>server</artifactId>
+                <artifactId>fs-server</artifactId>
                 <version>${firstspirit.version}</version>
                 <scope>runtime</scope>
             </dependency>
@@ -446,7 +447,7 @@
                 </property>
             </activation>
             <properties>
-                <firstspirit.version>5.2.1503</firstspirit.version>
+                <firstspirit.version>5.2.2109</firstspirit.version>
             </properties>
         </profile>
         <profile>
