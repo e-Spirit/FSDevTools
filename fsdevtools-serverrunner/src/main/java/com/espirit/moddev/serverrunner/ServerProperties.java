@@ -4,23 +4,28 @@ package com.espirit.moddev.serverrunner;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Singular;
+import de.espirit.firstspirit.access.Connection;
+import de.espirit.firstspirit.access.ConnectionManager;
+import de.espirit.firstspirit.common.MaximumNumberOfSessionsExceededException;
+import de.espirit.firstspirit.server.authentication.AuthenticationException;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.CodeSource;
 import java.time.Duration;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -29,6 +34,7 @@ import static org.hamcrest.Matchers.*;
 @Getter
 public class ServerProperties {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerProperties.class);
+    private static final Pattern firstSpiritJarPattern = Pattern.compile("(fs-.*?\\.jar|wrapper.*?\\.jar)$");
 
     public enum ConnectionMode {
         HTTP_MODE(8000);
@@ -89,20 +95,15 @@ public class ServerProperties {
      * Where the FirstSpirit jars are stored. You will need at least these jars to successfully start a server:
      * <ul>
      * <li>server</li>
-     * <li>fs-access</li>
      * <li>wrapper</li>
      * </ul>
      *
      * If you give one dependency, you need to give all. If you give none, they will be taken from the classpath (if possible).
+     * If you try to start a FirstSpirit Server in isolated mode, you must not put fs-isolated-server.jar and fs-access.jar on the classpath.
      */
     private final List<File> firstSpiritJars;
 
     private final File lockFile;
-      
-    /**
-     * matches de/espirit/firstspirit/anything.jar on both unix and windows
-     */
-    static final Pattern FS_SERVER_JAR_PATTERN = Pattern.compile("de[\\\\/]espirit[\\\\/]firstspirit[\\\\/].+\\.jar");
 
     /**
      * A reference to a supplier for the license file. May come from the file system, or the class path, or anything else.
@@ -143,9 +144,8 @@ public class ServerProperties {
         this.serverHost = serverHost == null || serverHost.isEmpty() ? "localhost" : serverHost;
         this.serverPort = serverPort == null ? this.mode.defaultPort : serverPort;
         this.firstSpiritJars =
-            firstSpiritJars == null || firstSpiritJars.isEmpty() ? getFsJarFiles() : firstSpiritJars.stream().filter(Objects::nonNull)
+            firstSpiritJars == null || firstSpiritJars.isEmpty() ? Collections.emptyList() : firstSpiritJars.stream().filter(Objects::nonNull)
                 .collect(Collectors.toCollection(ArrayList::new));
-        assertThat(this.firstSpiritJars, "firstSpiritJars", hasSize(greaterThan(0)));
 
         //generate lock file reference, which can be found in the server directory
         this.lockFile = this.serverRoot.resolve(".fs.lock").toFile();
@@ -177,85 +177,98 @@ public class ServerProperties {
         }
     }
 
-    private static List<File> getFsJarFiles() {
-        final ClassLoader cl = ClassLoader.getSystemClassLoader();
-        if (cl instanceof URLClassLoader) {
-            final URL[] urls = ((URLClassLoader) cl).getURLs();
+    /**
+     * Tries to get the FirstSpirit jars from the classpath.
+     *
+     * Maven uses https://codehaus-plexus.github.io/plexus-classworlds/.
+     * Therefore UrlClassLoader.getUrls does _not_ return all urls of all dependencies (like fs-server.jar).
+     * This is a problem for Tests in this project as well as in tests in other projects,
+     * that use this library to start a FirstSpirit server.
+     *
+     * Using Class.forName to search for startup classes isn't an option either,
+     * because many classes can be found in multiple jars.
+     * E. g. de.espirit.common.bootstrap.Bootstrap exists in fs-isolated-runtime.jar and in fs-isolated-server.jar,
+     * but we need the one from the server jar to start a server.
+     * Unfortunately, projects will have both on their classpath, because they need the runtime jar for their production code
+     * and the server jar to start the FirstSpirit server.
+     *
+     * Therefore we try to identify the jars needed to start a FirstSpirit server by searching for certain attribute values in the MANIFEST.MF files on the classpath.
+     *
+     * Note, that this problem only occurs when running with maven.
+     * You will usually not run into it, when running from within your IDE or when running the ServerStartCommand via command line.
+     * @return a list with one or two jar files or an empty list, if none of them can be found
+     */
+    public static List<File> getFirstSpiritJarsFromClasspath() {
+        final ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+        final Map<Attributes.Name, List<String>> attributeValues = new HashMap<>();
+        attributeValues.put(Attributes.Name.SPECIFICATION_TITLE, Collections.singletonList("Java Service Wrapper"));
+        final List<String> startUpClassNames = Arrays.stream(ServerType.values()).map(serverType -> serverType.getStartUpClass().replaceAll("/", ".")).collect(Collectors.toList());
+        attributeValues.put(Attributes.Name.MAIN_CLASS, startUpClassNames);
+        return findJarsByManifestAttributeValues(systemClassLoader, attributeValues);
+    }
 
-            return Arrays.stream(urls)
-                .map(URL::getFile)
-                .filter(x -> FS_SERVER_JAR_PATTERN.matcher(x).find())
-                .map(File::new)
-                .collect(Collectors.toList());
-        } else {
-            throw new IllegalStateException(
-                "When the system classloader is not an UrlClassLoader, you need to manually specify the FirstSpirit jars.");
+    static List<File> findJarsByManifestAttributeValues(ClassLoader classLoader, Map<Attributes.Name, List<String>> attributeValues) {
+        final List<File> files = new LinkedList<>();
+        try {
+            final Enumeration<URL> resources = classLoader.getResources("META-INF/MANIFEST.MF");
+            while (resources.hasMoreElements()) {
+                final URL url = resources.nextElement();
+                try (final InputStream inputStream = url.openStream()) {
+                    if (manifestMainAttributesContainAnyOf(new Manifest(inputStream), attributeValues)) {
+                        final String schemeSpecificPart = url.toURI().getSchemeSpecificPart();
+                        files.add(new File(schemeSpecificPart.replace("!/META-INF/MANIFEST.MF", "")));
+                    }
+                }
+            }
+        } catch (IOException | URISyntaxException e) {
+            LOGGER.error("Error while reading a MANIFEST.MF", e);
+        }
+        return files;
+    }
+
+    private static boolean manifestMainAttributesContainAnyOf(Manifest manifest, Map<Attributes.Name, List<String>> soughtAttributeValues) {
+        final Attributes attributes = manifest.getMainAttributes();
+        for (Map.Entry<Attributes.Name, List<String>> sought : soughtAttributeValues.entrySet()) {
+            final String manifestAttributeValue = attributes.getValue(sought.getKey());
+            if (manifestAttributeValue != null && sought.getValue().contains(manifestAttributeValue.replaceAll("/", "."))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static Optional<Class> tryFindStartUpClass(ClassLoader systemClassLoader) {
+        return Arrays.stream(ServerType.values())
+                .map(type -> tryClassForName(type.getStartUpClass(), systemClassLoader))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst();
+    }
+
+    private static Optional<Class> tryClassForName(String className, ClassLoader classLoader) {
+        try {
+            LOGGER.debug("Trying to resolve {}.", className);
+            return Optional.of(Class.forName(className, false, classLoader));
+        } catch (ClassNotFoundException e) {
+            LOGGER.debug("Class {} could not be resolved.", className);
+            return Optional.empty();
         }
     }
 
     /**
-     * Tries to get the FirstSpirit server jar and wrapper jar from the classpath.
-     * @return a list with one or two jar files or an empty list, if none of them can be found
+     * Tries to open a connection to the FirstSpirit server described by this ServerProperties.
+     * @return An {@link Optional} object containing a {@link Connection} if it could be established.
      */
-    public static List<File> getFirstSpiritJarsFromClasspath() {
-        List<File> result = new ArrayList<>();
-        getServerJarFileFromClasspath().ifPresent(result::add);
-        getWrapperJarFileFromClasspath().ifPresent(result::add);
-        getAccessJarFileFromClasspath().ifPresent(result::add);
-        return result;
-    }
-
-    public static Optional<File> getJarFileFromClasspath(String name, String classname) {
-    try {
-        File jarFile = getJarFileForClass(classname);
-        LOGGER.info("FirstSpirit "+name+" jar found in classpath: " + jarFile.getPath());
-        return Optional.of(jarFile);
-    } catch (ClassNotFoundException e) {
-        LOGGER.info("FirstSpirit "+name+" class not found! Is the "+name+" jar file on the classpath?", e);
-    } catch (URISyntaxException e) {
-        LOGGER.info("FirstSpirit "+name+" jar location couldn't be translated to an URI!", e);
-    }
-    return Optional.empty();
-}
-    
-    
-    /**
-     * Optionally gets the jar file of the FirstSpirit server, if the CMSServer class can be loaded
-     * with the current classpath.
-     * @return the server jar file or an empty {@link Optional}
-     */
-    public static Optional<File> getServerJarFileFromClasspath() {
-        return getJarFileFromClasspath("server", "de.espirit.firstspirit.server.CMSServer");
-    }
-
-    /**
-     * Optionally returns the jar file of the FirstSpirit wrapper, if the WrapperManager class can be
-     * loaded with the current classpath.
-     * @return the wrapper jar file or an empty {@link Optional}
-     */
-    public static Optional<File> getWrapperJarFileFromClasspath() {
-        return getJarFileFromClasspath("wrapper", "org.tanukisoftware.wrapper.WrapperManager");
-    }
-
-    /**
-     * Optionally returns the jar file of the FirstSpirit access API, if the ShutdownServer class can be
-     * loaded with the current classpath.
-     * @return the access jar file or an empty {@link Optional}
-     */
-    public static Optional<File> getAccessJarFileFromClasspath() {
-        return getJarFileFromClasspath("access", "de.espirit.firstspirit.server.ShutdownServer");
-    }
-
-    /**
-     * Tries to get the jar file of the class with the given fullQualifiedClassName string.
-     * @param fullQualifiedClassName the name of the class the jar file should be located for
-     * @return the corresponding jar file
-     * @throws ClassNotFoundException if the given class couldn't be found
-     * @throws URISyntaxException if the location of the class can not be converted to an URI
-     */
-    private static File getJarFileForClass(String fullQualifiedClassName) throws ClassNotFoundException, URISyntaxException {
-        Class<?> serverClass = Class.forName(fullQualifiedClassName);
-        CodeSource serverCodeSource = serverClass.getProtectionDomain().getCodeSource();
-        return new File(serverCodeSource.getLocation().toURI().getPath());
+    public Optional<Connection> tryOpenAdminConnection() {
+        LOGGER.debug("Create connection for FirstSpirit server at '{}:{}' with user '{}'...", getServerHost(), getServerPort(), "Admin");
+        try {
+            final Connection connection =
+                ConnectionManager.getConnection(getServerHost(), getServerPort(), ConnectionManager.HTTP_MODE, "Admin", getServerAdminPw());
+            connection.connect();
+            return Optional.of(connection);
+        } catch (IOException | AuthenticationException | MaximumNumberOfSessionsExceededException e) {
+            LOGGER.error("Could not connect to the FirstSpirit server.", e);
+            return Optional.empty();
+        }
     }
 }

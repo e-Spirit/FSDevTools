@@ -32,6 +32,7 @@ import java.io.File;
 import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Optional;
 
 @Command(name = "stop", groupNames = "server", description = "Stops a FirstSpirit server. Needs an fs-access.jar on the classpath. "+
         "WARNING: If you execute commands asynchronously, you may end up in unpredictable behavior.")
@@ -56,15 +57,15 @@ public class ServerStopCommand extends AbstractServerCommand implements com.espi
     @Override
     public SimpleResult<Boolean> call() {
         try {
-            final Path serverRootPath = getServerRootPath(new File(getServerRoot()));
-        
-            final ServerProperties serverProperties = ServerProperties.builder()
+            final Optional<Path> serverRootPath = getServerRootPath(new File(getServerRoot()));
+            final ServerProperties.ServerPropertiesBuilder builder = ServerProperties.builder();
+            serverRootPath.ifPresent(builder::serverRoot);
+
+            final ServerProperties serverProperties = builder
                 .serverHost(getHost())
                 .serverPort(getPort())
                 .serverAdminPw(getPassword())
-                .firstSpiritJar(ServerProperties.getAccessJarFileFromClasspath().get())
-                .serverRoot(serverRootPath)
-                    .build();
+                .build();
             final ServerRunner serverRunner = createRunner(serverProperties);
             final boolean stopped = serverRunner.stop();
             LOGGER.info(stopped ? "Server stopped" : "Server couldn't be stopped!");
@@ -79,13 +80,13 @@ public class ServerStopCommand extends AbstractServerCommand implements com.espi
     }
 
     
-    private Path getServerRootPath(File serverRootFile) throws IllegalArgumentException {
+    private Optional<Path> getServerRootPath(File serverRootFile) {
         if (serverRootFile.exists()) {
             LOGGER.info("Server root is at \""+ serverRootFile.getAbsolutePath() +"\"");
-            return serverRootFile.toPath();
+            return Optional.of(serverRootFile.toPath());
         } else {
             LOGGER.info("Server root is not set correctly. The server will stop but the \"isStopped\"-state may be displayed to early!");
-            throw new IllegalArgumentException("Server root is not set correctly." + serverRootFile.toURI());
+            return Optional.empty();
         }
     }
 

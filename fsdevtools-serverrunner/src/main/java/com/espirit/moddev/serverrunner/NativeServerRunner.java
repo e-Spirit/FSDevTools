@@ -3,9 +3,19 @@ package com.espirit.moddev.serverrunner;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
+import de.espirit.firstspirit.access.AdminService;
+import de.espirit.firstspirit.access.Connection;
+import de.espirit.firstspirit.access.ServicesBroker;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,6 +38,7 @@ import static java.util.stream.Collectors.joining;
 public class NativeServerRunner implements ServerRunner {
 
     private static final String PROBLEM_READING = "Problem reading data from FirstSpirit server process";
+    private static final Logger LOGGER = LoggerFactory.getLogger(NativeServerRunner.class);
 
     protected ServerProperties serverProperties;
     /**
@@ -148,9 +159,30 @@ public class NativeServerRunner implements ServerRunner {
         args.add("-Dcmsroot=" + fsServerRoot);
         args.add("-Djava.security.policy=" + fsServerRoot.resolve("conf").resolve("fs-server.policy"));
         args.addAll(Arrays.asList("-cp", serverProperties.getFirstSpiritJars().stream().map(File::toString).collect(joining(String.valueOf(java.io.File.pathSeparatorChar)))));
-        args.add("de.espirit.firstspirit.server.CMSServer");
+
+        URLClassLoader loader = new URLClassLoader(toUrlArray(serverProperties.getFirstSpiritJars()));
+        Optional<Class> startupClass = ServerProperties.tryFindStartUpClass(loader);
+
+        if (startupClass.isPresent()) {
+            args.add(startupClass.get().getCanonicalName());
+        } else {
+            throw new IllegalStateException("No startup class for a FirstSpirit server could be found on the class.");
+        }
 
         return args;
+    }
+
+    private static URL[] toUrlArray(List<File> files) {
+        List<URL> urls = new LinkedList<>();
+        for (File file : files) {
+            // We do not want to have null elements in the array, so first we store all successfully transformed urls in a list.
+            try {
+                urls.add(file.toURI().toURL());
+            } catch (MalformedURLException e) {
+                LOGGER.error("Location of a jar file could not be transformed to an URL.", e);
+            }
+        }
+        return urls.toArray(new URL[0]);
     }
 
     /**
@@ -217,50 +249,6 @@ public class NativeServerRunner implements ServerRunner {
 
         executor.submit(cancellableLogTask);
         return cancellableLogTask;
-    }
-
-    /**
-     * Prepare command line arguments to stop the server
-     *
-     * @param serverProperties the server properties to be used
-     * @return command line arguments to stop the server
-     */
-    static List<String> prepareStop(final ServerProperties serverProperties) {
-        final List<String> args = new ArrayList<>();
-        args.add("java");
-        args.addAll(Arrays.asList("-cp", serverProperties.getFirstSpiritJars().stream().map(File::toString).collect(joining(String.valueOf(java.io.File.pathSeparatorChar)))));
-        args.add("-Dhost=" + serverProperties.getServerHost());
-        args.add("-Dport=" + serverProperties.getServerPort());
-        args.add("-Dmode=HTTP");
-        args.add("de.espirit.firstspirit.server.ShutdownServer");
-        return args;
-    }
-
-    private static boolean stopFirstSpiritServer(final ServerProperties serverProperties, final Optional<FutureTask<Void>> serverTask) {
-        final ProcessBuilder builder = new ProcessBuilder(prepareStop(serverProperties));
-        builder.redirectErrorStream(true);
-        log.info("Stopping FirstSpirit Server...");
-        try {
-            final Process process = builder.start();
-            new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8)).lines()
-                .forEach(line -> log.info("FirstSpirit shutdown log:" + line));
-        } catch (final IOException ioe) {
-            log.error(PROBLEM_READING, ioe);
-            return false;
-        }
-        //ensure the FS lock file is removed (indicates that the server is still running if the lock file is still there)
-        if (isServerLocal(serverProperties)) {
-            waitForCondition(() -> !serverProperties.getLockFile().exists(), serverProperties.getRetryWait(), serverProperties.getRetryCount());
-        } else {
-            log.warn("WARNING: ", "Server is not local! After stopping it the server may still be running for some time.");
-        }
-        try {
-            Thread.sleep(500);
-        } catch (final InterruptedException ie) {
-            Thread.currentThread().interrupt();
-        }
-        serverTask.ifPresent(x -> x.cancel(true)); //kill running process if it did not die itself
-        return !testConnection(serverProperties);
     }
 
     private static boolean isServerLocal(final ServerProperties serverProperties) {
@@ -336,6 +324,45 @@ public class NativeServerRunner implements ServerRunner {
 
     @Override
     public boolean stop() {
-        return stopFirstSpiritServer(serverProperties, serverTask);
+        log.info("Stopping FirstSpirit Server...");
+        Optional<Connection> optionalConnection = serverProperties.tryOpenAdminConnection();
+        if (optionalConnection.isPresent()) {
+            stopFirstSpiritServerAndDisconnect(optionalConnection.get());
+            ensureFsLockFileIsRemoved(serverProperties);
+            killRunningProcess();
+            return !testConnection(serverProperties);
+        } else {
+            throw new IllegalStateException("Stopping the FirstSpirit server failed, due to a connection failure.");
+        }
+    }
+
+    private void stopFirstSpiritServerAndDisconnect(final Connection connection) {
+        ServicesBroker servicesBroker = connection.getBroker().requireSpecialist(ServicesBroker.TYPE);
+        AdminService adminService = servicesBroker.getService(AdminService.class);
+        adminService.stopServer();
+        try {
+            connection.disconnect();
+        } catch (IOException e) {
+            LOGGER.error("Error while closing FirstSpirit Connection", e);
+        }
+    }
+
+    private void ensureFsLockFileIsRemoved(ServerProperties serverProperties) {
+        // indicates that the server is still running if the lock file is still thereueck.de
+
+        if (isServerLocal(serverProperties)) {
+            waitForCondition(() -> !serverProperties.getLockFile().exists(), serverProperties.getRetryWait(), serverProperties.getRetryCount());
+        } else {
+            log.warn("WARNING: ", "Server is not local! After stopping it the server may still be running for some time.");
+        }
+        try {
+            Thread.sleep(500);
+        } catch (final InterruptedException ie) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private void killRunningProcess() {
+        serverTask.ifPresent(x -> x.cancel(true));
     }
 }

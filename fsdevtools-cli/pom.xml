@@ -60,6 +60,7 @@
         <dependency>
             <groupId>de.espirit.firstspirit</groupId>
             <artifactId>fs-access</artifactId>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -108,6 +109,17 @@
             <groupId>com.espirit.moddev.fsdevtools</groupId>
             <artifactId>fsdevtools-customcommand-example</artifactId>
             <version>${ci.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>de.espirit.firstspirit</groupId>
+            <artifactId>fs-server</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.espirit.firstspirit</groupId>
+            <artifactId>wrapper</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -456,7 +468,7 @@
             <dependencies>
                 <dependency>
                     <groupId>de.espirit.firstspirit</groupId>
-                    <artifactId>server</artifactId>
+                    <artifactId>fs-server</artifactId>
                     <scope>provided</scope>
                 </dependency>
                 <dependency>

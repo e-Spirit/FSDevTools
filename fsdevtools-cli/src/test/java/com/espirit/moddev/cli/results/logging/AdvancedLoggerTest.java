@@ -818,9 +818,10 @@ public class AdvancedLoggerTest {
                     "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )"                    + NEW_LINE +
                     "[INFO]  - Schema: 'schema3'                    ( entity types: 1, entities: 1 )"   + NEW_LINE +
                     "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )"                    + NEW_LINE +
-                    "[INFO] Updated elements: 21"                                                       + NEW_LINE +
-                    "[INFO] - project properties: 9"                                                    + NEW_LINE +
+                    "[INFO] Updated elements: 22"                                                       + NEW_LINE +
+                    "[INFO] - project properties: 10"                                                   + NEW_LINE +
                     "[INFO]  - Common                              "                                    + NEW_LINE +
+                    "[INFO]  - CustomProperties                    "                                    + NEW_LINE +
                     "[INFO]  - Resolutions                         "                                    + NEW_LINE +
                     "[INFO]  - Groups                              "                                    + NEW_LINE +
                     "[INFO]  - ScheduleEntries                     "                                    + NEW_LINE +
@@ -892,7 +893,7 @@ public class AdvancedLoggerTest {
                     "[INFO]  - store: TEMPLATESTORE | name: templatestore_name_1231 | reason: GOM is invalid"                                                                                   + NEW_LINE +
                     "[INFO] == SUMMARY =="                                                                                                                                                      + NEW_LINE +
                     "[INFO] Created elements: 12 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 5 ( schemas: 3, entities: 6 )"                           + NEW_LINE +
-                    "[INFO] Updated elements: 21 | project properties: 9 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 5 ( schemas: 3, entities: 6 )"   + NEW_LINE +
+                    "[INFO] Updated elements: 22 | project properties: 10 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 5 ( schemas: 3, entities: 6 )"   + NEW_LINE +
                     "[INFO] Deleted elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
                     "[INFO]   Moved elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
                     "[INFO] L&Found elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
@@ -929,9 +930,10 @@ public class AdvancedLoggerTest {
                     "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )" + NEW_LINE +
                     "[INFO]  - Schema: 'schema3'                    ( entity types: 1, entities: 1 )"   + NEW_LINE +
                     "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )" + NEW_LINE +
-                    "[INFO] Updated elements: 21"                                    + NEW_LINE +
-                    "[INFO] - project properties: 9"                                 + NEW_LINE +
+                    "[INFO] Updated elements: 22"                                    + NEW_LINE +
+                    "[INFO] - project properties: 10"                                + NEW_LINE +
                     "[INFO]  - Common                              "                 + NEW_LINE +
+                    "[INFO]  - CustomProperties                    "                 + NEW_LINE +
                     "[INFO]  - Resolutions                         "                 + NEW_LINE +
                     "[INFO]  - Groups                              "                 + NEW_LINE +
                     "[INFO]  - ScheduleEntries                     "                 + NEW_LINE +
@@ -1003,7 +1005,7 @@ public class AdvancedLoggerTest {
                     "[INFO]  - store: TEMPLATESTORE | name: templatestore_name_1231 | reason: GOM is invalid"                                                                                   + NEW_LINE +
                     "[INFO] == SUMMARY =="                                                                                                                                                      + NEW_LINE +
                     "[INFO] Created elements: 12 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 5 ( schemas: 3, entities: 6 )"                           + NEW_LINE +
-                    "[INFO] Updated elements: 21 | project properties: 9 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 5 ( schemas: 3, entities: 6 )"   + NEW_LINE +
+                    "[INFO] Updated elements: 22 | project properties: 10 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 5 ( schemas: 3, entities: 6 )"   + NEW_LINE +
                     "[INFO] Deleted elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
                     "[INFO]   Moved elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
                     "[INFO] L&Found elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +

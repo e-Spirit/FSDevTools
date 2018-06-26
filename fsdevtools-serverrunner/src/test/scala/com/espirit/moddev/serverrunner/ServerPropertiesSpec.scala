@@ -104,19 +104,4 @@ class ServerPropertiesSpec extends UnitSpec with GeneratorDrivenPropertyChecks w
   def noShrink[T] = Shrink[T](_ => Stream.empty)
 
   implicit val myTypeNoShrink = noShrink[String]
-
-  def filenameGen(pathSeperator: String) =
-    for { filename <- Gen.alphaNumStr suchThat (_.nonEmpty) } yield
-      s"""de${pathSeperator}espirit${pathSeperator}firstspirit$pathSeperator$filename.jar"""
-
-  "FS_SERVER_JAR_PATTERN" should "match unix-like paths" in {
-    forAll(filenameGen("/")) { filename =>
-      assert(ServerProperties.FS_SERVER_JAR_PATTERN.matcher(filename).matches)
-    }
-  }
-  it should "match windows-like paths" in {
-    forAll(filenameGen("""\""")) { filename =>
-      assert(ServerProperties.FS_SERVER_JAR_PATTERN.matcher(filename).matches)
-    }
-  }
 }
