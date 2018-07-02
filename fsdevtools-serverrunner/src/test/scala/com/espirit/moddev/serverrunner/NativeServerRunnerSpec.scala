@@ -19,7 +19,7 @@ import scala.language.{implicitConversions, postfixOps}
 
 class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
   def fixture = new {
-    lazy val propsWithVersionBuilder        = ServerProperties.builder().serverRoot(new File(System.getProperty("fsServerRoot")).toPath).firstSpiritJar(new File("foobar"))
+    lazy val propsWithVersionBuilder        = ServerProperties.builder().serverRoot(new File(System.getProperty("fsServerRoot")).toPath).firstSpiritJars(ServerProperties.getFirstSpiritJarsFromClasspath)
     lazy val minimalServerPropertiesBuilder = propsWithVersionBuilder
     lazy val minimalServerProperties        = minimalServerPropertiesBuilder.build()
     lazy val propsWithVersion               = propsWithVersionBuilder.build()
@@ -142,14 +142,14 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
       val argsGcLog =
         NativeServerRunner
           .prepareStartup(
-            ServerProperties.builder().serverInstall(false).serverGcLog(true).firstSpiritJar(new File("foobar")).build())
+            ServerProperties.builder().serverInstall(false).serverGcLog(true).firstSpiritJars(ServerProperties.getFirstSpiritJarsFromClasspath).build())
           .asScala
       assert(argsGcLog.count(str => str startsWith "-Xloggc") == 1)
     }
     "add the server ops" in {
       val commands = NativeServerRunner
         .prepareStartup(
-          ServerProperties.builder().serverOp("-Dabc=123").serverOp("-Dcde=234").firstSpiritJar(new File("foobar")).build())
+          ServerProperties.builder().serverOp("-Dabc=123").serverOp("-Dcde=234").firstSpiritJars(ServerProperties.getFirstSpiritJarsFromClasspath).build())
       commands should contain inOrder ("-Dabc=123", "-Dcde=234")
     }
     "add the server policy file" in {

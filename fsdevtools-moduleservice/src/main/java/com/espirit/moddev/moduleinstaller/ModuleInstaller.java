@@ -96,10 +96,10 @@ public class ModuleInstaller {
                 File configuration = parameters.getServiceConfigurations().get(serviceDescriptor.getName());
                 if(configuration != null) {
                     createConfigurationFile(SERVICE, connection, serviceDescriptor, configuration, moduleName, parameters.getProjectName(), null);
-                    setAutostartAndRestartService(moduleAdminAgent, serviceDescriptor);
                 } else {
                     LOGGER.info("No configuration found for service " + serviceDescriptor.getName());
                 }
+                setAutostartAndRestartService(moduleAdminAgent, serviceDescriptor);
             });
         }
     }
@@ -136,7 +136,7 @@ public class ModuleInstaller {
         fsOptional.ifPresent(fs -> {
             LOGGER.info("Obtaining handle");
             try {
-                FileHandle handle = fs.obtain(getConfigFileName(componentDescriptor) + ".ini");
+                FileHandle handle = fs.obtain(configurationFile.getName());
                 LOGGER.info("Saving handle to " + handle.getPath());
                 handle.save(new FileInputStream(configurationFile));
             } catch (IOException e) {
@@ -354,14 +354,6 @@ public class ModuleInstaller {
         } catch (IllegalArgumentException e) {
             LOGGER.error("Invalid Scope " + scope, e);
         }
-    }
-
-    private static String getConfigFileName(ComponentDescriptor componentDescriptor) {
-        String componentDescriptorName = null;
-        if (componentDescriptor.getName() != null) {
-            componentDescriptorName = componentDescriptor.getName().replace(" ", "_").replaceFirst("-fsm-projectApp", "");
-        }
-        return componentDescriptorName;
     }
 
     private static boolean setActiveWebServer(WebAppIdentifier webScope, Project project) {
