@@ -160,7 +160,7 @@ public class NativeServerRunner implements ServerRunner {
         args.add("-Djava.security.policy=" + fsServerRoot.resolve("conf").resolve("fs-server.policy"));
         args.addAll(Arrays.asList("-cp", serverProperties.getFirstSpiritJars().stream().map(File::toString).collect(joining(String.valueOf(java.io.File.pathSeparatorChar)))));
 
-        URLClassLoader loader = new URLClassLoader(toUrlArray(serverProperties.getFirstSpiritJars()));
+        URLClassLoader loader = new URLClassLoader(toUrlArray(serverProperties.getFirstSpiritJars()), null);
         Optional<Class> startupClass = ServerProperties.tryFindStartUpClass(loader);
 
         if (startupClass.isPresent()) {

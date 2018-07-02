@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -215,8 +216,8 @@ public class ServerProperties {
                 final URL url = resources.nextElement();
                 try (final InputStream inputStream = url.openStream()) {
                     if (manifestMainAttributesContainAnyOf(new Manifest(inputStream), attributeValues)) {
-                        final String schemeSpecificPart = url.toURI().getSchemeSpecificPart();
-                        files.add(new File(schemeSpecificPart.replace("!/META-INF/MANIFEST.MF", "")));
+                        final String normalizedUri = url.toURI().toString().replaceAll("jar:file:", "file://").replace("!/META-INF/MANIFEST.MF", "");
+                        files.add(new File(new URI(normalizedUri)));
                     }
                 }
             }
