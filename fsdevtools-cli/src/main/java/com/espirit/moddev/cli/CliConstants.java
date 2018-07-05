@@ -90,6 +90,11 @@ public enum CliConstants {
     KEY_FS_PROJECT("fsproject"),
 
     /**
+     * Key fs project cli constant.
+     */
+    KEY_FS_PROJECT_ID("fsprojectid"),
+
+    /**
      * Key fs import comment cli constant.
      */
     KEY_FS_IMPORT_COMMENT("import_comment"),

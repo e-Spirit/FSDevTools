@@ -38,6 +38,7 @@ import de.espirit.firstspirit.agency.SpecialistType;
 import de.espirit.firstspirit.agency.SpecialistsBroker;
 import de.espirit.firstspirit.common.IOError;
 import de.espirit.firstspirit.common.MaximumNumberOfSessionsExceededException;
+import de.espirit.firstspirit.common.StringUtil;
 import de.espirit.firstspirit.server.authentication.AuthenticationException;
 
 import org.apache.commons.lang.StringUtils;
@@ -115,13 +116,14 @@ public class CliContextImpl implements CliContext {
 
     private void requireProjectSpecificBroker() {
         String projectName = clientConfig.getProject();
-        if(StringUtils.isEmpty(projectName)) {
+        String projectId = clientConfig.getProjectId();
+        if(StringUtils.isEmpty(projectName) && StringUtils.isEmpty(projectId)) {
             LOGGER.info("No project name given, so no project specific broker is required");
         } else {
             LOGGER.debug("Require project specific specialist broker for project '{}'...", projectName);
 
             try {
-                loadProject(projectName);
+                loadProject(StringUtils.isEmpty(projectId) ? projectName : projectId);
             } catch (Exception e) { //NOSONAR
                 LOGGER.info("Can't load project {}. Not going to require a broker.", projectName);
                 LOGGER.debug("Exception while loading project", e);
@@ -149,7 +151,13 @@ public class CliContextImpl implements CliContext {
 
     private void loadProject(String projectName) {
         if (!StringUtils.isBlank(projectName)) {
-            Project project = connection.getProjectByName(projectName);
+            Project project = null;
+
+            if (StringUtils.isNumeric(projectName)) {
+                project = connection.getProjectById(Long.parseLong(projectName));
+            } else {
+                project = connection.getProjectByName(projectName);
+            }
             if (project == null && clientConfig.isCreatingProjectIfMissing()) {
                 project = createProject(projectName);
             }

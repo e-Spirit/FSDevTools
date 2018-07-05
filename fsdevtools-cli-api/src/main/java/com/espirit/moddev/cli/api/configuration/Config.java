@@ -78,6 +78,13 @@ public interface Config {
     String getProject();
 
     /**
+     * Get the id of the project that will be synchronized.
+     *
+     * @return the id of the project that will be synchronized
+     */
+    String getProjectId();
+
+    /**
      * Gets the synchronization directory as a {@link java.lang.String} identifier.
      * Can be used to retrieve an actual file handle to a directory.
      *

@@ -81,6 +81,9 @@ public class GlobalConfig implements Config {
     @Option(type = OptionType.GLOBAL, name = {"-p", "--project"}, description = "Name of FirstSpirit project")
     private String project;
 
+    @Option(type = OptionType.GLOBAL, name = {"-pId", "--projectId"}, description = "ID of FirstSpirit project")
+    private String projectId;
+
     @Option(type = OptionType.GLOBAL, name = {"-a", "--activateProjectIfDeactivated"}, description = "Activates a project if deactivated for any reason")
     private boolean activateProjectIfDeactivated;
 
@@ -195,6 +198,17 @@ public class GlobalConfig implements Config {
             }
         }
         return project;
+    }
+
+    @Override
+    public String getProjectId() {
+        if(projectId == null || projectId.isEmpty()) {
+            boolean environmentContainsProject = getEnvironment().containsKey(CliConstants.KEY_FS_PROJECT_ID.value());
+            if(environmentContainsProject) {
+                return getEnvironment().get(CliConstants.KEY_FS_PROJECT_ID.value()).trim();
+            }
+        }
+        return projectId;
     }
 
     @Override

@@ -85,6 +85,9 @@ public class SyncDirectoryFactoryTest {
             }
 
             @Override
+            public String getProjectId() { return null; }
+
+            @Override
             public String getSynchronizationDirectoryString() {
                 return "test";
             }

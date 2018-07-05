@@ -99,6 +99,9 @@ public class CliErrorTest {
             }
 
             @Override
+            public String getProjectId() { return null; }
+
+            @Override
             public String getSynchronizationDirectoryString() {
                 return "test";
             }
