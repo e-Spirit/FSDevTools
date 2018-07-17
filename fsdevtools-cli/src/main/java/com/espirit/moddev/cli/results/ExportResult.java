@@ -24,11 +24,8 @@ package com.espirit.moddev.cli.results;
 
 import com.espirit.moddev.cli.results.logging.AdvancedLogger;
 import de.espirit.firstspirit.agency.StoreAgent;
-import de.espirit.firstspirit.common.TsFeatures;
-import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 
-import java.util.Set;
 
 /**
  * Specialization of {@link com.espirit.moddev.cli.results.SimpleResult} that can be used in conjunction with export commands.
@@ -42,6 +39,7 @@ public class ExportResult extends SimpleResult<ExportOperation.Result> {
     /**
      * Creates a new instance using the given command result.
      *
+     * @param storeAgent used to request related FirstSpirit elements
      * @param result Result produced by the command
      * @see com.espirit.moddev.cli.results.SimpleResult#SimpleResult(Object)
      */
@@ -67,13 +65,8 @@ public class ExportResult extends SimpleResult<ExportOperation.Result> {
             LOGGER.error("Export operation not successful", exception);
         } else {
             LOGGER.info("Export operation successful");
-            if (TsFeatures.TS_194654.isEnabled()) {
-                // new logging, based on elements
-                logElementBasedResult(get());
-            } else {
-                // old logging, based on files
-                logFileHandleBasedResult(get());
-            }
+            // new logging, based on elements
+            logElementBasedResult(get());
         }
     }
 
@@ -87,35 +80,4 @@ public class ExportResult extends SimpleResult<ExportOperation.Result> {
     }
 
 
-    /**
-     * Logs a result based on file handles.
-     */
-    private void logFileHandleBasedResult(final ExportOperation.Result exportResult) {
-        logFileChanges(exportResult.getUpdatedFiles(), "updated files");
-        logFileChanges(exportResult.getCreatedFiles(), "created files");
-        logFileChanges(exportResult.getDeletedFiles(), "deleted files");
-        Object[] args = {Integer.valueOf(exportResult.getUpdatedFiles().size()),
-                Integer.valueOf(exportResult.getCreatedFiles().size()),
-                Integer.valueOf(exportResult.getDeletedFiles().size())};
-
-        LOGGER.info("Export done.\n\t"
-                + "updated files: {}\n\t"
-                + "created files: {}\n\t"
-                + "deleted files: {}", args);
-    }
-
-    /**
-     * Log info messages.
-     *
-     * @param handle represents the current element that was exported
-     * @param state  is used for the log message ("updated", "created" and "deleted")
-     */
-    private void logFileChanges(final Set<FileHandle> handle, final String state) {
-        LOGGER.info("{}: {}", state, handle.size());
-        if (LOGGER.isDebugEnabled()) {
-            for (FileHandle _handle : handle) {
-                LOGGER.debug("fileName: " + _handle.getName() + " filePath: " + _handle.getPath());
-            }
-        }
-    }
 }
