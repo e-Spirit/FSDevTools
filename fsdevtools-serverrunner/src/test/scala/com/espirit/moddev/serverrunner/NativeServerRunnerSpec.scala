@@ -98,12 +98,35 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
           assertFileExists(props.getServerRoot.resolve("conf").resolve("fs-license.conf"))
         }
       }
-      "create 'fs-server.conf' with the correct server port" in {
-        val props = fixture.propsWithVersionBuilder.serverPort(9000).build()
+      "create 'fs-server.conf' with the correct HTTP server port" in {
+        val props = fixture.propsWithVersionBuilder.httpPort(9000).build()
         NativeServerRunner.prepareFilesystem(props)
         val confFile = props.getServerRoot.resolve("conf").resolve("fs-server.conf")
         assertFileExists(confFile)
         assert(Source.fromFile(confFile.toFile).getLines().contains("HTTP_PORT=9000"))
+      }
+      "create 'fs-server.conf' with random HTTP server port" in {
+        val props = fixture.propsWithVersionBuilder.httpPort(0).build()
+        assert(props.getHttpPort > 0)
+        NativeServerRunner.prepareFilesystem(props)
+        val confFile = props.getServerRoot.resolve("conf").resolve("fs-server.conf")
+        assertFileExists(confFile)
+        assert(Source.fromFile(confFile.toFile).getLines().contains("HTTP_PORT=" + props.getHttpPort))
+      }
+      "create 'fs-server.conf' with the correct Socket server port" in {
+        val props = fixture.propsWithVersionBuilder.socketPort(2000).build()
+        NativeServerRunner.prepareFilesystem(props)
+        val confFile = props.getServerRoot.resolve("conf").resolve("fs-server.conf")
+        assertFileExists(confFile)
+        assert(Source.fromFile(confFile.toFile).getLines().contains("SOCKET_PORT=2000"))
+      }
+      "create 'fs-server.conf' with random Socket server port" in {
+        val props = fixture.propsWithVersionBuilder.socketPort(0).build()
+        assert(props.getSocketPort > 0)
+        NativeServerRunner.prepareFilesystem(props)
+        val confFile = props.getServerRoot.resolve("conf").resolve("fs-server.conf")
+        assertFileExists(confFile)
+        assert(Source.fromFile(confFile.toFile).getLines().contains("SOCKET_PORT=" + props.getSocketPort))
       }
     }
     "we install the server" should {
@@ -166,15 +189,6 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
   "NativeServerRunner.testConnection" should {
     "return true" when {
       "the connection can be made correctly" in pending //complex to implement because URL class is final and PowerMock did not work
-    }
-    "return false" when {
-      "an exception gets thrown" in {
-        val badConnection = mock(classOf[ServerProperties])
-        when(badConnection.getServerUrl).thenThrow(new RuntimeException)
-
-        assert(!NativeServerRunner.testConnection(badConnection))
-      }
-      "no 200 OK is returned" in pending //complex to implement because URL class is final and PowerMock did not work
     }
   }
 

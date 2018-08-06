@@ -29,7 +29,7 @@ import java.nio.file.Paths;
 public abstract class AbstractServerCommand {
     @Option(name = {"-h", "--host"}, description = "The hostname to use for the FirstSpirit server. The default is 'localhost'.")
     private String host = "localhost";
-    @Option(name = {"-p", "-port", "--port"}, description = "The port to use for the FirstSpirit server. The default is '8000'.")
+    @Option(name = {"-p", "-port", "--port"}, description = "The HTTP port to use for the FirstSpirit server. The default is '8000'.")
     private Integer port = 8000;
     @Option(name = {"-pw", "-password"}, description = "The admin password to be used. The default is 'Admin'.")
     @SuppressWarnings("squid:S2068")
@@ -78,7 +78,7 @@ public abstract class AbstractServerCommand {
      */
     public void initializeFromProperties(final ServerProperties serverProperties) {
         setHost(serverProperties.getServerHost());
-        setPort(serverProperties.getServerPort());
+        setPort(serverProperties.getHttpPort());
         setPassword(serverProperties.getServerAdminPw());
     }
 
