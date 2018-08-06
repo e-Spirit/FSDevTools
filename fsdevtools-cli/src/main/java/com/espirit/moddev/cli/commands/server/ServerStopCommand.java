@@ -63,7 +63,7 @@ public class ServerStopCommand extends AbstractServerCommand implements com.espi
 
             final ServerProperties serverProperties = builder
                 .serverHost(getHost())
-                .serverPort(getPort())
+                .httpPort(getPort())
                 .serverAdminPw(getPassword())
                 .build();
             final ServerRunner serverRunner = createRunner(serverProperties);

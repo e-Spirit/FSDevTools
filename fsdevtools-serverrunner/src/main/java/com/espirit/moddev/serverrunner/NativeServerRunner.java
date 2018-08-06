@@ -119,7 +119,8 @@ public class NativeServerRunner implements ServerRunner {
             )) {
             final Properties properties = new Properties();
             properties.load(reader);
-            properties.setProperty("HTTP_PORT", String.valueOf(serverProperties.getServerPort()));
+            properties.setProperty("HTTP_PORT", String.valueOf(serverProperties.getHttpPort()));
+            properties.setProperty("SOCKET_PORT", String.valueOf(serverProperties.getSocketPort()));
 
             try (FileWriter fileWriter = new FileWriter(confFile.toFile())) {
                 properties.store(fileWriter, "");
@@ -192,11 +193,11 @@ public class NativeServerRunner implements ServerRunner {
      * @return whether the connection was successfully established
      */
     static boolean testConnection(final ServerProperties serverProperties) {
-        //currently HTTP_MODE is the only mode available - just want to point out clearly that this will only work for that mode.
-        if (serverProperties.getMode() == ServerProperties.ConnectionMode.HTTP_MODE) {
-            return HttpConnectionTester.testConnection(serverProperties.getServerUrl());
-        } else {
-            return false;
+        switch (serverProperties.getMode()) {
+            case HTTP_MODE: return HttpConnectionTester.testConnection(serverProperties.getServerUrl());
+            case SOCKET_MODE: return SocketConnectionTester.testConnection(serverProperties.getServerHost(), serverProperties.getSocketPort(),
+                                                                           serverProperties.getServerAdminPw());
+            default: return false;
         }
     }
 

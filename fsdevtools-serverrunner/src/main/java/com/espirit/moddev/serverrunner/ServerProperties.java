@@ -16,7 +16,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
+import java.net.ServerSocket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -38,6 +40,7 @@ public class ServerProperties {
     private static final Pattern firstSpiritJarPattern = Pattern.compile("(fs-.*?\\.jar|wrapper.*?\\.jar)$");
 
     public enum ConnectionMode {
+        SOCKET_MODE(1088),
         HTTP_MODE(8000);
 
         final int defaultPort;
@@ -53,9 +56,14 @@ public class ServerProperties {
     private final Path serverRoot;
 
     /**
-     * port under which the FirstSpirit server will be reachable (leave empty to use defaults)
+     * HTTP port under which the FirstSpirit server will be reachable (leave empty to use defaults or set to 0 for random port)
      */
-    private final int serverPort;
+    private final int httpPort;
+
+    /**
+     * Socket port under which the FirstSpirit server will be reachable (leave empty to use defaults or set to 0 for random port)
+     */
+    private final int socketPort;
 
     /**
      * whether a GC log should be written or not
@@ -113,20 +121,22 @@ public class ServerProperties {
     private final Supplier<Optional<InputStream>> licenseFileSupplier;
 
     /**
-     * In which mode to connect. Currently only HTTP_MODE is available, SOCKET_MODE might be added in the future.
+     * In which mode to connect.
      */
-    private final ConnectionMode mode = ConnectionMode.HTTP_MODE;
+    private final ConnectionMode mode;
 
     private final URL serverUrl;
 
     @SuppressWarnings("squid:S00107")
     @Builder
-    ServerProperties(final Path serverRoot, final String serverHost, final Integer serverPort, final boolean serverGcLog,
+    ServerProperties(final Path serverRoot, final String serverHost, final Integer httpPort, Integer socketPort,
+                     ConnectionMode connectionMode, final boolean serverGcLog,
                      final Boolean serverInstall,
                      @Singular final List<String> serverOps, final Duration threadWait, final String serverAdminPw,
                      final Integer retryCount, @Singular final List<File> firstSpiritJars,
                      final Supplier<Optional<InputStream>> licenseFileSupplier) {
-        assertThatOrNull(serverPort, "serverPort", allOf(greaterThan(0), lessThanOrEqualTo(65536)));
+        assertThatOrNull(httpPort, "httpPort", allOf(greaterThanOrEqualTo(0), lessThanOrEqualTo(65536)));
+        assertThatOrNull(socketPort, "socketPort", allOf(greaterThanOrEqualTo(0), lessThanOrEqualTo(65536)));
         if (threadWait != null && threadWait.isNegative()) {
             throw new IllegalArgumentException("threadWait may not be negative.");
         }
@@ -143,7 +153,9 @@ public class ServerProperties {
         this.retryCount = retryCount == null ? 45 : retryCount;
         this.serverAdminPw = serverAdminPw == null ? "Admin" : serverAdminPw;
         this.serverHost = serverHost == null || serverHost.isEmpty() ? "localhost" : serverHost;
-        this.serverPort = serverPort == null ? this.mode.defaultPort : serverPort;
+        this.mode = connectionMode;
+        this.httpPort = httpPort == null ? ConnectionMode.HTTP_MODE.defaultPort : port(httpPort);
+        this.socketPort = socketPort == null ? ConnectionMode.SOCKET_MODE.defaultPort : port(socketPort);
         this.firstSpiritJars =
             firstSpiritJars == null || firstSpiritJars.isEmpty() ? Collections.emptyList() : firstSpiritJars.stream().filter(Objects::nonNull)
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -157,9 +169,21 @@ public class ServerProperties {
 
         //this value should be lazily calculated
         try {
-            this.serverUrl = new URL("http://" + this.serverHost + ":" + this.serverPort + "/");
+            this.serverUrl = new URL("http://" + this.serverHost + ":" + this.httpPort + "/");
         } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("either serverHost or serverPort had an illegal format", e);
+            throw new IllegalArgumentException("either serverHost or httpPort had an illegal format", e);
+        }
+    }
+
+    private static int port(final int portNumber) {
+        if (portNumber != 0) {
+            return portNumber;
+        } else {
+            try (final ServerSocket serverSocket = new ServerSocket(0)) {
+                return serverSocket.getLocalPort();
+            } catch (final IOException e) {
+                throw new UncheckedIOException(e);
+            }
         }
     }
     
@@ -251,7 +275,7 @@ public class ServerProperties {
             LOGGER.debug("Trying to resolve {}.", className);
             return Optional.of(Class.forName(className, false, classLoader));
         } catch (ClassNotFoundException e) {
-            LOGGER.error("Class " + className + " could not be resolved.", e);
+            LOGGER.error("Class " + className + " could not be resolved.");
             return Optional.empty();
         }
     }
@@ -261,10 +285,10 @@ public class ServerProperties {
      * @return An {@link Optional} object containing a {@link Connection} if it could be established.
      */
     public Optional<Connection> tryOpenAdminConnection() {
-        LOGGER.debug("Create connection for FirstSpirit server at '{}:{}' with user '{}'...", getServerHost(), getServerPort(), "Admin");
+        LOGGER.debug("Create connection for FirstSpirit server at '{}:{}' with user '{}'...", getServerHost(), getHttpPort(), "Admin");
         try {
             final Connection connection =
-                ConnectionManager.getConnection(getServerHost(), getServerPort(), ConnectionManager.HTTP_MODE, "Admin", getServerAdminPw());
+                ConnectionManager.getConnection(getServerHost(), getHttpPort(), ConnectionManager.HTTP_MODE, "Admin", getServerAdminPw());
             connection.connect();
             return Optional.of(connection);
         } catch (IOException | AuthenticationException | MaximumNumberOfSessionsExceededException e) {

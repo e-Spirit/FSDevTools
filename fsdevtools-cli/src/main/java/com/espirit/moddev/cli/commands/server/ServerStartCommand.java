@@ -130,7 +130,7 @@ public class ServerStartCommand extends AbstractServerCommand implements com.esp
         
         final ServerPropertiesBuilder serverPropertiesBuilder = ServerProperties.builder()
                 .serverHost(getHost())
-                .serverPort(getPort())
+                .httpPort(getPort())
                 .serverAdminPw(getPassword())
                 .serverRoot(serverRootFile.toPath())
                 // don't install if directory exists
