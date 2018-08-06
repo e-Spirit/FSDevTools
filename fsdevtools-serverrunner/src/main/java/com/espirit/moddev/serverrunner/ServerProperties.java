@@ -270,6 +270,7 @@ public class ServerProperties {
                 .findFirst();
     }
 
+    @SuppressWarnings("squid:S1166")
     private static Optional<Class> tryClassForName(String className, ClassLoader classLoader) {
         try {
             LOGGER.debug("Trying to resolve {}.", className);
