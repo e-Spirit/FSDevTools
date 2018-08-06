@@ -28,6 +28,12 @@ class ServerPropertiesSpec extends UnitSpec with GeneratorDrivenPropertyChecks w
     noException should be thrownBy
       new ServerProperties(Paths.get(""), null, 1, 2, HTTP_MODE, true, null, new util.ArrayList(), Duration.ofMillis(0), "", 0, fakeJars, null).isServerInstall
   }
+  "ServerProperties constructor, parameter connectionMode" should "use a default parameter if given null" in {
+    assert(
+      new ServerProperties(Paths.get(""), null, 1, 2, null, true, true, new util.ArrayList(), Duration.ofMillis(0), "", 0, fakeJars, null).getMode !=
+      null
+    )
+  }
 
   def objWithPort(port: Int) =
     new ServerProperties(Paths.get(""), null, port, 2, HTTP_MODE, true, true, new util.ArrayList(), Duration.ofMillis(0), "", 0, fakeJars, null)

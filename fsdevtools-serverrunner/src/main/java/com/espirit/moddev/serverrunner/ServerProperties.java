@@ -153,7 +153,7 @@ public class ServerProperties {
         this.retryCount = retryCount == null ? 45 : retryCount;
         this.serverAdminPw = serverAdminPw == null ? "Admin" : serverAdminPw;
         this.serverHost = serverHost == null || serverHost.isEmpty() ? "localhost" : serverHost;
-        this.mode = connectionMode;
+        this.mode = connectionMode != null ? connectionMode : ConnectionMode.HTTP_MODE;
         this.httpPort = httpPort == null ? ConnectionMode.HTTP_MODE.defaultPort : port(httpPort);
         this.socketPort = socketPort == null ? ConnectionMode.SOCKET_MODE.defaultPort : port(socketPort);
         this.firstSpiritJars =
@@ -275,7 +275,7 @@ public class ServerProperties {
             LOGGER.debug("Trying to resolve {}.", className);
             return Optional.of(Class.forName(className, false, classLoader));
         } catch (ClassNotFoundException e) {
-            LOGGER.error("Class " + className + " could not be resolved.", e);
+            LOGGER.error("Class " + className + " could not be resolved.");
             return Optional.empty();
         }
     }
