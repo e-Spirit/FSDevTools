@@ -1,6 +1,12 @@
 package com.espirit.moddev.cli.results.logging;
 
 import de.espirit.firstspirit.access.store.Store;
+import de.espirit.firstspirit.access.store.pagestore.Page;
+import de.espirit.firstspirit.access.store.pagestore.Section;
+import de.espirit.firstspirit.access.store.templatestore.PageTemplate;
+import de.espirit.firstspirit.access.store.templatestore.SectionTemplate;
+import de.espirit.firstspirit.access.store.templatestore.Template;
+import de.espirit.firstspirit.store.access.TagNames;
 import de.espirit.firstspirit.store.access.nexport.*;
 import de.espirit.firstspirit.transport.PropertiesTransportOptions;
 import org.junit.Test;
@@ -16,9 +22,9 @@ public class AdvancedLoggerTest {
     public void testInfoLevelDisabled() throws Exception {
         final MockLogger logger = new MockLogger(false);
         logger.setInfoEnabled(false);
-        AdvancedLogger.logExportResult(logger, new MockedExportResult(true));
+        AdvancedLogger.logExportResult(logger, null, new MockedExportResult(true));
         assertEquals("Result does not match.", "", logger.toString());
-        AdvancedLogger.logImportResult(logger, new MockedImportResult(true), null);
+        AdvancedLogger.logImportResult(logger, null, new MockedImportResult(true));
         assertEquals("Result does not match.", "", logger.toString());
     }
 
@@ -26,7 +32,7 @@ public class AdvancedLoggerTest {
     public void testLogEmptyExportResult() throws Exception {
         {
             final MockLogger logger = new MockLogger(false);
-            AdvancedLogger.logExportResult(logger, new MockedExportResult(false));
+            AdvancedLogger.logExportResult(logger, null, new MockedExportResult(false));
             // @formatter:off
             final String expected =
                     "[INFO] Export done."                + NEW_LINE +
@@ -51,7 +57,7 @@ public class AdvancedLoggerTest {
             final MockLogger logger = new MockLogger(true);
             final MockedStoreAgent storeAgent = new MockedStoreAgent();
             storeAgent.addStore(Store.Type.PAGESTORE, new MockedStore(Store.Type.PAGESTORE));
-            AdvancedLogger.logImportResult(logger, new MockedImportResult(false), null);
+            AdvancedLogger.logImportResult(logger, null, new MockedImportResult(false));
             // @formatter:off
             final String expected =
                     "[INFO] Import done."                + NEW_LINE +
@@ -76,10 +82,80 @@ public class AdvancedLoggerTest {
     }
 
     @Test
+    public void testGetStoreElementIdentifier() throws Exception {
+        {
+            // SectionTemplate
+            final String storeElementName = "testElement";
+            final MockedElementExportInfo testElement = new MockedElementExportInfo(Store.Type.TEMPLATESTORE, storeElementName, TagNames.TEMPLATE, ExportStatus.CREATED);
+            final MockedStoreAgent mockedStoreAgent = new MockedStoreAgent();
+            final MockedStore store = (MockedStore) mockedStoreAgent.getStore(Store.Type.TEMPLATESTORE);
+            store.addMockedStoreElement(new SectionTemplateMock(testElement.getElementInfo().getNodeId(), storeElementName));
+            assertEquals("wrong identifier", SectionTemplate.class.getSimpleName(), AdvancedLogger.getStoreElementIdentifier(mockedStoreAgent, testElement));
+        }
+
+        {
+            // PageTemplate
+            final String storeElementName = "testElement";
+            final MockedElementExportInfo testElement = new MockedElementExportInfo(Store.Type.TEMPLATESTORE, storeElementName, TagNames.TEMPLATE, ExportStatus.CREATED);
+            final MockedStoreAgent mockedStoreAgent = new MockedStoreAgent();
+            final MockedStore store = (MockedStore) mockedStoreAgent.getStore(Store.Type.TEMPLATESTORE);
+            store.addMockedStoreElement(new PageTemplateMock(testElement.getElementInfo().getNodeId(), storeElementName));
+            assertEquals("wrong identifier", PageTemplate.class.getSimpleName(), AdvancedLogger.getStoreElementIdentifier(mockedStoreAgent, testElement));
+        }
+
+        {
+            // Content2Section
+            final String storeElementName = "testElement";
+            final MockedElementExportInfo testElement = new MockedElementExportInfo(Store.Type.TEMPLATESTORE, storeElementName, TagNames.SECTION, ExportStatus.CREATED);
+            final MockedStoreAgent mockedStoreAgent = new MockedStoreAgent();
+            final MockedStore store = (MockedStore) mockedStoreAgent.getStore(Store.Type.TEMPLATESTORE);
+            store.addMockedStoreElement(new Content2SectionMock(testElement.getElementInfo().getNodeId(), storeElementName));
+            assertEquals("wrong identifier", Section.class.getSimpleName(), AdvancedLogger.getStoreElementIdentifier(mockedStoreAgent, testElement));
+        }
+
+        {
+            // SectionReference
+            final String storeElementName = "testElement";
+            final MockedElementExportInfo testElement = new MockedElementExportInfo(Store.Type.TEMPLATESTORE, storeElementName, TagNames.SECTION, ExportStatus.CREATED);
+            final MockedStoreAgent mockedStoreAgent = new MockedStoreAgent();
+            final MockedStore store = (MockedStore) mockedStoreAgent.getStore(Store.Type.TEMPLATESTORE);
+            store.addMockedStoreElement(new SectionReferenceMock(testElement.getElementInfo().getNodeId(), storeElementName));
+            assertEquals("wrong identifier", Section.class.getSimpleName(), AdvancedLogger.getStoreElementIdentifier(mockedStoreAgent, testElement));
+        }
+
+        {
+            // Section
+            final String storeElementName = "testElement";
+            final MockedElementExportInfo testElement = new MockedElementExportInfo(Store.Type.TEMPLATESTORE, storeElementName, TagNames.SECTION, ExportStatus.CREATED);
+            final MockedStoreAgent mockedStoreAgent = new MockedStoreAgent();
+            final MockedStore store = (MockedStore) mockedStoreAgent.getStore(Store.Type.TEMPLATESTORE);
+            store.addMockedStoreElement(new SectionMock(testElement.getElementInfo().getNodeId(), storeElementName));
+            assertEquals("wrong identifier", Section.class.getSimpleName(), AdvancedLogger.getStoreElementIdentifier(mockedStoreAgent, testElement));
+        }
+
+        {
+            // Normal mode (e.g. Page)
+            final String storeElementName = "testElement";
+            final MockedElementExportInfo testElement = new MockedElementExportInfo(Store.Type.PAGESTORE, storeElementName, TagNames.PAGE, ExportStatus.CREATED);
+            final MockedStoreAgent mockedStoreAgent = new MockedStoreAgent();
+            final MockedStore store = (MockedStore) mockedStoreAgent.getStore(Store.Type.PAGESTORE);
+            store.addMockedStoreElement(new MockedStoreElement(testElement.getElementInfo().getNodeId(), storeElementName, storeElementName));
+            assertEquals("wrong identifier", Page.class.getSimpleName(), AdvancedLogger.getStoreElementIdentifier(mockedStoreAgent, testElement));
+        }
+
+        {
+            // template is unknown in Store --> fallback to "Template"
+            final String storeElementName = "testElement";
+            final MockedElementExportInfo testElement = new MockedElementExportInfo(Store.Type.TEMPLATESTORE, storeElementName, TagNames.TEMPLATE, ExportStatus.CREATED);
+            assertEquals("wrong identifier", Template.class.getSimpleName(), AdvancedLogger.getStoreElementIdentifier(new MockedStoreAgent(), testElement));
+        }
+    }
+
+    @Test
     public void testLogExportResult() throws Exception {
         {
             final MockLogger logger = new MockLogger(false);
-            AdvancedLogger.logExportResult(logger, new MockedExportResult());
+            AdvancedLogger.logExportResult(logger, null, new MockedExportResult());
             //@formatter:off
             final String expected = "[INFO] Export done."               + NEW_LINE +
                                     "[INFO] == DETAILS =="              + NEW_LINE +
@@ -87,23 +163,24 @@ public class AdvancedLoggerTest {
                                     "[INFO] - project properties: 1"    + NEW_LINE +
                                     "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO] - store elements: 5"        + NEW_LINE +
-                                        "[INFO]  - pagestore: 1"        + NEW_LINE +
+                                    "[INFO]  - pagestore: 1"            + NEW_LINE +
                                     "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]  - templatestore: 4"        + NEW_LINE +
                                     "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
-                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
-                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - Workflow: 'second'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - LinkTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO] - entity types: 1                       ( schemas: 1, entities: 1 )"        + NEW_LINE +
                                     "[INFO]  - Schema: 'createdSchema'              ( entity types: 1, entities: 1 )"   + NEW_LINE +
                                     "[INFO]   - EntityType: 'createdType'           ( entities: 1 )"                    + NEW_LINE +
-                                    "[INFO] Updated elements: 9"        + NEW_LINE +
+                                    "[INFO] Updated elements: 10"        + NEW_LINE +
                                     "[INFO] - project properties: 1"    + NEW_LINE +
                                     "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
-                                    "[INFO] - store elements: 5"        + NEW_LINE +
-                                    "[INFO]  - mediastore: 2"           + NEW_LINE +
+                                    "[INFO] - store elements: 6"        + NEW_LINE +
+                                    "[INFO]  - mediastore: 3"           + NEW_LINE +
                                     "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - MediaFolder: 'third'                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]  - sitestore: 3"            + NEW_LINE +
                                     "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
@@ -128,18 +205,19 @@ public class AdvancedLoggerTest {
                                     "[INFO]  - Schema: 'deletedSchema'              ( entity types: 2, entities: 7 )"   + NEW_LINE +
                                     "[INFO]   - EntityType: 'deletedType1'          ( entities: 3 )"                    + NEW_LINE +
                                     "[INFO]   - EntityType: 'deletedType2'          ( entities: 4 )"                    + NEW_LINE +
-                                    "[INFO] Moved elements: 9"        + NEW_LINE +
+                                    "[INFO] Moved elements: 10"        + NEW_LINE +
                                     "[INFO] - project properties: 1"    + NEW_LINE +
                                     "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
-                                    "[INFO] - store elements: 6"        + NEW_LINE +
-                                    "[INFO]  - mediastore: 2"           + NEW_LINE +
+                                    "[INFO] - store elements: 7"        + NEW_LINE +
+                                    "[INFO]  - mediastore: 3"           + NEW_LINE +
                                     "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - MediaFolder: 'third'                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]  - templatestore: 4"        + NEW_LINE +
                                     "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
-                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
-                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - Workflow: 'second'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - LinkTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO] - entity types: 2                       ( schemas: 2, entities: 3 )"        + NEW_LINE +
                                     "[INFO]  - Schema: 'movedSchema1'               ( entity types: 1, entities: 1 )"   + NEW_LINE +
                                     "[INFO]   - EntityType: 'movedType1'            ( entities: 1 )"                    + NEW_LINE +
@@ -147,15 +225,15 @@ public class AdvancedLoggerTest {
                                     "[INFO]   - EntityType: 'movedType2'            ( entities: 2 )"                    + NEW_LINE +
                                     "[INFO] == SUMMARY =="              + NEW_LINE +
                                     "[INFO] Created elements: 7 | project properties: 1 | store elements: 5 ( pagestore: 1, templatestore: 4 ) | entity types: 1 ( schemas: 1, entities: 1 )"   + NEW_LINE +
-                                    "[INFO] Updated elements: 9 | project properties: 1 | store elements: 5 ( mediastore: 2, sitestore: 3 ) | entity types: 3 ( schemas: 2, entities: 6 )"      + NEW_LINE +
+                                    "[INFO] Updated elements: 10 | project properties: 1 | store elements: 6 ( mediastore: 3, sitestore: 3 ) | entity types: 3 ( schemas: 2, entities: 6 )"      + NEW_LINE +
                                     "[INFO] Deleted elements: 7 | project properties: 1 | store elements: 4 ( pagestore: 1, sitestore: 3 ) | entity types: 2 ( schemas: 1, entities: 7 )"       + NEW_LINE +
-                                    "[INFO]   Moved elements: 9 | project properties: 1 | store elements: 6 ( mediastore: 2, templatestore: 4 ) | entity types: 2 ( schemas: 2, entities: 3 )"  + NEW_LINE;
+                                    "[INFO]   Moved elements: 10 | project properties: 1 | store elements: 7 ( mediastore: 3, templatestore: 4 ) | entity types: 2 ( schemas: 2, entities: 3 )"  + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
         {
             final MockLogger logger = new MockLogger(true);
-            AdvancedLogger.logExportResult(logger, new MockedExportResult());
+            AdvancedLogger.logExportResult(logger, null, new MockedExportResult());
             //@formatter:off
             final String expected = "[INFO] Export done."               + NEW_LINE +
                                     "[INFO] == DETAILS =="              + NEW_LINE +
@@ -224,7 +302,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
                                     "[DEBUG]     - 2.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
                                     "[DEBUG]     - 3.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
-                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - Workflow: 'second'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]    - Created files: 1"     + NEW_LINE +
                                     "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
                                     "[DEBUG]    - Updated files: 2"     + NEW_LINE +
@@ -239,7 +317,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
                                     "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
                                     "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
-                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - LinkTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]    - Created files: 1"     + NEW_LINE +
                                     "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
                                     "[DEBUG]    - Updated files: 2"     + NEW_LINE +
@@ -271,7 +349,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]      - 1.txt ( from '/from/createdSchema#createdType' to '/to/createdSchema#createdType' )" + NEW_LINE +
                                     "[DEBUG]      - 2.txt ( from '/from/createdSchema#createdType' to '/to/createdSchema#createdType' )" + NEW_LINE +
                                     "[DEBUG]      - 3.txt ( from '/from/createdSchema#createdType' to '/to/createdSchema#createdType' )" + NEW_LINE +
-                                    "[INFO] Updated elements: 9"        + NEW_LINE +
+                                    "[INFO] Updated elements: 10"        + NEW_LINE +
                                     "[INFO] - project properties: 1"    + NEW_LINE +
                                     "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]   - Created files: 1"      + NEW_LINE +
@@ -288,8 +366,8 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]    - 1.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
                                     "[DEBUG]    - 2.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
                                     "[DEBUG]    - 3.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
-                                    "[INFO] - store elements: 5"        + NEW_LINE +
-                                    "[INFO]  - mediastore: 2"           + NEW_LINE +
+                                    "[INFO] - store elements: 6"        + NEW_LINE +
+                                    "[INFO]  - mediastore: 3"           + NEW_LINE +
                                     "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]    - Created files: 1"     + NEW_LINE +
                                     "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
@@ -320,6 +398,21 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
                                     "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
                                     "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[INFO]   - MediaFolder: 'third'                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
                                     "[INFO]  - sitestore: 3"            + NEW_LINE +
                                     "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]    - Created files: 1"     + NEW_LINE +
@@ -526,7 +619,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]      - 1.txt ( from '/from/deletedSchema#deletedType2' to '/to/deletedSchema#deletedType2' )" + NEW_LINE +
                                     "[DEBUG]      - 2.txt ( from '/from/deletedSchema#deletedType2' to '/to/deletedSchema#deletedType2' )" + NEW_LINE +
                                     "[DEBUG]      - 3.txt ( from '/from/deletedSchema#deletedType2' to '/to/deletedSchema#deletedType2' )" + NEW_LINE +
-                                    "[INFO] Moved elements: 9"        + NEW_LINE +
+                                    "[INFO] Moved elements: 10"        + NEW_LINE +
                                     "[INFO] - project properties: 1"                               + NEW_LINE +
                                     "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]   - Created files: 1"      + NEW_LINE +
@@ -543,8 +636,8 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]    - 1.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
                                     "[DEBUG]    - 2.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
                                     "[DEBUG]    - 3.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
-                                    "[INFO] - store elements: 6"        + NEW_LINE +
-                                    "[INFO]  - mediastore: 2"           + NEW_LINE +
+                                    "[INFO] - store elements: 7"        + NEW_LINE +
+                                    "[INFO]  - mediastore: 3"           + NEW_LINE +
                                     "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]    - Created files: 1"     + NEW_LINE +
                                     "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
@@ -575,6 +668,21 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
                                     "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
                                     "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[INFO]   - MediaFolder: 'third'                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
                                     "[INFO]  - templatestore: 4"        + NEW_LINE +
                                     "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]    - Created files: 1"     + NEW_LINE +
@@ -606,7 +714,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
                                     "[DEBUG]     - 2.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
                                     "[DEBUG]     - 3.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
-                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - Workflow: 'second'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]    - Created files: 1"     + NEW_LINE +
                                     "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
                                     "[DEBUG]    - Updated files: 2"     + NEW_LINE +
@@ -621,7 +729,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
                                     "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
                                     "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
-                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - LinkTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]    - Created files: 1"     + NEW_LINE +
                                     "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
                                     "[DEBUG]    - Updated files: 2"     + NEW_LINE +
@@ -671,9 +779,9 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]      - 3.txt ( from '/from/movedSchema2#movedType2' to '/to/movedSchema2#movedType2' )" + NEW_LINE +
                                     "[INFO] == SUMMARY ==" + NEW_LINE +
                                     "[INFO] Created elements: 7 | project properties: 1 | store elements: 5 ( pagestore: 1, templatestore: 4 ) | entity types: 1 ( schemas: 1, entities: 1 )"   + NEW_LINE +
-                                    "[INFO] Updated elements: 9 | project properties: 1 | store elements: 5 ( mediastore: 2, sitestore: 3 ) | entity types: 3 ( schemas: 2, entities: 6 )"      + NEW_LINE +
+                                    "[INFO] Updated elements: 10 | project properties: 1 | store elements: 6 ( mediastore: 3, sitestore: 3 ) | entity types: 3 ( schemas: 2, entities: 6 )"      + NEW_LINE +
                                     "[INFO] Deleted elements: 7 | project properties: 1 | store elements: 4 ( pagestore: 1, sitestore: 3 ) | entity types: 2 ( schemas: 1, entities: 7 )"       + NEW_LINE +
-                                    "[INFO]   Moved elements: 9 | project properties: 1 | store elements: 6 ( mediastore: 2, templatestore: 4 ) | entity types: 2 ( schemas: 2, entities: 3 )"  + NEW_LINE;
+                                    "[INFO]   Moved elements: 10 | project properties: 1 | store elements: 7 ( mediastore: 3, templatestore: 4 ) | entity types: 2 ( schemas: 2, entities: 3 )"  + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
@@ -684,7 +792,7 @@ public class AdvancedLoggerTest {
         {
             final MockLogger logger = new MockLogger(false);
             final MockedImportResult mockedImportResult = new MockedImportResult(true);
-            AdvancedLogger.logImportResult(logger, mockedImportResult, mockedImportResult.getStoreAgent());
+            AdvancedLogger.logImportResult(logger, mockedImportResult.getStoreAgent(), mockedImportResult);
             //@formatter:off
             final String expected =
                     "[INFO] Import done."                                                               + NEW_LINE +
@@ -710,9 +818,10 @@ public class AdvancedLoggerTest {
                     "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )"                    + NEW_LINE +
                     "[INFO]  - Schema: 'schema3'                    ( entity types: 1, entities: 1 )"   + NEW_LINE +
                     "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )"                    + NEW_LINE +
-                    "[INFO] Updated elements: 21"                                                       + NEW_LINE +
-                    "[INFO] - project properties: 9"                                                    + NEW_LINE +
+                    "[INFO] Updated elements: 22"                                                       + NEW_LINE +
+                    "[INFO] - project properties: 10"                                                   + NEW_LINE +
                     "[INFO]  - Common                              "                                    + NEW_LINE +
+                    "[INFO]  - CustomProperties                    "                                    + NEW_LINE +
                     "[INFO]  - Resolutions                         "                                    + NEW_LINE +
                     "[INFO]  - Groups                              "                                    + NEW_LINE +
                     "[INFO]  - ScheduleEntries                     "                                    + NEW_LINE +
@@ -784,7 +893,7 @@ public class AdvancedLoggerTest {
                     "[INFO]  - store: TEMPLATESTORE | name: templatestore_name_1231 | reason: GOM is invalid"                                                                                   + NEW_LINE +
                     "[INFO] == SUMMARY =="                                                                                                                                                      + NEW_LINE +
                     "[INFO] Created elements: 12 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 5 ( schemas: 3, entities: 6 )"                           + NEW_LINE +
-                    "[INFO] Updated elements: 21 | project properties: 9 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 5 ( schemas: 3, entities: 6 )"   + NEW_LINE +
+                    "[INFO] Updated elements: 22 | project properties: 10 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 5 ( schemas: 3, entities: 6 )"   + NEW_LINE +
                     "[INFO] Deleted elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
                     "[INFO]   Moved elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
                     "[INFO] L&Found elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
@@ -795,7 +904,7 @@ public class AdvancedLoggerTest {
         {
             final MockLogger logger = new MockLogger(true);
             final MockedImportResult mockedImportResult = new MockedImportResult(true);
-            AdvancedLogger.logImportResult(logger, mockedImportResult, mockedImportResult.getStoreAgent());
+            AdvancedLogger.logImportResult(logger, mockedImportResult.getStoreAgent(), mockedImportResult);
             //@formatter:off
             final String expected =
                     "[INFO] Import done."                                            + NEW_LINE +
@@ -821,9 +930,10 @@ public class AdvancedLoggerTest {
                     "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )" + NEW_LINE +
                     "[INFO]  - Schema: 'schema3'                    ( entity types: 1, entities: 1 )"   + NEW_LINE +
                     "[INFO]   - EntityType: 'created_entityType1'   ( entities: 1 )" + NEW_LINE +
-                    "[INFO] Updated elements: 21"                                    + NEW_LINE +
-                    "[INFO] - project properties: 9"                                 + NEW_LINE +
+                    "[INFO] Updated elements: 22"                                    + NEW_LINE +
+                    "[INFO] - project properties: 10"                                + NEW_LINE +
                     "[INFO]  - Common                              "                 + NEW_LINE +
+                    "[INFO]  - CustomProperties                    "                 + NEW_LINE +
                     "[INFO]  - Resolutions                         "                 + NEW_LINE +
                     "[INFO]  - Groups                              "                 + NEW_LINE +
                     "[INFO]  - ScheduleEntries                     "                 + NEW_LINE +
@@ -895,7 +1005,7 @@ public class AdvancedLoggerTest {
                     "[INFO]  - store: TEMPLATESTORE | name: templatestore_name_1231 | reason: GOM is invalid"                                                                                   + NEW_LINE +
                     "[INFO] == SUMMARY =="                                                                                                                                                      + NEW_LINE +
                     "[INFO] Created elements: 12 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 5 ( schemas: 3, entities: 6 )"                           + NEW_LINE +
-                    "[INFO] Updated elements: 21 | project properties: 9 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 5 ( schemas: 3, entities: 6 )"   + NEW_LINE +
+                    "[INFO] Updated elements: 22 | project properties: 10 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 ) | entity types: 5 ( schemas: 3, entities: 6 )"   + NEW_LINE +
                     "[INFO] Deleted elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
                     "[INFO]   Moved elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
                     "[INFO] L&Found elements: 7 | store elements: 7 ( pagestore: 1, mediastore: 2, templatestore: 4 )" + NEW_LINE +
@@ -909,7 +1019,7 @@ public class AdvancedLoggerTest {
     public void testLogElements() throws Exception {
         {
             final MockLogger logger = new MockLogger(true);
-            AdvancedLogger.logElements(logger, Collections.emptyList(), "myDescription");
+            AdvancedLogger.logElements(logger, null, Collections.emptyList(), "myDescription");
             // @formatter:off
             final String expected = "[INFO] myDescription: 0" + NEW_LINE;
             // @formatter:on
@@ -918,7 +1028,7 @@ public class AdvancedLoggerTest {
         {
             // update-case ==> -1
             final MockLogger logger = new MockLogger(true);
-            AdvancedLogger.logElements(logger, Collections.emptyList(), "myDescription");
+            AdvancedLogger.logElements(logger, null, Collections.emptyList(), "myDescription");
             // @formatter:off
             final String expected = "[INFO] myDescription: 0" + NEW_LINE;
             // @formatter:on
@@ -947,19 +1057,20 @@ public class AdvancedLoggerTest {
                 elements.add(new MockedEntityTypeExportInfo("myType", "myFirstSchema", 1));
                 elements.add(new MockedEntityTypeExportInfo("mySecondType", "mySecondSchema", 2));
             }
-            AdvancedLogger.logElements(logger, elements, "myDescription");
+            AdvancedLogger.logElements(logger, null, elements, "myDescription");
             // @formatter:off
-            final String expected = "[INFO] myDescription: 15"          + NEW_LINE +
+            final String expected = "[INFO] myDescription: 16"          + NEW_LINE +
                                     "[INFO] - project properties: 3"    + NEW_LINE +
                                     "[INFO]  - Groups                               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]  - TemplateSets                         ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]  - Users                                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
-                                    "[INFO] - store elements: 10"       + NEW_LINE +
+                                    "[INFO] - store elements: 11"       + NEW_LINE +
                                     "[INFO]  - pagestore: 1"            + NEW_LINE +
                                     "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
-                                    "[INFO]  - mediastore: 2"           + NEW_LINE +
+                                    "[INFO]  - mediastore: 3"           + NEW_LINE +
                                     "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - MediaFolder: 'third'                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]  - sitestore: 3"            + NEW_LINE +
                                     "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
@@ -967,8 +1078,8 @@ public class AdvancedLoggerTest {
                                     "[INFO]  - templatestore: 4"        + NEW_LINE +
                                     "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
-                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
-                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - Workflow: 'second'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - LinkTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO] - entity types: 2                       ( schemas: 2, entities: 3 )"        + NEW_LINE +
                                     "[INFO]  - Schema: 'myFirstSchema'              ( entity types: 1, entities: 1 )"   + NEW_LINE +
                                     "[INFO]   - EntityType: 'myType'                ( entities: 1 )"                    + NEW_LINE +
@@ -1000,9 +1111,9 @@ public class AdvancedLoggerTest {
                 elements.add(new MockedEntityTypeExportInfo("myType", "myFirstSchema", 1));
                 elements.add(new MockedEntityTypeExportInfo("mySecondType", "mySecondSchema", 2));
             }
-            AdvancedLogger.logElements(logger, elements, "myDescription");
+            AdvancedLogger.logElements(logger, null, elements, "myDescription");
             // @formatter:off
-            final String expected = "[INFO] myDescription: 15"          + NEW_LINE +
+            final String expected = "[INFO] myDescription: 16"          + NEW_LINE +
                                     "[INFO] - project properties: 3"    + NEW_LINE +
                                     "[INFO]  - Groups                               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]   - Created files: 1"      + NEW_LINE +
@@ -1049,7 +1160,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]    - 1.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
                                     "[DEBUG]    - 2.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
                                     "[DEBUG]    - 3.txt ( from '/from/USERS' to '/to/USERS' )" + NEW_LINE +
-                                    "[INFO] - store elements: 10"       + NEW_LINE +
+                                    "[INFO] - store elements: 11"       + NEW_LINE +
                                     "[INFO]  - pagestore: 1"            + NEW_LINE +
                                     "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]    - Created files: 1"     + NEW_LINE +
@@ -1066,7 +1177,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
                                     "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
                                     "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
-                                    "[INFO]  - mediastore: 2"           + NEW_LINE +
+                                    "[INFO]  - mediastore: 3"           + NEW_LINE +
                                     "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]    - Created files: 1"     + NEW_LINE +
                                     "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
@@ -1097,6 +1208,21 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
                                     "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
                                     "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[INFO]   - MediaFolder: 'third'                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
                                     "[INFO]  - sitestore: 3"            + NEW_LINE +
                                     "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]    - Created files: 1"     + NEW_LINE +
@@ -1174,7 +1300,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
                                     "[DEBUG]     - 2.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
                                     "[DEBUG]     - 3.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
-                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - Workflow: 'second'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]    - Created files: 1"     + NEW_LINE +
                                     "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
                                     "[DEBUG]    - Updated files: 2"     + NEW_LINE +
@@ -1189,7 +1315,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
                                     "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
                                     "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
-                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - LinkTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]    - Created files: 1"     + NEW_LINE +
                                     "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
                                     "[DEBUG]    - Updated files: 2"     + NEW_LINE +
@@ -1282,7 +1408,7 @@ public class AdvancedLoggerTest {
             }
             final ReorganizedResult reorganizedResult = new ReorganizedResult(elements);
             final String result = AdvancedLogger.buildSummary(elements, "myDescription", reorganizedResult);
-            final String expected = "myDescription: 13 | project properties: 3 | store elements: 10 ( pagestore: 1, mediastore: 2, sitestore: 3, templatestore: 4 )";
+            final String expected = "myDescription: 14 | project properties: 3 | store elements: 11 ( pagestore: 1, mediastore: 3, sitestore: 3, templatestore: 4 )";
             assertEquals("Result does not match.", expected, result);
         }
         {
@@ -1316,7 +1442,7 @@ public class AdvancedLoggerTest {
             }
             final ReorganizedResult reorganizedResult = new ReorganizedResult(elements);
             final String result = AdvancedLogger.buildSummary(elements, "myDescription", reorganizedResult);
-            final String expected = "myDescription: 12 | store elements: 10 ( pagestore: 1, mediastore: 2, sitestore: 3, templatestore: 4 ) | entity types: 2 ( schemas: 2, entities: 3 )";
+            final String expected = "myDescription: 13 | store elements: 11 ( pagestore: 1, mediastore: 3, sitestore: 3, templatestore: 4 ) | entity types: 2 ( schemas: 2, entities: 3 )";
             assertEquals("Result does not match.", expected, result);
         }
         {
@@ -1342,7 +1468,7 @@ public class AdvancedLoggerTest {
             }
             final ReorganizedResult reorganizedResult = new ReorganizedResult(elements);
             final String result = AdvancedLogger.buildSummary(elements, "myDescription", reorganizedResult);
-            final String expected = "myDescription: 15 | project properties: 3 | store elements: 10 ( pagestore: 1, mediastore: 2, sitestore: 3, templatestore: 4 ) | entity types: 2 ( schemas: 2, entities: 3 )";
+            final String expected = "myDescription: 16 | project properties: 3 | store elements: 11 ( pagestore: 1, mediastore: 3, sitestore: 3, templatestore: 4 ) | entity types: 2 ( schemas: 2, entities: 3 )";
             assertEquals("Result does not match.", expected, result);
         }
         {
@@ -1398,7 +1524,7 @@ public class AdvancedLoggerTest {
             final Map<Store.Type, List<ElementExportInfo>> storeElements = MockedElementExportInfo.createMapWithStoreElements();
             final StringBuilder stringBuilder = new StringBuilder();
             AdvancedLogger.appendStoreElementSummary(stringBuilder, storeElements);
-            assertEquals("Result does not match.", " | store elements: 10 ( pagestore: 1, mediastore: 2, sitestore: 3, templatestore: 4 )", stringBuilder.toString());
+            assertEquals("Result does not match.", " | store elements: 11 ( pagestore: 1, mediastore: 3, sitestore: 3, templatestore: 4 )", stringBuilder.toString());
         }
     }
 
@@ -1505,24 +1631,25 @@ public class AdvancedLoggerTest {
         {
             final MockLogger logger = new MockLogger(true);
             logger.setInfoEnabled(false);
-            AdvancedLogger.logStoreElements(logger, Collections.emptyMap());
+            AdvancedLogger.logStoreElements(logger, null, Collections.emptyMap());
             assertEquals("Result does not match.", "", logger.toString());
         }
         {
             final MockLogger logger = new MockLogger(true);
-            AdvancedLogger.logStoreElements(logger, Collections.emptyMap());
+            AdvancedLogger.logStoreElements(logger, null, Collections.emptyMap());
             assertEquals("Result does not match.", "", logger.toString());
         }
         {
             final MockLogger logger = new MockLogger(false);
-            AdvancedLogger.logStoreElements(logger, MockedElementExportInfo.createMapWithStoreElements());
+            AdvancedLogger.logStoreElements(logger, null, MockedElementExportInfo.createMapWithStoreElements());
             // @formatter:off
-            final String expected = "[INFO] - store elements: 10"                                                                                             + NEW_LINE +
+            final String expected = "[INFO] - store elements: 11"                                                                                             + NEW_LINE +
                                     "[INFO]  - pagestore: 1"                                                                                                  + NEW_LINE +
                                     "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
-                                    "[INFO]  - mediastore: 2"                                                                                                 + NEW_LINE +
+                                    "[INFO]  - mediastore: 3"                                                                                                 + NEW_LINE +
                                     "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]   - Media: 'second'                     ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - MediaFolder: 'third'                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]  - sitestore: 3"                                                                                                  + NEW_LINE +
                                     "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]   - PageRef: 'second'                   ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
@@ -1530,16 +1657,16 @@ public class AdvancedLoggerTest {
                                     "[INFO]  - templatestore: 4"                                                                                              + NEW_LINE +
                                     "[INFO]   - PageTemplate: 'first'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[INFO]   - PageTemplate: 'fourth'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
-                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
-                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE;
+                                    "[INFO]   - Workflow: 'second'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - LinkTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE;
             // @formatter:on
             assertEquals("Result does not match.", expected, logger.toString());
         }
         {
             final MockLogger logger = new MockLogger(true);
-            AdvancedLogger.logStoreElements(logger, MockedElementExportInfo.createMapWithStoreElements());
+            AdvancedLogger.logStoreElements(logger, null, MockedElementExportInfo.createMapWithStoreElements());
             // @formatter:off
-            final String expected = "[INFO] - store elements: 10"       + NEW_LINE +
+            final String expected = "[INFO] - store elements: 11"       + NEW_LINE +
                                     "[INFO]  - pagestore: 1"            + NEW_LINE +
                                     "[INFO]   - Page: 'first'                       ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]    - Created files: 1"     + NEW_LINE +
@@ -1556,7 +1683,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
                                     "[DEBUG]     - 2.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
                                     "[DEBUG]     - 3.txt ( from '/from/first' to '/to/first' )" + NEW_LINE +
-                                    "[INFO]  - mediastore: 2"           + NEW_LINE +
+                                    "[INFO]  - mediastore: 3"           + NEW_LINE +
                                     "[INFO]   - Media: 'first'                      ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]    - Created files: 1"     + NEW_LINE +
                                     "[DEBUG]     - /path/first/0.txt"   + NEW_LINE +
@@ -1587,6 +1714,21 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
                                     "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
                                     "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
+                                    "[INFO]   - MediaFolder: 'third'                ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[DEBUG]    - Created files: 1"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Updated files: 2"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Deleted files: 3"     + NEW_LINE +
+                                    "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/1.txt"   + NEW_LINE +
+                                    "[DEBUG]     - /path/third/2.txt"   + NEW_LINE +
+                                    "[DEBUG]    - Moved files: 4"       + NEW_LINE +
+                                    "[DEBUG]     - 0.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 1.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 2.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
+                                    "[DEBUG]     - 3.txt ( from '/from/third' to '/to/third' )" + NEW_LINE +
                                     "[INFO]  - sitestore: 3"            + NEW_LINE +
                                     "[INFO]   - PageRef: 'first'                    ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]    - Created files: 1"     + NEW_LINE +
@@ -1664,7 +1806,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
                                     "[DEBUG]     - 2.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
                                     "[DEBUG]     - 3.txt ( from '/from/fourth' to '/to/fourth' )" + NEW_LINE +
-                                    "[INFO]   - PageTemplate: 'second'              ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - Workflow: 'second'                  ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]    - Created files: 1"     + NEW_LINE +
                                     "[DEBUG]     - /path/second/0.txt"  + NEW_LINE +
                                     "[DEBUG]    - Updated files: 2"     + NEW_LINE +
@@ -1679,7 +1821,7 @@ public class AdvancedLoggerTest {
                                     "[DEBUG]     - 1.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
                                     "[DEBUG]     - 2.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
                                     "[DEBUG]     - 3.txt ( from '/from/second' to '/to/second' )" + NEW_LINE +
-                                    "[INFO]   - PageTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
+                                    "[INFO]   - LinkTemplate: 'third'               ( created files: 1, updated files: 2, deleted files: 3, moved files: 4 )" + NEW_LINE +
                                     "[DEBUG]    - Created files: 1"     + NEW_LINE +
                                     "[DEBUG]     - /path/third/0.txt"   + NEW_LINE +
                                     "[DEBUG]    - Updated files: 2"     + NEW_LINE +

@@ -52,10 +52,15 @@
             <groupId>com.espirit.moddev.fsdevtools</groupId>
             <artifactId>fsdevtools-projectservice</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.espirit.moddev.fsdevtools</groupId>
+            <artifactId>fsdevtools-moduleservice</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>de.espirit.firstspirit</groupId>
             <artifactId>fs-access</artifactId>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -70,9 +75,9 @@
             <version>2.1.1</version>
         </dependency>
         <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.9.10</version>
+            <groupId>io.github.lukehutch</groupId>
+            <artifactId>fast-classpath-scanner</artifactId>
+            <version>2.9.4</version>
         </dependency>
 
         <!-- Logging -->
@@ -104,6 +109,17 @@
             <groupId>com.espirit.moddev.fsdevtools</groupId>
             <artifactId>fsdevtools-customcommand-example</artifactId>
             <version>${ci.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>de.espirit.firstspirit</groupId>
+            <artifactId>fs-server</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.espirit.firstspirit</groupId>
+            <artifactId>wrapper</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -259,7 +275,7 @@
 						<configuration>
 							<sourceFile>${project.build.directory}/pom-install-deploy-fix/pom.xml</sourceFile>
 							<destinationFile>${project.build.directory}/pom-install-deploy-fix/${artifactId}-${project.version}.pom</destinationFile>
-						</configuration>
+                        </configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -452,7 +468,7 @@
             <dependencies>
                 <dependency>
                     <groupId>de.espirit.firstspirit</groupId>
-                    <artifactId>server</artifactId>
+                    <artifactId>fs-server</artifactId>
                     <scope>provided</scope>
                 </dependency>
                 <dependency>
@@ -485,7 +501,7 @@
                         <artifactId>github-release-plugin</artifactId>
                         <version>1.2.0</version>
                         <configuration>
-                            <description>This binary release is without FS Access jar file. Please add fs-access.jar to lib directory. Since major version **2.0** `FSDevTools` requires at least FirstSpirit Version **5.2.717**.</description>
+                            <description>The zip and the tar.gz files are our windows and linux/mac distributions. This binary release is without FS Access jar file. Please add fs-access.jar to lib directory. Since major version **2.1** `FSDevTools` requires at least FirstSpirit Version **5.2.1403**. The fsdevtools-cli-x.x.xxx.jar file can be used to compile against (Keep in mind that you should rather clone this repo and install all submodules to your local Maven repo).</description>
                             <releaseName>Release ${project.version}</releaseName>
                             <repositoryId>https://github.com/e-Spirit/FSDevTools.git</repositoryId>
                             <tag>${project.version}</tag>
@@ -505,6 +521,41 @@
                                 </fileSet>
                             </fileSets>
                         </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>license-aggregate</id>
+            <!-- used to generate a file containing all third party licenses in target folder usage: mvn -Plicense-aggregate -->
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>license-maven-plugin</artifactId>
+                        <version>1.8</version>
+                        <configuration>
+                            <failIfWarning>true</failIfWarning>
+                            <useMissingFile>true</useMissingFile>
+                            <excludedGroups>com\.espirit.moddev*|de\.espirit\.firstspirit*</excludedGroups>
+                            <excludedScopes>test,provided</excludedScopes>
+                            <verbose>true</verbose>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>download-licenses</id>
+                                <goals>
+                                    <goal>download-licenses</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>aggregate-add-third-party</id>
+                                <goals>
+                                    <goal>aggregate-add-third-party</goal>
+                                </goals>
+                                <phase>process-resources</phase>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

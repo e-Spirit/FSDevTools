@@ -40,15 +40,18 @@ public class TestProjectCommand extends GlobalConfig implements Command {
     @Override
     @SuppressWarnings("squid:S2221")
     public Result call() {
-        try(final AutoCloseable context = create()) {
+        try(final CliContextImpl cliContext = create()) {
+            if(cliContext.getProject() == null || cliContext.getSpecialistsBroker() == null) {
+                return new TestResult(this, new IllegalStateException("Couldn't query project"));
+            }
             return new TestResult(this);
         } catch (Exception e) {
             return new TestResult(this, e);
         }
     }
 
-    protected AutoCloseable create() {
-        // Will open implicitly a FirstSpirit Connection 
+    protected CliContextImpl create() {
+        // Implicitly opens a FirstSpirit connection and loads the specified project
         return new CliContextImpl(this);
     }
 

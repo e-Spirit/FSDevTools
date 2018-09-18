@@ -22,7 +22,6 @@
 
 package com.espirit.moddev.cli.commands.server;
 
-import com.espirit.moddev.serverrunner.ServerProperties;
 import java.nio.file.Paths;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +31,7 @@ public abstract class AbstractServerCommandTest {
     
     public AbstractServerCommandTest() {
     }
-    
+
     @Before
     public void setUp() {
     }

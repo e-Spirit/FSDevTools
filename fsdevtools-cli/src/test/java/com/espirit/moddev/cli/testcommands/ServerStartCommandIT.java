@@ -64,6 +64,7 @@ public class ServerStartCommandIT extends AbstractIntegrationTest {
 
         ServerStartCommand command = new ServerStartCommand();
         command.initializeFromProperties(serverProperties);
+        command.setWaitTimeInSeconds(300);
 
         SimpleResult<String> firstStartResult = command.call();
         assertThat("Expected command to start a server", firstStartResult.isError(), is(false));

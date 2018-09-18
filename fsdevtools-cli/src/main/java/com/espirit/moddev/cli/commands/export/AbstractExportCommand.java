@@ -267,7 +267,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
             // export
             final String syncDirStr = getSynchronizationDirectoryString();
             LOGGER.info("exporting to directory '{}'", syncDirStr);
-            return new ExportResult(exportOperation.perform(getSynchronizationDirectory(syncDirStr)));
+            return new ExportResult(getContext().requireSpecialist(StoreAgent.TYPE), exportOperation.perform(getSynchronizationDirectory(syncDirStr)));
         } catch (final Exception e) {
             return new ExportResult(e);
         }

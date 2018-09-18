@@ -70,7 +70,7 @@ public class TestResult extends SimpleResult {
         } else {
             LOGGER.info("Test was successful");
         }
-        LOGGER.info("#########");
+        LOGGER.info("######### Supplied config parameters:");
         LOGGER.info("User: " + config.getUser());
         LOGGER.info("Host: " + config.getHost());
         LOGGER.info("Port: " + config.getPort());

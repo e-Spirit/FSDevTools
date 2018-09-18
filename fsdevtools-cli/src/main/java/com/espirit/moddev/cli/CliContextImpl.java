@@ -61,15 +61,14 @@ public class CliContextImpl implements CliContext {
     private final Config clientConfig;
     private Connection connection;
     private SpecialistsBroker projectBroker;
+    private Project project;
 
     /**
      * Create a new instance that uses the given {@link com.espirit.moddev.cli.api.configuration.Config}
-     * and established a FirstSpirit connection. Afterwards, a ProjectSpecificBroker is required.
+     * and established a FirstSpirit connection. Afterwards, a ProjectSpecificBroker is required if a project is given.
      *
      * @param clientConfig the configuration to be used
      * @throws IllegalArgumentException if clientConfig is null
-     * @throws IllegalStateException    if requiring a ProjectSpecificBroker causes one. In this case, an already established connection is being
-     *                                  closed
      */
     public CliContextImpl(final Config clientConfig) {
         if (clientConfig == null) {
@@ -78,18 +77,7 @@ public class CliContextImpl implements CliContext {
         this.clientConfig = clientConfig;
         properties = new HashMap<>();
         openConnection();
-        try {
-            requireProjectSpecificBroker();
-        } catch (IllegalStateException ise) {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (IOException e) {
-                    LOGGER.info("Couldn't close connection", e);
-                }
-            }
-            throw ise;
-        }
+        requireProjectSpecificBroker();
     }
 
     protected void openConnection() {
@@ -126,24 +114,26 @@ public class CliContextImpl implements CliContext {
     }
 
     private void requireProjectSpecificBroker() {
-        LOGGER.debug("Require project specific specialist broker for project '{}'...", clientConfig.getProject());
+        String projectName = clientConfig.getProject();
+        if(StringUtils.isEmpty(projectName)) {
+            LOGGER.info("No project name given, so no project specific broker is required");
+        } else {
+            LOGGER.debug("Require project specific specialist broker for project '{}'...", projectName);
 
-        String name;
-        try {
-            final Project project = getProject();
-            name = project != null ? project.getName() : null;
-        } catch (Exception e) { //NOSONAR
-            throw new IllegalStateException(
-                "Project '" + clientConfig.getProject() + "' not found on server. Correct project name or omit --dont-create-project option.", e);
-        }
+            try {
+                loadProject(projectName);
+            } catch (Exception e) { //NOSONAR
+                LOGGER.info("Can't load project {}. Not going to require a broker.", projectName);
+                LOGGER.debug("Exception while loading project", e);
+            }
 
-        if (StringUtils.isNotBlank(name)) {
-            final SpecialistsBroker broker = connection.getBroker();
-            final BrokerAgent brokerAgent = broker.requireSpecialist(BrokerAgent.TYPE);
-            projectBroker = brokerAgent.getBrokerByProjectName(name);
-        }
-        if (projectBroker == null) {
-            throw new IllegalStateException("ProjectBroker cannot be retrieved for project " + name + ". Wrong project name?");
+            if(project != null) {
+                final SpecialistsBroker broker = connection.getBroker();
+                final BrokerAgent brokerAgent = broker.requireSpecialist(BrokerAgent.TYPE);
+                projectBroker = brokerAgent.getBrokerByProjectName(project.getName());
+            } else {
+                LOGGER.info("Project not available, so no project specific broker is required");
+            }
         }
     }
 
@@ -154,20 +144,22 @@ public class CliContextImpl implements CliContext {
 
     @Override
     public Project getProject() {
-        final String projectName = clientConfig.getProject();
-        if (StringUtils.isBlank(projectName)) {
-            return null;
-        }
-        Project project = connection.getProjectByName(projectName);
-        if (project == null && clientConfig.isCreatingProjectIfMissing()) {
-            project = createProject(projectName);
-        }
-        LOGGER.debug("activate project if deactivated: " + clientConfig.isActivateProjectIfDeactivated(), projectName);
-        if (clientConfig.isActivateProjectIfDeactivated()) {
-            activateProject(projectName, project);
-        }
-        LOGGER.info("project is '{}'", project);
         return project;
+    }
+
+    private void loadProject(String projectName) {
+        if (!StringUtils.isBlank(projectName)) {
+            Project project = connection.getProjectByName(projectName);
+            if (project == null && clientConfig.isCreatingProjectIfMissing()) {
+                project = createProject(projectName);
+            }
+            LOGGER.debug("activate project if deactivated: " + clientConfig.isActivateProjectIfDeactivated(), projectName);
+            if (clientConfig.isActivateProjectIfDeactivated()) {
+                activateProject(projectName, project);
+            }
+            LOGGER.info("project is '{}'", project);
+            this.project = project;
+        }
     }
 
     private static void activateProject(String projectName, Project project) {
@@ -250,12 +242,20 @@ public class CliContextImpl implements CliContext {
 
     @Override
     public <S> S requestSpecialist(SpecialistType<S> type) {
-        return projectBroker.requestSpecialist(type);
+        if(getSpecialistsBroker() == null) {
+            LOGGER.warn("Project broker is null, probably because no project name was configured. Going to return null.");
+            return null;
+
+        }
+        return getSpecialistsBroker().requestSpecialist(type);
     }
 
     @Override
     public <S> S requireSpecialist(SpecialistType<S> type) {
-        return projectBroker.requireSpecialist(type);
+        if (getSpecialistsBroker() == null) {
+            throw new IllegalStateException("No ProjectBroker initialized! Probably because no project name was configured.");
+        }
+        return getSpecialistsBroker().requireSpecialist(type);
     }
 
     @Override
@@ -263,5 +263,10 @@ public class CliContextImpl implements CliContext {
         LOGGER.debug("Closing connection to FirstSpirit ...");
         connection.close();
         LOGGER.info("Connection to FirstSpirit closed!");
+    }
+
+    @Override
+    public SpecialistsBroker getSpecialistsBroker() {
+        return projectBroker;
     }
 }

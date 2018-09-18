@@ -24,21 +24,16 @@ package com.espirit.moddev.cli.reflection;
 
 import com.espirit.moddev.cli.api.annotations.Description;
 import com.espirit.moddev.cli.api.command.Command;
-
 import org.apache.log4j.Logger;
-import org.reflections.Reflections;
-import org.reflections.scanners.MethodAnnotationsScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Utility class for various reflection-based techniques.
@@ -144,20 +139,22 @@ public final class ReflectionUtils {
      * @return the description method, or null if none is found
      */
     static Method getStaticDescriptionMethod(Class<? extends Command> commandClass) {
-        Reflections reflections = new Reflections(new ConfigurationBuilder()
-                                                      .setUrls(ClasspathHelper.forClass(commandClass))
-                                                      .filterInputsBy(in -> in.endsWith("java") || in.endsWith("class"))
-                                                      .setScanners(new MethodAnnotationsScanner())
-        );
 
-        Set<Method> methodsWithDescriptionAnnotation = reflections.getMethodsAnnotatedWith(Description.class).stream()
-            .filter(x -> x.getDeclaringClass().getCanonicalName().equals(commandClass.getCanonicalName()))
-            .collect(Collectors.toSet());
+        Method[] methods = commandClass.getMethods();
+        List<Method> methodsWithDescriptionAnnotation = new ArrayList<>(methods.length);
+        for (Method method : methods) {
+            if( method.isAnnotationPresent(Description.class)){
+                methodsWithDescriptionAnnotation.add(method);
+            }
+        }
 
         Method staticDescriptionMethod = null;
         if (!methodsWithDescriptionAnnotation.isEmpty()) {
             LOGGER.debug("Found annotated method for description for " + commandClass);
-            staticDescriptionMethod = methodsWithDescriptionAnnotation.iterator().next();
+            if(methodsWithDescriptionAnnotation.size() > 1) {
+                LOGGER.warn("Found multiple annotated methods for description for " + commandClass + ". Using first one.");
+            }
+            staticDescriptionMethod = methodsWithDescriptionAnnotation.get(0);
         } else {
             try {
                 staticDescriptionMethod = commandClass.getMethod("getDescription");
@@ -173,4 +170,5 @@ public final class ReflectionUtils {
         }
         return staticDescriptionMethod;
     }
+
 }

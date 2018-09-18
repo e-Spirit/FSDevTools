@@ -35,6 +35,7 @@
         <module>fsdevtools-serverrunner</module>
         <module>fsdevtools-customcommand-example</module>
         <module>fsdevtools-projectservice</module>
+        <module>fsdevtools-moduleservice</module>
     </modules>
     <packaging>pom</packaging>
     <name>FirstSpirit Development Tools</name>
@@ -174,7 +175,7 @@
                     <dependency>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>extra-enforcer-rules</artifactId>
-                        <version>1.0-beta-4</version>
+                        <version>1.0-beta-7</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -339,13 +340,19 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>de.espirit.firstspirit</groupId>
-                <artifactId>fs-access</artifactId>
-                <version>${firstspirit.version}</version>
+                <groupId>com.espirit.moddev.fsdevtools</groupId>
+                <artifactId>fsdevtools-moduleservice</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>de.espirit.firstspirit</groupId>
-                <artifactId>server</artifactId>
+                <artifactId>fs-access</artifactId>
+                <version>${firstspirit.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>de.espirit.firstspirit</groupId>
+                <artifactId>fs-server</artifactId>
                 <version>${firstspirit.version}</version>
                 <scope>runtime</scope>
             </dependency>
@@ -440,7 +447,7 @@
                 </property>
             </activation>
             <properties>
-                <firstspirit.version>5.2.802</firstspirit.version>
+                <firstspirit.version>5.2.2109</firstspirit.version>
             </properties>
         </profile>
         <profile>

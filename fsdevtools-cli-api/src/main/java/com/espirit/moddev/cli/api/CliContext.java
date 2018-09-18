@@ -23,6 +23,7 @@
 package com.espirit.moddev.cli.api;
 
 import de.espirit.firstspirit.access.project.ProjectScriptContext;
+import de.espirit.firstspirit.agency.SpecialistsBroker;
 
 /**
  * Exists to create a closeable project script context.
@@ -30,5 +31,5 @@ import de.espirit.firstspirit.access.project.ProjectScriptContext;
  * @author e-Spirit AG
  */
 public interface CliContext extends ProjectScriptContext, AutoCloseable {
-
+    SpecialistsBroker getSpecialistsBroker();
 }

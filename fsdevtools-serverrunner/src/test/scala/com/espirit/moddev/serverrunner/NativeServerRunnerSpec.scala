@@ -19,7 +19,7 @@ import scala.language.{implicitConversions, postfixOps}
 
 class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
   def fixture = new {
-    lazy val propsWithVersionBuilder        = ServerProperties.builder().serverRoot(new File(System.getProperty("fsServerRoot")).toPath).firstSpiritJar(new File("foobar"))
+    lazy val propsWithVersionBuilder        = ServerProperties.builder().serverRoot(new File(System.getProperty("fsServerRoot")).toPath).firstSpiritJars(ServerProperties.getFirstSpiritJarsFromClasspath)
     lazy val minimalServerPropertiesBuilder = propsWithVersionBuilder
     lazy val minimalServerProperties        = minimalServerPropertiesBuilder.build()
     lazy val propsWithVersion               = propsWithVersionBuilder.build()
@@ -98,12 +98,35 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
           assertFileExists(props.getServerRoot.resolve("conf").resolve("fs-license.conf"))
         }
       }
-      "create 'fs-server.conf' with the correct server port" in {
-        val props = fixture.propsWithVersionBuilder.serverPort(9000).build()
+      "create 'fs-server.conf' with the correct HTTP server port" in {
+        val props = fixture.propsWithVersionBuilder.httpPort(9000).build()
         NativeServerRunner.prepareFilesystem(props)
         val confFile = props.getServerRoot.resolve("conf").resolve("fs-server.conf")
         assertFileExists(confFile)
         assert(Source.fromFile(confFile.toFile).getLines().contains("HTTP_PORT=9000"))
+      }
+      "create 'fs-server.conf' with random HTTP server port" in {
+        val props = fixture.propsWithVersionBuilder.httpPort(0).build()
+        assert(props.getHttpPort > 0)
+        NativeServerRunner.prepareFilesystem(props)
+        val confFile = props.getServerRoot.resolve("conf").resolve("fs-server.conf")
+        assertFileExists(confFile)
+        assert(Source.fromFile(confFile.toFile).getLines().contains("HTTP_PORT=" + props.getHttpPort))
+      }
+      "create 'fs-server.conf' with the correct Socket server port" in {
+        val props = fixture.propsWithVersionBuilder.socketPort(2000).build()
+        NativeServerRunner.prepareFilesystem(props)
+        val confFile = props.getServerRoot.resolve("conf").resolve("fs-server.conf")
+        assertFileExists(confFile)
+        assert(Source.fromFile(confFile.toFile).getLines().contains("SOCKET_PORT=2000"))
+      }
+      "create 'fs-server.conf' with random Socket server port" in {
+        val props = fixture.propsWithVersionBuilder.socketPort(0).build()
+        assert(props.getSocketPort > 0)
+        NativeServerRunner.prepareFilesystem(props)
+        val confFile = props.getServerRoot.resolve("conf").resolve("fs-server.conf")
+        assertFileExists(confFile)
+        assert(Source.fromFile(confFile.toFile).getLines().contains("SOCKET_PORT=" + props.getSocketPort))
       }
     }
     "we install the server" should {
@@ -122,7 +145,7 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
     }
     "call the FirstSpirit server main class as last argument" in {
       val args = NativeServerRunner.prepareStartup(fixture.minimalServerProperties).asScala
-      assert(args.last == "de.espirit.firstspirit.server.CMSServer")
+      assert(args.last == "de.espirit.common.bootstrap.Bootstrap")
     }
     "define a java security policy" in {
       val props      = fixture.minimalServerProperties
@@ -142,14 +165,14 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
       val argsGcLog =
         NativeServerRunner
           .prepareStartup(
-            ServerProperties.builder().serverInstall(false).serverGcLog(true).firstSpiritJar(new File("foobar")).build())
+            ServerProperties.builder().serverInstall(false).serverGcLog(true).firstSpiritJars(ServerProperties.getFirstSpiritJarsFromClasspath).build())
           .asScala
       assert(argsGcLog.count(str => str startsWith "-Xloggc") == 1)
     }
     "add the server ops" in {
       val commands = NativeServerRunner
         .prepareStartup(
-          ServerProperties.builder().serverOp("-Dabc=123").serverOp("-Dcde=234").firstSpiritJar(new File("foobar")).build())
+          ServerProperties.builder().serverOp("-Dabc=123").serverOp("-Dcde=234").firstSpiritJars(ServerProperties.getFirstSpiritJarsFromClasspath).build())
       commands should contain inOrder ("-Dabc=123", "-Dcde=234")
     }
     "add the server policy file" in {
@@ -167,27 +190,6 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
     "return true" when {
       "the connection can be made correctly" in pending //complex to implement because URL class is final and PowerMock did not work
     }
-    "return false" when {
-      "an exception gets thrown" in {
-        val badConnection = mock(classOf[ServerProperties])
-        when(badConnection.getServerUrl).thenThrow(new RuntimeException)
-
-        assert(!NativeServerRunner.testConnection(badConnection))
-      }
-      "no 200 OK is returned" in pending //complex to implement because URL class is final and PowerMock did not work
-    }
-  }
-
-  "NativeServerRunner.prepareStop" should {
-    lazy val props  = fixture.propsWithVersionBuilder.serverHost("rainbow.unicorn").serverPort(1234).build()
-    lazy val result = NativeServerRunner.prepareStop(props).asScala
-
-    "have 'java' as the first element" in assert(result.head == "java")
-    "have 'de.espirit.firstspirit.server.ShutdownServer' as the last argument" in assert(
-      result.last == "de.espirit.firstspirit.server.ShutdownServer")
-    "contain mode HTTP" in assert(result.contains("-Dmode=HTTP"))
-    "use the configured host" in assert(result.contains("-Dhost=rainbow.unicorn"))
-    "use the configured port" in assert(result.contains("-Dport=1234"))
   }
 
   def assertNoServerRunning(props: ServerProperties): Unit = {

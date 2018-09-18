@@ -8,7 +8,7 @@ In order to use FSDevTools various prerequisites must be considered.
 They are described in detail inside the zip or tar.gz file of the binary distribution.
 The following list is just a short overview.
 
-Since major version **2.0** `FSDevTools` requires at least FirstSpirit Version **5.2.717**. 
+Since major version **2.1** `FSDevTools` requires at least FirstSpirit Version **5.2.1403**. 
 
 Furthermore a correct `JAVA_HOME` environment variable, which points to a **Java 8** installation, must be set.
 
@@ -64,10 +64,6 @@ Information about how to compile and extend this project is described in the [de
 FSDevTools is a product of [e-Spirit AG](http://www.e-spirit.com), Dortmund, Germany.
 
 Only a license agreed upon with e-Spirit AG is valid with respect to the user for using FSDevTools.
-
-<!-- 
-Details regarding any third-party software products in use but not created by e-Spirit AG, as well as the third-party licenses and, if applicable, update information can be found in the file THIRD-PARTY.txt included with the module.
--->
 
 ## Disclaimer
 

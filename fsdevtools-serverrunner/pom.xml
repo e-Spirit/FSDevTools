@@ -47,6 +47,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.16.16</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -83,6 +84,24 @@
             <groupId>org.scalacheck</groupId>
             <artifactId>scalacheck_2.12</artifactId>
             <version>1.13.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.espirit.firstspirit</groupId>
+            <artifactId>fs-isolated-runtime</artifactId>
+            <version>${firstspirit.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.espirit.firstspirit</groupId>
+            <artifactId>fs-isolated-server</artifactId>
+            <version>${firstspirit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.espirit.firstspirit</groupId>
+            <artifactId>wrapper</artifactId>
+            <version>${firstspirit.wrapper.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -249,7 +268,7 @@
                 </dependency>
                 <dependency>
                     <groupId>de.espirit.firstspirit</groupId>
-                    <artifactId>server</artifactId>
+                    <artifactId>fs-server</artifactId>
                     <version>${firstspirit.version}</version>
                     <scope>provided</scope>
                 </dependency>
