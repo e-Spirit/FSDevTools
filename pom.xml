@@ -56,7 +56,7 @@
         <coverage.reports.dir>${basedir}/target/coverage-reports</coverage.reports.dir>
         <sonar.jacoco.itReportPath>${coverage.reports.dir}/jacoco-it.exec</sonar.jacoco.itReportPath>
         <sonar.jacoco.reportPath>${coverage.reports.dir}/jacoco-unit.exec</sonar.jacoco.reportPath>
-        <jacoco.version>0.7.5.201505241946</jacoco.version>
+        <jacoco.version>0.8.2</jacoco.version>
         <java.version>1.8</java.version>
         <java.test.version>1.8</java.test.version>
         <asciidoctor.version>1.5.0</asciidoctor.version>
@@ -163,7 +163,7 @@
                                 <requireProperty>
                                     <property>firstspirit.version</property>
                                     <message>"FirstSpirit version of 5.2.x must be specified."</message>
-                                    <regex>^5\.2(_BETA)?\.[\d]+</regex>
+                                    <regex>^5\.2(_BETA)?\..*</regex>
                                     <regexMessage>"FirstSpirit version must start with '5.2.' or '5.2_BETA.'."</regexMessage>
                                 </requireProperty>
                             </rules>
@@ -473,5 +473,18 @@
             </properties>
         </profile>
     </profiles>
+
+    <repositories>
+        <repository>
+            <id>pso-nexus-e-spirit-artefacts</id>
+            <url>http://nexus-sonatype-nexus.nexus.svc.cluster.local:8081/repository/e-spirit-artefacts/</url>
+        </repository>
+
+        <!-- primarly for https://jitpack.io/#jgraph/jgraphx/v3.9.3 -->
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
 </project>
