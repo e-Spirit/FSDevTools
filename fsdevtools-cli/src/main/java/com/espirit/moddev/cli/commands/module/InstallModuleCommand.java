@@ -1,8 +1,30 @@
+/*
+ *
+ * *********************************************************************
+ * fsdevtools
+ * %%
+ * Copyright (C) 2016 e-Spirit AG
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * *********************************************************************
+ *
+ */
+
 package com.espirit.moddev.cli.commands.module;
 
 import com.espirit.moddev.cli.ConnectionBuilder;
 import com.espirit.moddev.cli.commands.SimpleCommand;
-import com.espirit.moddev.cli.results.SimpleResult;
+import com.espirit.moddev.cli.results.InstallModuleResult;
 import com.espirit.moddev.moduleinstaller.ModuleInstallationParameters;
 import com.espirit.moddev.moduleinstaller.ModuleInstallationRawParameters;
 import com.espirit.moddev.moduleinstaller.ModuleInstaller;
@@ -13,6 +35,7 @@ import com.github.rvesse.airline.annotations.help.Examples;
 import com.github.rvesse.airline.annotations.restrictions.Required;
 import com.google.common.base.Strings;
 import de.espirit.firstspirit.access.Connection;
+import de.espirit.firstspirit.agency.ModuleAdminAgent;
 import de.espirit.firstspirit.common.MaximumNumberOfSessionsExceededException;
 import de.espirit.firstspirit.server.authentication.AuthenticationException;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static com.google.common.base.Strings.*;
 
@@ -31,7 +55,7 @@ import static com.google.common.base.Strings.*;
 @Examples(examples = "module install -mpn \"Mithras Energy\" -fsm \"folder\\videomanagementpro.fsm\" -pacf \"resources\\projectApp.ini\" -scf\n" +
         "\"VideoManagementProService=folder\\videomanagementpro_service.ini\" -wacf \"preview=resources\\previewAppConfig.ini\"",
         descriptions = "Installs the videomanagementpro module with a given project app configuration and configures the VideoManagementProService with the given ini file.")
-public class InstallModuleCommand extends SimpleCommand<SimpleResult<Boolean>> {
+public class InstallModuleCommand extends SimpleCommand<InstallModuleResult> {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(InstallModuleCommand.class);
 
@@ -59,16 +83,16 @@ public class InstallModuleCommand extends SimpleCommand<SimpleResult<Boolean>> {
     private String webAppConfigurationFiles;
 
     @Override
-    public SimpleResult<Boolean> call() {
+    public InstallModuleResult call() {
         try(Connection connection = create()) {
             connection.connect();
             return installModule(connection);
         } catch (IOException | AuthenticationException | MaximumNumberOfSessionsExceededException | IllegalArgumentException e) {
-            return new SimpleResult<>(e);
+            return new InstallModuleResult(e);
         }
     }
 
-    private SimpleResult<Boolean> installModule(Connection connection) {
+    private InstallModuleResult installModule(Connection connection) {
         String projectName = retrieveProjectNameOrFallback();
 
         final ModuleInstallationParameters parameters = ModuleInstallationRawParameters.builder()
@@ -80,8 +104,10 @@ public class InstallModuleCommand extends SimpleCommand<SimpleResult<Boolean>> {
             .webAppScopes(webAppScopes)
             .build();
 
-        boolean installed = new ModuleInstaller().install(connection, parameters);
-        return new SimpleResult<>(installed);
+        Optional<ModuleAdminAgent.ModuleResult> result = new ModuleInstaller().install(connection, parameters);
+        return result
+                .map(moduleResult -> new InstallModuleResult(moduleResult.getDescriptor().getModuleName()))
+                .orElseGet(() -> new InstallModuleResult(new IllegalStateException("Cannot get installation result for module " + fsm)));
     }
 
     private String retrieveProjectNameOrFallback() {

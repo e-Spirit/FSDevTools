@@ -12,6 +12,7 @@ import de.espirit.firstspirit.io.FileSystem;
 import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
 import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
 import de.espirit.firstspirit.module.descriptor.ProjectAppDescriptor;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -50,7 +51,7 @@ public class ModuleInstaller {
      *
      * @param fsm        The path to the FirstSpirit module file (fsm) to be installed
      * @param connection A {@link Connection} to the server the module shall be installed to
-     * @return An optional ModuleResult. Result might be absent when there's an exception with the fsm file stream.
+     * @return An InstallModuleResult. Result might be absent when there's an exception with the fsm file stream.
      */
     private static Optional<ModuleResult> installModule(final File fsm, final Connection connection) {
         LOGGER.info("Starting module installation");
@@ -387,9 +388,9 @@ public class ModuleInstaller {
      *
      * @param connection a connected FirstSpirit connection that is used to install the module
      * @param parameters a parameter bean that defines how the module should be installed
-     * @return a boolean to as success indicator
+     * @return the optional {@link ModuleResult}, which is empty on failure
      */
-    public boolean install(Connection connection, ModuleInstallationParameters parameters) {
+    public Optional<ModuleResult> install(Connection connection, ModuleInstallationParameters parameters) {
         if (connection == null || !connection.isConnected()) {
             throw new IllegalStateException("Connection is null or not connected!");
         }
@@ -406,15 +407,14 @@ public class ModuleInstaller {
             Optional<ModuleDescriptor> moduleDescriptor = moduleAdminAgent.getModules().stream().filter(it -> it.getName().equals(moduleName)).findFirst();
             if(!moduleDescriptor.isPresent()) {
                 LOGGER.info("ModuleDescriptor not present!");
-                return false;
+                return Optional.empty();
             }
 
             boolean webAppsSuccessfullyInstalled = installProjectWebApps(connection, moduleDescriptor.get(), parameters, moduleName);
             if(!webAppsSuccessfullyInstalled) {
                 LOGGER.error("WebApp installation and activation not successful for module {}", moduleName);
             }
-            return webAppsSuccessfullyInstalled;
         }
-        return false;
+        return moduleResultOption;
     }
 }
