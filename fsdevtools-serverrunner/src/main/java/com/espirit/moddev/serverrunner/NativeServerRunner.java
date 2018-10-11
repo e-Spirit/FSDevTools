@@ -1,5 +1,7 @@
 package com.espirit.moddev.serverrunner;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -25,6 +27,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static java.util.stream.Collectors.joining;
@@ -83,6 +86,27 @@ public class NativeServerRunner implements ServerRunner {
     }
 
     /**
+     * Updates a properties file with the properties given
+     * @param fileToUpdate the file that should be updated - may not exist, in that case `alternativeSource` is read
+     * @param alternativeSource the source that should be read in case the file does not exist (e.g. an InputStream to a file from the resources)
+     * @param propertySetter side-effecting function to update the properties found in the file
+     */
+    @VisibleForTesting
+    static void updatePropertiesFile(Path fileToUpdate, InputStream alternativeSource, Consumer<Properties> propertySetter) throws IOException {
+        try (BufferedReader reader = fileToUpdate.toFile().exists()
+                 ? Files.newBufferedReader(fileToUpdate)
+                 : new BufferedReader(new InputStreamReader(alternativeSource, StandardCharsets.UTF_8))) {
+            final Properties properties = new Properties();
+            properties.load(reader);
+            propertySetter.accept(properties);
+
+            try (FileWriter fileWriter = new FileWriter(fileToUpdate.toFile())) {
+                properties.store(fileWriter, "");
+            }
+        }
+    }
+
+    /**
      * Prepares the file system for startup of a FirstSpirit server, e.g. creates `fs-init`, `fs-server.policy` and `fs-license.conf`.
      *
      * @param serverProperties the server properties to be used
@@ -99,6 +123,7 @@ public class NativeServerRunner implements ServerRunner {
         final Path initFile = serverDir.resolve("fs-init");
         final Path policyFile = confDir.resolve("fs-server.policy");
         final Path confFile = confDir.resolve("fs-server.conf");
+        final Path loggingConfigFile = confDir.resolve("fs-logging.conf");
 
         Files.createDirectories(serverDir);
         Files.createDirectories(confDir);
@@ -111,21 +136,14 @@ public class NativeServerRunner implements ServerRunner {
         }
 
         //either update an existing conf file, or if none exists, use the one from the class path
-        try (BufferedReader reader = confFile.toFile().exists()
-            ? Files.newBufferedReader(confFile)
-            : new BufferedReader(
-                new InputStreamReader(NativeServerRunner.class.getResourceAsStream("/" + confFile.getFileName().toString()),
-                    StandardCharsets.UTF_8)
-            )) {
-            final Properties properties = new Properties();
-            properties.load(reader);
+        updatePropertiesFile(confFile, NativeServerRunner.class.getResourceAsStream("/" + confFile.getFileName().toString()), properties -> {
             properties.setProperty("HTTP_PORT", String.valueOf(serverProperties.getHttpPort()));
             properties.setProperty("SOCKET_PORT", String.valueOf(serverProperties.getSocketPort()));
+        });
+        updatePropertiesFile(loggingConfigFile, NativeServerRunner.class.getResourceAsStream("/" + loggingConfigFile.getFileName().toString()), properties -> {
+            properties.setProperty("log4j.rootCategory", serverProperties.getLogLevel().name() + ", fs");
+        });
 
-            try (FileWriter fileWriter = new FileWriter(confFile.toFile())) {
-                properties.store(fileWriter, "");
-            }
-        }
         Files.write(policyFile, Arrays.asList(
             "/* policies for CMS-Server */",
             "",
