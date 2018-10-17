@@ -85,7 +85,11 @@ public final class Cli {
             LOGGER.error("Failed to load BuildProperties", e);
         }
         try (InputStream resourceAsStream = ClassLoader.getSystemClassLoader().getResourceAsStream("CliGit.properties")) {
-            gitProperties.load(resourceAsStream);
+            if(resourceAsStream != null) {
+                gitProperties.load(resourceAsStream);
+            } else {
+                throw new IOException("Resource not found");
+            }
         } catch (IOException e) {
             LOGGER.error("Failed to load GitProperties", e);
         }
@@ -224,7 +228,7 @@ public final class Cli {
         } catch (ClassCastException e) {
             LOGGER.trace("Cannot perform a cast - most likely because the command's call method returns Object as a result, instead of Result.", e);
         } catch (Exception e) {
-            LOGGER.trace("Exception occurred during context initialization or command execution", e);
+            LOGGER.error("Exception occurred during context initialization or command execution", e);
             throw e;
         } finally {
             closeContext(context);

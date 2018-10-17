@@ -155,15 +155,24 @@ public class ModuleInstaller {
         if (type.equals(SERVICE)) {
             fs = moduleAdminAgent.getServiceConfig(componentDescriptor.getName());
         } else if (type.equals(ComponentDescriptor.Type.PROJECTAPP)) {
-            if(Strings.isNullOrEmpty(projectName)) {
-                throw new IllegalArgumentException("No project given, can't get a project app configuration!");
-            }
-            fs = moduleAdminAgent.getProjectAppConfig(moduleName, componentDescriptor.getName(), connection.getProjectByName(projectName));
+            Project project = safelyRetrieveProject(connection, projectName);
+            fs = moduleAdminAgent.getProjectAppConfig(moduleName, componentDescriptor.getName(), project);
         } else if (type.equals(WEBAPP)) {
             LOGGER.info("ComponentDescriptor: " + componentDescriptor.getName());
             fs = moduleAdminAgent.getWebAppConfig(moduleName, componentDescriptor.getName(),  webAppId);
         }
         return Optional.ofNullable(fs);
+    }
+
+    private static Project safelyRetrieveProject(Connection connection, String projectName) {
+        if(Strings.isNullOrEmpty(projectName)) {
+            throw new IllegalArgumentException("No project given, can't get a project app configuration!");
+        }
+        Project project = connection.getProjectByName(projectName);
+        if(project == null) {
+            throw new IllegalArgumentException("Cannot find project " + projectName + "!");
+        }
+        return project;
     }
 
     /**
@@ -208,7 +217,8 @@ public class ModuleInstaller {
                         LOGGER.info("Existing project: {} app config - updating with the given configuration!", projectName, moduleName);
                     }
                     LOGGER.info("Install ProjectApp");
-                    moduleAdminAgent.installProjectApp(moduleName, projectAppDescriptor.getName(), connection.getProjectByName(projectName));
+                    Project project = safelyRetrieveProject(connection, projectName);
+                    moduleAdminAgent.installProjectApp(moduleName, projectAppDescriptor.getName(), project);
                     LOGGER.info("Create configuration files");
                     parameters.getProjectAppConfiguration().ifPresent(projectAppFile -> {
                         createConfigurationFile(ComponentDescriptor.Type.PROJECTAPP, connection, projectAppDescriptor, projectAppFile, moduleName, projectName, null);
