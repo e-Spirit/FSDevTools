@@ -131,8 +131,7 @@ public final class Cli {
 
         final CliBuilder<Command> builder = getDefaultCliBuilder();
         final Command command = parseCommandLine(args, builder);
-        Stopwatch stopwatch = new Stopwatch();
-        stopwatch.start();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         try {
             executeCommand(command);
         } catch (Exception e) {
@@ -144,7 +143,7 @@ public final class Cli {
     }
 
     private static void logExecutionTime(final Stopwatch stopwatch) {
-        double milliseconds = stopwatch.elapsedTime(TimeUnit.MILLISECONDS);
+        double milliseconds = stopwatch.elapsed(TimeUnit.MILLISECONDS);
         final String executionTime = String.format("Execution time: %ss", milliseconds / CliConstants.ONE_SECOND_IN_MILLIS.valueAsInt());
         LOGGER.info(executionTime);
     }
