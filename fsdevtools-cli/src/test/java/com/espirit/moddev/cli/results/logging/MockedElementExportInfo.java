@@ -3,7 +3,6 @@ package com.espirit.moddev.cli.results.logging;
 import de.espirit.firstspirit.access.store.BasicElementInfo;
 import de.espirit.firstspirit.access.store.Store;
 import de.espirit.firstspirit.store.access.BasicElementInfoImpl;
-import de.espirit.firstspirit.store.access.TagNames;
 import de.espirit.firstspirit.store.access.nexport.ElementExportInfo;
 import de.espirit.firstspirit.store.access.nexport.ExportStatus;
 
@@ -15,7 +14,7 @@ public class MockedElementExportInfo extends MockedExportInfo implements Element
         this(storeType, name, ExportStatus.CREATED);
     }
 
-    MockedElementExportInfo(final Store.Type storeType, final String name, final String nodeTag) {
+    MockedElementExportInfo(final Store.Type storeType, final String name, final TagNames nodeTag) {
         this(storeType, name, nodeTag, ExportStatus.CREATED);
     }
 
@@ -23,9 +22,9 @@ public class MockedElementExportInfo extends MockedExportInfo implements Element
         this(storeType, name, TagNames.PAGE, exportStatus);
     }
 
-    MockedElementExportInfo(final Store.Type storeType, final String name, final String nodeTag, final ExportStatus exportStatus) {
+    MockedElementExportInfo(final Store.Type storeType, final String name, final TagNames nodeTag, final ExportStatus exportStatus) {
         super(Type.ELEMENT, name, exportStatus);
-        _basicElementInfo = new BasicElementInfoImpl(storeType, nodeTag, -1, name, -1);
+        _basicElementInfo = new BasicElementInfoImpl(storeType, nodeTag.getName(), -1, name, -1);
         setCreatedFileHandles(createFileHandleCollection(this, 1));
         setUpdatedFileHandles(createFileHandleCollection(this, 2));
         setDeletedFileHandles(createFileHandleCollection(this, 3));

@@ -33,19 +33,17 @@ import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;
 import com.github.rvesse.airline.annotations.help.Examples;
 import com.github.rvesse.airline.annotations.restrictions.Required;
-import com.google.common.base.Strings;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
 import de.espirit.firstspirit.common.MaximumNumberOfSessionsExceededException;
 import de.espirit.firstspirit.server.authentication.AuthenticationException;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Optional;
 
-import static com.google.common.base.Strings.*;
+import static com.espirit.moddev.shared.StringUtils.isNullOrEmpty;
 
 /**
  * Installs a module on a FirstSpirit server. Provides mechanisms to configure project apps, webapps

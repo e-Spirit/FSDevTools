@@ -262,9 +262,8 @@
                 </dependency>
                 <dependency>
                     <groupId>de.espirit.firstspirit</groupId>
-                    <artifactId>fs-access</artifactId>
+                    <artifactId>fs-isolated-runtime</artifactId>
                     <version>${firstspirit.version}</version>
-                    <scope>provided</scope>
                 </dependency>
                 <dependency>
                     <groupId>de.espirit.firstspirit</groupId>

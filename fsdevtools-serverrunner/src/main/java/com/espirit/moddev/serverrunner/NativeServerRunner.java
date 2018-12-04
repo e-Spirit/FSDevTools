@@ -1,7 +1,7 @@
 package com.espirit.moddev.serverrunner;
 
-import com.google.common.annotations.VisibleForTesting;
 
+import de.espirit.common.VisibleForTesting;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;

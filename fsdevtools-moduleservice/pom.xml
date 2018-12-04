@@ -14,11 +14,15 @@
     <dependencies>
         <dependency>
             <groupId>de.espirit.firstspirit</groupId>
-            <artifactId>fs-access</artifactId>
+            <artifactId>fs-isolated-runtime</artifactId>
         </dependency>
         <dependency>
             <groupId>com.espirit.moddev.fsdevtools</groupId>
             <artifactId>fsdevtools-serverrunner</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.espirit.moddev.fsdevtools</groupId>
+            <artifactId>fsdevtools-sharedutils</artifactId>
         </dependency>
     </dependencies>
 

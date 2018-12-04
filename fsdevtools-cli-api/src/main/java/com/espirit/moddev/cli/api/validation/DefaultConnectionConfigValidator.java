@@ -23,8 +23,7 @@ package com.espirit.moddev.cli.api.validation;
  */
 
 import com.espirit.moddev.cli.api.configuration.Config;
-
-import org.apache.commons.lang.StringUtils;
+import com.espirit.moddev.shared.StringUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -43,13 +42,13 @@ public class DefaultConnectionConfigValidator implements Validator<Config> {
         Set<Voilation> voilations = new HashSet<>();
 
         if(bean != null){
-            if(StringUtils.isBlank(bean.getHost())){
+            if(StringUtils.isNullOrEmpty(bean.getHost())){
                 voilations.add(new Voilation("host", MESSAGE_NULL_BLANK));
             }
-            if(StringUtils.isBlank(bean.getUser())){
+            if(StringUtils.isNullOrEmpty(bean.getUser())){
                 voilations.add(new Voilation("user", MESSAGE_NULL_BLANK));
             }
-            if(StringUtils.isBlank(bean.getPassword())){
+            if(StringUtils.isNullOrEmpty(bean.getPassword())){
                 voilations.add(new Voilation("password", MESSAGE_NULL_BLANK));
             }
             if(bean.getConnectionMode() == null){

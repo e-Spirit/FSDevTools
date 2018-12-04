@@ -26,6 +26,7 @@ import com.espirit.moddev.cli.api.CliContext;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.exception.CliError;
 import com.espirit.moddev.cli.exception.CliException;
+import com.espirit.moddev.shared.StringUtils;
 
 import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.Connection;
@@ -40,7 +41,6 @@ import de.espirit.firstspirit.common.IOError;
 import de.espirit.firstspirit.common.MaximumNumberOfSessionsExceededException;
 import de.espirit.firstspirit.server.authentication.AuthenticationException;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,7 +115,7 @@ public class CliContextImpl implements CliContext {
 
     private void requireProjectSpecificBroker() {
         String projectName = clientConfig.getProject();
-        if(StringUtils.isEmpty(projectName)) {
+        if(StringUtils.isNullOrEmpty(projectName)) {
             LOGGER.info("No project name given, so no project specific broker is required");
         } else {
             LOGGER.debug("Require project specific specialist broker for project '{}'...", projectName);
@@ -148,7 +148,7 @@ public class CliContextImpl implements CliContext {
     }
 
     private void loadProject(String projectName) {
-        if (!StringUtils.isBlank(projectName)) {
+        if (!StringUtils.isNullOrEmpty(projectName)) {
             Project project = connection.getProjectByName(projectName);
             if (project == null && clientConfig.isCreatingProjectIfMissing()) {
                 project = createProject(projectName);

@@ -59,8 +59,11 @@
 
         <dependency>
             <groupId>de.espirit.firstspirit</groupId>
-            <artifactId>fs-access</artifactId>
-            <scope>compile</scope>
+            <artifactId>fs-isolated-runtime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.espirit.moddev.fsdevtools</groupId>
+            <artifactId>fsdevtools-sharedutils</artifactId>
         </dependency>
 
         <dependency>
@@ -78,6 +81,16 @@
             <groupId>io.github.lukehutch</groupId>
             <artifactId>fast-classpath-scanner</artifactId>
             <version>2.9.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>26.0-jre</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.8.1</version>
         </dependency>
 
         <!-- Logging -->
@@ -180,10 +193,9 @@
 					<descriptor>src/main/assemblies/jar-without-firstspirit.xml</descriptor>
 					<archive>
 						<manifest>
-							<mainClass>com.espirit.moddev.cli.Cli</mainClass>
+							<mainClass>com.espirit.moddev.cli.Main</mainClass>
 						</manifest>
 						<manifestEntries>
-							<Class-Path>fs-access.jar</Class-Path>
 							<Implementation-Title>${project.name}</Implementation-Title>
 							<Implementation-Version>${project.version}</Implementation-Version>
 							<Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
@@ -194,7 +206,7 @@
 				</configuration>
 				<executions>
 					<execution>
-						<id>assemble-all</id>
+						<id>assemble-fatjar</id>
 						<phase>prepare-package</phase>
 						<goals>
 							<goal>single</goal>
@@ -209,35 +221,12 @@
 				<executions>
 					<execution>
 						<configuration>
-							<finalName>${project.artifactId}</finalName>
-						</configuration>
-						<id>assemble-all-fs-cli</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-					<execution>
-						<configuration>
-							<finalName>fs-cli-${project.version}</finalName>
+							<finalName>fs-cli</finalName>
 							<appendAssemblyId>false</appendAssemblyId>
-							<descriptorSourceDirectory>src/main/assemblies/distribution</descriptorSourceDirectory>
+							<descriptorSourceDirectory>src/main/assemblies/zip-distribution</descriptorSourceDirectory>
 							<tarLongFileMode>posix</tarLongFileMode>
 						</configuration>
-						<id>assemble-all</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-					<execution>
-						<configuration>
-							<finalName>fs-cli-without-access-jar</finalName>
-							<appendAssemblyId>false</appendAssemblyId>
-							<descriptorSourceDirectory>src/main/assemblies/distribution-without-access-jar</descriptorSourceDirectory>
-							<tarLongFileMode>posix</tarLongFileMode>
-						</configuration>
-						<id>assemble-all-without-access-jar</id>
+						<id>assemble-distribution</id>
 						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
@@ -501,7 +490,7 @@
                         <artifactId>github-release-plugin</artifactId>
                         <version>1.2.0</version>
                         <configuration>
-                            <description>The zip and the tar.gz files are our windows and linux/mac distributions. This binary release is without FS Access jar file. Please add fs-access.jar to lib directory. Since version **2.2** `FSDevTools` requires at least FirstSpirit Version **2018-11**. The fsdevtools-cli-x.x.xxx.jar file can be used to compile against (Keep in mind that you should rather clone this repo and install all submodules to your local Maven repo).</description>
+                            <description>The zip and the tar.gz files are our windows and linux/mac distributions. This binary release does not contain FirstSpirit api jars (fs-access.jar or fs-isolated-runtime.jar). Please add either of them to lib directory. Since version **2.2** `FSDevTools` requires at least FirstSpirit Version **2018-11**. The fsdevtools-cli-x.x.xxx.jar file can be used to compile against (Keep in mind that you should rather clone this repo and install all submodules to your local Maven repo).</description>
                             <releaseName>Release ${project.version}</releaseName>
                             <repositoryId>https://github.com/e-Spirit/FSDevTools.git</repositoryId>
                             <tag>${project.version}</tag>
@@ -510,14 +499,11 @@
                                 <fileSet>
                                     <directory>${project.build.directory}</directory>
                                     <includes>
-                                        <include>*without-access-jar*.tar.gz</include>
-                                        <include>*without-access-jar*.zip</include>
+                                        <include>fs-cli.tar.gz</include>
+                                        <include>fs-cli.zip</include>
+                                        <include>fsdevtools-cli-${project.version}.jar</include>
+                                        <include>fsdevtools-cli-${project.version}-javadoc.jar</include>
                                     </includes>
-                                    <excludes>
-                                        <exclude>*.jar</exclude>
-                                        <exclude>fs-cli-${project.version}.zip</exclude>
-                                        <exclude>fs-cli-${project.version}.tar.gz</exclude>
-                                    </excludes>
                                 </fileSet>
                             </fileSets>
                         </configuration>

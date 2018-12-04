@@ -2,7 +2,8 @@ package com.espirit.moddev.moduleinstaller.webapp;
 
 import com.espirit.moddev.moduleinstaller.ModuleInstaller;
 import com.espirit.moddev.moduleinstaller.WebAppIdentifier;
-import com.google.common.base.Strings;
+import com.espirit.moddev.shared.StringUtils;
+
 import de.espirit.firstspirit.module.WebEnvironment;
 import de.espirit.firstspirit.module.WebEnvironment.WebScope;
 import org.slf4j.LoggerFactory;
@@ -27,7 +28,7 @@ public class WebAppIdentifierParser {
                 .collect(toList());
     }
     public WebAppIdentifier parseSingle(String scopeOrGlobalWebAppId) {
-        if(Strings.isNullOrEmpty(scopeOrGlobalWebAppId)) {
+        if(StringUtils.isNullOrEmpty(scopeOrGlobalWebAppId)) {
             throw new IllegalArgumentException("Passed string for scope or global WebAppId is null or empty");
         }
         Matcher globalMatcher = globalWebAppPattern.matcher(scopeOrGlobalWebAppId);

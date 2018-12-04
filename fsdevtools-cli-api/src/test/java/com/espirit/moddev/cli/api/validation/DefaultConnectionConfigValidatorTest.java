@@ -25,13 +25,9 @@ package com.espirit.moddev.cli.api.validation;
 import com.espirit.moddev.cli.api.FsConnectionMode;
 import com.espirit.moddev.cli.api.configuration.Config;
 
-import de.espirit.firstspirit.io.FileHandle;
-import de.espirit.firstspirit.io.FileSystem;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.contains;

@@ -27,7 +27,7 @@ import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.access.store.Store;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
-import org.apache.commons.lang.StringUtils;
+import com.espirit.moddev.shared.StringUtils;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -55,7 +55,7 @@ public class UidIdentifier implements Identifier {
         if (uidMapping == null) {
             throw new IllegalArgumentException("uidMapping is null.");
         }
-        if (StringUtils.isBlank(uid)) {
+        if (StringUtils.isNullOrEmpty(uid)) {
             throw new IllegalArgumentException("Uid is null or empty.");
         }
         this.uidMapping = uidMapping;
