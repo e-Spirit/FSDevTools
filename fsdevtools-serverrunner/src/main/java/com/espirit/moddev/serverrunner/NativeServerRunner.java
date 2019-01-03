@@ -2,31 +2,30 @@ package com.espirit.moddev.serverrunner;
 
 
 import de.espirit.common.VisibleForTesting;
-import lombok.extern.slf4j.Slf4j;
-
-import java.io.*;
 import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ServicesBroker;
-
+import de.espirit.firstspirit.agency.RunLevelAgent;
+import de.espirit.firstspirit.server.RunLevel;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.io.*;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.Duration;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -47,7 +46,7 @@ public class NativeServerRunner implements ServerRunner {
     /**
      * potentially contains the task that logs the FirstSpirit output (might not be filled in case we did not start the server ourselves)
      */
-    protected Optional<FutureTask<Void>> serverTask = Optional.empty();
+    protected Optional<Future<Void>> serverTask = Optional.empty();
     protected ExecutorService executor = Executors.newCachedThreadPool();
 
     /**
@@ -228,7 +227,7 @@ public class NativeServerRunner implements ServerRunner {
      * @throws java.io.IOException on file system access problems
      */
     @SuppressWarnings({"squid:S1141", "squid:S1188"}) //nested try and too long lambda
-    static FutureTask<Void> startFirstSpiritServer(final ServerProperties serverProperties, final ExecutorService executor) throws IOException {
+    static Future startFirstSpiritServer(final ServerProperties serverProperties, final ExecutorService executor) throws IOException {
         final List<String> commands = Collections.unmodifiableList(new ArrayList<>(prepareStartup(serverProperties)));
         if (log.isInfoEnabled()) {
             log.info("Execute command " + String.join(" ", commands));
@@ -238,36 +237,30 @@ public class NativeServerRunner implements ServerRunner {
         /* Construct a cancellable logging task. It will be cancelled in `stopFirstSpiritServer`.
            The inner logTask is necessary since the implicit `readLine()` on the `BufferedReader` has a blocking API that cannot be interrupted. This
            task is stopped by destroying the process outputting data, which implicitly closes the input stream that is being blocked on. You can view
-           cancellableLogTask as an entity that does the very same job as logTask with the added functionality of gracefully shutting down on server
+           future as an entity that does the very same job as logTask with the added functionality of gracefully shutting down on server
            stop.
          */
-        final FutureTask<Void> cancellableLogTask = new FutureTask<>(() -> {
+        return executor.submit(() -> {
             final ProcessBuilder builder = new ProcessBuilder(commands);
             builder.redirectErrorStream(true);
             final Process process;
             try {
                 process = builder.start();
                 //start logging on another task to be able to be interrupted to destroy the original process because it hangs sometimes
-                final FutureTask<Void> logTask = new FutureTask<>(() -> {
+                final Future logTask = executor.submit(() -> {
                     new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8)).lines()
-                        .forEach(line -> log.info("FirstSpirit Server log:" + line));
-                    return null; //that one hurts
+                            .forEach(line -> log.info("FirstSpirit Server log:" + line));
                 });
-                executor.submit(logTask);
                 try {
                     logTask.get();
-                } catch (final InterruptedException ie) {
+                } catch (final InterruptedException | ExecutionException ie) {
                     process.destroy();  //kill the process if it did not die on its own
                     Thread.currentThread().interrupt();
                 }
             } catch (final IOException ioe) {
                 log.error(PROBLEM_READING, ioe);
             }
-            return null; //that one hurts
         });
-
-        executor.submit(cancellableLogTask);
-        return cancellableLogTask;
     }
 
     private static boolean isServerLocal(final ServerProperties serverProperties) {
@@ -309,26 +302,12 @@ public class NativeServerRunner implements ServerRunner {
     public boolean start() {
         if (!testConnection(serverProperties)) {
             log.info("Starting FirstSpirit Server...");
-            boolean serverRunning = false;
-            try {
-                if (!serverTask.isPresent()) {
-                    serverTask = Optional.of(startFirstSpiritServer(serverProperties, executor));
-                }
 
-                serverRunning = waitForCondition(() -> {
-                    log.info("Trying to connect to FirstSpirit server...");
-                    return testConnection(serverProperties);
-                }, serverProperties.getRetryWait(),
-                    serverProperties.getRetryCount()
-                    + 1); //retry count means we try one more time allover
-            } catch (final IOException ioe) {
-                //nothing to do, server will not be running in this case, normal behaviour following
-                log.error(PROBLEM_READING, ioe);
-            }
-            if (!serverRunning) {
-                log.error("Could not start FirstSpirit server.");
-            }
-            return serverRunning;
+            ServerStatus serverStatus = determineServerStatus();
+
+            logOptionalErrorState(serverStatus);
+
+            return serverStatus.serverRunning;
 
         } else {
             log.info("FirstSpirit Server already running.");
@@ -336,38 +315,124 @@ public class NativeServerRunner implements ServerRunner {
         }
     }
 
+    @NotNull
+    private ServerStatus determineServerStatus() {
+        ServerStatus serverStatus = new ServerStatus(false, false);
+
+        try {
+            startFirstSpiritServerIfNotDoneYet();
+
+            ApiConnectionStatus apiConnectionStatus = waitForSuccessfulApiConnection(serverProperties.getRetryCount());
+
+            boolean serverRunLevelIsStarted = false;
+            if(apiConnectionStatus.apiConnectionSuccessful) {
+                serverRunLevelIsStarted = connectAndWaitForRunLevelStarted(serverProperties.getRetryCount());
+            }
+            serverStatus = new ServerStatus(apiConnectionStatus.apiConnectionSuccessful, serverRunLevelIsStarted);
+        } catch (final IOException ioe) {
+//            This information is not useful for most cases, so we shouldn't log this in error.
+            log.debug(PROBLEM_READING, ioe);
+        }
+        return serverStatus;
+    }
+
+    private boolean connectAndWaitForRunLevelStarted(int remainingRetryCount) {
+        Optional<Connection> optionalConnection = serverProperties.tryOpenAdminConnection();
+        boolean runLevelIsStarted = optionalConnection.map((Connection connectionParam) -> {
+            try (Connection connection = connectionParam) {
+                RunLevelAgent runLevelAgent = connection.getBroker().requireSpecialist(RunLevelAgent.TYPE);
+                return waitForRunLevelStarted(runLevelAgent, remainingRetryCount); //retry count means we try one more time
+            } catch (IOException e) {
+//                This information is not useful for most cases, so we shouldn't log this in error.
+                log.debug("Not able to close connection properly...", e);
+                return false;
+            }
+        }).orElse(false);
+
+        return runLevelIsStarted;
+    }
+
+    private void logOptionalErrorState(ServerStatus serverStatus) {
+        if (!serverStatus.apiConnectionSuccessful) {
+            log.error("Could not establish admin connection to FirstSpirit server.");
+        }
+        if (!serverStatus.serverRunning) {
+            log.error("Could not start FirstSpirit server.");
+        }
+    }
+
+    private boolean waitForRunLevelStarted(RunLevelAgent runLevelAgent, int startRetryCount) {
+        AtomicInteger remainingRetryCount = new AtomicInteger(startRetryCount);
+
+        boolean runLevelIsStarted = waitForCondition(() -> {
+            log.info("Trying to retrieve run level status from FirstSpirit server...");
+            RunLevel currentRunLevel = runLevelAgent.getRunLevel();
+            log.info("Current run level status is " + currentRunLevel.name());
+
+            return currentRunLevel == RunLevel.STARTED;
+        }, serverProperties.getRetryWait(), remainingRetryCount.getAndIncrement());
+
+        return runLevelIsStarted;
+    }
+
+    private ApiConnectionStatus waitForSuccessfulApiConnection(int startRetryCount) {
+        AtomicInteger remainingRetryCount = new AtomicInteger(startRetryCount);
+
+        boolean apiConnectionSuccessful = waitForCondition(() -> {
+            log.info("Trying to establish FirstSpirit server connection...");
+            remainingRetryCount.getAndDecrement();
+            return testConnection(serverProperties);
+        }, serverProperties.getRetryWait(), remainingRetryCount.getAndIncrement());
+
+        return new ApiConnectionStatus(apiConnectionSuccessful, remainingRetryCount.get());
+    }
+
+    private void startFirstSpiritServerIfNotDoneYet() throws IOException {
+        if (!serverTask.isPresent()) {
+            serverTask = Optional.of(startFirstSpiritServer(serverProperties, executor));
+        }
+    }
+
     @Override
     public boolean isRunning() {
-        return testConnection(serverProperties);
+        Optional<Connection> optionalConnection = serverProperties.tryOpenAdminConnection();
+        return optionalConnection.map((Connection connection) -> {
+            RunLevel runLevel = connection.getBroker().requireSpecialist(RunLevelAgent.TYPE).getRunLevel();
+            closeConnectionAndDebugLogErrors(connection);
+            return runLevel == RunLevel.STARTED;
+        }).orElse(false);
+    }
+
+    private void closeConnectionAndDebugLogErrors(Connection connection) {
+        try {
+            connection.close();
+        } catch (IOException e) {
+//            This information is not useful for most cases, so we shouldn't log this in error.
+            log.debug("Not able to close connection properly...", e);
+        }
     }
 
     @Override
     public boolean stop() {
         log.info("Stopping FirstSpirit Server...");
-        Optional<Connection> optionalConnection = serverProperties.tryOpenAdminConnection();
-        if (optionalConnection.isPresent()) {
-            stopFirstSpiritServerAndDisconnect(optionalConnection.get());
-            ensureFsLockFileIsRemoved(serverProperties);
-            killRunningProcess();
-            return !testConnection(serverProperties);
-        } else {
-            throw new IllegalStateException("Stopping the FirstSpirit server failed, due to a connection failure.");
-        }
+        Connection connection = serverProperties.tryOpenAdminConnection()
+                .orElseThrow(() -> new IllegalStateException("Stopping the FirstSpirit server failed, due to a connection failure."));
+
+        stopFirstSpiritServerAndDisconnect(connection);
+        ensureFsLockFileIsRemoved(serverProperties);
+        killRunningProcess();
+        return !testConnection(serverProperties);
     }
 
     private void stopFirstSpiritServerAndDisconnect(final Connection connection) {
         ServicesBroker servicesBroker = connection.getBroker().requireSpecialist(ServicesBroker.TYPE);
         AdminService adminService = servicesBroker.getService(AdminService.class);
         adminService.stopServer();
-        try {
-            connection.disconnect();
-        } catch (IOException e) {
-            LOGGER.error("Error while closing FirstSpirit Connection", e);
-        }
+        closeConnectionAndDebugLogErrors(connection);
     }
 
     private void ensureFsLockFileIsRemoved(ServerProperties serverProperties) {
-        // indicates that the server is still running if the lock file is still thereueck.de
+        // indicates that the server is still running if the lock file is still there
 
         if (isServerLocal(serverProperties)) {
             waitForCondition(() -> !serverProperties.getLockFile().exists(), serverProperties.getRetryWait(), serverProperties.getRetryCount());
@@ -383,5 +448,21 @@ public class NativeServerRunner implements ServerRunner {
 
     private void killRunningProcess() {
         serverTask.ifPresent(x -> x.cancel(true));
+    }
+
+    @Data
+    @Setter(AccessLevel.NONE)
+    @AllArgsConstructor
+    private static class ApiConnectionStatus {
+        private boolean apiConnectionSuccessful = false;
+        private int remainingRetryCount;
+    }
+
+    @Data
+    @Setter(AccessLevel.NONE)
+    @AllArgsConstructor
+    private static class ServerStatus {
+        private boolean apiConnectionSuccessful = false;
+        private boolean serverRunning = false;
     }
 }
