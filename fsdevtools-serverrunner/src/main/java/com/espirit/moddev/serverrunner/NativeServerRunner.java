@@ -256,6 +256,7 @@ public class NativeServerRunner implements ServerRunner {
                 } catch (final InterruptedException | ExecutionException ie) {
                     process.destroy();  //kill the process if it did not die on its own
                     Thread.currentThread().interrupt();
+                    log.debug(PROBLEM_READING, ie);
                 }
             } catch (final IOException ioe) {
                 log.error(PROBLEM_READING, ioe);
