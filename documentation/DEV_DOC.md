@@ -3,7 +3,7 @@
 FSDevTools is a project to optimize the developer experience (DX) with FirstSpirit.
 
 ## Dependencies
-As mentioned in the [README.md](../README.md) FSDevTools only compiles with **Java 8** and FirstSpirit **2018-11**. 
+As mentioned in the [README.md](../README.md) FSDevTools only compiles with **Java 8** and FirstSpirit **2018-12**. 
 Since the required FirstSpirit artifacts are not publicly available the steps in the next section are absolutely necessary.
 
 ### Use FirstSpirit Access API as maven dependency
