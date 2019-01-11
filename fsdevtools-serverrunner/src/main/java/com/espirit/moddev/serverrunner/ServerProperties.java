@@ -301,6 +301,9 @@ public class ServerProperties {
         } catch (IOException | AuthenticationException | MaximumNumberOfSessionsExceededException e) {
             LOGGER.error("Could not connect to the FirstSpirit server.", e);
             return Optional.empty();
+        } catch (Exception e) {
+            LOGGER.debug("An unexpected exception occurred.", e);
+            return Optional.empty();
         }
     }
 }
