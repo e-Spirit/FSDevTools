@@ -6,7 +6,6 @@ import de.espirit.firstspirit.access.store.pagestore.Section;
 import de.espirit.firstspirit.access.store.templatestore.PageTemplate;
 import de.espirit.firstspirit.access.store.templatestore.SectionTemplate;
 import de.espirit.firstspirit.access.store.templatestore.Template;
-import de.espirit.firstspirit.store.access.TagNames;
 import de.espirit.firstspirit.store.access.nexport.*;
 import de.espirit.firstspirit.transport.PropertiesTransportOptions;
 import org.junit.Test;

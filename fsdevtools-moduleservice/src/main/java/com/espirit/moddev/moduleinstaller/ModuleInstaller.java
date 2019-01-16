@@ -1,6 +1,6 @@
 package com.espirit.moddev.moduleinstaller;
 
-import com.google.common.base.Strings;
+import com.espirit.moddev.shared.StringUtils;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.access.store.LockException;
@@ -50,7 +50,7 @@ public class ModuleInstaller {
      *
      * @param fsm        The path to the FirstSpirit module file (fsm) to be installed
      * @param connection A {@link Connection} to the server the module shall be installed to
-     * @return An optional ModuleResult. Result might be absent when there's an exception with the fsm file stream.
+     * @return An InstallModuleResult. Result might be absent when there's an exception with the fsm file stream.
      */
     private static Optional<ModuleResult> installModule(final File fsm, final Connection connection) {
         LOGGER.info("Starting module installation");
@@ -154,15 +154,24 @@ public class ModuleInstaller {
         if (type.equals(SERVICE)) {
             fs = moduleAdminAgent.getServiceConfig(componentDescriptor.getName());
         } else if (type.equals(ComponentDescriptor.Type.PROJECTAPP)) {
-            if(Strings.isNullOrEmpty(projectName)) {
-                throw new IllegalArgumentException("No project given, can't get a project app configuration!");
-            }
-            fs = moduleAdminAgent.getProjectAppConfig(moduleName, componentDescriptor.getName(), connection.getProjectByName(projectName));
+            Project project = safelyRetrieveProject(connection, projectName);
+            fs = moduleAdminAgent.getProjectAppConfig(moduleName, componentDescriptor.getName(), project);
         } else if (type.equals(WEBAPP)) {
             LOGGER.info("ComponentDescriptor: " + componentDescriptor.getName());
             fs = moduleAdminAgent.getWebAppConfig(moduleName, componentDescriptor.getName(),  webAppId);
         }
         return Optional.ofNullable(fs);
+    }
+
+    private static Project safelyRetrieveProject(Connection connection, String projectName) {
+        if(StringUtils.isNullOrEmpty(projectName)) {
+            throw new IllegalArgumentException("No project given, can't get a project app configuration!");
+        }
+        Project project = connection.getProjectByName(projectName);
+        if(project == null) {
+            throw new IllegalArgumentException("Cannot find project " + projectName + "!");
+        }
+        return project;
     }
 
     /**
@@ -184,7 +193,7 @@ public class ModuleInstaller {
         List<ComponentDescriptor> projectAppDescriptors = stream(moduleDescriptor.get().getComponents()).filter(it -> it instanceof ProjectAppDescriptor).collect(toList());
 
         String projectName = parameters.getProjectName();
-        if(Strings.isNullOrEmpty(projectName)) {
+        if(StringUtils.isNullOrEmpty(projectName)) {
             if(!projectAppDescriptors.isEmpty()) {
                 LOGGER.warn("Found project app descriptors, but can't install project apps without a project name given!");
             }
@@ -207,7 +216,8 @@ public class ModuleInstaller {
                         LOGGER.info("Existing project: {} app config - updating with the given configuration!", projectName, moduleName);
                     }
                     LOGGER.info("Install ProjectApp");
-                    moduleAdminAgent.installProjectApp(moduleName, projectAppDescriptor.getName(), connection.getProjectByName(projectName));
+                    Project project = safelyRetrieveProject(connection, projectName);
+                    moduleAdminAgent.installProjectApp(moduleName, projectAppDescriptor.getName(), project);
                     LOGGER.info("Create configuration files");
                     parameters.getProjectAppConfiguration().ifPresent(projectAppFile -> {
                         createConfigurationFile(ComponentDescriptor.Type.PROJECTAPP, connection, projectAppDescriptor, projectAppFile, moduleName, projectName, null);
@@ -281,7 +291,7 @@ public class ModuleInstaller {
         try {
 
             Project projectOrNull = null;
-            if(!Strings.isNullOrEmpty(projectName)) {
+            if(!StringUtils.isNullOrEmpty(projectName)) {
                 projectOrNull = connection.getProjectByName(projectName);
             }
 
@@ -336,7 +346,7 @@ public class ModuleInstaller {
                                                       Map<WebAppIdentifier, File> webAppConfigurations,
                                                       ComponentDescriptor componentDescriptor,
                                                       WebAppIdentifier scope) {
-        Project projectOrNull = Strings.isNullOrEmpty(projectName) ? null : connection.getProjectByName(projectName);
+        Project projectOrNull = StringUtils.isNullOrEmpty(projectName) ? null : connection.getProjectByName(projectName);
         try {
             WebAppId id = scope.createWebAppId(projectOrNull);
             moduleAdminAgent.installWebApp(moduleName, componentDescriptor.getName(), id);
@@ -363,7 +373,7 @@ public class ModuleInstaller {
             try {
                 project.lock();
                 String selectedWebServer = project.getSelectedWebServer(webScope.toString());
-                if(Strings.isNullOrEmpty(selectedWebServer)) {
+                if(StringUtils.isNullOrEmpty(selectedWebServer)) {
                     LOGGER.warn("Project has no webserver selected. Setting usage of InternalJetty.");
                     selectedWebServer = "InternalJetty";
                     project.setSelectedWebServer(webAppId, selectedWebServer);
@@ -387,9 +397,9 @@ public class ModuleInstaller {
      *
      * @param connection a connected FirstSpirit connection that is used to install the module
      * @param parameters a parameter bean that defines how the module should be installed
-     * @return a boolean to as success indicator
+     * @return the optional {@link ModuleResult}, which is empty on failure
      */
-    public boolean install(Connection connection, ModuleInstallationParameters parameters) {
+    public Optional<ModuleResult> install(Connection connection, ModuleInstallationParameters parameters) {
         if (connection == null || !connection.isConnected()) {
             throw new IllegalStateException("Connection is null or not connected!");
         }
@@ -406,15 +416,14 @@ public class ModuleInstaller {
             Optional<ModuleDescriptor> moduleDescriptor = moduleAdminAgent.getModules().stream().filter(it -> it.getName().equals(moduleName)).findFirst();
             if(!moduleDescriptor.isPresent()) {
                 LOGGER.info("ModuleDescriptor not present!");
-                return false;
+                return Optional.empty();
             }
 
             boolean webAppsSuccessfullyInstalled = installProjectWebApps(connection, moduleDescriptor.get(), parameters, moduleName);
             if(!webAppsSuccessfullyInstalled) {
                 LOGGER.error("WebApp installation and activation not successful for module {}", moduleName);
             }
-            return webAppsSuccessfullyInstalled;
         }
-        return false;
+        return moduleResultOption;
     }
 }

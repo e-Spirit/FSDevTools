@@ -34,7 +34,7 @@
     <artifactId>fsdevtools-serverrunner</artifactId>
 
     <properties>
-        <scala.version>2.12.2</scala.version>
+        <scala.version>2.12.7</scala.version>
     </properties>
 
     <dependencies>
@@ -262,9 +262,8 @@
                 </dependency>
                 <dependency>
                     <groupId>de.espirit.firstspirit</groupId>
-                    <artifactId>fs-access</artifactId>
+                    <artifactId>fs-isolated-runtime</artifactId>
                     <version>${firstspirit.version}</version>
-                    <scope>provided</scope>
                 </dependency>
                 <dependency>
                     <groupId>de.espirit.firstspirit</groupId>

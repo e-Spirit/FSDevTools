@@ -41,7 +41,7 @@ import java.io.File;
 
 @Command(name = "import", groupNames = {"project"}, description = "Imports a FirstSpirit project export into a FirstSpirit Server as a new project.")
 @Examples(
-        examples = {"fs-cli project import -h localhost -p 8000 project import --importProjectName \"newProjectName\" --projectFile \"D:\\my-project-export.tar.gz\"",
+        examples = {"fs-cli project import -h localhost -port 8000 project import --importProjectName \"newProjectName\" --projectFile \"D:\\my-project-export.tar.gz\"",
                     "fs-cli project import --importProjectName \"newProjectName\" --projectFile \"D:\\my-project-export.tar.gz\" -dlm *:CREATE_NEW",
                     "fs-cli project import --importProjectName \"newProjectName\" --projectFile \"D:\\my-project-export.tar.gz\" -dlm schema_a:derby_project14747_0,schema_b:derby_project14747_1"
         },

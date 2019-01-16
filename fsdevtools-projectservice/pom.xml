@@ -36,7 +36,11 @@
     <dependencies>
         <dependency>
             <groupId>de.espirit.firstspirit</groupId>
-            <artifactId>fs-access</artifactId>
+            <artifactId>fs-isolated-runtime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
     </dependencies>
 

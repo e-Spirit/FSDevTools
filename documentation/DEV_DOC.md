@@ -3,32 +3,32 @@
 FSDevTools is a project to optimize the developer experience (DX) with FirstSpirit.
 
 ## Dependencies
-As mentioned in the [README.md](../README.md) FSDevTools only compiles with **Java 8** and **FirstSpirit 5.2R8** (version 5.2.802 or newer). 
+As mentioned in the [README.md](../README.md) FSDevTools only compiles with **Java 8** and FirstSpirit **2018-12**. 
 Since the required FirstSpirit artifacts are not publicly available the steps in the next section are absolutely necessary.
 
 ### Use FirstSpirit Access API as maven dependency
 
-First, the **fs-access.jar** file of the FirstSpirit server used needs to be installed in the local Maven repository to enable a successful compilation of the amended source code.
+First, the **fs-isolated-runtime.jar** file of the FirstSpirit server used needs to be installed in the local Maven repository to enable a successful compilation of the amended source code.
 
-The **fs-access.jar** file is located in the directory:
+The **fs-isolated-runtime.jar** file is located in the directory:
 
 ```
 <FirstSpirit Server directory>/data/fslib
 ```
 
-It is installed by entering the following command into the command line, in which the path to **fs-access.jar** file and the FirstSpirit version used have to be substituted accordingly:
+It is installed by entering the following command into the command line, in which the path to **fs-isolated-runtime.jar** file and the FirstSpirit version used have to be substituted accordingly:
 
 ```
-mvn install:install-file -Dfile=<path-to-access.jar> -DgroupId=de.espirit.firstspirit -DartifactId=fs-access -Dversion=<fs version e.g. '5.0.0'> -Dpackaging=jar
+mvn install:install-file -Dfile=<path-to-fs-isolated-runtime.jar> -DgroupId=de.espirit.firstspirit -DartifactId=fs-isolated-runtime -Dversion=<fs version e.g. '5.2.181108'> -Dpackaging=jar
 ```
 **Note:** *Running the installation command within the directory in which the **pom.xml** file has been saved leads to an error. The installation must therefore be performed outside this directory.*
 
 During installation the local Maven repository has been created automatically in the user directory under **<user home>.m2/repository**
-After the **fs-access.jar** file has been installed successfully, it should be located in this directory (see figure below):
+After the **fs-isolated-runtime.jar** file has been installed successfully, it should be located in this directory (see figure below):
 
 ![Local Maven repository with installed fs-access.jar file](images/local_maven.gif)
 
-Install the `fs-server.jar`, `fs-isolated-runtime.jar` and `wrapper-$VERSION.jar` files, too, by following the steps described above. 
+Install the `fs-isolated-server.jar`, `fs-isolated-runtime.jar` and `wrapper-$VERSION.jar` files, too, by following the steps described above. 
 They enable the execution of the integration tests for the module `fsdevtools-serverrunner`.
 The files can be found in the following directories:
 
@@ -37,7 +37,7 @@ The files can be found in the following directories:
 <FirstSpirit Server directory>/server/lib-isolated
 ```
 
-Note that the `fs-server.jar` and the `fs-isolated-runtime.jar` file need to be installed with the same version as the `fs-access.jar` file, while the version of the `wrapper-$VERSION.jar` file can be found in the file name.
+Note that the `fs-server.jar` and the `fs-isolated-server.jar` files need to be installed with the same version as the `fs-access.jar` or `fs-isolated-runtime.jar` files, while the version of the `wrapper-$VERSION.jar` file can be found in the file name.
 
 ## Compile with Maven
 

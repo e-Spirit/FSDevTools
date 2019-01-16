@@ -1,6 +1,7 @@
 package com.espirit.moddev.moduleinstaller;
 
-import com.google.common.base.Strings;
+import com.espirit.moddev.shared.StringUtils;
+
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.agency.WebAppId;
 import de.espirit.firstspirit.module.WebEnvironment.WebScope;
@@ -41,7 +42,7 @@ public interface WebAppIdentifier {
         }
 
         if(GLOBAL.equals(scope)) {
-            if(Strings.isNullOrEmpty(globalWebAppName)) {
+            if(StringUtils.isNullOrEmpty(globalWebAppName)) {
                 throw new IllegalArgumentException("WebApp name missing for global WebApp.");
             }
             return new GlobalWebAppIdentifier(globalWebAppName);
