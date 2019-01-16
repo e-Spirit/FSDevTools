@@ -13,7 +13,6 @@ import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.store.access.BasicElementInfoImpl;
 import de.espirit.firstspirit.store.access.StoreElements;
-import de.espirit.firstspirit.store.access.TagNames;
 import de.espirit.firstspirit.store.access.nexport.*;
 import de.espirit.firstspirit.store.access.nexport.io.ExportInfoFileHandle;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
@@ -412,7 +411,7 @@ public enum AdvancedLogger {
         final BasicElementInfo elementInfo = element.getElementInfo();
 
         // workaround for duplicate TagNames
-        if (TagNames.TEMPLATE.equals(elementInfo.getNodeTag()) && storeAgent != null) {
+        if (TagNames.TEMPLATE.getName().equals(elementInfo.getNodeTag()) && storeAgent != null) {
             final Store store = storeAgent.getStore(elementInfo.getStoreType());
             final IDProvider storeElement = store.getStoreElement(elementInfo.getNodeId());
             if (storeElement != null) {
@@ -541,6 +540,8 @@ public enum AdvancedLogger {
             }
             // get the first entity
             final BasicEntityInfo firstEntity = collection.iterator().next();
+
+            final String schemaNodeTag = TagNames.SCHEMA.getName();
             if (storeAgent != null) {
                 // get the schema ... (if the store is a templateStore --> may not be the case in tests)
                 final Store store = storeAgent.getStore(Store.Type.TEMPLATESTORE);
@@ -552,14 +553,14 @@ public enum AdvancedLogger {
                 final EntityTypeImportInfoImpl entityTypeImportInfo;
                 // ... and create a new EntityTypeImportInfo
                 if (schema != null) {
-                    entityTypeImportInfo = new EntityTypeImportInfoImpl(status, new BasicElementInfoImpl(Store.Type.TEMPLATESTORE, TagNames.SCHEMA, schema.getId(), schema.getUid(), schema.getRevision().getId()), firstEntity.getEntityType(), collection);
+                    entityTypeImportInfo = new EntityTypeImportInfoImpl(status, new BasicElementInfoImpl(Store.Type.TEMPLATESTORE, schemaNodeTag, schema.getId(), schema.getUid(), schema.getRevision().getId()), firstEntity.getEntityType(), collection);
                 } else {
-                    entityTypeImportInfo = new EntityTypeImportInfoImpl(status, new BasicElementInfoImpl(Store.Type.TEMPLATESTORE, TagNames.SCHEMA, -1, firstEntity.getSchemaUid(), -1), firstEntity.getEntityType(), collection);
+                    entityTypeImportInfo = new EntityTypeImportInfoImpl(status, new BasicElementInfoImpl(Store.Type.TEMPLATESTORE, schemaNodeTag, -1, firstEntity.getSchemaUid(), -1), firstEntity.getEntityType(), collection);
                 }
                 result.add(entityTypeImportInfo);
             } else {
                 // fallback --> used for tests only
-                final EntityTypeImportInfoImpl entityTypeImportInfo = new EntityTypeImportInfoImpl(status, new BasicElementInfoImpl(Store.Type.TEMPLATESTORE, TagNames.SCHEMA, -1, firstEntity.getSchemaUid(), -1), firstEntity.getEntityType(), collection);
+                final EntityTypeImportInfoImpl entityTypeImportInfo = new EntityTypeImportInfoImpl(status, new BasicElementInfoImpl(Store.Type.TEMPLATESTORE, schemaNodeTag, -1, firstEntity.getSchemaUid(), -1), firstEntity.getEntityType(), collection);
                 result.add(entityTypeImportInfo);
             }
         }

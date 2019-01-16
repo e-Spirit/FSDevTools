@@ -4,6 +4,8 @@ package com.espirit.moddev.serverrunner;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Singular;
+
+import de.espirit.common.base.Logger.LogLevel;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ConnectionManager;
 import de.espirit.firstspirit.common.MaximumNumberOfSessionsExceededException;
@@ -127,6 +129,8 @@ public class ServerProperties {
 
     private final URL serverUrl;
 
+    private final LogLevel logLevel;
+
     @SuppressWarnings("squid:S00107")
     @Builder
     ServerProperties(final Path serverRoot, final String serverHost, final Integer httpPort, Integer socketPort,
@@ -134,7 +138,7 @@ public class ServerProperties {
                      final Boolean serverInstall,
                      @Singular final List<String> serverOps, final Duration threadWait, final String serverAdminPw,
                      final Integer retryCount, @Singular final List<File> firstSpiritJars,
-                     final Supplier<Optional<InputStream>> licenseFileSupplier) {
+                     final Supplier<Optional<InputStream>> licenseFileSupplier, final LogLevel logLevel) {
         assertThatOrNull(httpPort, "httpPort", allOf(greaterThanOrEqualTo(0), lessThanOrEqualTo(65536)));
         assertThatOrNull(socketPort, "socketPort", allOf(greaterThanOrEqualTo(0), lessThanOrEqualTo(65536)));
         if (threadWait != null && threadWait.isNegative()) {
@@ -173,6 +177,8 @@ public class ServerProperties {
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("either serverHost or httpPort had an illegal format", e);
         }
+
+        this.logLevel = logLevel == null ? LogLevel.DEBUG : logLevel;
     }
 
     private static int port(final int portNumber) {
@@ -294,6 +300,9 @@ public class ServerProperties {
             return Optional.of(connection);
         } catch (IOException | AuthenticationException | MaximumNumberOfSessionsExceededException e) {
             LOGGER.error("Could not connect to the FirstSpirit server.", e);
+            return Optional.empty();
+        } catch (Exception e) {
+            LOGGER.debug("An unexpected exception occurred.", e);
             return Optional.empty();
         }
     }

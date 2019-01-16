@@ -2,7 +2,6 @@ package com.espirit.moddev.cli.results.logging;
 
 import de.espirit.common.util.Pair;
 import de.espirit.firstspirit.access.store.Store;
-import de.espirit.firstspirit.store.access.TagNames;
 import de.espirit.firstspirit.store.access.nexport.ElementExportInfo;
 import de.espirit.firstspirit.store.access.nexport.ExportInfo;
 import de.espirit.firstspirit.store.access.nexport.ExportStatus;
@@ -96,6 +95,7 @@ public class MockedExportInfo implements ExportInfo {
     }
 
     public static Map<Store.Type, List<ElementExportInfo>> createMapWithStoreElements(final ExportStatus status, final boolean pageStore, final boolean mediaStore, final boolean siteStore, final boolean templateStore) {
+
         final Map<Store.Type, List<ElementExportInfo>> storeElements = new TreeMap<>();
         if (pageStore) {
             final Store.Type storeType = Store.Type.PAGESTORE;

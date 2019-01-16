@@ -34,9 +34,6 @@
             <useProjectArtifact>true</useProjectArtifact>
             <unpack>true</unpack>
             <scope>runtime</scope>
-            <excludes>
-                <exclude>de.espirit.firstspirit:fs-access</exclude>
-            </excludes>
         </dependencySet>
     </dependencySets>
 </assembly>

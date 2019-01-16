@@ -7,7 +7,7 @@ my_realpath() {
 }
 
 FS_CLI_DIR="$( cd "$(dirname "$(my_realpath "$0")")/../" ; pwd -P )/"
-$JAVACMD -Xmx512m -Dlog4j.configuration=file:"${FS_CLI_DIR}conf/log4j.properties" -cp "${FS_CLI_DIR}/lib/*" com.espirit.moddev.cli.Cli "$@";
+$JAVACMD -Xmx512m -Dlog4j.configuration=file:"${FS_CLI_DIR}conf/log4j.properties" -cp "${FS_CLI_DIR}/lib/*" com.espirit.moddev.cli.Main "$@";
 RETVAL=$?;
 exit ${RETVAL};
 

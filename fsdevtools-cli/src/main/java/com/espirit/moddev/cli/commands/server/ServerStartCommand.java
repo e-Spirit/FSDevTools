@@ -111,7 +111,7 @@ public class ServerStartCommand extends AbstractServerCommand implements com.esp
         if(started) {
             return new SimpleResult<>("The server has been started.");
         } else {
-            return new SimpleResult(new IllegalStateException("The server couldn't be started or it takes some more time (use --wait-time parameter)."));
+            return new SimpleResult<>(new IllegalStateException("The server couldn't be started or it takes some more time (use --wait-time parameter)."));
         }
     }
 

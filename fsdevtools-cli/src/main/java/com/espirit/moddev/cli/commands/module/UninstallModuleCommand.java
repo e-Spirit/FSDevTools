@@ -29,10 +29,6 @@ public class UninstallModuleCommand extends SimpleCommand<SimpleResult<Boolean>>
     @Required
     private String moduleName;
 
-    @Option(type = OptionType.COMMAND, name = {"-pn", "--projectName"}, description = "Name of the project, where module components should be deleted")
-    @Required
-    private String projectName;
-
     @Override
     public SimpleResult<Boolean> call() {
         try(Connection connection = create()) {
@@ -60,13 +56,5 @@ public class UninstallModuleCommand extends SimpleCommand<SimpleResult<Boolean>>
 
     public void setModuleName(String moduleName) {
         this.moduleName = moduleName;
-    }
-
-    public String getProjectName() {
-        return projectName;
-    }
-
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
     }
 }

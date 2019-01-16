@@ -1,12 +1,12 @@
 package com.espirit.moddev.serverrunner
 
-import java.io.{File, IOException}
-import java.nio.file.{Files, Path}
+import java.io.{ByteArrayInputStream, File}
+import java.nio.file.{Files, Path, Paths}
 import java.time.Duration
 import java.util.concurrent.Executors
 import java.util.function.Supplier
 
-import org.mockito.Mockito.{mock, when}
+import de.espirit.common.base.Logger.LogLevel
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{Matchers, WordSpec}
 import spec.IntegrationTest
@@ -127,6 +127,14 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
         val confFile = props.getServerRoot.resolve("conf").resolve("fs-server.conf")
         assertFileExists(confFile)
         assert(Source.fromFile(confFile.toFile).getLines().contains("SOCKET_PORT=" + props.getSocketPort))
+      }
+      "create 'fs-logging.conf' with the given log level" in {
+        val props = fixture.propsWithVersionBuilder.logLevel(LogLevel.ERROR).build()
+        assert(props.getLogLevel == LogLevel.ERROR)
+        NativeServerRunner.prepareFilesystem(props)
+        val confFile = props.getServerRoot.resolve("conf").resolve("fs-logging.conf")
+        assertFileExists(confFile)
+        assert(Source.fromFile(confFile.toFile).getLines().contains("log4j.rootCategory=ERROR, fs"))
       }
     }
     "we install the server" should {
@@ -250,6 +258,24 @@ class NativeServerRunnerSpec extends WordSpec with Matchers with Eventually {
       assert(runner2.stop())
       assert(!runner1.isRunning)
       assert(!runner2.isRunning)
+    }
+  }
+
+  "NativeServerRunner.updatePropertiesFile" should {
+    "create a new file with the given contents in case it does not exist yet" in {
+      val tempFile = File.createTempFile("foo", "bar")
+      val tempFileName = tempFile.toString
+      tempFile.delete()
+      val path = Paths.get(tempFileName)
+      assert(!path.toFile.exists())
+      NativeServerRunner.updatePropertiesFile(path, new ByteArrayInputStream(new Array[Byte](0)), p => p.setProperty("abc", "def"))
+      assert(Source.fromFile(tempFile).mkString.contains("abc=def"))
+    }
+    "update an existing file" in {
+      val tempFile = File.createTempFile("foo", "bar")
+
+      NativeServerRunner.updatePropertiesFile(tempFile.toPath, new ByteArrayInputStream(new Array[Byte](0)), p => p.setProperty("abc", "def"))
+      assert(Source.fromFile(tempFile).mkString.contains("abc=def"))
     }
   }
 }

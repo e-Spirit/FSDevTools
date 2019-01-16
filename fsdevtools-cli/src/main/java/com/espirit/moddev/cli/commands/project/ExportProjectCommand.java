@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 @Command(name = "export", groupNames = {"project"}, description = "Exports an existing FirstSpirit project from a FirstSpirit Server.")
 @Examples(
-        examples = {"fs-cli -h localhost -p 8000 project export -epn \"Mithras Energy\" -epp \"D:\\my-server-exports\" -fpa"},
+        examples = {"fs-cli -h localhost -port 8000 project export -epn \"Mithras Energy\" -epp \"D:\\my-server-exports\" -fpa"},
         descriptions = {"Imports the project export into a new project that is named newProjectName"})
 public class ExportProjectCommand extends SimpleCommand<SimpleResult<Boolean>> {
     protected static final Logger LOGGER = LoggerFactory.getLogger(ExportProjectCommand.class);

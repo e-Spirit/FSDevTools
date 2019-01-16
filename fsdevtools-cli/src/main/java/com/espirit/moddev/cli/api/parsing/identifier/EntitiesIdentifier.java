@@ -22,7 +22,8 @@
 
 package com.espirit.moddev.cli.api.parsing.identifier;
 
-import com.google.common.base.Strings;
+import com.espirit.moddev.shared.StringUtils;
+
 import de.espirit.firstspirit.access.store.Store;
 import de.espirit.firstspirit.access.store.contentstore.Content2;
 import de.espirit.firstspirit.access.store.contentstore.ContentStoreRoot;
@@ -47,7 +48,7 @@ public class EntitiesIdentifier implements Identifier {
      * @param uid the uid of the Content2 object
      */
     public EntitiesIdentifier(String uid) {
-        if(Strings.isNullOrEmpty(uid)) {
+        if(StringUtils.isNullOrEmpty(uid)) {
             throw new IllegalArgumentException("Don't pass an empty or null uid to content2 identifier!");
         }
         this.uid = uid;

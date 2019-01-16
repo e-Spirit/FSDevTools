@@ -22,8 +22,7 @@
 
 package com.espirit.moddev.projectservice.projectdelete;
 
-import com.google.common.annotations.VisibleForTesting;
-
+import de.espirit.common.VisibleForTesting;
 import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ServicesBroker;

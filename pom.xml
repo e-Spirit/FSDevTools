@@ -36,6 +36,7 @@
         <module>fsdevtools-customcommand-example</module>
         <module>fsdevtools-projectservice</module>
         <module>fsdevtools-moduleservice</module>
+        <module>fsdevtools-sharedutils</module>
     </modules>
     <packaging>pom</packaging>
     <name>FirstSpirit Development Tools</name>
@@ -345,8 +346,13 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.espirit.moddev.fsdevtools</groupId>
+                <artifactId>fsdevtools-sharedutils</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>de.espirit.firstspirit</groupId>
-                <artifactId>fs-access</artifactId>
+                <artifactId>fs-isolated-runtime</artifactId>
                 <version>${firstspirit.version}</version>
                 <scope>provided</scope>
             </dependency>
@@ -360,6 +366,18 @@
                 <groupId>de.espirit.firstspirit</groupId>
                 <artifactId>wrapper</artifactId>
                 <version>${firstspirit.wrapper.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4jVersion}</version>
                 <scope>runtime</scope>
             </dependency>
         </dependencies>
@@ -447,7 +465,7 @@
                 </property>
             </activation>
             <properties>
-                <firstspirit.version>5.2.2109</firstspirit.version>
+                <firstspirit.version>5.2.181206</firstspirit.version>
             </properties>
         </profile>
         <profile>

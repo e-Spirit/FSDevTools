@@ -23,6 +23,7 @@
 package com.espirit.moddev.projectservice.projectexport;
 
 import de.espirit.firstspirit.access.AdminService;
+import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ServerActionHandle;
 import de.espirit.firstspirit.access.admin.ProjectStorage;
 import de.espirit.firstspirit.access.export.ExportFile;
@@ -85,7 +86,7 @@ public class ProjectExporter {
      * @param projectExportParameters ProjectExportParameters containing the projectName to lookup.
      * @return true if the project exists on the server, false otherwise.
      */
-    protected boolean projectExistsOnServer(ServerConnection serverConnection, ProjectExportParameters projectExportParameters) {
+    protected boolean projectExistsOnServer(Connection serverConnection, ProjectExportParameters projectExportParameters) {
         return serverConnection.getProjectByName(projectExportParameters.getProjectName()) != null;
     }
 

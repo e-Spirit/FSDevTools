@@ -1,8 +1,9 @@
 package com.espirit.moddev.moduleinstaller;
 
 import com.espirit.moddev.moduleinstaller.webapp.WebAppIdentifierParser;
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
+import com.espirit.moddev.shared.StringUtils;
+
+import de.espirit.common.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,7 +89,7 @@ public class ModuleInstallationRawParameters {
 
         @VisibleForTesting
         List<WebAppIdentifier> extractWebScopes(String webAppScopes) {
-            if (Strings.isNullOrEmpty(webAppScopes)) {
+            if (StringUtils.isNullOrEmpty(webAppScopes)) {
                 return new ArrayList<>();
             }
             try {
@@ -139,7 +140,7 @@ public class ModuleInstallationRawParameters {
 
         @VisibleForTesting
         Map<String, File> getStringFilesMap(String webAppConfigurations) {
-            if(Strings.isNullOrEmpty(webAppConfigurations)) {
+            if(StringUtils.isNullOrEmpty(webAppConfigurations)) {
                 return new HashMap<>();
             }
             return Arrays.stream(webAppConfigurations.split(","))

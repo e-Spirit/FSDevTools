@@ -68,7 +68,7 @@ public enum UidMapping {
 
 
     private IDProvider.UidType uidType;
-    private Class correspondingType;
+    private Class<?> correspondingType;
     private Store.Type storeType;
 
     UidMapping(Store.Type storeType, IDProvider.UidType uidType, Class correspondingType) {
@@ -98,7 +98,7 @@ public enum UidMapping {
      * Getter for the class, a uid mapping uses for filtering.
      * @return the class of which corresponding elements should be
      */
-    public Class getCorrespondingType() {
+    public Class<?> getCorrespondingType() {
         return correspondingType;
     }
 
