@@ -11,12 +11,12 @@ import com.github.rvesse.airline.annotations.restrictions.Required;
 import de.espirit.firstspirit.access.Connection;
 import groovy.json.JsonSlurper;
 import groovy.lang.GroovyShell;
+import org.apache.groovy.json.internal.LazyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
 
 @Command(name = "run", groupNames = {"groovyscript"}, description = "Runs a given groovyscript.")
@@ -26,7 +26,8 @@ import java.util.Map;
                 "Runs given \"myscript.groovy\" scriptfile.\n" +
                         "\tcontext variables:\n" +
                         "\t\tfsConnection : class de.espirit.firstspirit.access.Connection\n" +
-                        "\t\tscriptParameters : class HashMap<String, Object>"})
+                        "\t\tfsContext : class ScriptContext\n" +
+                        "\t\tscriptParameters : class Map<String, Object>"})
 public class RunGroovyScriptCommand extends SimpleCommand<SimpleResult> {
     protected static final Logger LOGGER = LoggerFactory.getLogger(RunGroovyScriptCommand.class);
 
@@ -35,7 +36,7 @@ public class RunGroovyScriptCommand extends SimpleCommand<SimpleResult> {
     private String scriptURI;
 
     @Option(type = OptionType.COMMAND, name = {"--scriptParameters"}, description = "parameters as json string, e.g.: \n" +
-            "'{\"hostname\":\"test\",\"domainname\":\"example.com\"}'")
+            "{\"hostname\":\"test\",\"domainname\":\"example.com\"}")
     private String scriptParameters;
 
     @Override
@@ -51,21 +52,21 @@ public class RunGroovyScriptCommand extends SimpleCommand<SimpleResult> {
 
             // checking for valid json input for scriptParameters
             if(scriptParameters == null || scriptParameters.length() <= 2) {
-                scriptParameters = "'{\"testParameter\": \"testValue\"}'";
+                scriptParameters = "{\"testParameter\": \"testValue\"}";
             }
             JsonSlurper jsonSlurper = new JsonSlurper();
             Object parsedParametersAsObject = jsonSlurper.parseText(scriptParameters);
-            HashMap<String, Object> parsedParameters = new HashMap<>();
+            LazyMap parsedParameters;
 
             if(!(parsedParametersAsObject instanceof Map)) {
                 return new SimpleResult<>(new IllegalArgumentException("--scriptParameters required to be of type HashMap<String, Object>"));
             }
 
             GroovyShell shell = new GroovyShell(this.getClass().getClassLoader());
-            shell.setVariable("log", LOGGER);
-            shell.setVariable("fsConnection", connection);
+            shell.setVariable("fsConnection", getContext().getConnection());
+            shell.setVariable("fsContext", getContext());
 
-            parsedParameters = (HashMap<String, Object>)parsedParametersAsObject;
+            parsedParameters = (LazyMap)parsedParametersAsObject;
             shell.setVariable("scriptParameters", parsedParameters);
 
             Object result = null;

@@ -24,9 +24,11 @@ package com.espirit.moddev.cli.commands.server;
 
 import java.nio.file.Paths;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+@Ignore("Ignored since it is a abstract class")
 public abstract class AbstractServerCommandTest {
     
     public AbstractServerCommandTest() {

@@ -91,7 +91,7 @@
                 <version>1.4</version>
                 <executions>
                     <!-- enforce byte code compatibility with libraries -->
-                    <execution>
+                    <!--<execution>
                         <id>enforce-bytecode-version</id>
                         <goals>
                             <goal>enforce</goal>
@@ -107,7 +107,7 @@
                             </rules>
                             <fail>true</fail>
                         </configuration>
-                    </execution>
+                    </execution>-->
                     <execution>
                         <id>enforce-no-snapshots</id>
                         <goals>
