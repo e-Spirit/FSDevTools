@@ -42,6 +42,10 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.espirit.moddev.fsdevtools</groupId>
+            <artifactId>fsdevtools-sharedutils</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

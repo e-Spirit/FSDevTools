@@ -1,7 +1,7 @@
 package com.espirit.moddev.moduleinstaller;
 
 import com.espirit.moddev.moduleinstaller.ModuleInstallationRawParameters.ModuleInstallationRawParametersBuilder;
-import de.espirit.firstspirit.module.WebEnvironment.WebScope;
+import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 
 import java.io.File;
 import java.util.*;

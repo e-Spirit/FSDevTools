@@ -1,7 +1,8 @@
 package com.espirit.moddev.moduleinstaller;
 
-import com.espirit.moddev.moduleinstaller.webapp.WebAppIdentifierParser;
+import com.espirit.moddev.shared.webapp.WebAppIdentifierParser;
 import com.espirit.moddev.shared.StringUtils;
+import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 
 import de.espirit.common.VisibleForTesting;
 import org.slf4j.Logger;
@@ -10,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.*;
 
-import static de.espirit.firstspirit.module.WebEnvironment.WebScope.valueOf;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -71,7 +71,7 @@ public class ModuleInstallationRawParameters {
 
         /**
          * This method creates a new instance of @see com.espirit.moddev.moduleinstaller.ModuleInstallationParameters
-         * based on all setted parameters.
+         * based on all set parameters.
          * @return an instance of @see com.espirit.moddev.moduleinstaller.ModuleInstallationParameters
          */
         public ModuleInstallationParameters build() {
@@ -82,23 +82,9 @@ public class ModuleInstallationRawParameters {
 
             File projectAppConfigFile = createAndValidateOptionalProjectAppConfigurationFile(this.projectAppConfigurationFile);
             Map<String, File> configurationFileForServiceName = getAndValidateStringFilesMap(this.serviceConfigurationFile);
-            List<WebAppIdentifier> splittedWebAppScopes = extractWebScopes(webAppScopes);
+            List<WebAppIdentifier> splittedWebAppScopes = new WebAppIdentifierParser().extractWebScopes(webAppScopes);
             Map<WebAppIdentifier, File> webAppConfigurationFilesForWebScopes = getAndValidateWebScopeFileMap(this.webAppConfigurationFiles);
             return new ModuleInstallationParameters(projectName, firstSpiritModule, configurationFileForServiceName, projectAppConfigFile, splittedWebAppScopes, webAppConfigurationFilesForWebScopes);
-        }
-
-        @VisibleForTesting
-        List<WebAppIdentifier> extractWebScopes(String webAppScopes) {
-            if (StringUtils.isNullOrEmpty(webAppScopes)) {
-                return new ArrayList<>();
-            }
-            try {
-                WebAppIdentifierParser webAppIdentifierParser = new WebAppIdentifierParser();
-                return webAppIdentifierParser.parseMultiple(webAppScopes);
-            } catch (IllegalArgumentException e) {
-                LOGGER.error("You passed an illegal argument as webapp scope", e);
-            }
-            return new ArrayList<>();
         }
 
         @VisibleForTesting

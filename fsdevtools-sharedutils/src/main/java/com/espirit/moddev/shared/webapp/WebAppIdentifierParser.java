@@ -1,13 +1,13 @@
-package com.espirit.moddev.moduleinstaller.webapp;
+package com.espirit.moddev.shared.webapp;
 
-import com.espirit.moddev.moduleinstaller.ModuleInstaller;
-import com.espirit.moddev.moduleinstaller.WebAppIdentifier;
 import com.espirit.moddev.shared.StringUtils;
 
-import de.espirit.firstspirit.module.WebEnvironment;
+import de.espirit.common.VisibleForTesting;
 import de.espirit.firstspirit.module.WebEnvironment.WebScope;
+
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -19,14 +19,8 @@ import static java.util.stream.Collectors.toList;
 
 public class WebAppIdentifierParser {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(WebAppIdentifierParser.class);
-
     private Pattern globalWebAppPattern = Pattern.compile("global\\((.*)\\)");
 
-    public List<WebAppIdentifier> parseMultiple(String toParse) {
-        return Arrays.stream(toParse.split(","))
-                .map(it -> parseSingle(it))
-                .collect(toList());
-    }
     public WebAppIdentifier parseSingle(String scopeOrGlobalWebAppId) {
         if(StringUtils.isNullOrEmpty(scopeOrGlobalWebAppId)) {
             throw new IllegalArgumentException("Passed string for scope or global WebAppId is null or empty");
@@ -52,5 +46,24 @@ public class WebAppIdentifierParser {
                 return WebAppIdentifier.forScope(parsedScope);
             }
         }
+    }
+
+    @VisibleForTesting
+    public List<WebAppIdentifier> extractWebScopes(String webAppScopes) {
+        if (StringUtils.isNullOrEmpty(webAppScopes)) {
+            return new ArrayList<>();
+        }
+        try {
+            return parseMultiple(webAppScopes);
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("You passed an illegal argument as webapp scope", e);
+        }
+        return new ArrayList<>();
+    }
+
+    private List<WebAppIdentifier> parseMultiple(String toParse) {
+        return Arrays.stream(toParse.split(","))
+            .map(this::parseSingle)
+            .collect(toList());
     }
 }

@@ -1,4 +1,4 @@
-package com.espirit.moddev.moduleinstaller;
+package com.espirit.moddev.shared.webapp;
 
 import com.espirit.moddev.shared.StringUtils;
 
@@ -31,7 +31,6 @@ public interface WebAppIdentifier {
     }
 
     /**
-     * TODO: Make this private/package private
      * @param scope
      * @param globalWebAppName
      * @return
@@ -49,8 +48,6 @@ public interface WebAppIdentifier {
         } else {
             return new SimpleWebAppIdentifier(scope);
         }
-
-
     }
 
     static boolean isFs5RootWebApp(WebAppId candidate) {

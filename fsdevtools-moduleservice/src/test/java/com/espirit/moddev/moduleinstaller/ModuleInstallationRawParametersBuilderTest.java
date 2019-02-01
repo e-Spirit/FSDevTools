@@ -1,19 +1,14 @@
 package com.espirit.moddev.moduleinstaller;
 
 import com.espirit.moddev.moduleinstaller.ModuleInstallationRawParameters.ModuleInstallationRawParametersBuilder;
+import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 
-import de.espirit.firstspirit.module.WebEnvironment;
-
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
 
-import static de.espirit.firstspirit.module.WebEnvironment.WebScope.PREVIEW;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
@@ -50,12 +45,5 @@ public class ModuleInstallationRawParametersBuilderTest {
         Map<String, File> stringFilesMap = builder.getStringFilesMap("staging=temp/myConfig.ini,preview=temp/myConfig2.ini");
         assertThat(stringFilesMap.get("staging"), is(new File("temp/myConfig.ini")));
         assertThat(stringFilesMap.get("preview"), is(new File("temp/myConfig2.ini")));
-    }
-
-    @Test
-    public void extractWebScopes() throws Exception {
-        String testWebAppScopes ="preview,staging";
-        List<WebAppIdentifier> extractedScopes = builder.extractWebScopes(testWebAppScopes);
-        assertThat(extractedScopes, contains(WebAppIdentifier.PREVIEW, WebAppIdentifier.STAGING));
     }
 }

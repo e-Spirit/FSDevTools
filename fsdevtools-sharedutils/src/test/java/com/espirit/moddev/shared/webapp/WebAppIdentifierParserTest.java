@@ -1,12 +1,17 @@
-package com.espirit.moddev.moduleinstaller.webapp;
+package com.espirit.moddev.shared.webapp;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.espirit.moddev.moduleinstaller.WebAppIdentifier.forGlobalWebApp;
-import static com.espirit.moddev.moduleinstaller.WebAppIdentifier.forScope;
+
+import java.util.List;
+
+import static com.espirit.moddev.shared.webapp.WebAppIdentifier.forGlobalWebApp;
+import static com.espirit.moddev.shared.webapp.WebAppIdentifier.forScope;
 import static de.espirit.firstspirit.module.WebEnvironment.WebScope.PREVIEW;
+import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class WebAppIdentifierParserTest {
 
@@ -35,4 +40,10 @@ public class WebAppIdentifierParserTest {
         parser.parseSingle(null);
     }
 
+    @Test
+    public void testExtractWebScopes() throws Exception {
+        String testWebAppScopes ="preview,staging";
+        List<WebAppIdentifier> extractedScopes = parser.extractWebScopes(testWebAppScopes);
+        assertThat(extractedScopes, contains(WebAppIdentifier.PREVIEW, WebAppIdentifier.STAGING));
+    }
 }

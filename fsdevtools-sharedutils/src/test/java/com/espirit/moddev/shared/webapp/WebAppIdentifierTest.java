@@ -1,12 +1,11 @@
-package com.espirit.moddev.moduleinstaller.webapp;
+package com.espirit.moddev.shared.webapp;
 
-import com.espirit.moddev.moduleinstaller.WebAppIdentifier;
-import com.espirit.moddev.moduleinstaller.WebAppIdentifier.GlobalWebAppIdentifier;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-import static com.espirit.moddev.moduleinstaller.WebAppIdentifier.forGlobalWebApp;
-import static com.espirit.moddev.moduleinstaller.WebAppIdentifier.forScope;
+import static com.espirit.moddev.shared.webapp.WebAppIdentifier.forGlobalWebApp;
+import static com.espirit.moddev.shared.webapp.WebAppIdentifier.forScope;
 import static de.espirit.firstspirit.module.WebEnvironment.WebScope.*;
 
 public class WebAppIdentifierTest {
@@ -35,9 +34,9 @@ public class WebAppIdentifierTest {
     @Test
     public void testFactoryWebAppNameForGlobalWebAppIdentifier() {
         WebAppIdentifier parsed = forGlobalWebApp("fs5root");
-        Assert.assertTrue(parsed instanceof GlobalWebAppIdentifier);
+        Assert.assertTrue(parsed instanceof WebAppIdentifier.GlobalWebAppIdentifier);
         Assert.assertEquals(GLOBAL, parsed.getScope());
-        Assert.assertEquals("fs5root", ((GlobalWebAppIdentifier) parsed).getGlobalWebAppId());
+        Assert.assertEquals("fs5root", ((WebAppIdentifier.GlobalWebAppIdentifier) parsed).getGlobalWebAppId());
     }
 
     @Test
