@@ -5,7 +5,7 @@ package com.espirit.moddev.cli;
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2016 e-Spirit AG
+ * Copyright (C) 2019 e-Spirit AG
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"),
  * you may not use this file except in compliance with the License.
@@ -24,15 +24,9 @@ package com.espirit.moddev.cli;
 
 import com.espirit.moddev.cli.api.FsConnectionMode;
 import com.espirit.moddev.cli.api.configuration.Config;
-import com.espirit.moddev.fstesttools.rules.logging.InitLog4jLoggingRule;
-import com.espirit.moddev.fstesttools.rules.logging.LogTestMethodNameRule;
-
-import de.espirit.common.Null;
 import de.espirit.firstspirit.access.Connection;
 
 import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -46,12 +40,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(Theories.class)
 public class ConnectionBuilderTest {
-
-    @ClassRule
-    public static InitLog4jLoggingRule initLog4J = new InitLog4jLoggingRule();
-
-    @Rule
-    public LogTestMethodNameRule logTestMethodNames = new LogTestMethodNameRule();
 
     @DataPoints
     public static FsConnectionMode[] testCases = FsConnectionMode.values();
