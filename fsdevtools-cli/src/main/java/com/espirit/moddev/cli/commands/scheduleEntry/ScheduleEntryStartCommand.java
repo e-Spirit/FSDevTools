@@ -43,8 +43,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
- * This Command can start a FirstSpirit server. Uses ServerRunner implementations to achieve this.
- * It makes use of its command arguments to decide which server to start.
+ * This Command can start a project schedule entry.
  *
  * @author e-Spirit AG
  */
@@ -78,25 +77,7 @@ public class ScheduleEntryStartCommand extends SimpleCommand<SimpleResult<Boolea
                 throw new IllegalStateException("Connection is null or not connected!");
             }
 
-            ServicesBroker servicesBroker = connection.getBroker().requireSpecialist(ServicesBroker.TYPE);
-            AdminService adminService = servicesBroker.getService(AdminService.class);
-            Project project = adminService.getProjectStorage().getProject(super.getProject());
-            ScheduleEntry scheduleEntry = adminService.getScheduleStorage().getScheduleEntry(project, getScheduleEntryName());
-
-            if (scheduleEntry == null) {
-                LOGGER.error("Can't find schedule entry. Nothing to execute");
-                return new SimpleResult<>(false);
-            }
-
-            LOGGER.info(String.format("Found schedule %s on project %s", getScheduleEntryName(), super.getProject()));
-            LOGGER.info("Execute schedule");
-            ScheduleEntryControl scheduleEntryControl = scheduleEntry.execute();
-            if (isWaitForFinish()) {
-                LOGGER.info("Wait for the task to finish.");
-                scheduleEntryControl.awaitTermination();
-            }
-
-            return new SimpleResult<>(true);
+            return executeScheduleEntry(connection);
         } catch (IOException | AuthenticationException | MaximumNumberOfSessionsExceededException | IllegalArgumentException | IllegalStateException e) {
             LOGGER.error("Can't connect to the FirstSpirit Server", e);
             return new SimpleResult<>(e);
@@ -104,6 +85,28 @@ public class ScheduleEntryStartCommand extends SimpleCommand<SimpleResult<Boolea
             LOGGER.error("Can't execute schedule entry", e);
             return new SimpleResult<>(e);
         }
+    }
+
+    private SimpleResult<Boolean> executeScheduleEntry(Connection connection) throws ScheduleEntryRunningException {
+        ServicesBroker servicesBroker = connection.getBroker().requireSpecialist(ServicesBroker.TYPE);
+        AdminService adminService = servicesBroker.getService(AdminService.class);
+        Project project = adminService.getProjectStorage().getProject(super.getProject());
+        ScheduleEntry scheduleEntry = adminService.getScheduleStorage().getScheduleEntry(project, getScheduleEntryName());
+
+        if (scheduleEntry == null) {
+            LOGGER.error("Can't find schedule entry. Nothing to execute");
+            return new SimpleResult<>(false);
+        }
+
+        LOGGER.info(String.format("Found schedule %s on project %s", getScheduleEntryName(), super.getProject()));
+        LOGGER.info("Execute schedule");
+        ScheduleEntryControl scheduleEntryControl = scheduleEntry.execute();
+        if (isWaitForFinish()) {
+            LOGGER.info("Wait for the task to finish.");
+            scheduleEntryControl.awaitTermination();
+        }
+
+        return new SimpleResult<>(true);
     }
 
     public boolean isWaitForFinish() {

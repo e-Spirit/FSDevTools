@@ -41,8 +41,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- *  This Command can start a FirstSpirit server. Uses ServerRunner implementations to achieve this.
- *  It makes use of its command arguments to decide which server to start.
+ *  This Command can list project schedule entries.
  *
  * @author e-Spirit AG
  */
