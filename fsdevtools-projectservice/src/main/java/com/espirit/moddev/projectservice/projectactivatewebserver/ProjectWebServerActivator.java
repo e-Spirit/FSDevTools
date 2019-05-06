@@ -109,6 +109,7 @@ public class ProjectWebServerActivator {
         try {
             setActiveWebServer(activeServerName, project, scopeName);
         } catch (ExecutionException e) {
+            LOGGER.warn("Migration web server failed, recovering...", e);
             recoverDeploymentForScope(scopeName, oldActiveServerName, project, moduleAdminAgent, scope);
             return false;
         }

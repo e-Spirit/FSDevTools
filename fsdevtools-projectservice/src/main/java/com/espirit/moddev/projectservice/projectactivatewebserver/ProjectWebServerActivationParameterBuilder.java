@@ -24,8 +24,7 @@ package com.espirit.moddev.projectservice.projectactivatewebserver;
 
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 
-import de.espirit.firstspirit.module.WebEnvironment;
-
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -60,7 +59,7 @@ public class ProjectWebServerActivationParameterBuilder {
      * @return the current builder
      */
     public ProjectWebServerActivationParameterBuilder forScopes(List<WebAppIdentifier> scopes) {
-        this.scopes = scopes;
+        this.scopes = scopes == null ? null : new ArrayList<>(scopes);
         return this;
     }
 

@@ -24,10 +24,13 @@ package com.espirit.moddev.projectservice.projectactivatewebserver;
 
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 
-import de.espirit.firstspirit.module.WebEnvironment;
-
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+/**
+ * Class that represents all parameters for the "activatewebserver" command.
+ */
 public class ProjectWebServerActivationParameter {
 
     private final String projectName;
@@ -46,7 +49,7 @@ public class ProjectWebServerActivationParameter {
             throw new IllegalArgumentException("Server name should not be null or empty");
         }
         this.projectName = projectName;
-        this.scopes = scopes;
+        this.scopes = new ArrayList<>(scopes);
         this.serverName = serverName;
         this.forceActivation = forceActivation;
     }
@@ -56,7 +59,7 @@ public class ProjectWebServerActivationParameter {
     }
 
     public List<WebAppIdentifier> getScopes() {
-        return scopes;
+        return Collections.unmodifiableList(scopes);
     }
 
     public String getServerName() {
