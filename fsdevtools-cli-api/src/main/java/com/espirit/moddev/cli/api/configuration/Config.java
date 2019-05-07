@@ -50,6 +50,20 @@ public interface Config {
     Integer getPort();
 
     /**
+     * Get the Proxy host.
+     *
+     * @return the Proxy host
+     */
+    String getProxyHost();
+
+    /**
+     * Get the Proxy server port.
+     *
+     * @return the Proxy server port
+     */
+    Integer getProxyPort();
+
+    /**
      * Get the connection mode used to connect to the FirstSpirit server.
      *
      * @return a {@link com.espirit.moddev.cli.api.FsConnectionMode} object that specifies the connection mode used to connect to the FirstSpirit server

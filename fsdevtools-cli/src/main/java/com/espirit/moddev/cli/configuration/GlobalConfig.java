@@ -72,6 +72,12 @@ public class GlobalConfig implements Config {
     @Option(type = OptionType.GLOBAL, name = {"-port"}, description = "FirstSpirit host's port. Default is 8000.")
     private Integer port;
 
+    @Option(type = OptionType.GLOBAL, name = {"-ph", "--proxyhost"}, description = "Proxy host.")
+    private String proxyHost;
+
+    @Option(type = OptionType.GLOBAL, name = {"-proxyport"}, description = "Proxy host's port. Default is 80.")
+    private Integer proxyPort;
+
     @Option(type = OptionType.GLOBAL, name = {"-u", "--user"}, description = "FirstSpirit user. Default is Admin.")
     private String user;
 
@@ -124,6 +130,30 @@ public class GlobalConfig implements Config {
      */
     public Environment getEnvironment() {
         return environment;
+    }
+
+    @Override
+    public String getProxyHost() {
+        if(proxyHost == null || proxyHost.isEmpty()) {
+            boolean environmentContainsHost = getEnvironment().containsKey(CliConstants.KEY_FS_PROXYHOST.value());
+            if(environmentContainsHost) {
+                return getEnvironment().get(CliConstants.KEY_FS_PROXYHOST.value()).trim();
+            }
+            return "";
+        }
+        return proxyHost;
+    }
+
+    @Override
+    public Integer getProxyPort() {
+        if(proxyPort == null) {
+            boolean environmentContainsPort = getEnvironment().containsKey(CliConstants.KEY_FS_PROXYPORT.value());
+            if(environmentContainsPort) {
+                return Integer.valueOf(getEnvironment().get(CliConstants.KEY_FS_PROXYPORT.value()).trim());
+            }
+            return 80;
+        }
+        return proxyPort;
     }
 
     @Override

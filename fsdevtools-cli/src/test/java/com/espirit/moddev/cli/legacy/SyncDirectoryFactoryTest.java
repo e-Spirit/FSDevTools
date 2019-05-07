@@ -65,6 +65,16 @@ public class SyncDirectoryFactoryTest {
             }
 
             @Override
+            public String getProxyHost() {
+                return "";
+            }
+
+            @Override
+            public Integer getProxyPort() {
+                return 80;
+            }
+
+            @Override
             public FsConnectionMode getConnectionMode() {
                 return null;
             }

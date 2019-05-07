@@ -148,6 +148,7 @@ public final class Cli {
         final Object[] argsVersion =
             {CliConstants.FS_CLI, buildProperties.getProperty("fs.cli.build.version"), gitProperties.getProperty("git.hash")};
         LOGGER.info("{} version {} / git hash {}", argsVersion);
+        LOGGER.info("Experimental version with Proxy Support - bridgingIT for Bosch");
         LOGGER.info("Build for FirstSpirit version {}", new Object[]{buildProperties.getProperty("fs.cli.fs.version")});
         String jarFilePath = System.getenv("jarfile") != null ? System.getenv("jarfile") : System.getenv("JARFILE");
         if (jarFilePath != null) {
