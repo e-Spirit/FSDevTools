@@ -75,7 +75,7 @@ public class GlobalConfig implements Config {
     @Option(type = OptionType.GLOBAL, name = {"-ph", "--proxyhost"}, description = "Proxy host.")
     private String proxyHost;
 
-    @Option(type = OptionType.GLOBAL, name = {"-proxyport"}, description = "Proxy host's port. Default is 80.")
+    @Option(type = OptionType.GLOBAL, name = {"-proxyport"}, description = "Proxy host's port. Default is 8080.")
     private Integer proxyPort;
 
     @Option(type = OptionType.GLOBAL, name = {"-u", "--user"}, description = "FirstSpirit user. Default is Admin.")
@@ -151,7 +151,7 @@ public class GlobalConfig implements Config {
             if(environmentContainsPort) {
                 return Integer.valueOf(getEnvironment().get(CliConstants.KEY_FS_PROXYPORT.value()).trim());
             }
-            return 80;
+            return 8080;
         }
         return proxyPort;
     }
