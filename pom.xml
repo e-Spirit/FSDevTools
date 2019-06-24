@@ -459,7 +459,7 @@
                 </property>
             </activation>
             <properties>
-                <firstspirit.version>5.2.181206</firstspirit.version>
+                <firstspirit.version>5.2.190710</firstspirit.version>
             </properties>
         </profile>
         <profile>

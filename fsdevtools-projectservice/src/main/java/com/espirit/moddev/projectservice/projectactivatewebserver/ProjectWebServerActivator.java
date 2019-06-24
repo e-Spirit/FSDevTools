@@ -22,9 +22,9 @@
 
 package com.espirit.moddev.projectservice.projectactivatewebserver;
 
+import com.espirit.moddev.shared.annotation.VisibleForTesting;
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 
-import de.espirit.common.VisibleForTesting;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.access.script.ExecutionException;
@@ -37,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
-import java.util.function.Function;
 
 /**
  * Class that can activate a web server for given FirstSpirit project.

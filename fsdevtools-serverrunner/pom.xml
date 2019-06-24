@@ -39,6 +39,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.espirit.moddev.fsdevtools</groupId>
+            <artifactId>fsdevtools-sharedutils</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.24</version>

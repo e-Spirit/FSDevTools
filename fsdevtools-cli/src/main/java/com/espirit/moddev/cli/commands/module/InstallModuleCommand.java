@@ -25,13 +25,15 @@ package com.espirit.moddev.cli.commands.module;
 import com.espirit.moddev.cli.ConnectionBuilder;
 import com.espirit.moddev.cli.commands.SimpleCommand;
 import com.espirit.moddev.cli.results.InstallModuleResult;
+import com.espirit.moddev.module.common.ModuleInstallationConfiguration;
 import com.espirit.moddev.moduleinstaller.ModuleInstallationParameters;
-import com.espirit.moddev.moduleinstaller.ModuleInstallationRawParameters;
 import com.espirit.moddev.moduleinstaller.ModuleInstaller;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;
 import com.github.rvesse.airline.annotations.help.Examples;
+import com.github.rvesse.airline.annotations.restrictions.Path;
+import com.github.rvesse.airline.annotations.restrictions.PathKind;
 import com.github.rvesse.airline.annotations.restrictions.Required;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
@@ -41,6 +43,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static com.espirit.moddev.shared.StringUtils.isNullOrEmpty;
@@ -57,17 +61,18 @@ public class InstallModuleCommand extends SimpleCommand<InstallModuleResult> {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(InstallModuleCommand.class);
 
-    @Option(type = OptionType.COMMAND, name = {"-fsm", "--fsm"}, description = "Path to the module fsm file file that should be installed")
+    @Option(type = OptionType.COMMAND, name = {"-fsm", "--fsm"}, description = "Path to the module fsm file that should be installed")
+    @Path(mustExist = true, kind = PathKind.FILE, writable = false)
     @Required
-    private String fsm;
+    private String _fsm;
 
     @Option(type = OptionType.COMMAND, name = {"-mpn", "--moduleProjectName"}, description = "Name of the FirstSpirit target project where the application's components should be installed to. Optional.")
-    private String projectName;
+    private String _projectName;
 
     @Option(type = OptionType.COMMAND, name = {"-scf", "--serviceConfigurationFiles"}, description = "Define a map-like configuration file for services of the given module - comma-separated value pairs with service name and configuration path file.")
-    private String serviceConfigurationsFiles;
+    private String _serviceConfigurationsFiles;
     @Option(type = OptionType.COMMAND, name = {"-pacf", "--projectAppConfigurationFile"}, description = "Configuration file path for project app")
-    private String projectAppConfigurationFile;
+    private String _projectAppConfigurationFile;
     @Option(type = OptionType.COMMAND, name = {"-was", "--webAppScopes"}, description = "Define a map-like configuration for webapp scopes of the given module - comma-separated values from the FirstSpirit WebScope enum."
                                                                                         + " The FS WebScope enum contains the following keys:\n"
                                                                                         + "'GLOBAL'\n"
@@ -76,45 +81,61 @@ public class InstallModuleCommand extends SimpleCommand<InstallModuleResult> {
                                                                                         + "'STAGING'\n"
                                                                                         + "'WEBEDIT'\n"
                                                                                         + " For global webapps, use 'global(WebAppId)'.")
-    private String webAppScopes;
+    private String _webAppScopes;
     @Option(type = OptionType.COMMAND, name = {"-wacf", "--webAppConfigurationFiles"}, description = "Define a map-like configuration for the webapps of the given module - with comma-separated key-values.")
-    private String webAppConfigurationFiles;
+    private String _webAppConfigurationFiles;
+    @Option(type = OptionType.COMMAND, name = {"-dwa", "--deployWebApps"}, description = "Define whether all related webapps of the module should be immediately deployed after the installation or not [true = deploy (default) | false = no deploy]")
+    private String _deploy = String.valueOf(true);
 
     @Override
     public InstallModuleResult call() {
-        try(Connection connection = create()) {
+        try (Connection connection = create()) {
             connection.connect();
             return installModule(connection);
         } catch (IOException | AuthenticationException | MaximumNumberOfSessionsExceededException | IllegalArgumentException e) {
-            return new InstallModuleResult(e);
+            return new InstallModuleResult(_fsm, e);
         }
     }
 
     private InstallModuleResult installModule(Connection connection) {
         String projectName = retrieveProjectNameOrFallback();
 
-        final ModuleInstallationParameters parameters = ModuleInstallationRawParameters.builder()
-            .fsm(fsm)
-            .projectAppConfigurationFile(projectAppConfigurationFile)
-            .projectName(projectName)
-            .webAppConfigurationFiles(webAppConfigurationFiles)
-            .serviceConfigurationFile(serviceConfigurationsFiles)
-            .webAppScopes(webAppScopes)
-            .build();
+        final ModuleInstallationConfiguration configuration = new ModuleInstallationConfiguration();
+        configuration.setFsm(_fsm);
+        configuration.setModuleProjectName(projectName);
+        configuration.setWebAppScopes(splitAndTrim(_webAppScopes));
+        configuration.setDeploy(_deploy);
+        configuration.setProjectAppConfigurationFile(_projectAppConfigurationFile);
+        configuration.setServiceConfigurationFiles(splitAndTrim(_serviceConfigurationsFiles));
+        configuration.setWebAppConfigurationFiles(splitAndTrim(_webAppConfigurationFiles));
+        configuration.verify(connection);
+        final ModuleInstallationParameters parameters = ModuleInstallationParameters.forConfiguration(configuration);
 
-        Optional<ModuleAdminAgent.ModuleResult> result = new ModuleInstaller().install(connection, parameters);
+        Optional<ModuleAdminAgent.ModuleResult> result = new ModuleInstaller(connection).install(parameters, parameters.getDeploy());
         return result
                 .map(moduleResult -> new InstallModuleResult(moduleResult.getDescriptor().getModuleName()))
-                .orElseGet(() -> new InstallModuleResult(new IllegalStateException("Cannot get installation result for module " + fsm)));
+                .orElseGet(() -> new InstallModuleResult(_fsm, new IllegalStateException("Cannot get installation result for module " + _fsm)));
+    }
+
+    private List<String> splitAndTrim(final String text) {
+        final List<String> result = new ArrayList<>();
+        if (text == null) {
+            return result;
+        }
+        final String[] splittedText = text.split(",");
+        for (String part : splittedText) {
+            result.add(part.trim());
+        }
+        return result;
     }
 
     private String retrieveProjectNameOrFallback() {
-        String projectName = this.projectName;
-        if(isNullOrEmpty(projectName)) {
+        String projectName = _projectName;
+        if (isNullOrEmpty(projectName)) {
             LOGGER.warn("No --moduleProjectName parameter given for module installation.");
-            if(!isNullOrEmpty(getProject())) {
+            if (!isNullOrEmpty(getProject())) {
                 projectName = getProject();
-                LOGGER.warn("Using global --project parameter of value \"" + getProject() +  "\"");
+                LOGGER.warn("Using global --project parameter of value \"" + getProject() + "\"");
             } else {
                 LOGGER.debug("No project name given as --moduleProjectName or --project parameter. " +
                         "Going on without project, so module installation with project specific components could fail.");
@@ -122,7 +143,6 @@ public class InstallModuleCommand extends SimpleCommand<InstallModuleResult> {
         }
         return projectName;
     }
-
 
     protected Connection create() {
         return ConnectionBuilder.with(this).build();
@@ -133,51 +153,4 @@ public class InstallModuleCommand extends SimpleCommand<InstallModuleResult> {
         return false;
     }
 
-    public String getFsm() {
-        return fsm;
-    }
-
-    public void setFsm(String fsm) {
-        this.fsm = fsm;
-    }
-
-    public String getProjectName() {
-        return projectName;
-    }
-
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
-
-    public String getServiceConfigurationsFiles() {
-        return serviceConfigurationsFiles;
-    }
-
-    public void setServiceConfigurationsFiles(String serviceConfigurationsFiles) {
-        this.serviceConfigurationsFiles = serviceConfigurationsFiles;
-    }
-
-    public String getProjectAppConfigurationFile() {
-        return projectAppConfigurationFile;
-    }
-
-    public void setProjectAppConfigurationFile(String projectAppConfigurationFile) {
-        this.projectAppConfigurationFile = projectAppConfigurationFile;
-    }
-
-    public String getWebAppScopes() {
-        return webAppScopes;
-    }
-
-    public void setWebAppScopes(String webAppScopes) {
-        this.webAppScopes = webAppScopes;
-    }
-
-    public String getWebAppConfigurationFiles() {
-        return webAppConfigurationFiles;
-    }
-
-    public void setWebAppConfigurationFiles(String webAppConfigurationFiles) {
-        this.webAppConfigurationFiles = webAppConfigurationFiles;
-    }
 }

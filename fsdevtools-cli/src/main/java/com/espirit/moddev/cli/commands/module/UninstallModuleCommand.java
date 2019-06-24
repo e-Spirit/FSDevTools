@@ -27,19 +27,18 @@ public class UninstallModuleCommand extends SimpleCommand<SimpleResult<Boolean>>
 
     @Option(type = OptionType.COMMAND, name = {"-m", "--moduleName"}, description = "Name of the module that should be deleted")
     @Required
-    private String moduleName;
+    private String _moduleName;
 
     @Override
     public SimpleResult<Boolean> call() {
         try(Connection connection = create()) {
             connection.connect();
-            new ModuleUninstaller().uninstall(connection, moduleName);
+            new ModuleUninstaller().uninstall(connection, _moduleName);
             return new SimpleResult<>(true);
         } catch (IOException | AuthenticationException | MaximumNumberOfSessionsExceededException e) {
             return new SimpleResult<>(e);
         }
     }
-
 
     protected Connection create() {
         return ConnectionBuilder.with(this).build();
@@ -50,11 +49,4 @@ public class UninstallModuleCommand extends SimpleCommand<SimpleResult<Boolean>>
         return false;
     }
 
-    public String getModuleName() {
-        return moduleName;
-    }
-
-    public void setModuleName(String moduleName) {
-        this.moduleName = moduleName;
-    }
 }

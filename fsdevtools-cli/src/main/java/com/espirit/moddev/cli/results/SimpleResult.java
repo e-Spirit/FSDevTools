@@ -68,10 +68,21 @@ public class SimpleResult<CUSTOM_RESULT_TYPE> implements Result<CUSTOM_RESULT_TY
 
     /**
      * Creates a new error result using the given exception.
+     *
      * @param exception Exception produced by the command
      */
     public SimpleResult(final Exception exception) {
-        this.result = null;
+        this(null, exception);
+    }
+
+    /**
+     * Creates a new result using the given parameters.
+     *
+     * @param result    Result produced by the command
+     * @param exception Exception produced by the command
+     */
+    protected SimpleResult(final CUSTOM_RESULT_TYPE result, final Exception exception) {
+        this.result = result;
         this.exception = exception;
     }
 

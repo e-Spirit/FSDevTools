@@ -33,8 +33,8 @@ public class InstallModuleResult extends SimpleResult<String> {
         super(result);
     }
 
-    public InstallModuleResult(Exception exception) {
-        super(exception);
+    public InstallModuleResult(final String pathToFsm, Exception exception) {
+        super(pathToFsm, exception);
     }
 
     public String getModuleName() {

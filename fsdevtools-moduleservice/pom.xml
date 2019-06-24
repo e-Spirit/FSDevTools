@@ -15,6 +15,7 @@
         <dependency>
             <groupId>de.espirit.firstspirit</groupId>
             <artifactId>fs-isolated-runtime</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.espirit.moddev.fsdevtools</groupId>
@@ -23,6 +24,21 @@
         <dependency>
             <groupId>com.espirit.moddev.fsdevtools</groupId>
             <artifactId>fsdevtools-sharedutils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.9.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.9.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.8</version>
         </dependency>
     </dependencies>
 

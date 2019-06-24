@@ -1,10 +1,8 @@
 package com.espirit.moddev.shared.webapp;
 
 import com.espirit.moddev.shared.StringUtils;
-
-import de.espirit.common.VisibleForTesting;
+import com.espirit.moddev.shared.annotation.VisibleForTesting;
 import de.espirit.firstspirit.module.WebEnvironment.WebScope;
-
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -22,12 +20,16 @@ public class WebAppIdentifierParser {
     private Pattern globalWebAppPattern = Pattern.compile("global\\((.*)\\)");
 
     public WebAppIdentifier parseSingle(String scopeOrGlobalWebAppId) {
-        if(StringUtils.isNullOrEmpty(scopeOrGlobalWebAppId)) {
+        return parseSingle(scopeOrGlobalWebAppId, true);
+    }
+
+    public WebAppIdentifier parseSingle(String scopeOrGlobalWebAppId, final boolean logError) {
+        if (StringUtils.isNullOrEmpty(scopeOrGlobalWebAppId)) {
             throw new IllegalArgumentException("Passed string for scope or global WebAppId is null or empty");
         }
         Matcher globalMatcher = globalWebAppPattern.matcher(scopeOrGlobalWebAppId);
 
-        if(globalMatcher.matches()) {
+        if (globalMatcher.matches()) {
             String globalWebAppId = globalMatcher.group(1);
             return WebAppIdentifier.forGlobalWebApp(globalWebAppId);
         } else {
@@ -36,11 +38,13 @@ public class WebAppIdentifierParser {
             try {
                 parsedScope = WebScope.valueOf(upperCaseScope);
             } catch (IllegalArgumentException e) {
-                LOGGER.error("Can't find a WebScope for " + upperCaseScope + ". " +
-                        "Take a look at the WebScope enum, or pass global(webAppId) to select a global WebApp.", e);
+                if (logError) {
+                    LOGGER.error("Can't find a WebScope for " + upperCaseScope + ". " +
+                            "Take a look at the WebScope enum, or pass global(webAppId) to select a global WebApp.", e);
+                }
                 throw e;
             }
-            if(GLOBAL.equals(parsedScope)) {
+            if (GLOBAL.equals(parsedScope)) {
                 throw new IllegalArgumentException("Global WebApp scope has to be passed in the form of 'global(webAppId)'!");
             } else {
                 return WebAppIdentifier.forScope(parsedScope);
@@ -63,7 +67,7 @@ public class WebAppIdentifierParser {
 
     private List<WebAppIdentifier> parseMultiple(String toParse) {
         return Arrays.stream(toParse.split(","))
-            .map(this::parseSingle)
-            .collect(toList());
+                .map(this::parseSingle)
+                .collect(toList());
     }
 }
