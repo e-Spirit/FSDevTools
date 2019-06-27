@@ -16,16 +16,37 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.Duration;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -41,6 +62,7 @@ public class NativeServerRunner implements ServerRunner {
 
     private static final String PROBLEM_READING = "Problem reading data from FirstSpirit server process";
     private static final Logger LOGGER = LoggerFactory.getLogger(NativeServerRunner.class);
+    private static final Duration CONNECTION_RETRY_WAIT = Duration.ofMillis(500);
 
     protected ServerProperties serverProperties;
     /**
@@ -323,13 +345,16 @@ public class NativeServerRunner implements ServerRunner {
         try {
             startFirstSpiritServerIfNotDoneYet();
 
-            ApiConnectionStatus apiConnectionStatus = waitForSuccessfulApiConnection(serverProperties.getRetryCount());
+            final Duration timeout = serverProperties.getTimeout();
+            final long started = System.currentTimeMillis();
+            final boolean apiConnectionSuccessful = waitForSuccessfulApiConnection(timeout);
+            final Duration remainingTimeout = timeout.minusMillis(System.currentTimeMillis() - started);
 
             boolean serverRunLevelIsStarted = false;
-            if(apiConnectionStatus.apiConnectionSuccessful) {
-                serverRunLevelIsStarted = connectAndWaitForRunLevelStarted(serverProperties.getRetryCount());
+            if (apiConnectionSuccessful) {
+                serverRunLevelIsStarted = connectAndWaitForRunLevelStarted(remainingTimeout);
             }
-            serverStatus = new ServerStatus(apiConnectionStatus.apiConnectionSuccessful, serverRunLevelIsStarted);
+            serverStatus = new ServerStatus(apiConnectionSuccessful, serverRunLevelIsStarted);
         } catch (final IOException ioe) {
 //            This information is not useful for most cases, so we shouldn't log this in error.
             log.debug(PROBLEM_READING, ioe);
@@ -337,20 +362,21 @@ public class NativeServerRunner implements ServerRunner {
         return serverStatus;
     }
 
-    private boolean connectAndWaitForRunLevelStarted(int remainingRetryCount) {
+    private boolean connectAndWaitForRunLevelStarted(final Duration timeout) {
         Optional<Connection> optionalConnection = serverProperties.tryOpenAdminConnection();
-        boolean runLevelIsStarted = optionalConnection.map((Connection connectionParam) -> {
+        return optionalConnection.map((Connection connectionParam) -> {
             try (Connection connection = connectionParam) {
-                RunLevelAgent runLevelAgent = connection.getBroker().requireSpecialist(RunLevelAgent.TYPE);
-                return waitForRunLevelStarted(runLevelAgent, remainingRetryCount); //retry count means we try one more time
+                final RunLevelAgent runLevelAgent = connection.getBroker().requireSpecialist(RunLevelAgent.TYPE);
+                runLevelAgent.waitForRunLevel(RunLevel.STARTED, timeout);
+                return true;
+            } catch (TimeoutException e) {
+                log.error("FirstSpirit server could not be started within configured timeout of " + serverProperties.getTimeout() + ".", e);
             } catch (IOException e) {
 //                This information is not useful for most cases, so we shouldn't log this in error.
                 log.debug("Not able to close connection properly...", e);
-                return false;
             }
+            return false;
         }).orElse(false);
-
-        return runLevelIsStarted;
     }
 
     private void logOptionalErrorState(ServerStatus serverStatus) {
@@ -362,30 +388,13 @@ public class NativeServerRunner implements ServerRunner {
         }
     }
 
-    private boolean waitForRunLevelStarted(RunLevelAgent runLevelAgent, int startRetryCount) {
-        AtomicInteger remainingRetryCount = new AtomicInteger(startRetryCount);
+    private boolean waitForSuccessfulApiConnection(final Duration timeout) {
+        final int retryCount = (int) (timeout.toMillis() / CONNECTION_RETRY_WAIT.toMillis());
 
-        boolean runLevelIsStarted = waitForCondition(() -> {
-            log.info("Trying to retrieve run level status from FirstSpirit server...");
-            RunLevel currentRunLevel = runLevelAgent.getRunLevel();
-            log.info("Current run level status is " + currentRunLevel.name());
-
-            return currentRunLevel == RunLevel.STARTED;
-        }, serverProperties.getRetryWait(), remainingRetryCount.getAndIncrement());
-
-        return runLevelIsStarted;
-    }
-
-    private ApiConnectionStatus waitForSuccessfulApiConnection(int startRetryCount) {
-        AtomicInteger remainingRetryCount = new AtomicInteger(startRetryCount);
-
-        boolean apiConnectionSuccessful = waitForCondition(() -> {
+        return waitForCondition(() -> {
             log.info("Trying to establish FirstSpirit server connection...");
-            remainingRetryCount.getAndDecrement();
             return testConnection(serverProperties);
-        }, serverProperties.getRetryWait(), remainingRetryCount.getAndIncrement());
-
-        return new ApiConnectionStatus(apiConnectionSuccessful, remainingRetryCount.get());
+        }, CONNECTION_RETRY_WAIT, retryCount);
     }
 
     private void startFirstSpiritServerIfNotDoneYet() throws IOException {
@@ -436,7 +445,8 @@ public class NativeServerRunner implements ServerRunner {
         // indicates that the server is still running if the lock file is still there
 
         if (isServerLocal(serverProperties)) {
-            waitForCondition(() -> !serverProperties.getLockFile().exists(), serverProperties.getRetryWait(), serverProperties.getRetryCount());
+            final int retryCount = (int) (serverProperties.getTimeout().toMillis() / CONNECTION_RETRY_WAIT.toMillis());
+            waitForCondition(() -> !serverProperties.getLockFile().exists(), CONNECTION_RETRY_WAIT, retryCount);
         } else {
             log.warn("WARNING: ", "Server is not local! After stopping it the server may still be running for some time.");
         }
@@ -454,16 +464,8 @@ public class NativeServerRunner implements ServerRunner {
     @Data
     @Setter(AccessLevel.NONE)
     @AllArgsConstructor
-    private static class ApiConnectionStatus {
-        private boolean apiConnectionSuccessful = false;
-        private int remainingRetryCount;
-    }
-
-    @Data
-    @Setter(AccessLevel.NONE)
-    @AllArgsConstructor
     private static class ServerStatus {
-        private boolean apiConnectionSuccessful = false;
-        private boolean serverRunning = false;
+        private boolean apiConnectionSuccessful;
+        private boolean serverRunning;
     }
 }

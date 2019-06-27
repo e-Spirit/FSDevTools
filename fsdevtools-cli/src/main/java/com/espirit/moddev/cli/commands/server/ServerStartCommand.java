@@ -135,8 +135,7 @@ public class ServerStartCommand extends AbstractServerCommand implements com.esp
                 .serverRoot(serverRootFile.toPath())
                 // don't install if directory exists
                 .serverInstall(needServerInstall)
-                .retryCount((int) (actualWaitTimeInSeconds / DEFAULT_POLLING_INTERVALL))
-                .threadWait(Duration.of(DEFAULT_POLLING_INTERVALL, SECONDS));
+                .timeout(Duration.ofSeconds(actualWaitTimeInSeconds));
 
         if(licenseFilePath != null) {
             serverPropertiesBuilder.licenseFileSupplier(getLicenseFileSupplier());

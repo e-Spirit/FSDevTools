@@ -1,15 +1,14 @@
 package com.espirit.moddev.serverrunner;
 
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Singular;
-
 import de.espirit.common.base.Logger.LogLevel;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ConnectionManager;
 import de.espirit.firstspirit.common.MaximumNumberOfSessionsExceededException;
 import de.espirit.firstspirit.server.authentication.AuthenticationException;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Singular;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.slf4j.Logger;
@@ -27,19 +26,32 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
 @Getter
 public class ServerProperties {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerProperties.class);
     private static final Pattern firstSpiritJarPattern = Pattern.compile("(fs-.*?\\.jar|wrapper.*?\\.jar)$");
+    private static final Duration DEFAULT_TIMEOUT = Duration.ofMinutes(6);
 
     public enum ConnectionMode {
         SOCKET_MODE(1088),
@@ -93,14 +105,9 @@ public class ServerProperties {
     private final String serverHost;
 
     /**
-     * how often should action be retried?
+     * Timeout waiting for FirstSpirit Server start.
      */
-    private final int retryCount;
-
-    /**
-     * how long should we wait for the first spirit server before we consider it dead (tried `retryCount` times)
-     */
-    private final Duration retryWait;
+    private final Duration timeout;
 
     /**
      * Where the FirstSpirit jars are stored. You will need at least these jars to successfully start a server:
@@ -136,15 +143,14 @@ public class ServerProperties {
     ServerProperties(final Path serverRoot, final String serverHost, final Integer httpPort, Integer socketPort,
                      ConnectionMode connectionMode, final boolean serverGcLog,
                      final Boolean serverInstall,
-                     @Singular final List<String> serverOps, final Duration threadWait, final String serverAdminPw,
-                     final Integer retryCount, @Singular final List<File> firstSpiritJars,
+                     @Singular final List<String> serverOps, final String serverAdminPw,
+                     final Duration timeout, @Singular final List<File> firstSpiritJars,
                      final Supplier<Optional<InputStream>> licenseFileSupplier, final LogLevel logLevel) {
         assertThatOrNull(httpPort, "httpPort", allOf(greaterThanOrEqualTo(0), lessThanOrEqualTo(65536)));
         assertThatOrNull(socketPort, "socketPort", allOf(greaterThanOrEqualTo(0), lessThanOrEqualTo(65536)));
-        if (threadWait != null && threadWait.isNegative()) {
-            throw new IllegalArgumentException("threadWait may not be negative.");
+        if (timeout != null && timeout.isNegative()) {
+            throw new IllegalArgumentException("timeout may not be negative.");
         }
-        assertThatOrNull(retryCount, "retryCount", greaterThanOrEqualTo(0));
 
         this.serverRoot = serverRoot == null ? Paths.get(System.getProperty("user.home"), "opt", "FirstSpirit") : serverRoot;
         this.serverGcLog = serverGcLog;
@@ -153,8 +159,7 @@ public class ServerProperties {
                          serverOps.stream().filter(Objects::nonNull)
                              .collect(Collectors.toCollection(ArrayList::new));
 
-        this.retryWait = threadWait == null ? Duration.ofSeconds(2) : threadWait;
-        this.retryCount = retryCount == null ? 45 : retryCount;
+        this.timeout = timeout == null ? DEFAULT_TIMEOUT : timeout;
         this.serverAdminPw = serverAdminPw == null ? "Admin" : serverAdminPw;
         this.serverHost = serverHost == null || serverHost.isEmpty() ? "localhost" : serverHost;
         this.mode = connectionMode != null ? connectionMode : ConnectionMode.HTTP_MODE;
@@ -292,10 +297,12 @@ public class ServerProperties {
      * @return An {@link Optional} object containing a {@link Connection} if it could be established.
      */
     public Optional<Connection> tryOpenAdminConnection() {
-        LOGGER.debug("Create connection for FirstSpirit server at '{}:{}' with user '{}'...", getServerHost(), getHttpPort(), "Admin");
+        final int port = mode == ConnectionMode.SOCKET_MODE ? socketPort : httpPort;
+        final int connectionMode = mode == ConnectionMode.SOCKET_MODE ? ConnectionManager.SOCKET_MODE : ConnectionManager.HTTP_MODE;
+        LOGGER.debug("Create connection for FirstSpirit server at '{}:{}' with user '{}' in {}...", getServerHost(), port, "Admin", mode);
         try {
             final Connection connection =
-                ConnectionManager.getConnection(getServerHost(), getHttpPort(), ConnectionManager.HTTP_MODE, "Admin", getServerAdminPw());
+                ConnectionManager.getConnection(getServerHost(), port, connectionMode, "Admin", getServerAdminPw());
             connection.connect();
             return Optional.of(connection);
         } catch (IOException | AuthenticationException | MaximumNumberOfSessionsExceededException e) {
