@@ -510,7 +510,7 @@
                         <artifactId>github-release-plugin</artifactId>
                         <version>1.2.0</version>
                         <configuration>
-                            <description>The zip and the tar.gz files are our windows and linux/mac distributions. This binary release does not contain FirstSpirit api jars (fs-access.jar or fs-isolated-runtime.jar). Please add either of them to lib directory. Since version **2.3** `FSDevTools` requires at least FirstSpirit Version **2018-12**. The fsdevtools-cli-x.x.xxx.jar file can be used to compile against (Keep in mind that you should rather clone this repo and install all submodules to your local Maven repo).</description>
+                            <description>The zip and the tar.gz files are our windows and linux/mac distributions. This binary release does not contain FirstSpirit api jars (fs-isolated-runtime.jar). Please add either of them to lib directory. For further information about the prerequisites, please take a look at the [README](https://github.com/e-Spirit/FSDevTools/blob/master/README.md#prerequisites). The fsdevtools-cli-x.x.xxx.jar file can be used to compile against (Keep in mind that you should rather clone this repo and install all submodules to your local Maven repo).</description>
                             <releaseName>Release ${project.version}</releaseName>
                             <repositoryId>https://github.com/e-Spirit/FSDevTools.git</repositoryId>
                             <tag>${project.version}</tag>
