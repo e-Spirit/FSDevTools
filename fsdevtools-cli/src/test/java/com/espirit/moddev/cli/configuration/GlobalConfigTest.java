@@ -23,9 +23,10 @@
 package com.espirit.moddev.cli.configuration;
 
 import com.espirit.moddev.cli.CliConstants;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author e-Spirit AG
@@ -39,29 +40,59 @@ public class GlobalConfigTest {
         config.getEnvironment().clear();
         config.getEnvironment().put(CliConstants.KEY_FS_USER.value(), "xyz");
 
-        Assert.assertEquals("abc", config.getUser());
+        assertEquals("abc", config.getUser());
     }
+
     @Test
     public void userIsFetchedFromEnvironmentIfNotConfigured() {
         final GlobalConfig config = new GlobalConfig();
         config.getEnvironment().clear();
         config.getEnvironment().put(CliConstants.KEY_FS_USER.value(), "xyz");
 
-        Assert.assertEquals("xyz", config.getUser());
+        assertEquals("xyz", config.getUser());
     }
+
     @Test
     public void defaultUserIsReturnedIfNoUserIsConfigured() {
         final GlobalConfig config = new GlobalConfig();
         config.getEnvironment().clear();
 
-        Assert.assertEquals(CliConstants.DEFAULT_USER.value(), config.getUser());
+        assertEquals(CliConstants.DEFAULT_USER.value(), config.getUser());
     }
+
     @Test
     public void nullProjectIsReturnedIfNoProjectIsConfigured() {
         final GlobalConfig config = new GlobalConfig();
 
         config.getEnvironment().clear();
         Assert.assertNull(config.getProject());
+    }
+
+    @Test
+    public void defaultHTTPProxySettings() {
+        final GlobalConfig config = new GlobalConfig();
+        assertEquals("", config.getHttpProxyHost());
+        assertEquals(Integer.valueOf(8080), config.getHttpProxyPort());
+    }
+
+    @Test
+    public void nullHTTPProxySettings() {
+        final GlobalConfig config = new GlobalConfig();
+        config.setHttpProxyHost(null);
+        config.setHttpProxyPort(null);
+        assertEquals("", config.getHttpProxyHost());
+        assertEquals(Integer.valueOf(8080), config.getHttpProxyPort());
+    }
+
+    @Test
+    public void customHTTPProxySettings() {
+        final String customHost = "myHost";
+        final Integer customPort = Integer.valueOf(1337);
+        final GlobalConfig config = new GlobalConfig();
+        config.setHttpProxyHost(customHost);
+        config.setHttpProxyPort(customPort);
+        assertEquals(customHost, config.getHttpProxyHost());
+        assertEquals(customPort, config.getHttpProxyPort());
     }
 
 }

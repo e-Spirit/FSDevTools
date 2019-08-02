@@ -50,18 +50,18 @@ public interface Config {
     Integer getPort();
 
     /**
-     * Get the Proxy host.
+     * Get the proxy host for http/https connections.
      *
-     * @return the Proxy host
+     * @return the proxy host for http/https connections
      */
-    String getProxyHost();
+    String getHttpProxyHost();
 
     /**
-     * Get the Proxy server port.
+     * Get the proxy server port for http/https connections.
      *
-     * @return the Proxy server port
+     * @return the proxy server port for http/https connections
      */
-    Integer getProxyPort();
+    Integer getHttpProxyPort();
 
     /**
      * Get the connection mode used to connect to the FirstSpirit server.

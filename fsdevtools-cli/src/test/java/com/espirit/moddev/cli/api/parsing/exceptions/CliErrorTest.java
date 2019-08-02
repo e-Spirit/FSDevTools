@@ -79,13 +79,13 @@ public class CliErrorTest {
             }
 
             @Override
-            public String getProxyHost() {
+            public String getHttpProxyHost() {
                 return "";
             }
 
             @Override
-            public Integer getProxyPort() {
-                return 80;
+            public Integer getHttpProxyPort() {
+                return 8080;
             }
 
             @Override

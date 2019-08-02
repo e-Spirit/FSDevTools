@@ -57,7 +57,9 @@ public class ConnectionBuilderTest {
     public void testBuild(final FsConnectionMode mode) throws Exception {
 
         when(config.getHost()).thenReturn("localhost");
+        when(config.getHttpProxyHost()).thenReturn("");
         when(config.getPort()).thenReturn(mode.getDefaultPort());
+        when(config.getHttpProxyPort()).thenReturn(8080);
         when(config.getConnectionMode()).thenReturn(mode);
         when(config.getUser()).thenReturn("Admin");
         when(config.getPassword()).thenReturn("Admin");

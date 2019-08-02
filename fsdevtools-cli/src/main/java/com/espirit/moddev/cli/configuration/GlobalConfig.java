@@ -29,7 +29,6 @@ import com.espirit.moddev.cli.api.configuration.Config;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;
 import com.github.rvesse.airline.annotations.restrictions.AllowedRawValues;
-
 import de.espirit.firstspirit.access.project.ProjectScriptContext;
 import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.io.FileSystem;
@@ -72,11 +71,11 @@ public class GlobalConfig implements Config {
     @Option(type = OptionType.GLOBAL, name = {"-port"}, description = "FirstSpirit host's port. Default is 8000.")
     private Integer port;
 
-    @Option(type = OptionType.GLOBAL, name = {"-ph", "--proxyhost"}, description = "Proxy host.")
-    private String proxyHost;
+    @Option(type = OptionType.GLOBAL, name = {"-hph", "--httpproxyhost"}, description = "Proxy host for HTTP/HTTPS connections.")
+    private String httpProxyHost;
 
-    @Option(type = OptionType.GLOBAL, name = {"-proxyport"}, description = "Proxy host's port. Default is 8080.")
-    private Integer proxyPort;
+    @Option(type = OptionType.GLOBAL, name = {"-hpp", "--httpproxyport"}, description = "Proxy host's port for HTTP/HTTPS connections. Default is 8080.")
+    private Integer httpProxyPort;
 
     @Option(type = OptionType.GLOBAL, name = {"-u", "--user"}, description = "FirstSpirit user. Default is Admin.")
     private String user;
@@ -133,27 +132,27 @@ public class GlobalConfig implements Config {
     }
 
     @Override
-    public String getProxyHost() {
-        if(proxyHost == null || proxyHost.isEmpty()) {
-            boolean environmentContainsHost = getEnvironment().containsKey(CliConstants.KEY_FS_PROXYHOST.value());
+    public String getHttpProxyHost() {
+        if(httpProxyHost == null || httpProxyHost.isEmpty()) {
+            boolean environmentContainsHost = getEnvironment().containsKey(CliConstants.KEY_FS_HTTP_PROXYHOST.value());
             if(environmentContainsHost) {
-                return getEnvironment().get(CliConstants.KEY_FS_PROXYHOST.value()).trim();
+                return getEnvironment().get(CliConstants.KEY_FS_HTTP_PROXYHOST.value()).trim();
             }
             return "";
         }
-        return proxyHost;
+        return httpProxyHost;
     }
 
     @Override
-    public Integer getProxyPort() {
-        if(proxyPort == null) {
-            boolean environmentContainsPort = getEnvironment().containsKey(CliConstants.KEY_FS_PROXYPORT.value());
+    public Integer getHttpProxyPort() {
+        if(httpProxyPort == null) {
+            boolean environmentContainsPort = getEnvironment().containsKey(CliConstants.KEY_FS_HTTP_PROXYPORT.value());
             if(environmentContainsPort) {
-                return Integer.valueOf(getEnvironment().get(CliConstants.KEY_FS_PROXYPORT.value()).trim());
+                return Integer.valueOf(getEnvironment().get(CliConstants.KEY_FS_HTTP_PROXYPORT.value()).trim());
             }
             return 8080;
         }
-        return proxyPort;
+        return httpProxyPort;
     }
 
     @Override
@@ -296,6 +295,25 @@ public class GlobalConfig implements Config {
     public void setPort(Integer port) {
         this.port = port;
     }
+
+    /**
+     * Set the HTTP/HTTPS proxy host that the cli will use for the connection.
+     *
+     * @param host HTTP/HTTPS proxy host
+     */
+    public void setHttpProxyHost(final String host) {
+        this.httpProxyHost = host;
+    }
+
+    /**
+     * Set the HTTP/HTTPS proxy port that the cli will use for the connection.
+     *
+     * @param port HTTP/HTTPS proxy port
+     */
+    public void setHttpProxyPort(Integer port) {
+        this.httpProxyPort = port;
+    }
+
 
     /**
      * Set the user used to authenticate against FirstSpirit.
