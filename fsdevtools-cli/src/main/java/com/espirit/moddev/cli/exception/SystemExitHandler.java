@@ -31,12 +31,12 @@ import org.slf4j.LoggerFactory;
  * @author e-Spirit AG
  */
 public final class SystemExitHandler implements CliEventHandler {
-    protected static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(SystemExitHandler.class);
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(SystemExitHandler.class);
 
     @Override
     @SuppressWarnings("squid:S1147")
     public final void afterExceptionalTermination(Throwable e) {
-        LOGGER.error("", e);
+        LOGGER.error("An unexpected error occurred during command execution", e);
         System.exit(1);
     }
 

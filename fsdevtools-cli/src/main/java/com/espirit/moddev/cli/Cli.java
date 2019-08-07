@@ -100,7 +100,7 @@ public final class Cli {
      * @param args the input arguments
      */
     public static void main(final String[] args) {
-        SystemExitHandler cliEventHandler = new SystemExitHandler();
+        final SystemExitHandler cliEventHandler = new SystemExitHandler();
         try {
             new Cli().execute(args);
             cliEventHandler.afterTermination();
