@@ -54,7 +54,7 @@ public class ServerRestartCommand extends ServerStartCommand {
     @Override
     public SimpleResult<String> call() throws Exception {
         final ServerProperties serverProperties = super.getServerProperties();
-        final ServerRunner serverRunner = createRunner(serverProperties);
+        final ServerRunner serverRunner = getOrCreateServerRunner(serverProperties);
 
         final boolean stopped = serverRunner.stop();
         LOGGER.warn(stopped ? "Server stopped!" : "Server couldn't be stopped!");

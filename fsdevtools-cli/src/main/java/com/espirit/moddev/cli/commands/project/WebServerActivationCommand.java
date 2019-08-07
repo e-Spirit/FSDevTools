@@ -5,6 +5,7 @@ import com.espirit.moddev.cli.commands.SimpleCommand;
 import com.espirit.moddev.cli.results.SimpleResult;
 import com.espirit.moddev.projectservice.projectactivatewebserver.ProjectWebServerActivationParameter;
 import com.espirit.moddev.projectservice.projectactivatewebserver.ProjectWebServerActivator;
+import com.espirit.moddev.shared.annotation.VisibleForTesting;
 import com.espirit.moddev.shared.webapp.WebAppIdentifierParser;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
@@ -88,5 +89,20 @@ public class WebServerActivationCommand extends SimpleCommand<SimpleResult> {
     @Override
     public boolean needsContext() {
         return false;
+    }
+
+    @VisibleForTesting
+    public void setWebServerName(final String webServerName) {
+        this.webServerName = webServerName;
+    }
+
+    @VisibleForTesting
+    public void setWebAppScopes(final String webAppScopes) {
+        this.webAppScopes = webAppScopes;
+    }
+
+    @VisibleForTesting
+    public void setProjectName(final String projectName) {
+        this.projectName = projectName;
     }
 }

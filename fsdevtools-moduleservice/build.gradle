@@ -1,0 +1,7 @@
+dependencies {
+    compile project(":fsdevtools-sharedutils")
+    compile project(":fsdevtools-serverrunner")
+    compile "com.fasterxml.jackson.core:jackson-core:${jacksonCoreVersion}"
+    compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonCoreVersion}"
+    compile "com.fasterxml.jackson.core:jackson-databind:${jacksonDatabindVersion}"
+}

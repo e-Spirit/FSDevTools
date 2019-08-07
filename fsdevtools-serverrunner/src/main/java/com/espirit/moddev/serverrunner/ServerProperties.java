@@ -1,6 +1,5 @@
 package com.espirit.moddev.serverrunner;
 
-
 import de.espirit.common.base.Logger.LogLevel;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ConnectionManager;
@@ -18,33 +17,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.net.MalformedURLException;
-import java.net.ServerSocket;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.hamcrest.Matchers.*;
 
 @Getter
 public class ServerProperties {
@@ -61,6 +45,10 @@ public class ServerProperties {
 
         ConnectionMode(final int defaultPort) {
             this.defaultPort = defaultPort;
+        }
+
+        public int getDefaultPort() {
+            return defaultPort;
         }
     }
 
@@ -115,7 +103,7 @@ public class ServerProperties {
      * <li>server</li>
      * <li>wrapper</li>
      * </ul>
-     *
+     * <p>
      * If you give one dependency, you need to give all. If you give none, they will be taken from the classpath (if possible).
      * If you try to start a FirstSpirit Server in isolated mode, you must not put fs-isolated-server.jar and fs-access.jar on the classpath.
      */
@@ -156,29 +144,33 @@ public class ServerProperties {
         this.serverGcLog = serverGcLog;
         this.serverInstall = serverInstall == null ? true : serverInstall;
         this.serverOps = serverOps == null ? Collections.emptyList() :
-                         serverOps.stream().filter(Objects::nonNull)
-                             .collect(Collectors.toCollection(ArrayList::new));
+                serverOps.stream().filter(Objects::nonNull)
+                        .collect(Collectors.toCollection(ArrayList::new));
 
         this.timeout = timeout == null ? DEFAULT_TIMEOUT : timeout;
         this.serverAdminPw = serverAdminPw == null ? "Admin" : serverAdminPw;
         this.serverHost = serverHost == null || serverHost.isEmpty() ? "localhost" : serverHost;
-        this.mode = connectionMode != null ? connectionMode : ConnectionMode.HTTP_MODE;
-        this.httpPort = httpPort == null ? ConnectionMode.HTTP_MODE.defaultPort : port(httpPort);
-        this.socketPort = socketPort == null ? ConnectionMode.SOCKET_MODE.defaultPort : port(socketPort);
+        mode = connectionMode != null ? connectionMode : ConnectionMode.HTTP_MODE;
+        this.httpPort = httpPort == null ? ConnectionMode.HTTP_MODE.getDefaultPort() : port(httpPort);
+        int targetSocketPort = this.httpPort;
+        while (targetSocketPort == this.httpPort) {
+            targetSocketPort = socketPort == null ? ConnectionMode.SOCKET_MODE.getDefaultPort() : port(socketPort);
+        }
+        this.socketPort = targetSocketPort;
         this.firstSpiritJars =
-            firstSpiritJars == null || firstSpiritJars.isEmpty() ? Collections.emptyList() : firstSpiritJars.stream().filter(Objects::nonNull)
-                .collect(Collectors.toCollection(ArrayList::new));
+                firstSpiritJars == null || firstSpiritJars.isEmpty() ? Collections.emptyList() : firstSpiritJars.stream().filter(Objects::nonNull)
+                        .collect(Collectors.toCollection(ArrayList::new));
 
         //generate lock file reference, which can be found in the server directory
-        this.lockFile = this.serverRoot.resolve(".fs.lock").toFile();
+        lockFile = this.serverRoot.resolve(".fs.lock").toFile();
 
         //when we do not have fs-license.jar on the class path, we will not find the fs-license.conf and getResourceAsStream will return null
         this.licenseFileSupplier =
-            licenseFileSupplier == null ? () -> Optional.ofNullable(ServerProperties.class.getResourceAsStream("/fs-license.conf")) : licenseFileSupplier;
+                licenseFileSupplier == null ? () -> Optional.ofNullable(ServerProperties.class.getResourceAsStream("/fs-license.conf")) : licenseFileSupplier;
 
         //this value should be lazily calculated
         try {
-            this.serverUrl = new URL("http://" + this.serverHost + ":" + this.httpPort + "/");
+            serverUrl = new URL("http://" + this.serverHost + ":" + this.httpPort + "/");
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("either serverHost or httpPort had an illegal format", e);
         }
@@ -186,7 +178,7 @@ public class ServerProperties {
         this.logLevel = logLevel == null ? LogLevel.DEBUG : logLevel;
     }
 
-    private static int port(final int portNumber) {
+    public static int port(final int portNumber) {
         if (portNumber != 0) {
             return portNumber;
         } else {
@@ -197,7 +189,7 @@ public class ServerProperties {
             }
         }
     }
-    
+
     private static <T> void assertThat(final T obj, final String name, final Matcher<T> matcher) {
         if (!matcher.matches(obj)) {
             final StringDescription description = new StringDescription();
@@ -215,23 +207,24 @@ public class ServerProperties {
 
     /**
      * Tries to get the FirstSpirit jars from the classpath.
-     *
+     * <p>
      * Maven uses https://codehaus-plexus.github.io/plexus-classworlds/.
      * Therefore UrlClassLoader.getUrls does _not_ return all urls of all dependencies (like fs-server.jar).
      * This is a problem for Tests in this project as well as in tests in other projects,
      * that use this library to start a FirstSpirit server.
-     *
+     * <p>
      * Using Class.forName to search for startup classes isn't an option either,
      * because many classes can be found in multiple jars.
      * E. g. de.espirit.common.bootstrap.Bootstrap exists in fs-isolated-runtime.jar and in fs-isolated-server.jar,
      * but we need the one from the server jar to start a server.
      * Unfortunately, projects will have both on their classpath, because they need the runtime jar for their production code
      * and the server jar to start the FirstSpirit server.
-     *
+     * <p>
      * Therefore we try to identify the jars needed to start a FirstSpirit server by searching for certain attribute values in the MANIFEST.MF files on the classpath.
-     *
+     * <p>
      * Note, that this problem only occurs when running with maven.
      * You will usually not run into it, when running from within your IDE or when running the ServerStartCommand via command line.
+     *
      * @return a list with one or two jar files or an empty list, if none of them can be found
      */
     public static List<File> getFirstSpiritJarsFromClasspath() {
@@ -294,6 +287,7 @@ public class ServerProperties {
 
     /**
      * Tries to open a connection to the FirstSpirit server described by this ServerProperties.
+     *
      * @return An {@link Optional} object containing a {@link Connection} if it could be established.
      */
     public Optional<Connection> tryOpenAdminConnection() {
@@ -301,8 +295,7 @@ public class ServerProperties {
         final int connectionMode = mode == ConnectionMode.SOCKET_MODE ? ConnectionManager.SOCKET_MODE : ConnectionManager.HTTP_MODE;
         LOGGER.debug("Create connection for FirstSpirit server at '{}:{}' with user '{}' in {}...", getServerHost(), port, "Admin", mode);
         try {
-            final Connection connection =
-                ConnectionManager.getConnection(getServerHost(), port, connectionMode, "Admin", getServerAdminPw());
+            final Connection connection = ConnectionManager.getConnection(getServerHost(), port, connectionMode, "Admin", getServerAdminPw());
             connection.connect();
             return Optional.of(connection);
         } catch (IOException | AuthenticationException | MaximumNumberOfSessionsExceededException e) {

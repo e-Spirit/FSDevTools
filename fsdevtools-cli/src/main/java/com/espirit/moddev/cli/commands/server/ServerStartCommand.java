@@ -28,9 +28,12 @@ import com.espirit.moddev.serverrunner.ServerProperties;
 import com.espirit.moddev.serverrunner.ServerProperties.ServerPropertiesBuilder;
 import com.espirit.moddev.serverrunner.ServerRunner;
 import com.espirit.moddev.serverrunner.ServerType;
+import com.espirit.moddev.shared.annotation.VisibleForTesting;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.help.Examples;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,15 +49,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import static java.time.temporal.ChronoUnit.SECONDS;
-
 /**
- *  This Command can start a FirstSpirit server. Uses ServerRunner implementations to achieve this.
- *  It makes use of its command arguments to decide which server to start.
+ * This Command can start a FirstSpirit server. Uses ServerRunner implementations to achieve 
+ * It makes use of its command arguments to decide which server to start.
  *
  * @author e-Spirit AG
  */
-@Command(name = "start", groupNames = "server", description = "Starts a FirstSpirit server. You have to provide at least the fs-server.jar / fs-isolated-server.jar and the wrapper jar, in order to boot a server."+
+@Command(name = "start", groupNames = "server", description = "Starts a FirstSpirit server. You have to provide at least the fs-server.jar / fs-isolated-server.jar and the wrapper jar, in order to boot a server." +
         "WARNING: If you execute commands asynchronously, you may end up in unpredictable behavior.")
 @Examples(examples =
         {
@@ -70,7 +71,6 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 @SuppressWarnings("squid:S1200")
 public class ServerStartCommand extends AbstractServerCommand implements com.espirit.moddev.cli.api.command.Command<SimpleResult<String>> {
 
-    public static final int DEFAULT_POLLING_INTERVALL = 2;
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerStartCommand.class);
 
     @Option(name = {"-sid", "--server-installation-directory"}, description = "A FirstSpirit server's installation directory. " +
@@ -78,45 +78,45 @@ public class ServerStartCommand extends AbstractServerCommand implements com.esp
             "The installation directory will also be used as the working directory, and the serverRoot option is ignored. WARNING: Don't " +
             "use this property in conjunction with a server, that has been bootstrapped with -sj and -wj properties, because " +
             "those jar files would then be searched in this installation directory (where the files aren't placed).")
-    private String serverInstallationDirectory;
+    private String _serverInstallationDirectory;
 
     @Option(name = {"-sj", "--server-jar"}, description = "The path to a FirstSpirit server's fs-server.jar.")
-    private String serverJar;
+    private String _serverJar;
 
     @Option(name = {"-wj", "--wrapper-jar"}, description = "The path to a FirstSpirit server's wrapper.jar.")
-    private String wrapperJar;
+    private String _wrapperJar;
 
     @Option(name = {"-lf", "--license-file"}, description = "The path to a FirstSpirit server license file")
-    private String licenseFilePath;
+    private String _licenseFilePath;
 
     @Option(name = {"-wt", "--wait-time"}, description = "The time in seconds to wait for a successful connection." +
             "The default is 120 seconds if the working directory exists already, otherwise 60 seconds.")
-    private long waitTimeInSeconds = -1;
-
-    // 60 seconds is experiential the time a FirstSpirit server needs for a boot process if the working dir is already created
-    private static final long WAIT_IN_MS_IF_NO_INSTALL_NEEDED = 60;
-    // 120 seconds is experiential the time a FirstSpirit server needs for a completely new boot process
-    private static final long WAIT_IN_MS_IF_NEEDS_INSTALL = 120;
+    private long _waitTimeInSeconds = Duration.ofMinutes(10).getSeconds();
+    private NativeServerRunner _serverRunner;
 
     @Override
     public SimpleResult<String> call() throws Exception {
         final ServerProperties serverProperties = getServerProperties();
-        final ServerRunner runner = createRunner(serverProperties);
+        final ServerRunner runner = getOrCreateServerRunner(serverProperties);
 
-        if(LOGGER.isInfoEnabled()) {
-            LOGGER.info(String.format("Starting server on %s:%d with working dir %s and waiting %d seconds for startup...", getHost(), getPort(), getServerRoot(), getActualWaitTimeInSeconds(serverProperties.isServerInstall())));
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info(String.format("Starting server on %s:%d with working dir %s and waiting %d seconds for startup...", getHost(), getPort(), getServerRoot(), getWaitTimeInSeconds()));
         }
 
         final boolean started = runner.start();
-        if(started) {
+        if (started) {
             return new SimpleResult<>("The server has been started.");
         } else {
             return new SimpleResult<>(new IllegalStateException("The server couldn't be started or it takes some more time (use --wait-time parameter)."));
         }
     }
 
-    protected ServerRunner createRunner(final ServerProperties serverProperties) {
-        return new NativeServerRunner(serverProperties);
+    @NotNull
+    protected ServerRunner getOrCreateServerRunner(final ServerProperties serverProperties) {
+        if (_serverRunner == null) {
+            _serverRunner = new NativeServerRunner(serverProperties);
+        }
+        return _serverRunner;
     }
 
     protected ServerProperties getServerProperties() {
@@ -125,19 +125,28 @@ public class ServerStartCommand extends AbstractServerCommand implements com.esp
         final File[] filesInRootFolder = serverRootFile.listFiles();
         final boolean rootFolderIsEmpty = filesInRootFolder == null || filesInRootFolder.length == 0;
         final boolean needServerInstall = !serverRootFile.exists() || rootFolderIsEmpty;
-        
-        final long actualWaitTimeInSeconds = getActualWaitTimeInSeconds(needServerInstall);
-        
+
+        final long actualWaitTimeInSeconds = getWaitTimeInSeconds();
+
         final ServerPropertiesBuilder serverPropertiesBuilder = ServerProperties.builder()
                 .serverHost(getHost())
-                .httpPort(getPort())
                 .serverAdminPw(getPassword())
                 .serverRoot(serverRootFile.toPath())
+                .connectionMode(getConnectionMode())
                 // don't install if directory exists
                 .serverInstall(needServerInstall)
                 .timeout(Duration.ofSeconds(actualWaitTimeInSeconds));
 
-        if(licenseFilePath != null) {
+        // setup ports, depending on the connection mode
+        serverPropertiesBuilder.httpPort(ServerProperties.port(0));
+        serverPropertiesBuilder.socketPort(ServerProperties.port(0));
+        if (getConnectionMode() == ServerProperties.ConnectionMode.SOCKET_MODE) {
+            serverPropertiesBuilder.socketPort(getPort());
+        } else {
+            serverPropertiesBuilder.httpPort(getPort());
+        }
+
+        if (_licenseFilePath != null) {
             serverPropertiesBuilder.licenseFileSupplier(getLicenseFileSupplier());
         }
 
@@ -146,30 +155,29 @@ public class ServerStartCommand extends AbstractServerCommand implements com.esp
         return serverPropertiesBuilder.build();
     }
 
-    private long getActualWaitTimeInSeconds(boolean needServerInstall) {
-        long targetDefaultWaitTimeInSeconds = needServerInstall ? WAIT_IN_MS_IF_NEEDS_INSTALL : WAIT_IN_MS_IF_NO_INSTALL_NEEDED;
-        boolean waitTimeSpecifiedExplicitely = waitTimeInSeconds > 0;
-        return waitTimeSpecifiedExplicitely ? waitTimeInSeconds : targetDefaultWaitTimeInSeconds;
+    @VisibleForTesting
+    public void setLicenseFilePath(@Nullable final String licenseFilePath) {
+        _licenseFilePath = licenseFilePath;
     }
 
     private File figureOutServerRootDirectory() {
-        if(useServerInstallationDirectory()) {
+        if (useServerInstallationDirectory()) {
             LOGGER.info("Server installation directory given, so it is used as the servers root directory.");
-            return new File(serverInstallationDirectory);
+            return new File(_serverInstallationDirectory);
         } else {
             return new File(getServerRoot());
         }
     }
 
     private void addServerJarsToBuilder(ServerPropertiesBuilder serverPropertiesBuilder) {
-        if(useServerInstallationDirectory()) {
-            LOGGER.info("Server installation directory given: {}", serverInstallationDirectory);
-            Path serverInstallationDir = Paths.get(serverInstallationDirectory);
+        if (useServerInstallationDirectory()) {
+            LOGGER.info("Server installation directory given: {}", _serverInstallationDirectory);
+            Path serverInstallationDir = Paths.get(_serverInstallationDirectory);
 
             Optional<List<File>> jars = Arrays.stream(ServerType.values())
-                .map(serverType -> serverType.resolveJars(serverInstallationDir))
-                .filter(jarsByServerType -> jarsByServerType.stream().allMatch(File::exists))
-                .findFirst();
+                    .map(serverType -> serverType.resolveJars(serverInstallationDir))
+                    .filter(jarsByServerType -> jarsByServerType.stream().allMatch(File::exists))
+                    .findFirst();
 
             if (jars.isPresent()) {
                 LOGGER.info("Server and wrapper jar found in server installation directory.");
@@ -184,11 +192,11 @@ public class ServerStartCommand extends AbstractServerCommand implements com.esp
     }
 
     private void addServerJarsFromOptionsOrClasspath(ServerPropertiesBuilder serverPropertiesBuilder) {
-        if(this.serverJar != null && this.wrapperJar != null) {
-            serverPropertiesBuilder.firstSpiritJar(new File(this.serverJar)).firstSpiritJar(new File(this.wrapperJar));
+        if (_serverJar != null && _wrapperJar != null) {
+            serverPropertiesBuilder.firstSpiritJar(new File(_serverJar)).firstSpiritJar(new File(_wrapperJar));
         } else {
             List<File> jars = ServerProperties.getFirstSpiritJarsFromClasspath();
-            if(!jars.isEmpty()) {
+            if (!jars.isEmpty()) {
                 serverPropertiesBuilder.firstSpiritJars(jars);
             } else {
                 throw new IllegalStateException("Server and/or wrapper jar couldn't be retrieved from classpath.");
@@ -197,12 +205,12 @@ public class ServerStartCommand extends AbstractServerCommand implements com.esp
     }
 
     private boolean useServerInstallationDirectory() {
-        return serverInstallationDirectory != null;
+        return _serverInstallationDirectory != null;
     }
 
     private Supplier<Optional<InputStream>> getLicenseFileSupplier() {
         return () -> {
-            File licenseFile = new File(licenseFilePath);
+            File licenseFile = new File(_licenseFilePath);
             FileInputStream inputStream = null;
             try {
                 inputStream = new FileInputStream(licenseFile);
@@ -214,26 +222,31 @@ public class ServerStartCommand extends AbstractServerCommand implements com.esp
     }
 
     public String getServerJar() {
-        return serverJar;
+        return _serverJar;
     }
 
     public void setServerJar(String serverJar) {
-        this.serverJar = serverJar;
+        _serverJar = serverJar;
     }
 
     public String getWrapperJar() {
-        return wrapperJar;
+        return _wrapperJar;
     }
 
     public void setWrapperJar(String wrapperJar) {
-        this.wrapperJar = wrapperJar;
+        _wrapperJar = wrapperJar;
     }
 
     public long getWaitTimeInSeconds() {
-        return waitTimeInSeconds;
+        return _waitTimeInSeconds;
     }
 
     public void setWaitTimeInSeconds(long waitTimeInSeconds) {
-        this.waitTimeInSeconds = waitTimeInSeconds;
+        _waitTimeInSeconds = waitTimeInSeconds;
+    }
+
+    @Nullable
+    ServerRunner getServerRunner() {
+        return _serverRunner;
     }
 }

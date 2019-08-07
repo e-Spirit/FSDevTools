@@ -80,7 +80,7 @@ public enum FsConnectionMode {
         return name();
     }
 
-    private static final class Constants {
+    public static final class Constants {
 
         /**
          * Default FirstSpirit http port (8000).

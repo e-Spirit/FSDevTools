@@ -1,0 +1,23 @@
+pluginManagement {
+    repositories {
+        maven {
+            url = 'https://artifactory.e-spirit.de/artifactory/repo/'
+            credentials {
+                username = artifactory_username
+                password = artifactory_password
+            }
+        }
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'fs-cli'
+include 'fsdevtools-cli'
+include 'fsdevtools-cli-api'
+include 'fsdevtools-core'
+include 'fsdevtools-sharedutils'
+include 'fsdevtools-serverrunner'
+include 'fsdevtools-moduleservice'
+include 'fsdevtools-projectservice'
+include 'fsdevtools-customcommand-example'
+

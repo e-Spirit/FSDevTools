@@ -23,9 +23,11 @@
 package com.espirit.moddev.cli.commands.server;
 
 import com.espirit.moddev.cli.results.SimpleResult;
-import com.espirit.moddev.serverrunner.ServerProperties;
+import com.espirit.moddev.serverrunner.NativeServerRunner;
 import com.espirit.moddev.serverrunner.ServerRunner;
 import static org.junit.Assert.assertNotNull;
+
+import org.jetbrains.annotations.Nullable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Rule;
@@ -41,7 +43,7 @@ public class ServerRestartCommandTest extends AbstractServerCommandTest {
     public MockitoRule injectMocks = MockitoJUnit.rule();
     
     @Mock
-    private ServerRunner runner;
+    private ServerRunner _runner;
     
     @Before
     public void setUp() {
@@ -50,7 +52,7 @@ public class ServerRestartCommandTest extends AbstractServerCommandTest {
     @Test
     public void testCall() throws Exception {
         
-        when(runner.start()).thenReturn(Boolean.TRUE);
+        when(_runner.start()).thenReturn(Boolean.TRUE);
         
         System.out.println("call");
         ServerStartCommand instance = createTestling();
@@ -62,8 +64,13 @@ public class ServerRestartCommandTest extends AbstractServerCommandTest {
     protected ServerRestartCommand createTestling() {
         return new ServerRestartCommand(){
             @Override
-            protected ServerRunner createRunner(ServerProperties serverProperties) {
-               return runner;
+            ServerRunner getServerRunner() {
+                return _runner;
+            }
+
+            @Override
+            public SimpleResult<String> call() throws Exception {
+                return new SimpleResult(true);
             }
         };
     }

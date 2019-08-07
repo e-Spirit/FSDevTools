@@ -45,15 +45,15 @@ public class SyncDirectoryFactoryTest {
 
 
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public TemporaryFolder _temporaryFolder = new TemporaryFolder();
 
-    private SyncDirectoryFactory testling;
-    private File syncDir;
+    private SyncDirectoryFactory _testling;
+    private File _syncDir;
 
     @Before
     public void setUp() throws Exception {
-        syncDir = temporaryFolder.newFolder();
-        testling = new SyncDirectoryFactory(new Config() {
+        _syncDir = _temporaryFolder.newFolder();
+        _testling = new SyncDirectoryFactory(new Config() {
             @Override
             public String getHost() {
                 return "localhost";
@@ -61,7 +61,7 @@ public class SyncDirectoryFactoryTest {
 
             @Override
             public Integer getPort() {
-                return 8000;
+                return FsConnectionMode.Constants.DEFAULT_HTTP_PORT;
             }
 
             @Override
@@ -114,36 +114,36 @@ public class SyncDirectoryFactoryTest {
 
     @Test
     public void testCheckAndCreateSyncDirIfNeeded() throws Exception {
-        testling.checkAndCreateSyncDirIfNeeded(syncDir.getAbsolutePath());
+        _testling.checkAndCreateSyncDirIfNeeded(_syncDir.getAbsolutePath());
 
-        assertTrue("Expect sync dir exists", syncDir.exists());
+        assertTrue("Expect sync dir exists", _syncDir.exists());
     }
 
     @Test
     public void testCheckAndCreateSyncDir() throws Exception {
-        syncDir = new File(temporaryFolder.newFolder(), "mySyncDir");
+        _syncDir = new File(_temporaryFolder.newFolder(), "mySyncDir");
 
-        assertFalse("Expect sync dir is missing", syncDir.exists());
+        assertFalse("Expect sync dir is missing", _syncDir.exists());
 
-        testling.checkAndCreateSyncDirIfNeeded(syncDir.getAbsolutePath());
+        _testling.checkAndCreateSyncDirIfNeeded(_syncDir.getAbsolutePath());
 
-        assertTrue("Expect sync dir exists", syncDir.exists());
+        assertTrue("Expect sync dir exists", _syncDir.exists());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testCheckAndCreateSyncDirIfNeededException() throws Exception {
-        syncDir = temporaryFolder.newFile();
+        _syncDir = _temporaryFolder.newFile();
 
-        testling.checkAndCreateSyncDirIfNeeded(syncDir.getAbsolutePath());
+        _testling.checkAndCreateSyncDirIfNeeded(_syncDir.getAbsolutePath());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testCheckAndCreateSyncDirIfNeededEmpty() throws Exception {
-        testling.checkAndCreateSyncDirIfNeeded("");
+        _testling.checkAndCreateSyncDirIfNeeded("");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testCheckAndCreateSyncDirIfNeededNull() throws Exception {
-        testling.checkAndCreateSyncDirIfNeeded(null);
+        _testling.checkAndCreateSyncDirIfNeeded(null);
     }
 }

@@ -1,0 +1,78 @@
+plugins {
+    id 'de.espirit.firstspirit'
+    id 'idea'
+}
+
+sourceSets {
+    integrationTest {
+        java {
+            compileClasspath += main.output
+            runtimeClasspath += main.output
+            srcDir file('src/integrationTest/java')
+        }
+        resources {
+            srcDir file('src/integrationTest/resources')
+        }
+    }
+}
+
+idea {
+    module {
+        testSourceDirs += file('src/integrationTest/java')
+        testResourceDirs += file('src/integrationTest/resources')
+    }
+}
+
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+}
+
+processResources {
+    outputs.upToDateWhen{false}
+    expand(project.properties)
+}
+
+task javaIntegrationTest(type: Test) {
+    group 'verification'
+    dependsOn(build, prepareIntegrationTest)
+
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+
+    ///////////////////////////////////////////////////////
+    // set system property for integration tests
+    ///////////////////////////////////////////////////////
+
+    systemProperty("fsHttpPort", String.valueOf(serverHttpPort))
+}
+javaIntegrationTest.finalizedBy(":fsStop")
+integrationTest.dependsOn(javaIntegrationTest)
+
+test {
+    systemProperty("fsLicenseFile", String.valueOf(rootProject.configurations.fsLicense.resolve().first().absolutePath))
+}
+
+dependencies {
+    compile project(":fsdevtools-cli-api")
+    compile project(":fsdevtools-core")
+    compile project(":fsdevtools-moduleservice")
+    compile project(":fsdevtools-projectservice")
+    compile project(":fsdevtools-serverrunner")
+    compile project(":fsdevtools-sharedutils")
+
+    compile 'io.github.lukehutch:fast-classpath-scanner:2.9.4'
+    compile "com.google.guava:guava:${guavaVersion}"
+    compile "org.apache.commons:commons-lang3:${apacheCommonsVersion}"
+
+    // logging
+    compile "log4j:log4j:${log4jVersion}"
+    compile "org.slf4j:slf4j-log4j12:${slf4japiVersion}"
+    compile "org.slf4j:jcl-over-slf4j:${slf4japiVersion}"
+    compile "org.slf4j:jul-to-slf4j:${slf4japiVersion}"
+
+    testCompile 'com.github.stefanbirkner:system-rules:1.14.0'
+    testCompile project(":fsdevtools-customcommand-example")
+    testImplementation group: 'de.espirit.firstspirit', name: 'fs-isolated-server', version: "${fsRuntimeVersion}"
+    testImplementation group: 'de.espirit.firstspirit', name: 'wrapper', version: "${fsWrapperVersion}"
+}

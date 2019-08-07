@@ -1,0 +1,4 @@
+dependencies {
+    compile project(":fsdevtools-sharedutils")
+    compile "com.github.rvesse:airline:${airlineVersion}"
+}

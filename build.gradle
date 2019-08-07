@@ -1,0 +1,480 @@
+import com.espirit.moddev.build.BuildUtils
+import com.espirit.moddev.gradle.fs.tasks.FSProjectImportTask
+import org.apache.tools.ant.filters.ReplaceTokens
+
+import java.time.Duration
+
+/**
+ * configure buildscript
+ */
+
+buildscript {
+    ext {
+        fsRuntimeVersion = '5.2.190710'
+    }
+
+    repositories {
+        maven {
+            url = "https://artifactory.e-spirit.de/artifactory/repo"
+            credentials {
+                username = artifactory_username
+                password = artifactory_password
+            }
+        }
+    }
+
+    dependencies {
+        classpath "de.espirit.firstspirit:fs-isolated-server:${fsRuntimeVersion}"
+    }
+}
+
+
+/**
+ * plugins
+ */
+
+plugins {
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '5.1.0'
+    id 'org.ajoberstar.grgit' version '3.1.1'
+    id 'maven-publish'
+    id 'de.espirit.firstspirit' version '0.15.0'
+    id 'de.espirit.process' version '0.0.2'
+    id "com.github.breadmoirai.github-release" version "2.2.9"
+}
+
+///////////////////////////////////////////////////////
+// configure gradle wrapper
+///////////////////////////////////////////////////////
+
+wrapper {
+    gradleVersion = '5.5.1'
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+///////////////////////////////////////////////////////
+// configure application plugin
+///////////////////////////////////////////////////////
+
+application {
+    applicationName('fs-devtools')
+    mainClassName('com.espirit.moddev.cli.Main')
+}
+
+/**
+ * project configuration
+ */
+
+///////////////////////////////////////////////////////
+// configure global variables
+///////////////////////////////////////////////////////
+
+ext {
+    // common properties
+    gitHash = grgit.head().id
+
+    // dependency versions
+    airlineVersion = '2.1.1'
+    apacheCommonsVersion = '3.8.1'
+    assertJVersion = '3.3.0'
+    fsWrapperVersion = '3.5.26'
+    hamcrestCoreVersion = '2.1'
+    hamcrestJavaVersion = '2.0.0.0'
+    guavaVersion = '26.0-jre'
+    jacksonCoreVersion = '2.9.2'
+    jacksonDatabindVersion = '2.9.9.3'
+    junitVersion = '4.12'
+    log4jVersion = '1.2.17'
+    lombokVersion = '1.18.8'
+    mockitoVersion = '2.1.0'
+    slf4japiVersion = '1.7.12'
+    slf4jLog4jVersion = '1.7.24'
+
+    // setup some variables
+    firstSpiritVersion = fsRuntimeVersion
+    javaVersion = JavaVersion.VERSION_1_8
+    projectName = 'Command Line Interface'
+
+    // setup repositories
+    releaseRepository = 'core-platform-mvn-release'
+    snapshotRepository = 'core-platform-mvn-snapshot'
+}
+
+///////////////////////////////////////////////////////
+// additional scopes
+///////////////////////////////////////////////////////
+
+configurations {
+    fsLicense
+    demoProject
+    demoProjectWithDB
+}
+
+/**
+ * Uses {@code grgit} to get the name of the current branch
+ * @return
+ */
+String getBranchName() {
+    return grgit.branch.current().name
+}
+
+
+/**
+ * CONFIGURE PROJECTS
+ */
+
+///////////////////////////////////////////////////////
+// dependencies for root project
+///////////////////////////////////////////////////////
+
+dependencies {
+    compile project(":fsdevtools-cli")
+
+    // tests
+    fsLicense group: 'de.espirit.firstspirit', name: 'fs-license', version: '5-SNAPSHOT', ext: 'conf'
+    demoProject 'com.espirit.moddev:pm-demo-without-db:1.0'
+    demoProjectWithDB 'com.espirit.moddev:pm-demo-with-db:1.0'
+}
+
+///////////////////////////////////////////////////////
+// randomize port for integration tests
+//
+// NOTE: port should be in range 49152 <= port <= 65535
+//
+// see links for detailed description:
+// - https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers#Dynamic,_private_or_ephemeral_ports
+// - https://en.wikipedia.org/wiki/Ephemeral_port
+//
+///////////////////////////////////////////////////////
+
+List<Integer> ports = BuildUtils.guessFreePorts()
+ext.serverHttpPort = ports.get(0)
+ext.serverSocketPort = ports.get(1)
+
+///////////////////////////////////////////////////////
+// configure all projects
+///////////////////////////////////////////////////////
+
+allprojects {
+    repositories {
+        maven {
+            url = "https://artifactory.e-spirit.de/artifactory/repo"
+            credentials {
+                username = artifactory_username
+                password = artifactory_password
+            }
+        }
+    }
+
+    apply plugin: 'maven-publish'
+    apply plugin: 'de.espirit.process'
+
+    group 'com.espirit.moddev.fsdevtools'
+    version BuildUtils.getArtifactVersion(getBranchName(), project.version)
+
+    ///////////////////////////////////////////////////////
+    // disable technical release
+    ///////////////////////////////////////////////////////
+    prepareTechnicalSupportRelease {
+        enabled = false
+    }
+
+    notifyTechnicalSupport {
+        enabled = false
+    }
+
+    publishing {
+        repositories {
+            maven {
+                credentials {
+                    username = artifactory_username
+                    password = artifactory_password
+                }
+
+                url BuildUtils.getArtifactory(project.version, snapshotRepository, releaseRepository)
+            }
+        }
+    }
+}
+
+///////////////////////////////////////////////////////
+// configure sub projects
+///////////////////////////////////////////////////////
+
+subprojects {
+    apply plugin: 'java'
+
+    // setup java
+    compileJava.options.encoding = 'UTF-8'
+    compileTestJava.options.encoding = 'UTF-8'
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+
+    ///////////////////////////////////////////////////////
+    // common dependencies for every sub project
+    ///////////////////////////////////////////////////////
+
+    dependencies {
+        compileOnly group: 'de.espirit.firstspirit', name: 'fs-isolated-runtime', version: "${fsRuntimeVersion}"
+        compile "org.slf4j:slf4j-api:${slf4japiVersion}"
+
+        testCompile group: 'de.espirit.firstspirit', name: 'fs-isolated-runtime', version: "${fsRuntimeVersion}"
+        testCompile "junit:junit:${junitVersion}"
+        testCompile "org.hamcrest:hamcrest-core:${hamcrestCoreVersion}"
+        testCompile "org.mockito:mockito-core:${mockitoVersion}"
+        testCompile "org.assertj:assertj-core:${assertJVersion}"
+    }
+
+    ///////////////////////////////////////////////////////
+    // build source.jar
+    ///////////////////////////////////////////////////////
+
+    task sourcesJar(type: Jar) {
+        classifier("sources")
+        from sourceSets.main.allJava
+    }
+
+    ///////////////////////////////////////////////////////
+    // build javadoc.jar
+    ///////////////////////////////////////////////////////
+
+    task javadocJar(type: Jar) {
+        classifier("javadoc")
+        from javadoc.destinationDir
+    }
+
+    ///////////////////////////////////////////////////////
+    // publishing
+    ///////////////////////////////////////////////////////
+
+    publishing {
+        repositories {
+            maven {
+                credentials {
+                    username = artifactory_username
+                    password = artifactory_password
+                }
+
+                url BuildUtils.getArtifactory(project.version, snapshotRepository, releaseRepository)
+            }
+        }
+
+        publications {
+            maven(MavenPublication) {
+                from components.java
+                artifact sourcesJar
+                artifact javadocJar
+            }
+        }
+    }
+}
+
+/**
+ * INTEGRATION TESTS
+ */
+
+firstSpirit {
+    fsrunner {
+        httpPort = serverHttpPort
+        socketPort = serverSocketPort
+        connectionMode = "HTTP_MODE"
+        licenseFile = configurations.fsLicense.resolve().first().absolutePath
+        serverOpts = ["-DINTERNAL_SERVLET_ENGINE=0"]
+        timeout = Duration.ofMinutes(10)
+    }
+}
+
+///////////////////////////////////////////////////////
+// manual clean up task
+///////////////////////////////////////////////////////
+
+task cleanupIntegrationTestServer() {
+    group 'firstspirit'
+    doFirst {
+        def directory = new File("$buildDir/fs");
+        if (directory.exists()) {
+            if (!directory.deleteDir()) {
+                throw new IllegalStateException("Could not delete directory '$directory'!")
+            } else {
+                logger.info("Directory '$directory' deleted.")
+            }
+        } else {
+            logger.info("Nothing to delete.")
+        }
+    }
+}
+
+///////////////////////////////////////////////////////
+// setup projects for integration tests
+///////////////////////////////////////////////////////
+
+task importProjectWithoutDB(type: FSProjectImportTask) {
+    dependsOn fsStart
+
+    fsserver {
+        host = "localhost"
+        httpPort = serverHttpPort
+        connectionMode = "HTTP_MODE"
+        username = "Admin"
+        password = "Admin"
+    }
+
+    testproject {
+        forceActivation = true
+        projectDescription = "fs-cli Project"
+        projectName = "fs-cli Project"
+        projectFile = configurations.demoProject.resolve().first().absolutePath.toString()
+    }
+}
+
+task importProjectWithDB(type: FSProjectImportTask) {
+    dependsOn fsStart
+
+    fsserver {
+        host = "localhost"
+        httpPort = serverHttpPort
+        connectionMode = "HTTP_MODE"
+        username = "Admin"
+        password = "Admin"
+    }
+
+    testproject {
+        forceActivation = true
+        projectDescription = "fs-cli Project with db"
+        projectName = "fs-cli Project with db"
+        projectFile = configurations.demoProjectWithDB.resolve().first().absolutePath.toString()
+    }
+}
+
+///////////////////////////////////////////////////////
+// setup integration test task dependencies
+///////////////////////////////////////////////////////
+
+prepareIntegrationTest.dependsOn(fsStart, importProjectWithoutDB, importProjectWithDB)
+cleanupIntegrationTest.finalizedBy(fsStop)
+fsStop.finalizedBy(cleanupIntegrationTestServer)
+
+/**
+ * DISTRIBUTION
+ */
+
+/**
+ * Constructs the file name for the distributed archive file. The name is based on the {@code project.name}, the current
+ * {@link BuildUtils#getArtifactVersion(java.lang.String, java.lang.String) artifact version} and the given extension.
+ *
+ * @param extension the extension for the archive file
+ * @return the file name for the distributed archive file
+ *
+ * @see BuildUtils#getArtifactVersion(java.lang.String, java.lang.String)
+ */
+String getDistributedArchiveName(final String extension) {
+    return "${project.name}-" + BuildUtils.getArtifactVersion(getBranchName(), project.version) + ".$extension"
+}
+
+///////////////////////////////////////////////////////
+// creates the fat jar (which is included in the distribution in "/lib/...")
+///////////////////////////////////////////////////////
+shadowJar {
+    archiveName("fsdevtools-cli-" + BuildUtils.getArtifactVersion(getBranchName(), project.version) + ".jar")
+}
+
+///////////////////////////////////////////////////////
+// assembles the tar.gz file
+///////////////////////////////////////////////////////
+
+task assembleTarGz(type: Tar) {
+    dependsOn(shadowJar)
+
+    group('build')
+    archiveName(getDistributedArchiveName("tar.gz"))
+    extension("tar.gz")
+    compression = Compression.GZIP
+
+    // copy with filtering
+    from("${project.projectDir}/archive") {
+        into("fs-cli")
+        filter(ReplaceTokens, tokens: BuildUtils.mapToHashtable(project.properties))
+    }
+    // copy fat jar
+    into("fs-cli/lib") {
+        from(shadowJar.getArchiveFile())
+    }
+}
+
+///////////////////////////////////////////////////////
+// assembles the zip file
+///////////////////////////////////////////////////////
+
+task assembleZip(type: Zip) {
+    dependsOn(shadowJar)
+
+    group('build')
+
+    archiveName(getDistributedArchiveName("zip"))
+    extension("zip")
+
+    // copy with filtering
+    from("${project.projectDir}/archive") {
+        into("fs-cli")
+        filter(ReplaceTokens, tokens: BuildUtils.mapToHashtable(project.properties))
+    }
+    // copy fat jar
+    into("fs-cli/lib") {
+        from(shadowJar.getArchiveFile())
+    }
+}
+
+///////////////////////////////////////////////////////
+// assembles the zip & tar.gz file
+///////////////////////////////////////////////////////
+
+assemble.dependsOn(assembleTarGz, assembleZip)
+
+/**
+ * GITHUB RELEASE MANAGEMENT
+ */
+
+///////////////////////////////////////////////////////
+// setup the githubRelease plugin
+///////////////////////////////////////////////////////
+
+if (project.hasProperty('github_fsdevtools_api_token')) {
+    githubRelease {
+        token github_fsdevtools_api_token
+        owner "e-Spirit"
+        repo "FSDevTools"
+        body "The zip and the tar.gz files are our windows and linux/mac distributions. This binary release does not contain FirstSpirit api jars (fs-isolated-runtime.jar). Please add either of them to lib directory. For further information about the prerequisites, please take a look at the [README](https://github.com/e-Spirit/FSDevTools/blob/master/README.md#prerequisites). The fsdevtools-cli-x.x.xxx.jar file can be used to compile against (Keep in mind that you should rather clone this repo and install all submodules to your local Maven repo)."
+        releaseName "Release " + BuildUtils.getArtifactVersion(getBranchName(), project.version)
+        releaseAssets new File("$buildDir/distributions").listFiles()
+    }
+}
+
+// release is only allowed for master branch & no snapshots
+if (!BuildUtils.isSnapshotVersion(getBranchName(), project.version)) {
+    release.dependsOn(githubRelease)
+} else {
+    // disable githubRelease for non-master-branches/non-snapshots
+    task githubRelease(overwrite: true) {
+        group 'publishing'
+        enabled = false
+        finalizedBy {
+            // github release is not allowed for snapshots
+            logger.error("GitHub Release is only allowed on master branch!")
+        }
+    }
+}
+
+
+
+/**
+ * PUBLISHING
+ */
+
+publishing {
+    publications {
+        distributeArchives(MavenPublication) {
+            artifact assembleZip
+            artifact assembleTarGz
+        }
+    }
+}
