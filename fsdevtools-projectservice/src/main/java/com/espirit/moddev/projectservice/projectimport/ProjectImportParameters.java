@@ -22,56 +22,49 @@
 
 package com.espirit.moddev.projectservice.projectimport;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.util.Map;
 
 public class ProjectImportParameters {
-    private final String projectName;
-    private final File projectFile;
-    private final Map<String, String> databases;
-    private final String projectDescription;
-    private final boolean fsForceProjectActivation;
 
-    public ProjectImportParameters(String projectName, String projectDescription, File projectFile, Map<String, String> databases, boolean forceProjectActivation) {
-        validateStringInput(projectName, "Project name should not be null or empty");
-        validateFile(projectFile, "Project file is null, absent, or not a file");
+    private final String _projectName;
+    private final File _projectFile;
+    private final Map<String, String> _layerMapping;
+    private final String _projectDescription;
+    private final boolean _forceProjectActivation;
 
-        this.projectName = projectName;
-        this.projectFile = projectFile;
-        this.databases = databases;
-        this.projectDescription = projectDescription;
-        this.fsForceProjectActivation = forceProjectActivation;
+    public ProjectImportParameters(@NotNull final String projectName, @NotNull final String projectDescription, @NotNull final File projectFile, @NotNull final Map<String, String> layerMapping, final boolean forceProjectActivation) {
+        _projectName = projectName;
+        _projectFile = projectFile;
+        _layerMapping = layerMapping;
+        _projectDescription = projectDescription;
+        _forceProjectActivation = forceProjectActivation;
     }
 
-    private void validateFile(File file, String message) {
-        if(file == null || !file.exists() || !file.isFile()) {
-            throw new IllegalArgumentException(message);
-        }
-    }
-
-    private void validateStringInput(String projectName, String message) {
-        if(projectName == null || projectName.isEmpty()) {
-            throw new IllegalArgumentException(message);
-        }
-    }
-
+    @NotNull
     public String getProjectName() {
-        return projectName;
+        return _projectName;
     }
 
+    @NotNull
     public File getProjectFile() {
-        return projectFile;
+        return _projectFile;
     }
 
-    public Map<String, String> getDatabases() {
-        return databases;
+    @NotNull
+    public Map<String, String> getLayerMapping() {
+        return _layerMapping;
     }
 
+    @NotNull
     public String getProjectDescription() {
-        return projectDescription;
+        return _projectDescription;
     }
 
-    public boolean isFsForceProjectActivation() {
-        return fsForceProjectActivation;
+    public boolean forceProjectActivation() {
+        return _forceProjectActivation;
     }
+
 }

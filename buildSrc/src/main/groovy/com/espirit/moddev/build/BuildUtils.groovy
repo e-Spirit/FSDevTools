@@ -21,32 +21,12 @@ class BuildUtils {
     }
 
     /**
-     * Returns the version string which is based on the name of the current branch. This version should be used for all generated artifacts.
-     *
-     * If the current branch is an issue branch, a snapshot-version which is based on the branch name will be
-     * returned (otherwise the given {@code version} will be returned).
-     *
-     * @return the version string
-     */
-    static String getArtifactVersion(String branchName, final Object version) {
-        def matcher = Pattern.compile('(?:.*/)?[^A-Z]*([A-Z]+-[0-9]+).*').matcher(branchName)
-        if (matcher.matches()) {
-            // issue branch     --> version = "issueKey-SNAPSHOT"
-            return "${matcher.group(1)}-SNAPSHOT"
-        } else {
-            // master branch    --> version = version
-            return "${version}"
-        }
-    }
-
-    /**
      * Returns whether the current version is a snapshot-version.
      *
      * @return {@code true} if the current version is a snapshot, otherwise {@code false}
-     * @see #getArtifactVersion(java.lang.String, java.lang.String)
      */
-    static boolean isSnapshotVersion(final String branchName, final Object version) {
-        return getArtifactVersion(branchName, version).contains("-SNAPSHOT")
+    static boolean isSnapshotVersion(final Object version) {
+        return version.contains("-SNAPSHOT")
     }
 
     /**
@@ -56,7 +36,7 @@ class BuildUtils {
      * @return the target artifactory based on the version
      */
     static String getArtifactory(final Object version, final String snapshotRepository, final String releaseRepository) {
-        return "https://artifactory.e-spirit.de/artifactory/${version.endsWith("SNAPSHOT") ? snapshotRepository : releaseRepository}"
+        return "https://artifactory.e-spirit.de/artifactory/${isSnapshotVersion(version) ? snapshotRepository : releaseRepository}"
     }
 
     /**

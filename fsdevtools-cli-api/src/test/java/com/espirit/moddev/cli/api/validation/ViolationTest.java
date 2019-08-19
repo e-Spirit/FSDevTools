@@ -29,28 +29,28 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
-public class VoilationTest {
+public class ViolationTest {
 
-    private Voilation testling;
+    private Violation _testling;
 
     @Before
     public void setUp() throws Exception {
-        testling = new Voilation("field", "is wrong!");
+        _testling = new Violation("field", "is wrong!");
     }
 
     @Test
     public void testEquals() throws Exception {
-        Voilation copy = new Voilation("field", "is wrong!");
-        Voilation newOne = new Voilation("field", "is blank!");
+        Violation copy = new Violation("field", "is wrong!");
+        Violation newOne = new Violation("field", "is blank!");
 
-        assertThat("Expect identity", testling, is(testling));
-        assertThat("Expect identity", testling, is(copy));
-        assertThat("Expect non-identity", testling, is(not(newOne)));
+        assertThat("Expect identity", _testling, is(_testling));
+        assertThat("Expect identity", _testling, is(copy));
+        assertThat("Expect non-identity", _testling, is(not(newOne)));
     }
 
     @Test
     public void testToString() throws Exception {
-        assertThat(testling.toString(), is("field is wrong!"));
+        assertThat(_testling.toString(), is("field is wrong!"));
     }
 
 }

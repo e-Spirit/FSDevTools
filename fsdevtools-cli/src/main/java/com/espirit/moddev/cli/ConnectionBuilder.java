@@ -25,12 +25,12 @@ package com.espirit.moddev.cli;
 import com.espirit.moddev.cli.api.FsConnectionMode;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.api.validation.DefaultConnectionConfigValidator;
-import com.espirit.moddev.cli.api.validation.Voilation;
-
+import com.espirit.moddev.cli.api.validation.Violation;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ConnectionManager;
 import de.espirit.firstspirit.access.Proxy;
 
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,10 +46,10 @@ public class ConnectionBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionBuilder.class);
 
-    private final Config config;
+    private final Config _config;
 
-    private ConnectionBuilder(final Config config){
-        this.config = Objects.requireNonNull(config, "Config is null!");
+    private ConnectionBuilder(@NotNull final Config config){
+        _config = Objects.requireNonNull(config, "Config is null!");
     }
 
     /**
@@ -58,7 +58,8 @@ public class ConnectionBuilder {
      * @param config the config
      * @return the connection builder
      */
-    public static ConnectionBuilder with(Config config){
+    @NotNull
+    public static ConnectionBuilder with(@NotNull final Config config){
         return new ConnectionBuilder(config);
     }
 
@@ -67,11 +68,13 @@ public class ConnectionBuilder {
      *
      * @return the FirstSpirit connection
      */
+    @NotNull
     public Connection build(){
+        // validate configuration
+        validateConfiguration();
 
-        checkConfig();
-
-        final FsConnectionMode connectionMode = config.getConnectionMode();
+        // use https, if needed
+        final FsConnectionMode connectionMode = _config.getConnectionMode();
         if(FsConnectionMode.HTTPS == connectionMode) {
             ConnectionManager.setUseHttps(true);
         } else {
@@ -79,37 +82,43 @@ public class ConnectionBuilder {
         }
 
         // if set: use proxy for http / https
-        if (!config.getHttpProxyHost().isEmpty()) {
-            if (config.getConnectionMode() == FsConnectionMode.HTTP || config.getConnectionMode() == FsConnectionMode.HTTPS) {
-                LOGGER.info("Using http proxy '{}:{}'", config.getHttpProxyHost(), config.getHttpProxyPort());
-                ConnectionManager.setProxy(new Proxy(config.getHttpProxyHost(), config.getHttpProxyPort()));
+        if (!_config.getHttpProxyHost().isEmpty()) {
+            if (_config.getConnectionMode() == FsConnectionMode.HTTP || _config.getConnectionMode() == FsConnectionMode.HTTPS) {
+                LOGGER.info("Using http proxy '{}:{}'", _config.getHttpProxyHost(), _config.getHttpProxyPort());
+                ConnectionManager.setProxy(new Proxy(_config.getHttpProxyHost(), _config.getHttpProxyPort()));
             }
         }
 
-        final String user = config.getUser();
-        final Integer port = config.getPort();
-        final String host = config.getHost();
+        // setup user, host & port
+        final String user = _config.getUser();
+        final Integer port = _config.getPort();
+        final String host = _config.getHost();
 
+        // logging
         Object[] args = {host, port, user};
         LOGGER.debug("Create connection for FirstSpirit server at '{}:{}' with user '{}'...", args);
 
-        return ConnectionManager.getConnection(host, port, connectionMode.getCode(), user, config.getPassword());
+        // create connection
+        return ConnectionManager.getConnection(host, port, connectionMode.getCode(), user, _config.getPassword());
     }
 
-    private void checkConfig() {
-        DefaultConnectionConfigValidator validator = new DefaultConnectionConfigValidator();
-        final Set<Voilation> voilations = validator.validate(config);
+    private void validateConfiguration() throws IllegalStateException {
+        // validate configuration
+        final DefaultConnectionConfigValidator validator = new DefaultConnectionConfigValidator();
+        final Set<Violation> violations = validator.validate(_config);
 
-        if(!voilations.isEmpty()){
-            StringBuilder errorMessage = new StringBuilder("The configuration is invalid:");
+        // violations found --> build error message
+        if (!violations.isEmpty()) {
+            // build message
+            final StringBuilder errorMessage = new StringBuilder("The configuration is invalid:");
             errorMessage.append(System.lineSeparator());
-            for (Voilation voilation : voilations) {
-                errorMessage.append(voilation.toString())
-                    .append(System.lineSeparator());
+            for (final Violation violation : violations) {
+                errorMessage.append(violation.toString());
+                errorMessage.append(System.lineSeparator());
             }
-            final String message = errorMessage.toString();
 
-            throw new IllegalStateException(message);
+            // finally throw exception
+            throw new IllegalStateException(errorMessage.toString());
         }
     }
 

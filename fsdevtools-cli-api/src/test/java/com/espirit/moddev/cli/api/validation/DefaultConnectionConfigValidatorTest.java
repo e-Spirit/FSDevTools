@@ -40,95 +40,95 @@ import static org.mockito.Mockito.when;
 
 public class DefaultConnectionConfigValidatorTest {
 
-    private DefaultConnectionConfigValidator testling;
-    private Config config;
+    private DefaultConnectionConfigValidator _testling;
+    private Config _config;
 
     @Before
     public void setUp() throws Exception {
-        testling = new DefaultConnectionConfigValidator();
-        config = mock(Config.class);
+        _testling = new DefaultConnectionConfigValidator();
+        _config = mock(Config.class);
     }
 
     @Test
     public void validate() throws Exception {
-        when(config.getHost()).thenReturn("Localhost");
-        when(config.getUser()).thenReturn("Admin");
-        when(config.getPassword()).thenReturn("Admin");
-        when(config.getPort()).thenReturn(FsConnectionMode.HTTP.getDefaultPort());
-        when(config.getConnectionMode()).thenReturn(FsConnectionMode.HTTP);
-        final Set<Voilation> voilations = testling.validate(config);
+        when(_config.getHost()).thenReturn("Localhost");
+        when(_config.getUser()).thenReturn("Admin");
+        when(_config.getPassword()).thenReturn("Admin");
+        when(_config.getPort()).thenReturn(FsConnectionMode.HTTP.getDefaultPort());
+        when(_config.getConnectionMode()).thenReturn(FsConnectionMode.HTTP);
+        final Set<Violation> violation = _testling.validate(_config);
 
-        assertThat("Expect no voilations", voilations, is(empty()));
+        assertThat("Expect no violation", violation, is(empty()));
     }
 
     @Test
     public void validateHost() throws Exception {
-        when(config.getHost()).thenReturn("");
-        when(config.getUser()).thenReturn("Admin");
-        when(config.getPassword()).thenReturn("Admin");
-        when(config.getPort()).thenReturn(FsConnectionMode.HTTP.getDefaultPort());
-        when(config.getConnectionMode()).thenReturn(FsConnectionMode.HTTP);
+        when(_config.getHost()).thenReturn("");
+        when(_config.getUser()).thenReturn("Admin");
+        when(_config.getPassword()).thenReturn("Admin");
+        when(_config.getPort()).thenReturn(FsConnectionMode.HTTP.getDefaultPort());
+        when(_config.getConnectionMode()).thenReturn(FsConnectionMode.HTTP);
 
-        final Set<Voilation> voilations = testling.validate(config);
+        final Set<Violation> violation = _testling.validate(_config);
 
-        assertThat("Expect one voilation", voilations, hasSize(1));
-        assertThat("Expect a specific voilation", voilations, contains(new Voilation("host", "is null or blank")));
+        assertThat("Expect one voilation", violation, hasSize(1));
+        assertThat("Expect a specific voilation", violation, contains(new Violation("host", "is null or blank")));
     }
 
     @Test
     public void validateUser() throws Exception {
-        when(config.getHost()).thenReturn("Localhost");
-        when(config.getUser()).thenReturn(" ");
-        when(config.getPassword()).thenReturn("Admin");
-        when(config.getPort()).thenReturn(FsConnectionMode.HTTP.getDefaultPort());
-        when(config.getConnectionMode()).thenReturn(FsConnectionMode.HTTP);
+        when(_config.getHost()).thenReturn("Localhost");
+        when(_config.getUser()).thenReturn(" ");
+        when(_config.getPassword()).thenReturn("Admin");
+        when(_config.getPort()).thenReturn(FsConnectionMode.HTTP.getDefaultPort());
+        when(_config.getConnectionMode()).thenReturn(FsConnectionMode.HTTP);
 
-        final Set<Voilation> voilations = testling.validate(config);
+        final Set<Violation> violation = _testling.validate(_config);
 
-        assertThat("Expect one voilation", voilations, hasSize(1));
-        assertThat("Expect a specific voilation", voilations, contains(new Voilation("user", "is null or blank")));
+        assertThat("Expect one voilation", violation, hasSize(1));
+        assertThat("Expect a specific voilation", violation, contains(new Violation("user", "is null or blank")));
     }
 
     @Test
     public void validatePassword() throws Exception {
-        when(config.getHost()).thenReturn("Localhost");
-        when(config.getUser()).thenReturn("Admin");
-        when(config.getPassword()).thenReturn("\t");
-        when(config.getPort()).thenReturn(FsConnectionMode.HTTP.getDefaultPort());
-        when(config.getConnectionMode()).thenReturn(FsConnectionMode.HTTP);
+        when(_config.getHost()).thenReturn("Localhost");
+        when(_config.getUser()).thenReturn("Admin");
+        when(_config.getPassword()).thenReturn("\t");
+        when(_config.getPort()).thenReturn(FsConnectionMode.HTTP.getDefaultPort());
+        when(_config.getConnectionMode()).thenReturn(FsConnectionMode.HTTP);
 
-        final Set<Voilation> voilations = testling.validate(config);
+        final Set<Violation> violation = _testling.validate(_config);
 
-        assertThat("Expect one voilation", voilations, hasSize(1));
-        assertThat("Expect a specific voilation", voilations, contains(new Voilation("password", "is null or blank")));
+        assertThat("Expect one voilation", violation, hasSize(1));
+        assertThat("Expect a specific voilation", violation, contains(new Violation("password", "is null or blank")));
     }
 
     @Test
     public void validatePort() throws Exception {
-        when(config.getHost()).thenReturn("Localhost");
-        when(config.getUser()).thenReturn("Admin");
-        when(config.getPassword()).thenReturn("Admin");
-        when(config.getPort()).thenReturn(null);
-        when(config.getConnectionMode()).thenReturn(FsConnectionMode.HTTP);
+        when(_config.getHost()).thenReturn("Localhost");
+        when(_config.getUser()).thenReturn("Admin");
+        when(_config.getPassword()).thenReturn("Admin");
+        when(_config.getPort()).thenReturn(null);
+        when(_config.getConnectionMode()).thenReturn(FsConnectionMode.HTTP);
 
-        final Set<Voilation> voilations = testling.validate(config);
+        final Set<Violation> violation = _testling.validate(_config);
 
-        assertThat("Expect one voilation", voilations, hasSize(1));
-        assertThat("Expect a specific voilation", voilations, contains(new Voilation("port", "is null")));
+        assertThat("Expect one voilation", violation, hasSize(1));
+        assertThat("Expect a specific voilation", violation, contains(new Violation("port", "is null")));
     }
 
     @Test
     public void validateConnectionMode() throws Exception {
-        when(config.getHost()).thenReturn("Localhost");
-        when(config.getUser()).thenReturn("Admin");
-        when(config.getPassword()).thenReturn("Admin");
-        when(config.getPort()).thenReturn(FsConnectionMode.HTTP.getDefaultPort());
-        when(config.getConnectionMode()).thenReturn(null);
+        when(_config.getHost()).thenReturn("Localhost");
+        when(_config.getUser()).thenReturn("Admin");
+        when(_config.getPassword()).thenReturn("Admin");
+        when(_config.getPort()).thenReturn(FsConnectionMode.HTTP.getDefaultPort());
+        when(_config.getConnectionMode()).thenReturn(null);
 
-        final Set<Voilation> voilations = testling.validate(config);
+        final Set<Violation> violation = _testling.validate(_config);
 
-        assertThat("Expect one voilation", voilations, hasSize(1));
-        assertThat("Expect a specific voilation", voilations, contains(new Voilation("connectionMode", "is null")));
+        assertThat("Expect one voilation", violation, hasSize(1));
+        assertThat("Expect a specific voilation", violation, contains(new Violation("connectionMode", "is null")));
     }
 
 }

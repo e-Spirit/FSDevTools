@@ -33,11 +33,11 @@ import java.util.Set;
 public interface Validator<T> {
 
     /**
-     * Validate the given bean and return possible voilations.
+     * Validate the given bean and return possible violations.
      *
      * @param bean the bean to check
-     * @return the possible voilations
+     * @return the possible violations
      */
-    Set<Voilation> validate(T bean);
+    Set<Violation> validate(T bean);
 
 }

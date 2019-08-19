@@ -25,20 +25,20 @@ package com.espirit.moddev.cli.api.validation;
 import java.util.Objects;
 
 /**
- * The type Voilation stores a result of a check.
+ * The type Violation stores a result of a check.
  */
-public class Voilation {
+public class Violation {
 
     private String field;
     private String message;
 
     /**
-     * Instantiates a new Voilation.
+     * Instantiates a new Violation.
      *
      * @param field   the field
      * @param message the message
      */
-    public Voilation(String field, String message) {
+    public Violation(String field, String message) {
         this.field = field;
         this.message = message;
     }
@@ -69,9 +69,9 @@ public class Voilation {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Voilation voilation = (Voilation) o;
-        return Objects.equals(field, voilation.field) &&
-               Objects.equals(message, voilation.message);
+        final Violation violation = (Violation) o;
+        return Objects.equals(field, violation.field) &&
+               Objects.equals(message, violation.message);
     }
 
     @Override

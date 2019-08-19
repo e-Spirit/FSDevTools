@@ -3,6 +3,7 @@ import com.espirit.moddev.gradle.fs.tasks.FSProjectImportTask
 import org.apache.tools.ant.filters.ReplaceTokens
 
 import java.time.Duration
+import java.util.regex.Pattern
 
 /**
  * configure buildscript
@@ -69,7 +70,26 @@ application {
 // configure global variables
 ///////////////////////////////////////////////////////
 
+/**
+ * Uses {@code grgit} to get the name of the current branch
+ * @return
+ */
+String getBranchName() {
+    return grgit.branch.current().name
+}
+
 ext {
+    // set version to {{issue.key}}-SNAPSHOT for feature branches
+    try {
+        def branchName = getBranchName().trim()
+        def matcher = Pattern.compile('(?:.*/)?[^A-Z]*([A-Z]+-[0-9]+).*').matcher(branchName)
+        if (matcher.matches()) {
+            project.version = "${matcher.group(1)}-SNAPSHOT"
+        }
+    } catch (IOException e) {
+        println "Failure determining branch name: $e"
+    }
+
     // common properties
     gitHash = grgit.head().id
 
@@ -109,15 +129,6 @@ configurations {
     demoProject
     demoProjectWithDB
 }
-
-/**
- * Uses {@code grgit} to get the name of the current branch
- * @return
- */
-String getBranchName() {
-    return grgit.branch.current().name
-}
-
 
 /**
  * CONFIGURE PROJECTS
@@ -170,7 +181,7 @@ allprojects {
     apply plugin: 'de.espirit.process'
 
     group 'com.espirit.moddev.fsdevtools'
-    version BuildUtils.getArtifactVersion(getBranchName(), project.version)
+    version project.version
 
     ///////////////////////////////////////////////////////
     // disable technical release
@@ -358,24 +369,33 @@ fsStop.finalizedBy(cleanupIntegrationTestServer)
  * DISTRIBUTION
  */
 
-/**
- * Constructs the file name for the distributed archive file. The name is based on the {@code project.name}, the current
- * {@link BuildUtils#getArtifactVersion(java.lang.String, java.lang.String) artifact version} and the given extension.
- *
- * @param extension the extension for the archive file
- * @return the file name for the distributed archive file
- *
- * @see BuildUtils#getArtifactVersion(java.lang.String, java.lang.String)
- */
-String getDistributedArchiveName(final String extension) {
-    return "${project.name}-" + BuildUtils.getArtifactVersion(getBranchName(), project.version) + ".$extension"
-}
-
 ///////////////////////////////////////////////////////
 // creates the fat jar (which is included in the distribution in "/lib/...")
 ///////////////////////////////////////////////////////
+
 shadowJar {
-    archiveName("fsdevtools-cli-" + BuildUtils.getArtifactVersion(getBranchName(), project.version) + ".jar")
+    archiveName("fsdevtools-cli-" + project.version + ".jar")
+    destinationDir(file("$buildDir/shadowJAR"))
+}
+
+///////////////////////////////////////////////////////
+// disable unneeded tasks
+///////////////////////////////////////////////////////
+
+shadowDistTar {
+    enabled false
+}
+
+shadowDistZip {
+    enabled false
+}
+
+distZip {
+    enabled false
+}
+
+distTar {
+    enabled false
 }
 
 ///////////////////////////////////////////////////////
@@ -386,9 +406,11 @@ task assembleTarGz(type: Tar) {
     dependsOn(shadowJar)
 
     group('build')
-    archiveName(getDistributedArchiveName("tar.gz"))
-    extension("tar.gz")
+    archiveBaseName = "fs-cli"
+    archiveVersion = project.version
+    archiveExtension = "tar.gz"
     compression = Compression.GZIP
+    destinationDir(file("$buildDir/distributions"))
 
     // copy with filtering
     from("${project.projectDir}/archive") {
@@ -410,8 +432,9 @@ task assembleZip(type: Zip) {
 
     group('build')
 
-    archiveName(getDistributedArchiveName("zip"))
-    extension("zip")
+    archiveBaseName = "fs-cli"
+    archiveVersion = project.version
+    destinationDir(file("$buildDir/distributions"))
 
     // copy with filtering
     from("${project.projectDir}/archive") {
@@ -444,14 +467,16 @@ if (project.hasProperty('github_fsdevtools_api_token')) {
         owner "e-Spirit"
         repo "FSDevTools"
         body "The zip and the tar.gz files are our windows and linux/mac distributions. This binary release does not contain FirstSpirit api jars (fs-isolated-runtime.jar). Please add either of them to lib directory. For further information about the prerequisites, please take a look at the [README](https://github.com/e-Spirit/FSDevTools/blob/master/README.md#prerequisites). The fsdevtools-cli-x.x.xxx.jar file can be used to compile against (Keep in mind that you should rather clone this repo and install all submodules to your local Maven repo)."
-        releaseName "Release " + BuildUtils.getArtifactVersion(getBranchName(), project.version)
+        releaseName "Release " + project.version
         releaseAssets new File("$buildDir/distributions").listFiles()
     }
 }
 
 // release is only allowed for master branch & no snapshots
-if (!BuildUtils.isSnapshotVersion(getBranchName(), project.version)) {
-    release.dependsOn(githubRelease)
+if (!BuildUtils.isSnapshotVersion(project.version)) {
+    def githubTask = project.tasks.findByName("githubRelease")
+    githubTask.dependsOn(assemble)
+    project.tasks.findByName("publish").dependsOn(githubTask)
 } else {
     // disable githubRelease for non-master-branches/non-snapshots
     task githubRelease(overwrite: true) {

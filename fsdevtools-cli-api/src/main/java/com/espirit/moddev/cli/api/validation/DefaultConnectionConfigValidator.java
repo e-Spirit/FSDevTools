@@ -24,6 +24,7 @@ package com.espirit.moddev.cli.api.validation;
 
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.shared.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -38,29 +39,25 @@ public class DefaultConnectionConfigValidator implements Validator<Config> {
     private static final String MESSAGE_NULL = "is null";
 
     @Override
-    public Set<Voilation> validate(Config bean) {
-        Set<Voilation> voilations = new HashSet<>();
+    public Set<Violation> validate(@NotNull final Config config) {
+        final Set<Violation> violations = new HashSet<>();
 
-        if(bean != null){
-            if(StringUtils.isNullOrEmpty(bean.getHost())){
-                voilations.add(new Voilation("host", MESSAGE_NULL_BLANK));
-            }
-            if(StringUtils.isNullOrEmpty(bean.getUser())){
-                voilations.add(new Voilation("user", MESSAGE_NULL_BLANK));
-            }
-            if(StringUtils.isNullOrEmpty(bean.getPassword())){
-                voilations.add(new Voilation("password", MESSAGE_NULL_BLANK));
-            }
-            if(bean.getConnectionMode() == null){
-                voilations.add(new Voilation("connectionMode", MESSAGE_NULL));
-            }
-            if(bean.getPort() == null){
-                voilations.add(new Voilation("port", MESSAGE_NULL));
-            }
-        } else {
-            voilations.add(new Voilation("config", MESSAGE_NULL));
+        if(StringUtils.isNullOrEmpty(config.getHost())){
+            violations.add(new Violation("host", MESSAGE_NULL_BLANK));
+        }
+        if(StringUtils.isNullOrEmpty(config.getUser())){
+            violations.add(new Violation("user", MESSAGE_NULL_BLANK));
+        }
+        if(StringUtils.isNullOrEmpty(config.getPassword())){
+            violations.add(new Violation("password", MESSAGE_NULL_BLANK));
+        }
+        if(config.getConnectionMode() == null){
+            violations.add(new Violation("connectionMode", MESSAGE_NULL));
+        }
+        if(config.getPort() == null){
+            violations.add(new Violation("port", MESSAGE_NULL));
         }
 
-        return voilations;
+        return violations;
     }
 }
