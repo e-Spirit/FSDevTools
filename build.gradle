@@ -1,5 +1,6 @@
 import com.espirit.moddev.build.BuildUtils
 import com.espirit.moddev.gradle.fs.tasks.FSProjectImportTask
+import org.apache.tools.ant.filters.FixCrLfFilter
 import org.apache.tools.ant.filters.ReplaceTokens
 
 import java.time.Duration
@@ -412,10 +413,22 @@ task assembleTarGz(type: Tar) {
     compression = Compression.GZIP
     destinationDir(file("$buildDir/distributions"))
 
-    // copy with filtering
-    from("${project.projectDir}/archive") {
-        into("fs-cli")
+    // copy conf-dir with filtering
+    from("${project.projectDir}/archive/conf") {
+        into("fs-cli/conf")
         filter(ReplaceTokens, tokens: BuildUtils.mapToHashtable(project.properties))
+    }
+    // copy fs-cli.sh with execution rights & lf
+    from("${project.projectDir}/archive/bin/fs-cli.sh") {
+        into("fs-cli/bin")
+        fileMode 0755
+        filter(FixCrLfFilter.class, eol:FixCrLfFilter.CrLf.newInstance("lf"))
+    }
+    // copy fs-cli.cmd with execution rights & crlf
+    from("${project.projectDir}/archive/bin/fs-cli.cmd") {
+        into("fs-cli/bin")
+        fileMode 0755
+        filter(FixCrLfFilter.class, eol:FixCrLfFilter.CrLf.newInstance("crlf"))
     }
     // copy fat jar
     into("fs-cli/lib") {
@@ -436,10 +449,22 @@ task assembleZip(type: Zip) {
     archiveVersion = project.version
     destinationDir(file("$buildDir/distributions"))
 
-    // copy with filtering
-    from("${project.projectDir}/archive") {
-        into("fs-cli")
+    // copy conf-dir with filtering
+    from("${project.projectDir}/archive/conf") {
+        into("fs-cli/conf")
         filter(ReplaceTokens, tokens: BuildUtils.mapToHashtable(project.properties))
+    }
+    // copy fs-cli.sh with execution rights & lf
+    from("${project.projectDir}/archive/bin/fs-cli.sh") {
+        into("fs-cli/bin")
+        fileMode 0755
+        filter(FixCrLfFilter.class, eol:FixCrLfFilter.CrLf.newInstance("lf"))
+    }
+    // copy fs-cli.cmd with execution rights & crlf
+    from("${project.projectDir}/archive/bin/fs-cli.cmd") {
+        into("fs-cli/bin")
+        fileMode 0755
+        filter(FixCrLfFilter.class, eol:FixCrLfFilter.CrLf.newInstance("crlf"))
     }
     // copy fat jar
     into("fs-cli/lib") {
@@ -469,7 +494,7 @@ if (project.hasProperty('github_fsdevtools_api_token')) {
         repo "FSDevTools"
         body "The zip and the tar.gz files are our windows and linux/mac distributions. This binary release does not contain FirstSpirit api jars (fs-isolated-runtime.jar). Please add either of them to lib directory. For further information about the prerequisites, please take a look at the [README](https://github.com/e-Spirit/FSDevTools/blob/master/README.md#prerequisites). The fsdevtools-cli-x.x.xxx.jar file can be used to compile against (Keep in mind that you should rather clone this repo and install all submodules to your local Maven repo)."
         releaseName "Release " + project.version
-        releaseAssets new File("$buildDir/distributions").listFiles()
+        releaseAssets assembleTarGz.outputs.files, assembleZip.outputs.files
     }
 }
 
