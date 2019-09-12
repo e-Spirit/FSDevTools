@@ -28,12 +28,23 @@ import com.espirit.moddev.cli.api.validation.DefaultConnectionConfigValidator;
 import com.espirit.moddev.cli.api.validation.Violation;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ConnectionManager;
+import de.espirit.firstspirit.access.ExceptionHandler;
+import de.espirit.firstspirit.access.InvalidSessionException;
 import de.espirit.firstspirit.access.Proxy;
-
+import de.espirit.firstspirit.access.ServerConfiguration;
+import de.espirit.firstspirit.access.ServiceNotFoundException;
+import de.espirit.firstspirit.access.User;
+import de.espirit.firstspirit.access.project.Project;
+import de.espirit.firstspirit.access.project.RemoteProjectConfiguration;
+import de.espirit.firstspirit.agency.ServerInformationAgent;
+import de.espirit.firstspirit.agency.SpecialistsBroker;
+import de.espirit.firstspirit.common.MaximumNumberOfSessionsExceededException;
+import de.espirit.firstspirit.server.authentication.AuthenticationException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Set;
 
@@ -48,7 +59,7 @@ public class ConnectionBuilder {
 
     private final Config _config;
 
-    private ConnectionBuilder(@NotNull final Config config){
+    private ConnectionBuilder(@NotNull final Config config) {
         _config = Objects.requireNonNull(config, "Config is null!");
     }
 
@@ -59,7 +70,7 @@ public class ConnectionBuilder {
      * @return the connection builder
      */
     @NotNull
-    public static ConnectionBuilder with(@NotNull final Config config){
+    public static ConnectionBuilder with(@NotNull final Config config) {
         return new ConnectionBuilder(config);
     }
 
@@ -69,13 +80,13 @@ public class ConnectionBuilder {
      * @return the FirstSpirit connection
      */
     @NotNull
-    public Connection build(){
+    public Connection build() {
         // validate configuration
         validateConfiguration();
 
         // use https, if needed
         final FsConnectionMode connectionMode = _config.getConnectionMode();
-        if(FsConnectionMode.HTTPS == connectionMode) {
+        if (FsConnectionMode.HTTPS == connectionMode) {
             ConnectionManager.setUseHttps(true);
         } else {
             ConnectionManager.setUseHttps(false);
@@ -95,11 +106,12 @@ public class ConnectionBuilder {
         final String host = _config.getHost();
 
         // logging
-        Object[] args = {host, port, user};
+        final Object[] args = {host, port, user};
         LOGGER.debug("Create connection for FirstSpirit server at '{}:{}' with user '{}'...", args);
 
         // create connection
-        return ConnectionManager.getConnection(host, port, connectionMode.getCode(), user, _config.getPassword());
+        final Connection connection = ConnectionManager.getConnection(host, port, connectionMode.getCode(), user, _config.getPassword());
+        return new DelegateConnection(connection);
     }
 
     private void validateConfiguration() throws IllegalStateException {
@@ -119,6 +131,119 @@ public class ConnectionBuilder {
 
             // finally throw exception
             throw new IllegalStateException(errorMessage.toString());
+        }
+    }
+
+    private static final class DelegateConnection implements Connection {
+
+        private final Connection _connection;
+
+        private DelegateConnection(final Connection delegate) {
+            _connection = delegate;
+        }
+
+        @Override
+        public <T> T getService(final Class<T> aClass) throws ServiceNotFoundException {
+            return _connection.getService(aClass);
+        }
+
+        @Override
+        public void close() throws IOException {
+            _connection.close();
+        }
+
+        public void connect() throws IOException, AuthenticationException, MaximumNumberOfSessionsExceededException {
+            _connection.connect();
+            final ServerInformationAgent serverInformationAgent = _connection.getBroker().requestSpecialist(ServerInformationAgent.TYPE);
+            if (serverInformationAgent != null) {
+                final ServerInformationAgent.VersionInfo serverVersion = serverInformationAgent.getServerVersion();
+                final ServerInformationAgent.VersionInfo.Mode mode = serverVersion.getMode();
+                LOGGER.info("Connected to FirstSpirit server at {} of version {} ({})", getHost(), serverVersion.getFullVersionString(), mode);
+            }
+        }
+
+        public boolean isConnected() {
+            return _connection.isConnected();
+        }
+
+        public void disconnect() throws IOException {
+            _connection.disconnect();
+        }
+
+        public String getHost() {
+            return _connection.getHost();
+        }
+
+        public int getPort() {
+            return _connection.getPort();
+        }
+
+        public int getMode() {
+            return _connection.getMode();
+        }
+
+        public String getServletZone() {
+            return _connection.getServletZone();
+        }
+
+        public SpecialistsBroker getBroker() {
+            return _connection.getBroker();
+        }
+
+        public Project[] getProjects() {
+            return _connection.getProjects();
+        }
+
+        public Project getProjectByName(String s) {
+            return _connection.getProjectByName(s);
+        }
+
+        public Project getProjectById(long l) {
+            return _connection.getProjectById(l);
+        }
+
+        public User getUser() throws InvalidSessionException {
+            return _connection.getUser();
+        }
+
+        public Object getService(String s) throws ServiceNotFoundException {
+            return _connection.getService(s);
+        }
+
+        public String createTicket() {
+            return _connection.createTicket();
+        }
+
+        public String createTicket(boolean b) {
+            return _connection.createTicket(b);
+        }
+
+        public void removeTicket(String s) {
+            _connection.removeTicket(s);
+        }
+
+        public Connection getRemoteConnection(RemoteProjectConfiguration remoteProjectConfiguration) throws IOException, AuthenticationException, MaximumNumberOfSessionsExceededException {
+            return _connection.getRemoteConnection(remoteProjectConfiguration);
+        }
+
+        public boolean isRemote() {
+            return _connection.isRemote();
+        }
+
+        public ExceptionHandler getExceptionHandler() {
+            return _connection.getExceptionHandler();
+        }
+
+        public void setExceptionHandler(ExceptionHandler exceptionHandler) {
+            _connection.setExceptionHandler(exceptionHandler);
+        }
+
+        public ServerConfiguration getServerConfiguration() {
+            return _connection.getServerConfiguration();
+        }
+
+        public ClassLoader getClassLoader() {
+            return _connection.getClassLoader();
         }
     }
 

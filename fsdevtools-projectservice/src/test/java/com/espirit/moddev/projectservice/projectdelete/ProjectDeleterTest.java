@@ -22,13 +22,9 @@
 
 package com.espirit.moddev.projectservice.projectdelete;
 
-import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.Connection;
-import de.espirit.firstspirit.access.ServicesBroker;
 import de.espirit.firstspirit.access.admin.ProjectStorage;
 import de.espirit.firstspirit.access.project.Project;
-import de.espirit.firstspirit.io.ServerConnection;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,7 +33,9 @@ import org.mockito.Mock;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -51,11 +49,12 @@ public class ProjectDeleterTest {
     @Mock
     private Connection mockConnection;
     private ProjectDeleter testling;
+
     @Before
     public void setUp() {
         testling = new ProjectDeleter();
         mockProject = mock(Project.class);
-        Connection mockConnection = mock(ServerConnection.class);
+        Connection mockConnection = mock(Connection.class);
         when(mockConnection.getProjectByName("test")).thenReturn(mockProject);
         when(mockConnection.isConnected()).thenReturn(true);
         when(mockConnection.getProjectByName(anyString())).thenReturn(null);
@@ -64,6 +63,7 @@ public class ProjectDeleterTest {
         when(mockConnection.getProjects()).thenReturn(projects);
         this.mockConnection = mockConnection;
     }
+
     /**
      * Test that the default constructor has no dependencies or exceptions.
      */
@@ -91,7 +91,7 @@ public class ProjectDeleterTest {
     public void testDeleteProject() {
         ProjectDeleter testling = new ProjectDeleter() {
             @Override
-            ProjectStorage returnProjectStorage (Connection connection,  Project project) {
+            ProjectStorage returnProjectStorage(Connection connection, Project project) {
                 return mock(ProjectStorage.class);
             }
         };

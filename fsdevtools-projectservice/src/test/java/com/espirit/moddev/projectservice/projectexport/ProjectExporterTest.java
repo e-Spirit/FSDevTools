@@ -23,6 +23,7 @@
 package com.espirit.moddev.projectservice.projectexport;
 
 import de.espirit.firstspirit.access.AdminService;
+import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ServerActionHandle;
 import de.espirit.firstspirit.access.admin.ProjectStorage;
 import de.espirit.firstspirit.access.export.ExportFile;
@@ -30,8 +31,6 @@ import de.espirit.firstspirit.access.export.ExportParameters;
 import de.espirit.firstspirit.access.export.ExportProgress;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.access.script.ExecutionException;
-import de.espirit.firstspirit.io.ServerConnection;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -79,9 +78,9 @@ public class ProjectExporterTest {
      * Test that an export with null connection throws an IllegalStateException.
      */
     @Test
-    public void testExportProjectWithNullServerConnectionThrowsException() {
+    public void testExportProjectWithNullConnectionThrowsException() {
         // Arrange
-        final ServerConnection nullConnection = null;
+        final Connection nullConnection = null;
         final ProjectExportParameters mockProjectExportParameters = mock(ProjectExportParameters.class);
 
         // Assert
@@ -98,7 +97,7 @@ public class ProjectExporterTest {
     @Test
     public void testExportProjectThrowsExceptionIfProjectDoesNotExistOnServer() {
         // Arrange
-        final ServerConnection mockConnection = mock(ServerConnection.class);
+        final Connection mockConnection = mock(Connection.class);
         when(mockConnection.isConnected()).thenReturn(true);
         when(mockConnection.getProjectByName(anyString())).thenReturn(null);
 
@@ -118,7 +117,7 @@ public class ProjectExporterTest {
     public void testProjectExistsOnServerReturnsTrueIfProjectExists() {
         // Arrange
         final Project mockProject = mock(Project.class);
-        final ServerConnection mockConnection = mock(ServerConnection.class);
+        final Connection mockConnection = mock(Connection.class);
         when(mockConnection.isConnected()).thenReturn(true);
         when(mockConnection.getProjectByName(anyString())).thenReturn(mockProject);
 
@@ -138,7 +137,7 @@ public class ProjectExporterTest {
     @Test
     public void testProjectExistsOnServerReturnsFalseIfProjectDoesNotExist() {
         // Arrange
-        final ServerConnection mockConnection = mock(ServerConnection.class);
+        final Connection mockConnection = mock(Connection.class);
         when(mockConnection.isConnected()).thenReturn(true);
         when(mockConnection.getProjectByName(anyString())).thenReturn(null);
 
@@ -159,7 +158,7 @@ public class ProjectExporterTest {
         // Arrange
         final ProjectExportParameters mockProjectExportParameters = mock(ProjectExportParameters.class);
 
-        final ServerConnection mockConnection = mock(ServerConnection.class);
+        final Connection mockConnection = mock(Connection.class);
         when(mockConnection.getProjectByName(mockProjectExportParameters.getProjectName())).thenReturn(null);
 
         // Act
@@ -181,7 +180,7 @@ public class ProjectExporterTest {
         final ProjectExportParameters mockProjectExportParameters = mock(ProjectExportParameters.class);
         when(mockProjectExportParameters.isFsForceProjectActivation()).thenReturn(false);
 
-        final ServerConnection mockConnection = mock(ServerConnection.class);
+        final Connection mockConnection = mock(Connection.class);
         when(mockConnection.getProjectByName(mockProjectExportParameters.getProjectName())).thenReturn(mockProject);
 
         // Act
@@ -203,7 +202,7 @@ public class ProjectExporterTest {
         final ProjectExportParameters mockProjectExportParameters = mock(ProjectExportParameters.class);
         when(mockProjectExportParameters.isFsForceProjectActivation()).thenReturn(true);
 
-        final ServerConnection mockConnection = mock(ServerConnection.class);
+        final Connection mockConnection = mock(Connection.class);
         when(mockConnection.getProjectByName(mockProjectExportParameters.getProjectName())).thenReturn(mockProject);
 
         final ProjectExporter spyProjectExporter = spy(testling);
@@ -224,7 +223,7 @@ public class ProjectExporterTest {
         // Arrange
         final ProjectExporter spyProjectExporter = spy(testling);
 
-        final ServerConnection mockConnection = mock(ServerConnection.class);
+        final Connection mockConnection = mock(Connection.class);
         when(mockConnection.isConnected()).thenReturn(true);
 
         final ProjectExportParameters mockProjectExportParameters = mock(ProjectExportParameters.class);
@@ -254,7 +253,7 @@ public class ProjectExporterTest {
         when(mockProjectExportParameters.getProjectExportPath()).thenReturn("validProjectExportPath");
 
         final ServerActionHandle mockExportHandle = mock(ServerActionHandle.class);
-        final ServerConnection mockConnection = mock(ServerConnection.class);
+        final Connection mockConnection = mock(Connection.class);
         when(mockConnection.getProjectByName(mockProjectExportParameters.getProjectName())).thenReturn(mockProject);
 
         final ProjectStorage mockProjectStorage = mock(ProjectStorage.class);
@@ -290,7 +289,7 @@ public class ProjectExporterTest {
         final AdminService mockAdminService = mock(AdminService.class);
         when(mockAdminService.getProjectStorage()).thenReturn(mockProjectStorage);
 
-        final ServerConnection mockConnection = mock(ServerConnection.class);
+        final Connection mockConnection = mock(Connection.class);
         when(mockConnection.getService(AdminService.class)).thenReturn(mockAdminService);
 
         // Act

@@ -33,6 +33,7 @@ import com.espirit.moddev.cli.exception.SystemExitHandler;
 import com.espirit.moddev.cli.reflection.CommandUtils;
 import com.espirit.moddev.cli.reflection.GroupUtils;
 import com.github.rvesse.airline.builder.CliBuilder;
+import de.espirit.common.VersionManager;
 import de.espirit.common.base.Logging;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
@@ -45,9 +46,6 @@ import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-
 
 /**
  * Class to represent a command line interface. Is meant to be used from the command line
@@ -69,7 +67,6 @@ public final class Cli {
     private final Properties buildProperties;
     private final Properties gitProperties;
 
-
     /**
      * Instantiates a new Cli.
      */
@@ -82,7 +79,7 @@ public final class Cli {
             LOGGER.error("Failed to load BuildProperties", e);
         }
         try (InputStream resourceAsStream = ClassLoader.getSystemClassLoader().getResourceAsStream("CliGit.properties")) {
-            if(resourceAsStream != null) {
+            if (resourceAsStream != null) {
                 gitProperties.load(resourceAsStream);
             } else {
                 throw new IOException("Resource not found");
@@ -146,28 +143,16 @@ public final class Cli {
 
     private void logVersionsAndGitHash() throws IOException {
         final Object[] argsVersion =
-            {CliConstants.FS_CLI, buildProperties.getProperty("fs.cli.build.version"), gitProperties.getProperty("git.hash")};
+                {CliConstants.FS_CLI, buildProperties.getProperty("fs.cli.build.version"), gitProperties.getProperty("git.hash")};
         LOGGER.info("{} version {} / git hash {}", argsVersion);
         LOGGER.info("Build for FirstSpirit version {}", new Object[]{buildProperties.getProperty("fs.cli.fs.version")});
-        String jarFilePath = System.getenv("jarfile") != null ? System.getenv("jarfile") : System.getenv("JARFILE");
-        if (jarFilePath != null) {
-            String fsAccessPath = normalizePath(jarFilePath);
-            try (JarFile jar = new JarFile(fsAccessPath)) {
-                final Attributes mainAttributes = jar.getManifest().getMainAttributes();
-                final String fsVersionJar = mainAttributes.getValue("FirstSpirit-Version");
-                final String fsImplVersionJar = mainAttributes.getValue("Implementation-Version");
-                final Object[] argsFsVersion = {fsVersionJar, fsImplVersionJar, fsAccessPath};
-                LOGGER.info("Using FirstSpirit Access API version {}.{} (see {})", argsFsVersion);
-            }
+        try {
+            // get jar file of VersionManager from classpath
+            final String jarFileName = new File(VersionManager.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getName();
+            LOGGER.info("Using FirstSpirit Access API version {} ({})", VersionManager.getVersionWithRevision(), jarFileName);
+        } catch (final Error | Exception e) {
+            // ignore any exceptions related to the VersionManager
         }
-    }
-
-    private static String normalizePath(String filePath) {
-        String jarFilePath = filePath.replace("\"", "");
-        final String libPath = new File(jarFilePath).getParentFile().getAbsolutePath();
-        jarFilePath = libPath + "/fs-access.jar";
-        jarFilePath = jarFilePath.replace("\\", "/");
-        return jarFilePath;
     }
 
     /**
@@ -231,7 +216,7 @@ public final class Cli {
     }
 
     static void closeContext(CliContext context) {
-        if(context != null) {
+        if (context != null) {
             try {
                 context.close();
             } catch (Exception e) {
@@ -241,10 +226,10 @@ public final class Cli {
     }
 
     @SuppressWarnings("squid:S1162")
-    private static void logResult(Result result) throws Exception{
+    private static void logResult(Result result) throws Exception {
         if (result != null) {
             result.log();
-            if(result.isError()){
+            if (result.isError()) {
                 throw result.getError();
             }
         } else {
@@ -290,8 +275,6 @@ public final class Cli {
         final com.github.rvesse.airline.Cli<Command> cliParser = builder.build();
         return cliParser.parse(args);
     }
-
-
 
     /**
      * A getter for command classes that can be found on the classpath. The classes are loaded at class-load

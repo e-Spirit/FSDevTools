@@ -90,12 +90,6 @@ public class CliContextImpl implements CliContext {
         }
         try {
             connection.connect();
-            final ServerInformationAgent serverInformationAgent = connection.getBroker().requestSpecialist(ServerInformationAgent.TYPE);
-            if (serverInformationAgent != null) {
-                final ServerInformationAgent.VersionInfo serverVersion = serverInformationAgent.getServerVersion();
-                LOGGER.info("Connected to FirstSpirit server at {} of version {}",
-                            new Object[]{clientConfig.getHost(), serverVersion.getFullVersionString()});
-            }
         } catch (MaximumNumberOfSessionsExceededException e) {
             throw new CliException(CliError.SESSIONS, clientConfig, e);
         } catch (AuthenticationException e) {

@@ -31,8 +31,8 @@ import de.espirit.firstspirit.access.export.ExportParameters;
 import de.espirit.firstspirit.access.export.ExportProgress;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.access.script.ExecutionException;
-import de.espirit.firstspirit.io.ServerConnection;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,41 +53,41 @@ public class ProjectExporter {
     /**
      * Exports a project specified by projectExportParameters from a FirstSpirit server.
      *
-     * @param serverConnection        The connection that is used to access the FirstSpirit server
+     * @param connection              The connection that is used to access the FirstSpirit server
      * @param projectExportParameters ProjectExportParameters representing the project which is going to be exported.
-     * @return                        true if the project was exported successfully, false otherwise.
-     * @throws IllegalStateException  If the given connection is null or not connected.
-     * @throws ExecutionException     If a project with the given name does not exist on the server.
+     * @return true if the project was exported successfully, false otherwise.
+     * @throws IllegalStateException If the given connection is null or not connected.
+     * @throws ExecutionException    If a project with the given name does not exist on the server.
      */
-    public boolean exportProject(ServerConnection serverConnection, ProjectExportParameters projectExportParameters) {
-        if(serverConnection == null || !serverConnection.isConnected()) {
+    public boolean exportProject(@Nullable final Connection connection, @NotNull final ProjectExportParameters projectExportParameters) {
+        if (connection == null || !connection.isConnected()) {
             throw new IllegalStateException("Please provide a connected connection");
         }
-        if(!projectExistsOnServer(serverConnection, projectExportParameters)) {
+        if (!projectExistsOnServer(connection, projectExportParameters)) {
             throw new ExecutionException("Project with name '"
                     + projectExportParameters.getProjectName()
                     + "' does not exist on server and could not be exported!");
         }
 
         final String exportDir = projectExportParameters.getProjectExportPath();
-        if(!exportPathIsWritable(exportDir)) {
+        if (!exportPathIsWritable(exportDir)) {
             throw new ExecutionException("Export directory '"
                     + projectExportParameters.getProjectExportPath()
                     + "' is not writable!");
         }
 
-        return performExport(serverConnection, projectExportParameters);
+        return performExport(connection, projectExportParameters);
     }
 
     /**
      * Check whether a project with the given name exists on the connected server.
      *
-     * @param serverConnection        A connected connection to the FirstSpirit server.
+     * @param connection              A connected connection to the FirstSpirit server.
      * @param projectExportParameters ProjectExportParameters containing the projectName to lookup.
      * @return true if the project exists on the server, false otherwise.
      */
-    protected boolean projectExistsOnServer(Connection serverConnection, ProjectExportParameters projectExportParameters) {
-        return serverConnection.getProjectByName(projectExportParameters.getProjectName()) != null;
+    protected boolean projectExistsOnServer(@NotNull final Connection connection, @NotNull final ProjectExportParameters projectExportParameters) {
+        return connection.getProjectByName(projectExportParameters.getProjectName()) != null;
     }
 
     /**
@@ -97,16 +97,16 @@ public class ProjectExporter {
      * @return true if the directory is writable, false otherwise
      */
     protected boolean exportPathIsWritable(String exportDirectory) {
-        if(exportDirectory == null || exportDirectory.isEmpty()) {
+        if (exportDirectory == null || exportDirectory.isEmpty()) {
             return false;
         }
 
         final File exportDir = new File(exportDirectory);
-        if(exportDir.exists()) {
+        if (exportDir.exists()) {
             return exportDir.canWrite();
         } else {
             final File parentExportDir = exportDir.getParentFile();
-            if(parentExportDir != null) {
+            if (parentExportDir != null) {
                 return exportPathIsWritable(parentExportDir.getAbsolutePath());
             } else {
                 return false;
@@ -119,18 +119,18 @@ public class ProjectExporter {
      * Sub-tasks are:
      * Check if project is available and activated, start project export, download project export to the filesystem.
      *
-     * @param serverConnection        A connected connection to the FirstSpirit server.
+     * @param connection              A connected connection to the FirstSpirit server.
      * @param projectExportParameters ProjectExportParameters containing information about the project to export
      * @return true if the export performed without any errors, false otherwise.
      */
-    protected boolean performExport(ServerConnection serverConnection, ProjectExportParameters projectExportParameters) {
+    protected boolean performExport(@NotNull final Connection connection, @NotNull final ProjectExportParameters projectExportParameters) {
         final String projectName = projectExportParameters.getProjectName();
-        final Project fsProject = serverConnection.getProjectByName(projectName);
+        final Project fsProject = connection.getProjectByName(projectName);
 
-        if(fsProject != null) {
-            if(!fsProject.isActive()) {
-                if(projectExportParameters.isFsForceProjectActivation()) {
-                    if(!activateProjectByForce(serverConnection, fsProject)) {
+        if (fsProject != null) {
+            if (!fsProject.isActive()) {
+                if (projectExportParameters.isFsForceProjectActivation()) {
+                    if (!activateProjectByForce(connection, fsProject)) {
                         LOGGER.error("Project could not be activated.");
                         return false;
                     }
@@ -141,7 +141,7 @@ public class ProjectExporter {
             }
 
             // Project must be active at this point
-            final ProjectStorage projectStorage = serverConnection.getService(AdminService.class).getProjectStorage();
+            final ProjectStorage projectStorage = connection.getService(AdminService.class).getProjectStorage();
             final ExportParameters exportParameters = new ExportParameters(
                     fsProject.getId(),
                     projectName
@@ -149,7 +149,6 @@ public class ProjectExporter {
 
             exportParameters.setExportDeletedElements(projectExportParameters.isExportDeletedElements());
             exportParameters.setMaxRevisionCount(projectExportParameters.getMaxRevisionCount());
-
 
             final List<ExportFile> exportFiles = triggerExport(projectStorage, exportParameters);
             final boolean downloadSuccessful = downloadExportFilesToFileSystem(projectExportParameters.getProjectExportPath(), projectStorage, exportFiles);
@@ -176,13 +175,13 @@ public class ProjectExporter {
     /**
      * Enforce project activation.
      *
-     * @param serverConnection A connected connection a FirstSpirit server.
-     * @param fsProject The project to check for activation.
+     * @param connection A connected connection a FirstSpirit server.
+     * @param fsProject  The project to check for activation.
      * @return Whether the activation was successful or not.
      */
-    protected boolean activateProjectByForce(ServerConnection serverConnection, Project fsProject) {
+    protected boolean activateProjectByForce(@NotNull final Connection connection, @NotNull final Project fsProject) {
         LOGGER.info("Project '" + fsProject.getName() + "' is not active! Trying to activate...");
-        AdminService adminService = serverConnection.getService(AdminService.class);
+        AdminService adminService = connection.getService(AdminService.class);
         adminService.getProjectStorage().activateProject(fsProject);
 
         fsProject.refresh();
@@ -206,9 +205,9 @@ public class ProjectExporter {
      */
     protected List<ExportFile> waitUntilExportFinished(ServerActionHandle<ExportProgress, Boolean> exportHandle) {
         ExportProgress exportProgress = exportHandle.getProgress(true);
-        while(!exportProgress.isFinished()) {
+        while (!exportProgress.isFinished()) {
             exportProgress = exportHandle.getProgress(true);
-            LOGGER.info("Export progress: " + exportProgress.getProgress() + "%");
+            LOGGER.info("Exporting...");
             try {
                 Thread.sleep(2500);
             } catch (InterruptedException e) {
@@ -226,19 +225,19 @@ public class ProjectExporter {
      * Ensures that the export directory exists beforehand.
      *
      * @param projectExportPath The download directory for the exported project.
-     * @param projectStorage     ProjectStorage who processed the export.
+     * @param projectStorage    ProjectStorage who processed the export.
      * @param exportFiles       List of all exported files.
      * @return true if the whole process was successful, false otherwise.
      */
     protected boolean downloadExportFilesToFileSystem(String projectExportPath, ProjectStorage projectStorage, List<ExportFile> exportFiles) {
-        if(exportFiles.isEmpty()) {
+        if (exportFiles.isEmpty()) {
             LOGGER.error("No exported files found.");
             return false;
         }
 
         File projectParentDir = new File(projectExportPath);
-        if(!projectParentDir.exists()) {
-            if(projectParentDir.mkdirs()) {
+        if (!projectParentDir.exists()) {
+            if (projectParentDir.mkdirs()) {
                 LOGGER.info("Created directory " + projectParentDir);
             } else {
                 LOGGER.error("Could not create download directory.");
@@ -246,18 +245,18 @@ public class ProjectExporter {
             }
         }
 
-        for(ExportFile exportFile : exportFiles) {
+        for (ExportFile exportFile : exportFiles) {
             File projectExportFile = new File(projectParentDir + File.separator + exportFile.getName());
 
-            try(InputStream downloadInputStream = projectStorage.downloadExportFile(exportFile); FileOutputStream exportFileOutputStream = new FileOutputStream(projectExportFile)) {
+            try (InputStream downloadInputStream = projectStorage.downloadExportFile(exportFile); FileOutputStream exportFileOutputStream = new FileOutputStream(projectExportFile)) {
 
                 int read;
                 byte[] bytes = new byte[8192];
-                while((read = downloadInputStream.read(bytes)) != -1) {
+                while ((read = downloadInputStream.read(bytes)) != -1) {
                     exportFileOutputStream.write(bytes, 0, read);
                 }
 
-                if(projectExportFile.exists()) {
+                if (projectExportFile.exists()) {
                     LOGGER.info("Export file download successful.");
                 } else {
                     LOGGER.info("Export file download failed.");

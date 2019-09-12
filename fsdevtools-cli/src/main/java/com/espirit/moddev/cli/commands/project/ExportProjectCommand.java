@@ -33,7 +33,7 @@ import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;
 import com.github.rvesse.airline.annotations.help.Examples;
 import de.espirit.firstspirit.access.Connection;
-import de.espirit.firstspirit.io.ServerConnection;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,35 +57,28 @@ public class ExportProjectCommand extends SimpleCommand<SimpleResult<Boolean>> {
     @Option(type = OptionType.COMMAND, name = {"-sde", "--skipDeletedElements"}, description = "Do not add deleted elements to the export.")
     private boolean skipDeletedElements;
 
-
-
     @Override
     public SimpleResult<Boolean> call() {
-        try(final Connection connection = createConnection()) {
+        try (final Connection connection = createConnection()) {
             connection.connect();
 
-            if(connection instanceof ServerConnection) {
-                ProjectExportParametersBuilder exportParametersBuilder = new ProjectExportParametersBuilder()
-                        .setProjectName(projectName)
-                        .setProjectExportPath(projectExportPath)
-                        .setFsForceProjectActivation(fsForceProjectActivation)
-                        .setDeleteExportFiles(deleteExportFiles)
-                        .setMaxRevisionCount(maxRevisionCount);
+            final ProjectExportParametersBuilder exportParametersBuilder = new ProjectExportParametersBuilder()
+                    .setProjectName(projectName)
+                    .setProjectExportPath(projectExportPath)
+                    .setFsForceProjectActivation(fsForceProjectActivation)
+                    .setDeleteExportFiles(deleteExportFiles)
+                    .setMaxRevisionCount(maxRevisionCount);
 
-                if (skipDeletedElements) {
-                    exportParametersBuilder.skipDeletedElements();
-                } else {
-                    exportParametersBuilder.exportDeletedElements();
-                }
-
-                final ProjectExporter projectExporter = new ProjectExporter();
-                boolean exported = callExportProject(projectExporter, (ServerConnection) connection, getProjectExportParameters(exportParametersBuilder));
-
-                return new SimpleResult(exported ? exported : new IllegalStateException("Export was not successful"));
+            if (skipDeletedElements) {
+                exportParametersBuilder.skipDeletedElements();
             } else {
-                return new SimpleResult<>(new IllegalStateException("Connection is not a ServerConnection implementation."));
+                exportParametersBuilder.exportDeletedElements();
             }
 
+            final ProjectExporter projectExporter = new ProjectExporter();
+            boolean exported = callExportProject(projectExporter, connection, getProjectExportParameters(exportParametersBuilder));
+
+            return new SimpleResult(exported ? exported : new IllegalStateException("Export was not successful"));
         } catch (final Exception e) {
             return new SimpleResult<>(e);
         }
@@ -97,6 +90,7 @@ public class ExportProjectCommand extends SimpleCommand<SimpleResult<Boolean>> {
      * @return A connection from a ConnectionBuild.
      * @see ConnectionBuilder
      */
+    @NotNull
     protected Connection createConnection() {
         return ConnectionBuilder.with(this).build();
     }
@@ -106,7 +100,7 @@ public class ExportProjectCommand extends SimpleCommand<SimpleResult<Boolean>> {
      *
      * @param projectName the name of the FirstSpirit project to export
      */
-    public void setProjectName(String projectName) {
+    public void setProjectName(@NotNull final String projectName) {
         this.projectName = projectName;
     }
 
@@ -116,7 +110,7 @@ public class ExportProjectCommand extends SimpleCommand<SimpleResult<Boolean>> {
      *
      * @param maxRevisionCount the maximum number of revisions to export
      */
-    public void setMaxRevisionCount(long maxRevisionCount) {
+    public void setMaxRevisionCount(final long maxRevisionCount) {
         this.maxRevisionCount = maxRevisionCount;
     }
 
@@ -126,10 +120,9 @@ public class ExportProjectCommand extends SimpleCommand<SimpleResult<Boolean>> {
      *
      * @param skipDeletedElements if deleted elements should be added
      */
-    public void setSkipDeletedElements(boolean skipDeletedElements) {
+    public void setSkipDeletedElements(final boolean skipDeletedElements) {
         this.skipDeletedElements = skipDeletedElements;
     }
-
 
     /**
      * Creates ProjectExportParameters from a builder.
@@ -137,18 +130,21 @@ public class ExportProjectCommand extends SimpleCommand<SimpleResult<Boolean>> {
      * @param projectExportParametersBuilder Builder for the export
      * @return Export parameters based on the given builder
      */
-    protected ProjectExportParameters getProjectExportParameters(ProjectExportParametersBuilder projectExportParametersBuilder) { return projectExportParametersBuilder.build(); }
+    @NotNull
+    protected ProjectExportParameters getProjectExportParameters(@NotNull final ProjectExportParametersBuilder projectExportParametersBuilder) {
+        return projectExportParametersBuilder.build();
+    }
 
     /**
      * Exports the project.
      *
      * @param projectExporter         Instance of a ProjectExporter.
-     * @param serverConnection        Connection to the FirstSpirit server.
+     * @param connection              Connection to the FirstSpirit server.
      * @param projectExportParameters Parameters of the project which is going to be exported.
      * @return Whether the export was successful or not.
      */
-    protected boolean callExportProject(ProjectExporter projectExporter, ServerConnection serverConnection, ProjectExportParameters projectExportParameters) {
-        return projectExporter.exportProject(serverConnection, projectExportParameters);
+    protected boolean callExportProject(@NotNull final ProjectExporter projectExporter, @NotNull final Connection connection, @NotNull final ProjectExportParameters projectExportParameters) {
+        return projectExporter.exportProject(connection, projectExportParameters);
     }
 
     @Override

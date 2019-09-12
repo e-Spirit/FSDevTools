@@ -27,14 +27,21 @@ import com.espirit.moddev.projectservice.projectexport.ProjectExportParameters;
 import com.espirit.moddev.projectservice.projectexport.ProjectExportParametersBuilder;
 import com.espirit.moddev.projectservice.projectexport.ProjectExporter;
 import de.espirit.firstspirit.access.Connection;
-import de.espirit.firstspirit.io.ServerConnection;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for ExportProjectCommandTest.
@@ -72,38 +79,20 @@ public class ExportProjectCommandTest {
     }
 
     /**
-     * Test if call() requires an instance of ServerConnection.
-     */
-    @Test
-    public void testCallNoServerConnectionReturnsSimpleResultWithError() {
-        // Arrange
-        final Connection mockConnection = mock(Connection.class);
-        final ExportProjectCommand spyTestling = spy(testling);
-        doReturn(mockConnection).when(spyTestling).createConnection();
-
-        // Act
-        final SimpleResult<Boolean> simpleResult = spyTestling.call();
-
-        // Assert
-        assertThat("Expected instance of IllegalStateException.", simpleResult.getError(), instanceOf(IllegalStateException.class));
-        assertThat("Expected equal.", simpleResult.getError().getMessage(), equalTo("Connection is not a ServerConnection implementation."));
-    }
-
-    /**
      * Test if successful project export returns a SimpleResult containing true.
      */
     @Test
     public void testCallExportProjectReturnsTrue() {
         // Arrange
-        final ServerConnection mockServerConnection = mock(ServerConnection.class);
-        when(mockServerConnection.isConnected()).thenReturn(true);
+        final Connection mockConnection = mock(Connection.class);
+        when(mockConnection.isConnected()).thenReturn(true);
 
         final ProjectExportParameters mockProjectExportParameters = mock(ProjectExportParameters.class);
 
         final ExportProjectCommand spyTestling = spy(testling);
-        doReturn(mockServerConnection).when(spyTestling).createConnection();
+        doReturn(mockConnection).when(spyTestling).createConnection();
         doReturn(mockProjectExportParameters).when(spyTestling).getProjectExportParameters(any(ProjectExportParametersBuilder.class));
-        doReturn(true).when(spyTestling).callExportProject(any(ProjectExporter.class), any(ServerConnection.class), any(ProjectExportParameters.class));
+        doReturn(true).when(spyTestling).callExportProject(any(ProjectExporter.class), any(Connection.class), any(ProjectExportParameters.class));
 
         // Act
         final SimpleResult<Boolean> simpleResult = spyTestling.call();
@@ -118,22 +107,22 @@ public class ExportProjectCommandTest {
     @Test
     public void testCallExportProjectReturnsSimpleResultWithError() {
         // Arrange
-        final ServerConnection mockServerConnection = mock(ServerConnection.class);
-        when(mockServerConnection.isConnected()).thenReturn(true);
+        final Connection mockConnection = mock(Connection.class);
+        when(mockConnection.isConnected()).thenReturn(true);
 
         final ProjectExportParameters mockProjectExportParameters = mock(ProjectExportParameters.class);
 
         final ExportProjectCommand spyTestling = spy(testling);
-        doReturn(mockServerConnection).when(spyTestling).createConnection();
+        doReturn(mockConnection).when(spyTestling).createConnection();
         doReturn(mockProjectExportParameters).when(spyTestling).getProjectExportParameters(any(ProjectExportParametersBuilder.class));
-        doReturn(false).when(spyTestling).callExportProject(any(ProjectExporter.class), any(ServerConnection.class), any(ProjectExportParameters.class));
+        doReturn(false).when(spyTestling).callExportProject(any(ProjectExporter.class), any(Connection.class), any(ProjectExportParameters.class));
 
         // Act
         final SimpleResult simpleResult = spyTestling.call();
 
         // Assert
         assertThat("Expected instance of IllegalStateException.", simpleResult.get(), instanceOf(IllegalStateException.class));
-        assertThat("Expected equal.", ((Exception)simpleResult.get()).getMessage(), equalTo("Export was not successful"));
+        assertThat("Expected equal.", ((Exception) simpleResult.get()).getMessage(), equalTo("Export was not successful"));
     }
 
     /**
@@ -175,11 +164,11 @@ public class ExportProjectCommandTest {
     public void testCallExportProject() {
         // Arrange
         final ProjectExporter mockProjectExporter = mock(ProjectExporter.class);
-        final ServerConnection mockServerConnection = mock(ServerConnection.class);
+        final Connection mockConnection = mock(Connection.class);
         final ProjectExportParameters mockProjectExportParameters = mock(ProjectExportParameters.class);
 
         // Act
-        final boolean exported = testling.callExportProject(mockProjectExporter, mockServerConnection, mockProjectExportParameters);
+        final boolean exported = testling.callExportProject(mockProjectExporter, mockConnection, mockProjectExportParameters);
 
         // Assert
 
