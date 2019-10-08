@@ -98,6 +98,7 @@ ext {
     airlineVersion = '2.1.1'
     apacheCommonsVersion = '3.8.1'
     assertJVersion = '3.3.0'
+    classGraphVersion = '4.8.47'
     fsWrapperVersion = '3.5.26'
     hamcrestCoreVersion = '2.1'
     hamcrestJavaVersion = '2.0.0.0'

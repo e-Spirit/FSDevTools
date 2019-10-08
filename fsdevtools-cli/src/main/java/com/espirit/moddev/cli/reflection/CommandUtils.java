@@ -23,10 +23,11 @@
 package com.espirit.moddev.cli.reflection;
 
 import com.espirit.moddev.cli.api.command.Command;
-import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.ScanResult;
 import org.apache.log4j.Logger;
 
-import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -67,17 +68,19 @@ public final class CommandUtils {
      * @throws IllegalArgumentException if null or empty package string is passed
      */
     public static Set<Class<? extends Command>> scanForCommandClasses(String packagesToScanForCommands) {
-        Set<Class<? extends Command>> matchingClasses = new HashSet<>();
-
-        FastClasspathScanner scanner = new FastClasspathScanner(packagesToScanForCommands).matchClassesImplementing(Command.class, (implementingClass) -> {
-            if(!Modifier.isAbstract( implementingClass.getModifiers() )) {
-                matchingClasses.add(implementingClass);
-            } else {
-                LOGGER.debug("Found command " + implementingClass.getSimpleName() + ", which is abstract, so it is ignored.");
+        final Set<Class<? extends Command>> matchingClasses = new HashSet<>();
+        final ClassGraph classGraph = new ClassGraph().enableClassInfo().whitelistPackages(packagesToScanForCommands);
+        try (final ScanResult scanResult = classGraph.scan()) {
+            for (final ClassInfo classInfo : scanResult.getClassesImplementing(Command.class.getName())) {
+                if (!classInfo.isAbstract()) {
+                    //noinspection unchecked --> we already know that this command implements the Command.class
+                    matchingClasses.add((Class<? extends Command>) classInfo.loadClass());
+                } else {
+                    LOGGER.debug("Found command " + classInfo.getSimpleName() + ", which is abstract, so it is ignored.");
+                }
             }
-        });
-        scanner.scan();
-        LOGGER.debug("Found " + matchingClasses.size() + " commands. " + matchingClasses.stream().map(it -> it.getSimpleName()).collect(Collectors.joining(",")));
+        }
+        LOGGER.debug("Found " + matchingClasses.size() + " commands. " + matchingClasses.stream().map(Class::getSimpleName).collect(Collectors.joining(",")));
         return matchingClasses;
     }
 }

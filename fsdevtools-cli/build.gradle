@@ -61,7 +61,7 @@ dependencies {
     compile project(":fsdevtools-serverrunner")
     compile project(":fsdevtools-sharedutils")
 
-    compile 'io.github.lukehutch:fast-classpath-scanner:2.9.4'
+    compile "io.github.classgraph:classgraph:${classGraphVersion}"
     compile "com.google.guava:guava:${guavaVersion}"
     compile "org.apache.commons:commons-lang3:${apacheCommonsVersion}"
 

@@ -23,7 +23,9 @@
 package com.espirit.moddev.cli.reflection;
 
 import com.github.rvesse.airline.annotations.Group;
-import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.ScanResult;
 import org.apache.log4j.Logger;
 
 import java.util.HashSet;
@@ -54,10 +56,14 @@ public final class GroupUtils {
      * @return a set of matching classes
      */
     public static Set<Class<?>> scanForGroupClasses(String packagesToScan) {
-        Set<Class<?>> result = new HashSet<>();
-        FastClasspathScanner scanner = new FastClasspathScanner(packagesToScan).matchClassesWithAnnotation(Group.class, result::add);
-        scanner.scan();
-        LOGGER.debug("Found " + result.size() + " commands. " + result.stream().map(it -> it.getSimpleName()).collect(Collectors.joining(",")));
+        final Set<Class<?>> result = new HashSet<>();
+        final ClassGraph classGraph = new ClassGraph().enableAnnotationInfo().whitelistPackages(packagesToScan);
+        try (final ScanResult scanResult = classGraph.scan()) {
+            for (final ClassInfo classInfo : scanResult.getClassesWithAnnotation(Group.class.getName())) {
+                result.add(classInfo.loadClass());
+            }
+        }
+        LOGGER.debug("Found " + result.size() + " commands. " + result.stream().map(Class::getSimpleName).collect(Collectors.joining(",")));
         return result;
     }
 
