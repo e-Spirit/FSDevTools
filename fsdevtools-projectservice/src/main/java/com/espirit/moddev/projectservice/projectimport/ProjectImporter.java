@@ -35,7 +35,18 @@ import de.espirit.firstspirit.access.export.ImportParameters;
 import de.espirit.firstspirit.access.export.ImportProgress;
 import de.espirit.firstspirit.access.export.ProjectInfo;
 import de.espirit.firstspirit.access.project.Project;
+import de.espirit.firstspirit.access.schedule.DeployTask;
+import de.espirit.firstspirit.access.schedule.MailTask;
+import de.espirit.firstspirit.access.schedule.ScheduleStorage;
+import de.espirit.firstspirit.access.schedule.ScheduleTask;
+import de.espirit.firstspirit.access.schedule.ScheduleTaskTemplate;
+import de.espirit.firstspirit.access.schedule.ScriptTask;
 import de.espirit.firstspirit.access.script.ExecutionException;
+import de.espirit.firstspirit.server.scheduler.DeployTaskDTO;
+import de.espirit.firstspirit.server.scheduler.MailTaskDTO;
+import de.espirit.firstspirit.server.scheduler.ScheduleTaskDTO;
+import de.espirit.firstspirit.server.scheduler.ScheduleTaskTemplateDTO;
+import de.espirit.firstspirit.server.scheduler.ScriptTaskDTO;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +57,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 
@@ -93,16 +105,19 @@ public class ProjectImporter {
             try (final FileInputStream fileInputStream = new FileInputStream(parameters.getProjectFile())) {
                 exportFile = projectStorage.uploadExportFile(parameters.getProjectFile().getName(), fileInputStream);
             }
-            final ProjectInfo info = projectStorage.getProjectInfo(exportFile);
+            final ProjectInfo projectInfo = projectStorage.getProjectInfo(exportFile);
 
             // get layer mapping & verify
-            final HashMap<String, String> layerMapping = getLayerMapping(parameters, info);
+            final Map<String, String> layerMapping = getLayerMapping(parameters, projectInfo);
             verifyTargetLayers(adminService, layerMapping);
 
+            // get schedule task template mapping
+            final Map<Long, Long> scheduleTaskTemplateMapping = getScheduleTaskTemplateMapping(adminService.getScheduleStorage(), projectInfo);
+
             // setup parameters
-            final ImportParameters importParameters = new ImportParameters(exportFile, info,
-                    parameters.getProjectName(), parameters.getProjectDescription(), layerMapping,
-                    new HashMap<>());
+            final ImportParameters importParameters = new ImportParameters(exportFile, projectInfo,
+                    parameters.getProjectName(), parameters.getProjectDescription(),
+                    layerMapping, scheduleTaskTemplateMapping);
 
             // start import
             final ServerActionHandle<ImportProgress, Boolean> handle = projectStorage.startImport(importParameters);
@@ -134,17 +149,17 @@ public class ProjectImporter {
         }
     }
 
-    private void verifyTargetLayers(@NotNull final AdminService adminService, @NotNull final HashMap<String, String> layerMapping) {
+    private void verifyTargetLayers(@NotNull final AdminService adminService, @NotNull final Map<String, String> layerMapping) {
         // iterate over targets and verify
         final Set<String> missingTargetLayers = new HashSet<>();
         for (final String targetLayer : layerMapping.values()) {
             // "null" layers should be ignored --> "null" means the layer will be created by FirstSpirit on the fly
-            if(targetLayer == null) {
+            if (targetLayer == null) {
                 continue;
             }
 
             final Layer lookup = adminService.getDatabaseLayer(targetLayer);
-            if(lookup == null) {
+            if (lookup == null) {
                 missingTargetLayers.add(targetLayer);
             }
         }
@@ -206,7 +221,7 @@ public class ProjectImporter {
 
     @VisibleForTesting
     @NotNull
-    static HashMap<String, String> getLayerMapping(@NotNull final ProjectImportParameters parameters, @NotNull final ProjectInfo info) {
+    static Map<String, String> getLayerMapping(@NotNull final ProjectImportParameters parameters, @NotNull final ProjectInfo info) {
         final HashMap<String, String> layerMapping = new HashMap<>();
         final List<Properties> usedLayers = info.getUsedLayers();
         for (final Properties property : usedLayers) {
@@ -226,6 +241,60 @@ public class ProjectImporter {
             layerMapping.put(name, mappedLayer);
         }
         return layerMapping;
+    }
+
+    @VisibleForTesting
+    @NotNull
+    static Map<Long, Long> getScheduleTaskTemplateMapping(@NotNull final ScheduleStorage scheduleStorage, @NotNull final ProjectInfo projectInfo) {
+        // map all serverScheduleTemplateMapping to -1 for all templates, which means we will always import the template from the project file
+        final List<ScheduleTaskTemplate> serverSideTaskTemplates = scheduleStorage.getScheduleTaskTemplates(null);
+        final List<ScheduleTaskTemplateDTO> taskTemplatesToImport = projectInfo.getServerScheduleTaskTemplates();
+        final HashMap<Long, Long> templateMapping = new HashMap<>();
+        for (final ScheduleTaskTemplateDTO templateToImport : taskTemplatesToImport) {
+            templateMapping.put(templateToImport.getId(), getMappedScheduleTaskId(serverSideTaskTemplates, templateToImport));
+        }
+        return templateMapping;
+    }
+
+    /**
+     * This method will check if the imported {@link ScheduleTaskTemplate} already exists on the server and will return the id of the existing template.
+     * If the {@link ScheduleTaskTemplate} does not exist yet, this method will return {@code -1}.
+     *
+     * @param serverSideTaskTemplates current list of {@link ScheduleTaskTemplate templates} existing on the server
+     * @param templateToImport        the {@link ScheduleTaskTemplateDTO dto} of the {@link ScheduleTaskTemplate template} to lookup
+     * @return the mapped id for the {@link ScheduleTaskTemplate} of {@code -1} if it does not yet exist
+     */
+    private static long getMappedScheduleTaskId(@NotNull final List<ScheduleTaskTemplate> serverSideTaskTemplates, @NotNull final ScheduleTaskTemplateDTO templateToImport) {
+        for (final ScheduleTaskTemplate serverSideTemplate : serverSideTaskTemplates) {
+            final ScheduleTask serverSideScheduleTask = serverSideTemplate.getTask();
+            // we assume that a task is similar if the type, the name and the description is equal
+            final ScheduleTaskDTO toImportTaskDTO = templateToImport.getTask();
+            if (isTypeEqual(serverSideScheduleTask, toImportTaskDTO) && Objects.equals(serverSideScheduleTask.getName(), toImportTaskDTO.getName()) && Objects.equals(serverSideScheduleTask.getDescription(), toImportTaskDTO.getDescription())) {
+                final long mappedId = serverSideTemplate.getId();
+                LOGGER.warn("Schedule task '" + toImportTaskDTO.getName() + "' (id=" + templateToImport.getId() + ") will be mapped to exisiting task with id=" + mappedId + ".");
+                return mappedId;
+            }
+        }
+        // no mapping found --> return -1
+        return -1;
+    }
+
+    /**
+     * Checks if the type of the given {@link ScheduleTask} is equal to the type of the {@link ScheduleTaskDTO} and returns the result.
+     *
+     * @param scheduleTask    the {@link ScheduleTask}
+     * @param scheduleTaskDTO the {@link ScheduleTaskDTO}
+     * @return {@code true} if the types are equal, otherwise {@code false}.
+     */
+    private static boolean isTypeEqual(@NotNull final ScheduleTask scheduleTask, @NotNull final ScheduleTaskDTO scheduleTaskDTO) {
+        if (scheduleTaskDTO instanceof ScriptTaskDTO) {
+            return scheduleTask instanceof ScriptTask;
+        } else if (scheduleTaskDTO instanceof MailTaskDTO) {
+            return scheduleTask instanceof MailTask;
+        } else if (scheduleTaskDTO instanceof DeployTaskDTO) {
+            return scheduleTask instanceof DeployTask;
+        }
+        return false;
     }
 
     private static void deleteExportFile(@NotNull final ProjectImportParameters parameters, @NotNull final ProjectStorage projectStorage) {
