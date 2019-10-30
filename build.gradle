@@ -95,7 +95,7 @@ ext {
     gitHash = grgit.head().id
 
     // dependency versions
-    airlineVersion = '2.1.1'
+    airlineVersion = '2.7.2'
     apacheCommonsVersion = '3.8.1'
     assertJVersion = '3.3.0'
     classGraphVersion = '4.8.47'
