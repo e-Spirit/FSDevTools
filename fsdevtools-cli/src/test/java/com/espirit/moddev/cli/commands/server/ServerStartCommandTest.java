@@ -136,6 +136,8 @@ public class ServerStartCommandTest extends AbstractServerCommandTest {
         };
     }
 
+    // this test only works with a license allowing api calls - specify one by passing e.g.
+    // -DfsLicenseFile=/home/[username]/cmsserver/conf/fs-license.conf to the Java VM options
     @Test
     public void simpleStartIsSuccessful() throws Exception {
         ServerProperties.ServerPropertiesBuilder serverPropertiesBuilder = ServerProperties.builder();
