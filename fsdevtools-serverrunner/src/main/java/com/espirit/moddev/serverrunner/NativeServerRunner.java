@@ -62,6 +62,7 @@ public class NativeServerRunner implements ServerRunner {
     private static final String PROBLEM_READING = "Problem reading data from FirstSpirit server process";
     private static final Logger LOGGER = LoggerFactory.getLogger(NativeServerRunner.class);
     private static final Duration CONNECTION_RETRY_WAIT = Duration.ofMillis(500);
+    private static final String DEFAULT_XMX = "2G";
 
     protected final ServerProperties _serverProperties;
     /**
@@ -191,7 +192,16 @@ public class NativeServerRunner implements ServerRunner {
             args.add("-Xloggc:" + serverProperties.getServerRoot().resolve("log").resolve("fs-gc.log"));
         }
 
-        args.addAll(serverProperties.getServerOps());
+        boolean noXmxSet = true;
+        for (String opt : serverProperties.getServerOps()){
+            args.add(opt); // add all ServerOps
+            if (opt.startsWith("-Xmx")){
+                noXmxSet = false;
+            }
+        }
+        if (noXmxSet){
+            args.add("-Xmx" + DEFAULT_XMX);
+        }
 
         if (serverProperties.isServerInstall()) {
             prepareFilesystem(serverProperties);

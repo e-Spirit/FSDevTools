@@ -292,7 +292,7 @@ firstSpirit {
         socketPort = serverSocketPort
         connectionMode = "HTTP_MODE"
         licenseFile = configurations.fsLicense.resolve().first().absolutePath
-        serverOpts = ["-DINTERNAL_SERVLET_ENGINE=0"]
+        serverOpts = ["-DINTERNAL_SERVLET_ENGINE=0","-Xmx1G"]
         timeout = Duration.ofMinutes(10)
     }
 }
