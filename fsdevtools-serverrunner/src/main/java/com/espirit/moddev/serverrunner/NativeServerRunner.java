@@ -192,14 +192,8 @@ public class NativeServerRunner implements ServerRunner {
             args.add("-Xloggc:" + serverProperties.getServerRoot().resolve("log").resolve("fs-gc.log"));
         }
 
-        boolean noXmxSet = true;
-        for (String opt : serverProperties.getServerOps()){
-            args.add(opt); // add all ServerOps
-            if (opt.startsWith("-Xmx")){
-                noXmxSet = false;
-            }
-        }
-        if (noXmxSet){
+        args.addAll(serverProperties.getServerOps());
+        if (args.stream().noneMatch(s -> s.trim().startsWith("-Xmx"))) {
             args.add("-Xmx" + DEFAULT_XMX);
         }
 
