@@ -109,7 +109,7 @@ ext {
     log4jVersion = '1.2.17'
     lombokVersion = '1.18.8'
     mockitoVersion = '2.1.0'
-    slf4japiVersion = '1.7.12'
+    slf4japiVersion = '1.7.29'
     slf4jLog4jVersion = '1.7.24'
 
     // setup some variables
