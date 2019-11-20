@@ -17,7 +17,7 @@ dependencies {
     testCompile group: 'de.espirit.firstspirit', name: 'fs-isolated-server', version: "${fsRuntimeVersion}"
     testCompile "de.espirit.firstspirit:wrapper:${fsWrapperVersion}"
 
-    testCompile 'org.scalatest:scalatest_2.12:3.0.1'
+    testCompile 'org.scalatest:scalatest_2.12:3.2.0-SNAP10'
     testCompile 'org.scala-lang.modules:scala-java8-compat_2.12:0.8.0'
     testCompile 'org.mockito:mockito-core:2.4.0'
     testCompile 'org.scalacheck:scalacheck_2.12:1.13.4'
