@@ -28,7 +28,7 @@ import com.espirit.moddev.cli.api.annotations.Description;
 /**
  * @author e-Spirit AG
  */
-@com.github.rvesse.airline.annotations.Command(name = "command_with_description_but_void_returntype")
+@com.github.rvesse.airline.annotations.Command(name = "command_with_non_string_description_method")
 public final class CommandWithNonStringDescriptionMethod implements Command {
     @Description
     public static StringBuilder getDescription() { return new StringBuilder("1234"); }

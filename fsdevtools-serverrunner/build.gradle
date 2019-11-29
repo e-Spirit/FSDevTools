@@ -24,7 +24,7 @@ dependencies {
 
     // setup scala test plugin
     testCompile 'org.scala-lang:scala-library:2.12.9'
-    testCompile 'org.scalatest:scalatest_2.11:3.0.0'
+    testCompile 'org.scalatest:scalatest_2.11:3.1.0'
 }
 
 // do not support scala in production

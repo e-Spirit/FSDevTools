@@ -38,7 +38,7 @@ buildscript {
 plugins {
     id 'application'
     id 'com.github.johnrengelman.shadow' version '5.1.0'
-    id 'org.ajoberstar.grgit' version '3.1.1'
+    id 'org.ajoberstar.grgit' version '4.0.0'
     id 'maven-publish'
     id 'de.espirit.firstspirit' version '0.15.0'
     id 'de.espirit.process' version '0.0.2'
@@ -95,7 +95,7 @@ ext {
     gitHash = grgit.head().id
 
     // dependency versions
-    airlineVersion = '2.1.1'
+    airlineVersion = '2.7.2'
     apacheCommonsVersion = '3.8.1'
     assertJVersion = '3.3.0'
     classGraphVersion = '4.8.47'
@@ -107,9 +107,9 @@ ext {
     jacksonDatabindVersion = '2.9.9.3'
     junitVersion = '4.12'
     log4jVersion = '1.2.17'
-    lombokVersion = '1.18.8'
+    lombokVersion = '1.18.10'
     mockitoVersion = '2.1.0'
-    slf4japiVersion = '1.7.12'
+    slf4japiVersion = '1.7.29'
     slf4jLog4jVersion = '1.7.24'
 
     // setup some variables
