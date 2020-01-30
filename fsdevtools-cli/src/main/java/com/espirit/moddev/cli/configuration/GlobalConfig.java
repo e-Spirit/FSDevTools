@@ -24,8 +24,8 @@ package com.espirit.moddev.cli.configuration;
 
 import com.espirit.moddev.cli.CliConstants;
 import com.espirit.moddev.cli.SyncDirectoryFactory;
-import com.espirit.moddev.cli.api.FsConnectionMode;
 import com.espirit.moddev.cli.api.configuration.Config;
+import com.espirit.moddev.connection.FsConnectionType;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;
 import com.github.rvesse.airline.annotations.restrictions.AllowedRawValues;
@@ -45,314 +45,322 @@ import java.util.Locale;
  */
 public class GlobalConfig implements Config {
 
-    /**
-     * {@link de.espirit.firstspirit.access.project.ProjectScriptContext} used by this configuration.
-     */
-    protected ProjectScriptContext context;
+	/**
+	 * {@link de.espirit.firstspirit.access.project.ProjectScriptContext} used by this configuration.
+	 */
+	protected ProjectScriptContext _context;
 
-    /**
-     * Boolean flag that indicates if the synchronization directory should be created if it does not exist.
-     */
-    @Option(type = OptionType.GLOBAL, name = {"--dont-create-sync-dir"}, description = "Do not create synchronisation directory if it is missing")
-    protected boolean dontCreateSynchronizationDirectoryIfMissing;
+	/**
+	 * Boolean flag that indicates if the synchronization directory should be created if it does not exist.
+	 */
+	@Option(type = OptionType.GLOBAL, name = {"--dont-create-sync-dir"}, description = "Do not create synchronisation directory if it is missing")
+	protected boolean dontCreateSynchronizationDirectoryIfMissing;
 
-    private final Environment environment = new Environment();
+	private final Environment _environment = new Environment();
 
-    @Option(type = OptionType.GLOBAL, name = "-e", description = "Error mode. Shows error stacktraces.")
-    private boolean error;
+	@Option(type = OptionType.GLOBAL, name = "-e", description = "Error mode. Shows error stacktraces.", title = "showStacktraces")
+	private boolean _error;
 
-    @Option(type = OptionType.GLOBAL, name = {"-h", "--host"}, description = "FirstSpirit host. Default is localhost.")
-    private String host;
+	@Option(type = OptionType.GLOBAL, name = {"-h", "--host"}, description = "FirstSpirit host. Default is localhost.", title = "host")
+	private String _host;
 
-    @Option(type = OptionType.GLOBAL, name = {"-c", "--conn-mode"}, description = "FirstSpirit connection mode. Default is HTTP.")
-    @AllowedRawValues(allowedValues = {"HTTP", "HTTPS", "SOCKET"})
-    private FsConnectionMode fsMode;
+	@Option(type = OptionType.GLOBAL, name = {"-c", "--conn-mode"}, description = "FirstSpirit connection mode. Default is HTTP.", title = "mode")
+	@AllowedRawValues(allowedValues = {"HTTP", "HTTPS", "SOCKET"})
+	private FsConnectionType _fsMode;
 
-    @Option(type = OptionType.GLOBAL, name = {"-port"}, description = "FirstSpirit host's port. Default is 8000.")
-    private Integer port;
+	@Option(type = OptionType.GLOBAL, name = {"-port"}, description = "FirstSpirit host's port. Default is 8000.", title = "port")
+	private Integer _port;
 
-    @Option(type = OptionType.GLOBAL, name = {"-hph", "--httpproxyhost"}, description = "Proxy host for HTTP/HTTPS connections.")
-    private String httpProxyHost;
+	@Option(type = OptionType.GLOBAL, name = {"-hph", "--httpproxyhost"}, description = "Proxy host for HTTP/HTTPS connections.", title = "proxyHost")
+	private String _httpProxyHost;
 
-    @Option(type = OptionType.GLOBAL, name = {"-hpp", "--httpproxyport"}, description = "Proxy host's port for HTTP/HTTPS connections. Default is 8080.")
-    private Integer httpProxyPort;
+	@Option(type = OptionType.GLOBAL, name = {"-hpp", "--httpproxyport"}, description = "Proxy host's port for HTTP/HTTPS connections. Default is 8080.", title = "proxyPort")
+	private Integer _httpProxyPort;
 
-    @Option(type = OptionType.GLOBAL, name = {"-u", "--user"}, description = "FirstSpirit user. Default is Admin.")
-    private String user;
+	@Option(type = OptionType.GLOBAL, name = {"-u", "--user"}, description = "FirstSpirit user. Default is Admin.", title = "userName")
+	private String _user;
 
-    @Option(type = OptionType.GLOBAL, name = {"-pwd", "--password"}, description = "FirstSpirit user's password. Default is Admin.")
-    private String password;
+	@Option(type = OptionType.GLOBAL, name = {"-pwd", "--password"}, description = "FirstSpirit user's password. Default is Admin.", title = "password")
+	private String _password;
 
-    @Option(type = OptionType.GLOBAL, name = {"-p", "--project"}, description = "Name of FirstSpirit project")
-    private String project;
+	@Option(type = OptionType.GLOBAL, name = {"-p", "--project"}, description = "Name of FirstSpirit project", title = "projectName")
+	private String _project;
 
-    @Option(type = OptionType.GLOBAL, name = {"-a", "--activateProjectIfDeactivated"}, description = "Activates a project if deactivated for any reason")
-    private boolean activateProjectIfDeactivated;
+	@Option(type = OptionType.GLOBAL, name = {"-a", "--activateProjectIfDeactivated"}, description = "Activates a project if deactivated for any reason", title = "forceActivation")
+	private boolean _activateProjectIfDeactivated;
 
-    @Option(type = OptionType.GLOBAL, name = {"-sd", "--syncDir"}, description = "The synchronization directory that is used for im- and export. Default is current directory")
-    private String synchronizationDirectory = ".";
+	@Option(type = OptionType.GLOBAL, name = {"-sd", "--syncDir"}, description = "The synchronization directory that is used for im- and export. Default is current directory", title = "syncDirectory")
+	private String _synchronizationDirectory = ".";
 
-    public GlobalConfig() {
-    }
+	public GlobalConfig() {
+	}
 
-    @Override
-    public final void setContext(ProjectScriptContext context) {
-        if(context == null) {
-            throw new IllegalArgumentException("Context should not be null");
-        }
-        this.context = context;
-    }
+	@Override
+	public final void setContext(ProjectScriptContext context) {
+		if (context == null) {
+			throw new IllegalArgumentException("Context should not be null");
+		}
+		_context = context;
+	}
 
-    /**
-     * Get the {@link de.espirit.firstspirit.access.project.ProjectScriptContext} used by this configuration.
-     *
-     * @return the context used by this configuration
-     */
-    public ProjectScriptContext getContext() {
-        return context;
-    }
+	/**
+	 * Get the {@link de.espirit.firstspirit.access.project.ProjectScriptContext} used by this configuration.
+	 *
+	 * @return the context used by this configuration
+	 */
+	public ProjectScriptContext getContext() {
+		return _context;
+	}
 
-    /**
-     * Indicates if the error mode is enabled.
-     * If in error mode, the cli application will log the full stack trace of an error.
-     *
-     * @return true if error mode is enabled, otherwise false
-     */
-    public boolean isError() {
-        return error;
-    }
+	/**
+	 * Indicates if the error mode is enabled.
+	 * If in error mode, the cli application will log the full stack trace of an error.
+	 *
+	 * @return true if error mode is enabled, otherwise false
+	 */
+	public boolean isError() {
+		return _error;
+	}
 
-    /**
-     * Get the {@link Environment} used by this instance.
-     *
-     * @return the {@link Environment} used by this instance
-     */
-    public Environment getEnvironment() {
-        return environment;
-    }
+	/**
+	 * Get the {@link Environment} used by this instance.
+	 *
+	 * @return the {@link Environment} used by this instance
+	 */
+	public Environment getEnvironment() {
+		return _environment;
+	}
 
-    @Override
-    public String getHttpProxyHost() {
-        if(httpProxyHost == null || httpProxyHost.isEmpty()) {
-            boolean environmentContainsHost = getEnvironment().containsKey(CliConstants.KEY_FS_HTTP_PROXYHOST.value());
-            if(environmentContainsHost) {
-                return getEnvironment().get(CliConstants.KEY_FS_HTTP_PROXYHOST.value()).trim();
-            }
-            return "";
-        }
-        return httpProxyHost;
-    }
+	@Override
+	public String getHttpProxyHost() {
+		if (_httpProxyHost == null || _httpProxyHost.isEmpty()) {
+			boolean environmentContainsHost = getEnvironment().containsKey(CliConstants.KEY_FS_HTTP_PROXYHOST.value());
+			if (environmentContainsHost) {
+				return getEnvironment().get(CliConstants.KEY_FS_HTTP_PROXYHOST.value()).trim();
+			}
+			return "";
+		}
+		return _httpProxyHost;
+	}
 
-    @Override
-    public Integer getHttpProxyPort() {
-        if(httpProxyPort == null) {
-            boolean environmentContainsPort = getEnvironment().containsKey(CliConstants.KEY_FS_HTTP_PROXYPORT.value());
-            if(environmentContainsPort) {
-                return Integer.valueOf(getEnvironment().get(CliConstants.KEY_FS_HTTP_PROXYPORT.value()).trim());
-            }
-            return 8080;
-        }
-        return httpProxyPort;
-    }
+	@Override
+	public Integer getHttpProxyPort() {
+		if (_httpProxyPort == null) {
+			boolean environmentContainsPort = getEnvironment().containsKey(CliConstants.KEY_FS_HTTP_PROXYPORT.value());
+			if (environmentContainsPort) {
+				return Integer.valueOf(getEnvironment().get(CliConstants.KEY_FS_HTTP_PROXYPORT.value()).trim());
+			}
+			return 8080;
+		}
+		return _httpProxyPort;
+	}
 
-    @Override
-    public String getHost() {
-        if(host == null || host.isEmpty()) {
-            boolean environmentContainsHost = getEnvironment().containsKey(CliConstants.KEY_FS_HOST.value());
-            if(environmentContainsHost) {
-                return getEnvironment().get(CliConstants.KEY_FS_HOST.value()).trim();
-            }
-            return CliConstants.DEFAULT_HOST.value();
-        }
-        return host;
-    }
+	@Override
+	public String getHost() {
+		if (_host == null || _host.isEmpty()) {
+			boolean environmentContainsHost = getEnvironment().containsKey(CliConstants.KEY_FS_HOST.value());
+			if (environmentContainsHost) {
+				return getEnvironment().get(CliConstants.KEY_FS_HOST.value()).trim();
+			}
+			return CliConstants.DEFAULT_HOST.value();
+		}
+		return _host;
+	}
 
-    @Override
-    public Integer getPort() {
-        if(port == null) {
-            boolean environmentContainsPort = getEnvironment().containsKey(CliConstants.KEY_FS_PORT.value());
-            if(environmentContainsPort) {
-                return Integer.valueOf(getEnvironment().get(CliConstants.KEY_FS_PORT.value()).trim());
-            }
-            return getConnectionMode().getDefaultPort();
-        }
-        return port;
-    }
+	@Override
+	public Integer getPort() {
+		if (_port == null) {
+			boolean environmentContainsPort = getEnvironment().containsKey(CliConstants.KEY_FS_PORT.value());
+			if (environmentContainsPort) {
+				return Integer.valueOf(getEnvironment().get(CliConstants.KEY_FS_PORT.value()).trim());
+			}
+			return getConnectionMode().getDefaultPort();
+		}
+		return _port;
+	}
 
-    @Override
-    public FsConnectionMode getConnectionMode() {
-        if(fsMode == null) {
-            boolean environmentContainsPort = getEnvironment().containsKey(CliConstants.KEY_FS_MODE.value());
-            if(environmentContainsPort) {
-                return FsConnectionMode.valueOf(getEnvironment().get(CliConstants.KEY_FS_MODE.value()).trim().toUpperCase(Locale.UK));
-            }
-            return FsConnectionMode.valueOf(CliConstants.DEFAULT_CONNECTION_MODE.value());
-        }
-        return fsMode;
-    }
+	@Override
+	public FsConnectionType getConnectionMode() {
+		if (_fsMode == null) {
+			boolean environmentContainsPort = getEnvironment().containsKey(CliConstants.KEY_FS_MODE.value());
+			if (environmentContainsPort) {
+				return FsConnectionType.valueOf(getEnvironment().get(CliConstants.KEY_FS_MODE.value()).trim().toUpperCase(Locale.UK));
+			}
+			return FsConnectionType.valueOf(CliConstants.DEFAULT_CONNECTION_MODE.value());
+		}
+		return _fsMode;
+	}
 
-    @Override
-    public String getUser() {
-        if(user == null || user.isEmpty()) {
-            boolean environmentContainsUser = getEnvironment().containsKey(CliConstants.KEY_FS_USER.value());
-            if(environmentContainsUser) {
-                return getEnvironment().get(CliConstants.KEY_FS_USER.value()).trim();
-            }
-            return CliConstants.DEFAULT_USER.value();
-        }
-        return user;
-    }
+	@Override
+	public String getUser() {
+		if (_user == null || _user.isEmpty()) {
+			boolean environmentContainsUser = getEnvironment().containsKey(CliConstants.KEY_FS_USER.value());
+			if (environmentContainsUser) {
+				return getEnvironment().get(CliConstants.KEY_FS_USER.value()).trim();
+			}
+			return CliConstants.DEFAULT_USER.value();
+		}
+		return _user;
+	}
 
-    @Override
-    public String getPassword() {
-        if(password == null || password.isEmpty()) {
-            boolean environmentContainsPassword = getEnvironment().containsKey(CliConstants.KEY_FS_PASSWORD.value());
-            if(environmentContainsPassword) {
-                return getEnvironment().get(CliConstants.KEY_FS_PASSWORD.value()).trim();
-            }
-            return CliConstants.DEFAULT_USER.value();
-        }
-        return password;
-    }
+	@Override
+	public String getPassword() {
+		if (_password == null || _password.isEmpty()) {
+			boolean environmentContainsPassword = getEnvironment().containsKey(CliConstants.KEY_FS_PASSWORD.value());
+			if (environmentContainsPassword) {
+				return getEnvironment().get(CliConstants.KEY_FS_PASSWORD.value()).trim();
+			}
+			return CliConstants.DEFAULT_USER.value();
+		}
+		return _password;
+	}
 
-    @Override
-    public String getProject() {
-        if(project == null || project.isEmpty()) {
-            boolean environmentContainsProject = getEnvironment().containsKey(CliConstants.KEY_FS_PROJECT.value());
-            if(environmentContainsProject) {
-                return getEnvironment().get(CliConstants.KEY_FS_PROJECT.value()).trim();
-            }
-        }
-        return project;
-    }
+	@Override
+	public String getProject() {
+		if (_project == null || _project.isEmpty()) {
+			boolean environmentContainsProject = getEnvironment().containsKey(CliConstants.KEY_FS_PROJECT.value());
+			if (environmentContainsProject) {
+				return getEnvironment().get(CliConstants.KEY_FS_PROJECT.value()).trim();
+			}
+		}
+		return _project;
+	}
 
-    @Override
-    public boolean isActivateProjectIfDeactivated() {
-        return activateProjectIfDeactivated;
-    }
+	@Override
+	public boolean isActivateProjectIfDeactivated() {
+		return _activateProjectIfDeactivated;
+	}
 
-    @Override
-    public String getSynchronizationDirectoryString() {
-        return synchronizationDirectory;
-    }
+	@Override
+	public String getSynchronizationDirectoryString() {
+		return _synchronizationDirectory;
+	}
 
-    @Override
-    public <F extends FileHandle> FileSystem<F> getSynchronizationDirectory() {
-        return getSynchronizationDirectory(getSynchronizationDirectoryString());
-    }
+	@Override
+	public <F extends FileHandle> FileSystem<F> getSynchronizationDirectory() {
+		return getSynchronizationDirectory(getSynchronizationDirectoryString());
+	}
 
+	protected <F extends FileHandle> FileSystem<F> getSynchronizationDirectory(final String syncDirStr) {
+		SyncDirectoryFactory syncDirectoryFactory = new SyncDirectoryFactory(this);
+		syncDirectoryFactory.checkAndCreateSyncDirIfNeeded(syncDirStr);
 
-    protected <F extends FileHandle> FileSystem<F> getSynchronizationDirectory(final String syncDirStr) {
-        SyncDirectoryFactory syncDirectoryFactory = new SyncDirectoryFactory(this);
-        syncDirectoryFactory.checkAndCreateSyncDirIfNeeded(syncDirStr);
+		final FileSystemsAgent fileSystemsAgent = _context.requireSpecialist(FileSystemsAgent.TYPE);
+		return (FileSystem<F>) fileSystemsAgent.getOSFileSystem(syncDirStr);
+	}
 
-        final FileSystemsAgent fileSystemsAgent = context.requireSpecialist(FileSystemsAgent.TYPE);
-        return (FileSystem<F>) fileSystemsAgent.getOSFileSystem(syncDirStr);
-    }
+	@Override
+	public boolean createSynchronizationDirectoryIfMissing() {
+		return !dontCreateSynchronizationDirectoryIfMissing;
+	}
 
-    @Override
-    public boolean createSynchronizationDirectoryIfMissing() {
-        return !dontCreateSynchronizationDirectoryIfMissing;
-    }
+	/**
+	 * Enable or disable the error mode.
+	 * If the error mode is enabled, the full stack trace of errors will be logged.
+	 *
+	 * @param error boolean value indicating if the error code should be enabled or not
+	 */
+	public void setError(boolean error) {
+		_error = error;
+	}
 
-    /**
-     * Enable or disable the error mode.
-     * If the error mode is enabled, the full stack trace of errors will be logged.
-     * @param error boolean value indicating if the error code should be enabled or not
-     */
-    public void setError(boolean error) {
-        this.error = error;
-    }
+	/**
+	 * Set the FirstSpirit server host that the cli application will connect to.
+	 *
+	 * @param host FirstSpirit server host
+	 */
+	public void setHost(String host) {
+		_host = host;
+	}
 
-    /**
-     * Set the FirstSpirit server host that the cli application will connect to.
-     * @param host FirstSpirit server host
-     */
-    public void setHost(String host) {
-        this.host = host;
-    }
+	/**
+	 * Get the {@link FsConnectionType} used to connect to FirstSpirit.
+	 *
+	 * @return the {@link FsConnectionType} used to connect to FirstSpirit
+	 */
+	public FsConnectionType getFsMode() {
+		return _fsMode;
+	}
 
-    /**
-     * Get the {@link com.espirit.moddev.cli.api.FsConnectionMode} used to connect to FirstSpirit.
-     * @return the {@link com.espirit.moddev.cli.api.FsConnectionMode} used to connect to FirstSpirit
-     */
-    public FsConnectionMode getFsMode() {
-        return fsMode;
-    }
+	/**
+	 * Set the {@link FsConnectionType} used to connect to FirstSpirit.
+	 *
+	 * @param fsMode the {@link FsConnectionType} used to connect to FirstSpirit
+	 */
+	public void setFsMode(FsConnectionType fsMode) {
+		_fsMode = fsMode;
+	}
 
-    /**
-     * Set the {@link com.espirit.moddev.cli.api.FsConnectionMode} used to connect to FirstSpirit.
-     * @param fsMode the {@link com.espirit.moddev.cli.api.FsConnectionMode} used to connect to FirstSpirit
-     */
-    public void setFsMode(FsConnectionMode fsMode) {
-        this.fsMode = fsMode;
-    }
+	/**
+	 * Set the FirstSpirit server port that the cli application will connect to.
+	 *
+	 * @param port FirstSpirit server port
+	 */
+	public void setPort(Integer port) {
+		_port = port;
+	}
 
-    /**
-     * Set the FirstSpirit server port that the cli application will connect to.
-     * @param port FirstSpirit server port
-     */
-    public void setPort(Integer port) {
-        this.port = port;
-    }
+	/**
+	 * Set the HTTP/HTTPS proxy host that the cli will use for the connection.
+	 *
+	 * @param host HTTP/HTTPS proxy host
+	 */
+	public void setHttpProxyHost(final String host) {
+		_httpProxyHost = host;
+	}
 
-    /**
-     * Set the HTTP/HTTPS proxy host that the cli will use for the connection.
-     *
-     * @param host HTTP/HTTPS proxy host
-     */
-    public void setHttpProxyHost(final String host) {
-        this.httpProxyHost = host;
-    }
+	/**
+	 * Set the HTTP/HTTPS proxy port that the cli will use for the connection.
+	 *
+	 * @param port HTTP/HTTPS proxy port
+	 */
+	public void setHttpProxyPort(Integer port) {
+		_httpProxyPort = port;
+	}
 
-    /**
-     * Set the HTTP/HTTPS proxy port that the cli will use for the connection.
-     *
-     * @param port HTTP/HTTPS proxy port
-     */
-    public void setHttpProxyPort(Integer port) {
-        this.httpProxyPort = port;
-    }
+	/**
+	 * Set the user used to authenticate against FirstSpirit.
+	 *
+	 * @param user the username used to authenticate against FirstSpirit
+	 */
+	public void setUser(String user) {
+		_user = user;
+	}
 
+	/**
+	 * Set the password used to authenticate against FirstSpirit.
+	 *
+	 * @param password the password used to authenticate against FirstSpirit
+	 */
+	public void setPassword(String password) {
+		_password = password;
+	}
 
-    /**
-     * Set the user used to authenticate against FirstSpirit.
-     * @param user the username used to authenticate against FirstSpirit
-     */
-    public void setUser(String user) {
-        this.user = user;
-    }
+	/**
+	 * Set the name of the project that will be synchronized.
+	 *
+	 * @param project the name of the project that will be synchronized
+	 */
+	public void setProject(String project) {
+		_project = project;
+	}
 
-    /**
-     * Set the password used to authenticate against FirstSpirit.
-     * @param password the password used to authenticate against FirstSpirit
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	/**
+	 * Enable or disable the automatic activation of the synchronized project.
+	 *
+	 * @param activateProjectIfDeactivated a boolean value indicating if the automatic activation of the synchronized project should be enabled or not
+	 */
+	public void setActivateProjectIfDeactivated(boolean activateProjectIfDeactivated) {
+		_activateProjectIfDeactivated = activateProjectIfDeactivated;
+	}
 
-    /**
-     * Set the name of the project that will be synchronized.
-     * @param project the name of the project that will be synchronized
-     */
-    public void setProject(String project) {
-        this.project = project;
-    }
-
-    /**
-     * Enable or disable the automatic activation of the synchronized project.
-     * @param activateProjectIfDeactivated a boolean value indicating if the automatic activation of the synchronized project should be enabled or not
-     */
-    public void setActivateProjectIfDeactivated(boolean activateProjectIfDeactivated) {
-        this.activateProjectIfDeactivated = activateProjectIfDeactivated;
-    }
-
-    /**
-     * Set the synchronization directory.
-     * @param synchronizationDirectory Path to the synchronization directory
-     */
-    public void setSynchronizationDirectory(String synchronizationDirectory) {
-        this.synchronizationDirectory = synchronizationDirectory;
-    }
+	/**
+	 * Set the synchronization directory.
+	 *
+	 * @param synchronizationDirectory Path to the synchronization directory
+	 */
+	public void setSynchronizationDirectory(String synchronizationDirectory) {
+		_synchronizationDirectory = synchronizationDirectory;
+	}
 
 }

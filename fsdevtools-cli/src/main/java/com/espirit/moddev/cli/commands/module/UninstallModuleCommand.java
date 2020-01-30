@@ -25,7 +25,7 @@ import java.io.IOException;
         descriptions = {"Uninstalls the abtesting module and removes all components from the Mithras Energy project"})
 public class UninstallModuleCommand extends SimpleCommand<SimpleResult<Boolean>> {
 
-    @Option(type = OptionType.COMMAND, name = {"-m", "--moduleName"}, description = "Name of the module that should be deleted")
+    @Option(type = OptionType.COMMAND, name = {"-m", "--moduleName"}, description = "Name of the module that should be deleted", title = "moduleName")
     @Required
     private String _moduleName;
 

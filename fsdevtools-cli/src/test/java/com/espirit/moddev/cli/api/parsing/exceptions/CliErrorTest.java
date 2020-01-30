@@ -24,7 +24,8 @@ package com.espirit.moddev.cli.api.parsing.exceptions;
 
 import com.espirit.moddev.cli.exception.CliError;
 import com.espirit.moddev.cli.api.configuration.Config;
-import com.espirit.moddev.cli.api.FsConnectionMode;
+import com.espirit.moddev.connection.FsConnectionType;
+import com.espirit.moddev.util.FsUtil;
 import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.io.FileSystem;
 import org.junit.Test;
@@ -70,12 +71,12 @@ public class CliErrorTest {
         final Config config = new Config() {
             @Override
             public String getHost() {
-                return "localhost";
+                return FsUtil.VALUE_DEFAULT_HOST;
             }
 
             @Override
             public Integer getPort() {
-                return FsConnectionMode.Constants.DEFAULT_HTTP_PORT;
+                return FsConnectionType.HTTP.getDefaultPort();
             }
 
             @Override
@@ -89,18 +90,18 @@ public class CliErrorTest {
             }
 
             @Override
-            public FsConnectionMode getConnectionMode() {
+            public FsConnectionType getConnectionMode() {
                 return null;
             }
 
             @Override
             public String getUser() {
-                return "Admin";
+                return FsUtil.VALUE_DEFAULT_USER;
             }
 
             @Override
             public String getPassword() {
-                return "Admin";
+                return FsUtil.VALUE_DEFAULT_USER;
             }
 
             @Override

@@ -32,7 +32,7 @@ public abstract class ServiceProcessCommand extends SimpleCommand<ServiceProcess
     public ServiceProcessResult call() {
 
         try {
-            ModuleAdminAgent moduleAdminAgent = context.getConnection().getBroker().requestSpecialist(ModuleAdminAgent.TYPE);
+            ModuleAdminAgent moduleAdminAgent = _context.getConnection().getBroker().requestSpecialist(ModuleAdminAgent.TYPE);
             return new ServiceProcessResult(processServices(moduleAdminAgent));
         } catch(ServiceNotFoundException s) {
             return new ServiceProcessResult(new ServiceNotFoundException(s.getLocalizedMessage(), s));

@@ -24,12 +24,9 @@ package com.espirit.moddev.cli.commands.test;
 
 import com.espirit.moddev.cli.ConnectionBuilder;
 import com.espirit.moddev.cli.api.command.Command;
-import com.espirit.moddev.cli.api.result.Result;
 import com.espirit.moddev.cli.configuration.GlobalConfig;
 import com.espirit.moddev.cli.results.TestResult;
-
 import de.espirit.firstspirit.access.Connection;
-
 
 /**
  * Command for connection testing. Creating a connection to FirstSpirit leads to a successful or unsuccessful result.
@@ -39,23 +36,23 @@ import de.espirit.firstspirit.access.Connection;
 @com.github.rvesse.airline.annotations.Command(name = "connection", groupNames = {"test"}, description = "Testing a FirstSpirit connection")
 public class TestConnectionCommand extends GlobalConfig implements Command {
 
-    @Override
-    @SuppressWarnings("squid:S2221")
-    public Result call() {
-        try(final Connection connection = create()) {
-            connection.connect();
-            return new TestResult(this);
-        } catch (final Exception e) {
-            return new TestResult(this, e);
-        }
-    }
+	@Override
+	@SuppressWarnings("squid:S2221")
+	public TestResult call() {
+		try (final Connection connection = create()) {
+			connection.connect();
+			return new TestResult(this);
+		} catch (final Exception e) {
+			return new TestResult(this, e);
+		}
+	}
 
-    protected Connection create() {
-        return ConnectionBuilder.with(this).build();
-    }
+	protected Connection create() {
+		return ConnectionBuilder.with(this).build();
+	}
 
-    @Override
-    public boolean needsContext() {
-        return false;
-    }
+	@Override
+	public boolean needsContext() {
+		return false;
+	}
 }

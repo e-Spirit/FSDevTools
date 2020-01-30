@@ -1,9 +1,7 @@
 import com.espirit.moddev.build.BuildUtils
-import com.espirit.moddev.gradle.fs.tasks.FSProjectImportTask
 import org.apache.tools.ant.filters.FixCrLfFilter
 import org.apache.tools.ant.filters.ReplaceTokens
 
-import java.time.Duration
 import java.util.regex.Pattern
 
 /**
@@ -40,7 +38,6 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '5.1.0'
     id 'org.ajoberstar.grgit' version '4.0.0'
     id 'maven-publish'
-    id 'de.espirit.firstspirit' version '0.15.0'
     id 'de.espirit.process' version '0.0.2'
     id "com.github.breadmoirai.github-release" version "2.2.9"
 }
@@ -99,6 +96,7 @@ ext {
     apacheCommonsVersion = '3.8.1'
     assertJVersion = '3.3.0'
     classGraphVersion = '4.8.47'
+    commonsCompressVersion = '1.19'
     fsWrapperVersion = '3.5.26'
     hamcrestCoreVersion = '2.1'
     hamcrestJavaVersion = '2.0.0.0'
@@ -130,6 +128,10 @@ configurations {
     fsLicense
     demoProject
     demoProjectWithDB
+    testInstallerTar
+    testServerJar
+    testRuntimeJar
+    testCliArchive
 }
 
 /**
@@ -147,6 +149,9 @@ dependencies {
     fsLicense group: 'de.espirit.firstspirit', name: 'fs-license', version: '5-SNAPSHOT', ext: 'conf'
     demoProject 'com.espirit.moddev:pm-demo-without-db:1.0'
     demoProjectWithDB 'com.espirit.moddev:pm-demo-with-db:1.0'
+    testInstallerTar group: 'de.espirit.firstspirit', name: 'fs-install', version: '1.0.2', ext: 'tar.gz'
+    testServerJar group: 'de.espirit.firstspirit', name: 'fs-isolated-server', version: "$firstSpiritVersion", ext: 'jar'
+    testRuntimeJar group: 'de.espirit.firstspirit', name: 'fs-isolated-runtime', version: "$firstSpiritVersion", ext: 'jar'
 }
 
 ///////////////////////////////////////////////////////
@@ -163,6 +168,10 @@ dependencies {
 List<Integer> ports = BuildUtils.guessFreePorts()
 ext.serverHttpPort = ports.get(0)
 ext.serverSocketPort = ports.get(1)
+
+test {
+    useJUnitPlatform()
+}
 
 ///////////////////////////////////////////////////////
 // configure all projects
@@ -261,17 +270,6 @@ subprojects {
     ///////////////////////////////////////////////////////
 
     publishing {
-        repositories {
-            maven {
-                credentials {
-                    username = artifactory_username
-                    password = artifactory_password
-                }
-
-                url BuildUtils.getArtifactory(project.version, snapshotRepository, releaseRepository)
-            }
-        }
-
         publications {
             maven(MavenPublication) {
                 from components.java
@@ -285,17 +283,6 @@ subprojects {
 /**
  * INTEGRATION TESTS
  */
-
-firstSpirit {
-    fsrunner {
-        httpPort = serverHttpPort
-        socketPort = serverSocketPort
-        connectionMode = "HTTP_MODE"
-        licenseFile = configurations.fsLicense.resolve().first().absolutePath
-        serverOpts = ["-DINTERNAL_SERVLET_ENGINE=0","-Xmx1G"]
-        timeout = Duration.ofMinutes(10)
-    }
-}
 
 ///////////////////////////////////////////////////////
 // manual clean up task
@@ -316,56 +303,6 @@ task cleanupIntegrationTestServer() {
         }
     }
 }
-
-///////////////////////////////////////////////////////
-// setup projects for integration tests
-///////////////////////////////////////////////////////
-
-task importProjectWithoutDB(type: FSProjectImportTask) {
-    dependsOn fsStart
-
-    fsserver {
-        host = "localhost"
-        httpPort = serverHttpPort
-        connectionMode = "HTTP_MODE"
-        username = "Admin"
-        password = "Admin"
-    }
-
-    testproject {
-        forceActivation = true
-        projectDescription = "fs-cli Project"
-        projectName = "fs-cli Project"
-        projectFile = configurations.demoProject.resolve().first().absolutePath.toString()
-    }
-}
-
-task importProjectWithDB(type: FSProjectImportTask) {
-    dependsOn fsStart
-
-    fsserver {
-        host = "localhost"
-        httpPort = serverHttpPort
-        connectionMode = "HTTP_MODE"
-        username = "Admin"
-        password = "Admin"
-    }
-
-    testproject {
-        forceActivation = true
-        projectDescription = "fs-cli Project with db"
-        projectName = "fs-cli Project with db"
-        projectFile = configurations.demoProjectWithDB.resolve().first().absolutePath.toString()
-    }
-}
-
-///////////////////////////////////////////////////////
-// setup integration test task dependencies
-///////////////////////////////////////////////////////
-
-prepareIntegrationTest.dependsOn(fsStart, importProjectWithoutDB, importProjectWithDB)
-cleanupIntegrationTest.finalizedBy(fsStop)
-fsStop.finalizedBy(cleanupIntegrationTestServer)
 
 /**
  * DISTRIBUTION
@@ -414,6 +351,11 @@ task assembleTarGz(type: Tar) {
     compression = Compression.GZIP
     destinationDir(file("$buildDir/distributions"))
 
+    // copy README.txt
+    from("${project.projectDir}/archive/README.txt") {
+        into("fs-cli")
+        filter(ReplaceTokens, tokens: BuildUtils.mapToHashtable(project.properties))
+    }
     // copy conf-dir with filtering
     from("${project.projectDir}/archive/conf") {
         into("fs-cli/conf")
@@ -423,13 +365,13 @@ task assembleTarGz(type: Tar) {
     from("${project.projectDir}/archive/bin/fs-cli.sh") {
         into("fs-cli/bin")
         fileMode 0755
-        filter(FixCrLfFilter.class, eol:FixCrLfFilter.CrLf.newInstance("lf"))
+        filter(FixCrLfFilter.class, eol: FixCrLfFilter.CrLf.newInstance("lf"))
     }
     // copy fs-cli.cmd with execution rights & crlf
     from("${project.projectDir}/archive/bin/fs-cli.cmd") {
         into("fs-cli/bin")
         fileMode 0755
-        filter(FixCrLfFilter.class, eol:FixCrLfFilter.CrLf.newInstance("crlf"))
+        filter(FixCrLfFilter.class, eol: FixCrLfFilter.CrLf.newInstance("crlf"))
     }
     // copy fat jar
     into("fs-cli/lib") {
@@ -450,6 +392,11 @@ task assembleZip(type: Zip) {
     archiveVersion = project.version
     destinationDir(file("$buildDir/distributions"))
 
+    // copy README.txt
+    from("${project.projectDir}/archive/README.txt") {
+        into("fs-cli")
+        filter(ReplaceTokens, tokens: BuildUtils.mapToHashtable(project.properties))
+    }
     // copy conf-dir with filtering
     from("${project.projectDir}/archive/conf") {
         into("fs-cli/conf")
@@ -459,13 +406,13 @@ task assembleZip(type: Zip) {
     from("${project.projectDir}/archive/bin/fs-cli.sh") {
         into("fs-cli/bin")
         fileMode 0755
-        filter(FixCrLfFilter.class, eol:FixCrLfFilter.CrLf.newInstance("lf"))
+        filter(FixCrLfFilter.class, eol: FixCrLfFilter.CrLf.newInstance("lf"))
     }
     // copy fs-cli.cmd with execution rights & crlf
     from("${project.projectDir}/archive/bin/fs-cli.cmd") {
         into("fs-cli/bin")
         fileMode 0755
-        filter(FixCrLfFilter.class, eol:FixCrLfFilter.CrLf.newInstance("crlf"))
+        filter(FixCrLfFilter.class, eol: FixCrLfFilter.CrLf.newInstance("crlf"))
     }
     // copy fat jar
     into("fs-cli/lib") {
@@ -515,7 +462,6 @@ if (!BuildUtils.isSnapshotVersion(project.version)) {
         }
     }
 }
-
 
 
 /**

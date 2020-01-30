@@ -23,12 +23,13 @@
 package com.espirit.moddev.cli;
 
 import com.espirit.moddev.cli.api.CliContext;
-import com.espirit.moddev.cli.api.FsConnectionMode;
 import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.api.configuration.ImportConfig;
 
 import com.espirit.moddev.cli.api.parsing.identifier.UidMapping;
+import com.espirit.moddev.connection.FsConnectionType;
+import com.espirit.moddev.util.FsUtil;
 import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.BaseContext;
 import de.espirit.firstspirit.access.Connection;
@@ -91,7 +92,7 @@ public class CliContextImplTest {
         when(clientConfig.getUser()).thenReturn("horst");
         when(clientConfig.getProject()).thenReturn("myProject");
         when(clientConfig.getSynchronizationDirectoryString()).thenReturn("dir");
-        when(clientConfig.getConnectionMode()).thenReturn(FsConnectionMode.HTTP);
+        when(clientConfig.getConnectionMode()).thenReturn(FsConnectionType.HTTP);
         final List<UidIdentifier> uidList = new ArrayList<>();
         uidList.add(new UidIdentifier(UidMapping.PAGE, "yourUID"));
         uidList.add(new UidIdentifier(UidMapping.PAGE, "yourSecondUID"));
@@ -133,7 +134,7 @@ public class CliContextImplTest {
     @Test
     public void testObtainConnectionExceptionOnEmptyProject() throws Exception {
         when(clientConfig.getProject()).thenReturn(null);
-        when(clientConfig.getHost()).thenReturn("localhost");
+        when(clientConfig.getHost()).thenReturn(FsUtil.VALUE_DEFAULT_HOST);
         new CliContextImpl(clientConfig) {
             @Override
             protected void openConnection() {}

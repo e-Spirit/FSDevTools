@@ -23,164 +23,89 @@
 package com.espirit.moddev.cli.commands.server;
 
 import com.espirit.moddev.cli.results.SimpleResult;
-import com.espirit.moddev.serverrunner.ServerProperties;
-import com.espirit.moddev.serverrunner.ServerRunner;
+import com.espirit.moddev.server.ServerRunner;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
-import java.io.File;
-import java.time.Duration;
-import java.util.List;
+import java.io.IOException;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-public class ServerStartCommandTest extends AbstractServerCommandTest {
+public class ServerStartCommandTest extends AbstractServerCommandTest<ServerStartCommand> {
 
-    @Rule
-    public TemporaryFolder _temporaryFolder = new TemporaryFolder();
+	@NotNull
+	@Override
+	protected ServerStartCommand createTestling() {
+		return new ServerStartCommand();
+	}
 
-    @Rule
-    public MockitoRule _injectMocks = MockitoJUnit.rule();
+	@Test
+	public void getWaitTime_default() {
+		final ServerStartCommand instance = createTestling();
+		assertEquals(ServerStartCommand.DEFAULT_WAIT_TIME, instance.getWaitTimeInSeconds());
+	}
 
-    @Mock
-    private ServerRunner _runner;
+	@Test
+	public void getWaitTime_customValue() {
+		final ServerStartCommand instance = createTestling();
+		final int expected = 10;
+		instance.setWaitTimeInSeconds(expected);
+		assertEquals(expected, instance.getWaitTimeInSeconds());
+	}
 
-    @Before
-    public void setUp() {
-    }
+	@Test
+	public void getServerDir_default() {
+		final ServerStartCommand instance = createTestling();
+		assertNull(instance.getServerDir());
+	}
 
-    @Test
-    public void testCall() throws Exception {
+	@Test
+	public void getServerDir_customValue() {
+		final ServerStartCommand instance = createTestling();
+		final String expected = "myServerDir";
+		instance.setServerDir(expected);
+		assertEquals(expected, instance.getServerDir());
+	}
 
-        when(_runner.start()).thenReturn(Boolean.TRUE);
+	@Test
+	public void call_serverStart_successful() throws Exception {
+		final ServerStartCommand instance = new ServerStartCommand() {
+			@NotNull
+			@Override
+			synchronized ServerRunner getServerRunner() {
+				return new ServerRunner() {
+					@Override
+					public void start() throws IOException {
+						// do nothing for this test (which means that the server has been started)
+					}
+				};
+			}
+		};
+		final SimpleResult<String> result = instance.call();
+		assertFalse(result.isError());
+		assertEquals(ServerStartCommand.MSG_SUCCESS, result.get());
+	}
 
-        System.out.println("call");
-        ServerStartCommand instance = createTestling();
-        SimpleResult<String> result = instance.call();
-        assertNotNull(result);
-    }
-
-    @Test
-    public void testGetServerProperties() {
-        System.out.println("getServerProperties");
-        ServerStartCommand instance = createTestling();
-        ServerProperties result = instance.getServerProperties();
-        assertNotNull(result);
-    }
-
-    @Test
-    public void testGetServerJar() {
-        System.out.println("getServerJar");
-        ServerStartCommand instance = createTestling();
-        instance.setServerJar("test");
-        String expResult = "test";
-        String result = instance.getServerJar();
-        assertEquals(expResult, result);
-    }
-
-    @Test
-    public void testGetEmptyServerJar() {
-        System.out.println("getServerJar");
-        ServerStartCommand instance = createTestling();
-        String result = instance.getServerJar();
-        assertNull(result);
-    }
-
-    @Test
-    public void testGetWrapperJar() {
-        System.out.println("getWrapperJar");
-        ServerStartCommand instance = createTestling();
-        instance.setWrapperJar("test");
-        String expResult = "test";
-        String result = instance.getWrapperJar();
-        assertEquals(expResult, result);
-    }
-
-    @Test
-    public void testGetEmptyWrapperJar() {
-        System.out.println("getWrapperJar");
-        ServerStartCommand instance = createTestling();
-        String result = instance.getWrapperJar();
-        assertNull(result);
-    }
-
-    @Test
-    public void testGetWaitTimeInSeconds() {
-        System.out.println("getWaitTimeInSeconds");
-        ServerStartCommand instance = createTestling();
-        long expResult = 600;
-        long result = instance.getWaitTimeInSeconds();
-        assertEquals(expResult, result);
-    }
-
-    @NotNull
-    @Override
-    protected ServerStartCommand createTestling() {
-        return new ServerStartCommand() {
-            @NotNull
-            @Override
-            protected ServerRunner getOrCreateServerRunner(final ServerProperties serverProperties) {
-                return _runner;
-            }
-        };
-    }
-
-    // this test only works with a license allowing api calls - specify one by passing e.g.
-    // -DfsLicenseFile=/home/[username]/cmsserver/conf/fs-license.conf to the Java VM options
-    @Test
-    public void simpleStartIsSuccessful() throws Exception {
-        ServerProperties.ServerPropertiesBuilder serverPropertiesBuilder = ServerProperties.builder();
-        serverPropertiesBuilder.serverRoot(_temporaryFolder.newFolder("FirstSpirit").toPath());
-
-        // determine random ports
-        int httpPort = ServerProperties.port(0);
-        int socketPort = httpPort;
-        while (socketPort == httpPort) {
-            socketPort = ServerProperties.port(0);
-        }
-        serverPropertiesBuilder.httpPort(httpPort);
-        serverPropertiesBuilder.socketPort(socketPort);
-        serverPropertiesBuilder.timeout(Duration.ofMinutes(10));
-
-        List<File> jarsFromClasspath = ServerProperties.getFirstSpiritJarsFromClasspath();
-        Assert.assertThat("The FirstSpirit and wrapper jars couldn't be found on the classpath!", jarsFromClasspath.size(), is(greaterThanOrEqualTo(2)));
-
-        // setup command
-        final ServerProperties serverProperties = serverPropertiesBuilder.firstSpiritJars(jarsFromClasspath).connectionMode(ServerProperties.ConnectionMode.SOCKET_MODE).build();
-        ServerStartCommand command = new ServerStartCommand();
-        try {
-            command.initializeFromProperties(serverProperties);
-            command.setWaitTimeInSeconds(serverProperties.getTimeout().getSeconds());
-            command.setLicenseFilePath(System.getProperty("fsLicenseFile"));
-            command.setConnectionMode(serverProperties.getMode());
-
-            // start the server
-            SimpleResult<String> firstStartResult = command.call();
-            assertThat(firstStartResult.isError()).describedAs("Expected command to start a server").isFalse();
-            assertThat(command.getServerRunner()).describedAs("Expected server runner to be null").isNotNull();
-            assertThat(command.getServerRunner().isRunning()).describedAs("Expected server to be running now").isTrue();
-
-            // test the connection again --> command will throw an error
-            SimpleResult<String> secondStartResult = command.call();
-            assertThat(secondStartResult.isError()).describedAs("Second start command should throw an error").isFalse();
-        } finally {
-            // stop the server
-            final ServerRunner serverRunner = command.getServerRunner();
-            if (serverRunner != null) {
-                serverRunner.stop();
-            }
-        }
-    }
+	@Test
+	public void call_serverStart_failed() throws Exception {
+		final ServerStartCommand instance = new ServerStartCommand() {
+			@NotNull
+			@Override
+			synchronized ServerRunner getServerRunner() {
+				return new ServerRunner() {
+					@Override
+					public void start() throws IOException {
+						throw new IOException();
+					}
+				};
+			}
+		};
+		final SimpleResult<String> result = instance.call();
+		assertTrue(result.isError());
+		assertEquals(ServerStartCommand.MSG_ERROR, result.getError().getMessage());
+	}
 
 }

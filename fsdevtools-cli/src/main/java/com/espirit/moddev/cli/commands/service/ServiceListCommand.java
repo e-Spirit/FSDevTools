@@ -54,7 +54,7 @@ public class ServiceListCommand extends SimpleCommand<SimpleResult<Boolean>> {
     public SimpleResult<Boolean> call() {
 
         try {
-            ModuleAdminAgent moduleAdminAgent = context.getConnection().getBroker().requestSpecialist(ModuleAdminAgent.TYPE);
+            ModuleAdminAgent moduleAdminAgent = _context.getConnection().getBroker().requestSpecialist(ModuleAdminAgent.TYPE);
 
             List<String> serviceNames = ServiceUtils.getAllServiceNamesFromServer(moduleAdminAgent);
             printServicesCountAndServiceNames(serviceNames, moduleAdminAgent);

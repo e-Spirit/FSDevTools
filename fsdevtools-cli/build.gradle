@@ -1,5 +1,4 @@
 plugins {
-    id 'de.espirit.firstspirit'
     id 'idea'
 }
 
@@ -29,13 +28,13 @@ configurations {
 }
 
 processResources {
-    outputs.upToDateWhen{false}
+    outputs.upToDateWhen { false }
     expand(project.properties)
 }
 
 task javaIntegrationTest(type: Test) {
     group 'verification'
-    dependsOn(build, prepareIntegrationTest)
+    dependsOn(assemble, prepareIntegrationTest)
 
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
@@ -44,9 +43,13 @@ task javaIntegrationTest(type: Test) {
     // set system property for integration tests
     ///////////////////////////////////////////////////////
 
-    systemProperty("fsHttpPort", String.valueOf(serverHttpPort))
+    systemProperty("testHttpPort", String.valueOf(serverHttpPort))
+    systemProperty("testSocketPort", String.valueOf(serverSocketPort))
+    systemProperty("testLicenseFile", String.valueOf(rootProject.configurations.fsLicense.resolve().first().absolutePath))
+    systemProperty("testInstallerTar", String.valueOf(rootProject.configurations.testInstallerTar.resolve().first().absolutePath))
+    systemProperty("testServerJar", String.valueOf(rootProject.configurations.testServerJar.resolve().first().absolutePath))
+    systemProperty("testRuntimeJar", String.valueOf(rootProject.configurations.testRuntimeJar.resolve().first().absolutePath))
 }
-javaIntegrationTest.finalizedBy(":fsStop")
 integrationTest.dependsOn(javaIntegrationTest)
 
 test {
@@ -73,6 +76,4 @@ dependencies {
 
     testCompile 'com.github.stefanbirkner:system-rules:1.14.0'
     testCompile project(":fsdevtools-customcommand-example")
-    testImplementation group: 'de.espirit.firstspirit', name: 'fs-isolated-server', version: "${fsRuntimeVersion}"
-    testImplementation group: 'de.espirit.firstspirit', name: 'wrapper', version: "${fsWrapperVersion}"
 }

@@ -22,9 +22,10 @@ package com.espirit.moddev.cli.api.validation;
  *
  */
 
-import com.espirit.moddev.cli.api.FsConnectionMode;
 import com.espirit.moddev.cli.api.configuration.Config;
 
+import com.espirit.moddev.connection.FsConnectionType;
+import com.espirit.moddev.util.FsUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -52,10 +53,10 @@ public class DefaultConnectionConfigValidatorTest {
     @Test
     public void validate() throws Exception {
         when(_config.getHost()).thenReturn("Localhost");
-        when(_config.getUser()).thenReturn("Admin");
-        when(_config.getPassword()).thenReturn("Admin");
-        when(_config.getPort()).thenReturn(FsConnectionMode.HTTP.getDefaultPort());
-        when(_config.getConnectionMode()).thenReturn(FsConnectionMode.HTTP);
+        when(_config.getUser()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+        when(_config.getPassword()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+        when(_config.getPort()).thenReturn(FsConnectionType.HTTP.getDefaultPort());
+        when(_config.getConnectionMode()).thenReturn(FsConnectionType.HTTP);
         final Set<Violation> violation = _testling.validate(_config);
 
         assertThat("Expect no violation", violation, is(empty()));
@@ -64,10 +65,10 @@ public class DefaultConnectionConfigValidatorTest {
     @Test
     public void validateHost() throws Exception {
         when(_config.getHost()).thenReturn("");
-        when(_config.getUser()).thenReturn("Admin");
-        when(_config.getPassword()).thenReturn("Admin");
-        when(_config.getPort()).thenReturn(FsConnectionMode.HTTP.getDefaultPort());
-        when(_config.getConnectionMode()).thenReturn(FsConnectionMode.HTTP);
+        when(_config.getUser()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+        when(_config.getPassword()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+        when(_config.getPort()).thenReturn(FsConnectionType.HTTP.getDefaultPort());
+        when(_config.getConnectionMode()).thenReturn(FsConnectionType.HTTP);
 
         final Set<Violation> violation = _testling.validate(_config);
 
@@ -79,9 +80,9 @@ public class DefaultConnectionConfigValidatorTest {
     public void validateUser() throws Exception {
         when(_config.getHost()).thenReturn("Localhost");
         when(_config.getUser()).thenReturn(" ");
-        when(_config.getPassword()).thenReturn("Admin");
-        when(_config.getPort()).thenReturn(FsConnectionMode.HTTP.getDefaultPort());
-        when(_config.getConnectionMode()).thenReturn(FsConnectionMode.HTTP);
+        when(_config.getPassword()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+        when(_config.getPort()).thenReturn(FsConnectionType.HTTP.getDefaultPort());
+        when(_config.getConnectionMode()).thenReturn(FsConnectionType.HTTP);
 
         final Set<Violation> violation = _testling.validate(_config);
 
@@ -92,10 +93,10 @@ public class DefaultConnectionConfigValidatorTest {
     @Test
     public void validatePassword() throws Exception {
         when(_config.getHost()).thenReturn("Localhost");
-        when(_config.getUser()).thenReturn("Admin");
+        when(_config.getUser()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
         when(_config.getPassword()).thenReturn("\t");
-        when(_config.getPort()).thenReturn(FsConnectionMode.HTTP.getDefaultPort());
-        when(_config.getConnectionMode()).thenReturn(FsConnectionMode.HTTP);
+        when(_config.getPort()).thenReturn(FsConnectionType.HTTP.getDefaultPort());
+        when(_config.getConnectionMode()).thenReturn(FsConnectionType.HTTP);
 
         final Set<Violation> violation = _testling.validate(_config);
 
@@ -106,10 +107,10 @@ public class DefaultConnectionConfigValidatorTest {
     @Test
     public void validatePort() throws Exception {
         when(_config.getHost()).thenReturn("Localhost");
-        when(_config.getUser()).thenReturn("Admin");
-        when(_config.getPassword()).thenReturn("Admin");
+        when(_config.getUser()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+        when(_config.getPassword()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
         when(_config.getPort()).thenReturn(null);
-        when(_config.getConnectionMode()).thenReturn(FsConnectionMode.HTTP);
+        when(_config.getConnectionMode()).thenReturn(FsConnectionType.HTTP);
 
         final Set<Violation> violation = _testling.validate(_config);
 
@@ -120,9 +121,9 @@ public class DefaultConnectionConfigValidatorTest {
     @Test
     public void validateConnectionMode() throws Exception {
         when(_config.getHost()).thenReturn("Localhost");
-        when(_config.getUser()).thenReturn("Admin");
-        when(_config.getPassword()).thenReturn("Admin");
-        when(_config.getPort()).thenReturn(FsConnectionMode.HTTP.getDefaultPort());
+        when(_config.getUser()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+        when(_config.getPassword()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+        when(_config.getPort()).thenReturn(FsConnectionType.HTTP.getDefaultPort());
         when(_config.getConnectionMode()).thenReturn(null);
 
         final Set<Violation> violation = _testling.validate(_config);

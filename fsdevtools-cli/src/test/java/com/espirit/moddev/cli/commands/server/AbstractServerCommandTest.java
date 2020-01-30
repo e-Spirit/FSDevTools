@@ -22,59 +22,75 @@
 
 package com.espirit.moddev.cli.commands.server;
 
-import com.espirit.moddev.cli.api.FsConnectionMode;
+import com.espirit.moddev.connection.FsConnectionType;
+import com.espirit.moddev.util.FsUtil;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.SimpleLayout;
+import org.apache.log4j.WriterAppender;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.nio.file.Paths;
+import java.io.StringWriter;
 
 import static org.junit.Assert.assertEquals;
 
-public abstract class AbstractServerCommandTest {
+public abstract class AbstractServerCommandTest<T extends AbstractServerCommand> {
 
-    public AbstractServerCommandTest() {
-    }
+	private static StringWriter _log;
 
-    @Before
-    public void setUp() {
-    }
+	@Before
+	public void setup() {
+		_log = new StringWriter();
+		final WriterAppender appender = new WriterAppender(new SimpleLayout(), _log);
+		appender.setImmediateFlush(true);
+		BasicConfigurator.configure(appender);
+		Logger.getRootLogger().setLevel(Level.DEBUG);
+	}
 
-    @Test
-    public void testGetServerRoot() {
-        System.out.println("getServerRoot");
-        AbstractServerCommand instance = createTestling();
-        String expResult = Paths.get(System.getProperty("user.home"), "opt", "FirstSpirit").toString();
-        String result = instance.getServerRoot();
-        assertEquals(expResult, result);
-    }
+	@NotNull
+	protected String getLog() {
+		return _log.toString();
+	}
 
-    @Test
-    public void testGetHost() {
-        System.out.println("getHost");
-        AbstractServerCommand instance = createTestling();
-        String expResult = "localhost";
-        String result = instance.getHost();
-        assertEquals(expResult, result);
-    }
+	@NotNull
+	protected abstract T createTestling();
 
-    @Test
-    public void testGetPort() {
-        System.out.println("getPort");
-        AbstractServerCommand instance = createTestling();
-        Integer expResult = FsConnectionMode.Constants.DEFAULT_HTTP_PORT;
-        Integer result = instance.getPort();
-        assertEquals(expResult, result);
-    }
+	@Test
+	public void getPassword_default() {
+		final AbstractServerCommand instance = createTestling();
+		final String expResult = FsUtil.VALUE_DEFAULT_USER;
+		final String result = instance.getPassword();
+		assertEquals(expResult, result);
+	}
 
-    @Test
-    public void testGetPassword() {
-        System.out.println("getPassword");
-        AbstractServerCommand instance = createTestling();
-        String expResult = "Admin";
-        String result = instance.getPassword();
-        assertEquals(expResult, result);
-    }
+	@Test
+	public void getConnectionMode_default() {
+		final AbstractServerCommand instance = createTestling();
+		assertEquals(FsConnectionType.HTTP, instance.getFsMode());
+	}
 
-    protected abstract <T extends AbstractServerCommand> T createTestling();
+	@Test
+	public void getConnectionMode_http() {
+		final AbstractServerCommand instance = createTestling();
+		instance.setFsMode(FsConnectionType.HTTP);
+		assertEquals(FsConnectionType.HTTP, instance.getFsMode());
+	}
+
+	@Test
+	public void getConnectionMode_https() {
+		final AbstractServerCommand instance = createTestling();
+		instance.setFsMode(FsConnectionType.HTTPS);
+		assertEquals(FsConnectionType.HTTPS, instance.getFsMode());
+	}
+
+	@Test
+	public void getConnectionMode_socket() {
+		final AbstractServerCommand instance = createTestling();
+		instance.setFsMode(FsConnectionType.SOCKET);
+		assertEquals(FsConnectionType.SOCKET, instance.getFsMode());
+	}
 
 }

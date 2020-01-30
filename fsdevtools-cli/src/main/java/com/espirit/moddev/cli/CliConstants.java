@@ -22,6 +22,8 @@
 
 package com.espirit.moddev.cli;
 
+import com.espirit.moddev.util.FsUtil;
+
 /**
  * Constants that are used in the context of FirstSpirit and the cli classes.
  *
@@ -42,12 +44,12 @@ public enum CliConstants {
     /**
      * Default user cli constant.
      */
-    DEFAULT_USER("Admin"),
+    DEFAULT_USER(FsUtil.VALUE_DEFAULT_USER),
 
     /**
      * Default host cli constant.
      */
-    DEFAULT_HOST("localhost"),
+    DEFAULT_HOST(FsUtil.VALUE_DEFAULT_HOST),
 
     /**
      * Default connection mode cli constant.

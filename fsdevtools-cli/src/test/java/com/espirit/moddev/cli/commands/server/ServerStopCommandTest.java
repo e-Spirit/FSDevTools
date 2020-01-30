@@ -23,48 +23,166 @@
 package com.espirit.moddev.cli.commands.server;
 
 import com.espirit.moddev.cli.results.SimpleResult;
-import com.espirit.moddev.serverrunner.ServerProperties;
-import com.espirit.moddev.serverrunner.ServerRunner;
-import org.junit.Before;
+import com.espirit.moddev.connection.FsConnectionConfig;
+import com.espirit.moddev.server.ServerRunner;
+import com.espirit.moddev.util.FsUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.mockito.Mock;
-import static org.mockito.Mockito.when;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
-public class ServerStopCommandTest extends AbstractServerCommandTest {
-    
-    @Rule
-    public MockitoRule injectMocks = MockitoJUnit.rule();
-    
-    @Mock
-    private ServerRunner runner;
-    
-    @Before
-    public void setUp() {
-    }
+import java.io.IOException;
 
-    @Test
-    public void testCall() throws Exception {
-        
-        when(runner.stop()).thenReturn(Boolean.TRUE);
-        
-        System.out.println("call");
-        ServerStopCommand instance = createTestling();
-        SimpleResult<Boolean> result = instance.call();
-        assertNotNull(result);
-    }
-    
-    @Override
-    protected ServerStopCommand createTestling() {
-        return new ServerStopCommand(){
-            @Override
-            protected ServerRunner createRunner(ServerProperties serverProperties) {
-               return runner;
-            }
-        };
-    }
-    
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+public class ServerStopCommandTest extends AbstractServerCommandTest<ServerStopCommand> {
+
+	@NotNull
+	@Override
+	protected ServerStopCommand createTestling() {
+		return new ServerStopCommand();
+	}
+
+	@Test
+	public void getServerDir_default() {
+		final ServerStopCommand instance = createTestling();
+		assertNull(instance.getServerDir());
+	}
+
+	@Test
+	public void getServerDir_customValue() {
+		final ServerStopCommand instance = createTestling();
+		final String expected = "myServerDir";
+		instance.setServerDir(expected);
+		assertEquals(expected, instance.getServerDir());
+	}
+
+	@Test
+	public void getHost_default() {
+		final ServerStopCommand instance = createTestling();
+		assertNull(instance.getHost());
+	}
+
+	@Test
+	public void getHost_customValue() {
+		final ServerStopCommand instance = createTestling();
+		final String expected = "myHost";
+		instance.setHost(expected);
+		assertEquals(expected, instance.getHost());
+	}
+
+	@Test
+	public void getPort_default() {
+		final ServerStopCommand instance = createTestling();
+		assertEquals(0, instance.getPort());
+	}
+
+	@Test
+	public void getPort_customValue() {
+		final ServerStopCommand instance = createTestling();
+		final int expected = 1337;
+		instance.setPort(expected);
+		assertEquals(expected, instance.getPort());
+	}
+
+	@Test
+	public void call_remote_serverStop_successful() {
+		final ServerStopCommand instance = new ServerStopCommand() {
+			@NotNull
+			@Override
+			ServerRunner getServerRunner(@Nullable final String serverDir) {
+				return new ServerRunner() {
+
+					@Override
+					public void stop(@NotNull final FsConnectionConfig config) throws IOException {
+						// do nothing for this test (which means that the server has been stopped)
+					}
+				};
+			}
+		};
+		final String host = FsUtil.VALUE_DEFAULT_HOST;
+		final int port = 80;
+		instance.setHost(host);
+		instance.setPort(port);
+		final SimpleResult<Boolean> result = instance.call();
+		assertFalse(result.isError());
+		assertTrue(result.get());
+		assertTrue(getLog().contains(String.format(ServerStopCommand.MSG_USING_REMOTE_HOST_PORT.replaceAll("\\{}", "%s"), "HTTP", host, port)));
+	}
+
+	@Test
+	public void call_local_serverStop_successful() {
+		final ServerStopCommand instance = new ServerStopCommand() {
+			@Override
+			boolean updateLocalConfig(@NotNull final FsConnectionConfig config) {
+				return true; // nothing to do in junit
+			}
+
+			@NotNull
+			@Override
+			ServerRunner getServerRunner(@Nullable final String serverDir) {
+				return new ServerRunner() {
+					@Override
+					public void stop(@NotNull final FsConnectionConfig config) throws IOException {
+						// do nothing for this test (which means that the server has been stopped)
+					}
+				};
+			}
+		};
+		instance.setServerDir("/my/path/to/dir");
+		final SimpleResult<Boolean> result = instance.call();
+		assertFalse(result.isError());
+		assertTrue(result.get());
+	}
+
+	@Test
+	public void call_serverStop_wrongArguments() {
+		final ServerStopCommand instance = new ServerStopCommand();
+		final SimpleResult<Boolean> result = instance.call();
+		assertTrue(result.isError());
+		assertTrue(result.getError().getMessage().contains(ServerStopCommand.MSG_ERROR));
+	}
+
+	@Test
+	public void call_local_serverStop_successful_noLockFile() {
+		final ServerStopCommand instance = new ServerStopCommand() {
+			@NotNull
+			@Override
+			ServerRunner getServerRunner(@Nullable final String serverDir) {
+				return new ServerRunner() {
+					@Override
+					public void stop(@NotNull final FsConnectionConfig config) throws IOException {
+						// do nothing for this test (which means that the server has been stopped)
+					}
+				};
+			}
+		};
+		instance.setServerDir("/my/path/to/dir");
+		final SimpleResult<Boolean> result = instance.call();
+		assertFalse(result.isError());
+		assertTrue(result.get());
+		assertTrue(getLog().contains(ServerStopCommand.MSG_LOCK_FILE_NOT_FOUND));
+	}
+
+	@Test
+	public void call_serverStop_failed() {
+		final ServerStopCommand instance = new ServerStopCommand() {
+			@NotNull
+			@Override
+			ServerRunner getServerRunner(@Nullable final String serverDir) {
+				return new ServerRunner() {
+					@Override
+					public void stop(@NotNull final FsConnectionConfig config) throws IOException {
+						throw new IOException();
+					}
+				};
+			}
+		};
+		final SimpleResult<Boolean> result = instance.call();
+		assertTrue(result.isError());
+		assertEquals(ServerStopCommand.MSG_ERROR, result.getError().getMessage());
+	}
+
 }

@@ -76,14 +76,14 @@ public class InstallModulesCommand extends SimpleCommand<InstallModulesResult> {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(InstallModulesCommand.class);
 
-    @Option(type = OptionType.COMMAND, name = {"-mcf", "--moduleConfigFile"}, description = "Path to the configuration json file")
+    @Option(type = OptionType.COMMAND, name = {"-mcf", "--moduleConfigFile"}, description = "Path to the configuration json file", title = "configFile")
     @com.github.rvesse.airline.annotations.restrictions.Path(mustExist = true, kind = PathKind.FILE, writable = false)
     @Required
     private String _configFile;
 
-    @Option(type = OptionType.COMMAND, name = {"-dwa", "--deployWebApps"}, description = "Define whether all related web apps of the modules should be immediately deployed after the installation or not [true = deploy (default) | false = no deploy]")
+    @Option(type = OptionType.COMMAND, name = {"-dwa", "--deployWebApps"}, description = "Define whether all related web apps of the modules should be immediately deployed after the installation or not [true = deploy (default) | false = no deploy]", title = "deployWebApps")
     @Once
-    private String deploy = String.valueOf(true);
+    private String _deploy = String.valueOf(true);
 
     @Override
     public InstallModulesResult call() {
@@ -235,7 +235,7 @@ public class InstallModulesCommand extends SimpleCommand<InstallModulesResult> {
     }
 
     private boolean shouldDeploy() {
-        return Boolean.TRUE.toString().equalsIgnoreCase(deploy);
+        return Boolean.TRUE.toString().equalsIgnoreCase(_deploy);
     }
 
     /**

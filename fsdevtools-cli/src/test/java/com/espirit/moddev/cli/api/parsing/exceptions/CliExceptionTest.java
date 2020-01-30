@@ -22,10 +22,11 @@
 
 package com.espirit.moddev.cli.api.parsing.exceptions;
 
-import com.espirit.moddev.cli.api.FsConnectionMode;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.exception.CliError;
 import com.espirit.moddev.cli.exception.CliException;
+import com.espirit.moddev.connection.FsConnectionType;
+import com.espirit.moddev.util.FsUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,9 +65,9 @@ public class CliExceptionTest {
     @Before
     public void setUp() throws Exception {
         config = mock(Config.class);
-        when(config.getUser()).thenReturn("Admin");
-        when(config.getHost()).thenReturn("localhost");
-        when(config.getPort()).thenReturn(FsConnectionMode.Constants.DEFAULT_HTTP_PORT);
+        when(config.getUser()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+        when(config.getHost()).thenReturn(FsUtil.VALUE_DEFAULT_HOST);
+        when(config.getPort()).thenReturn(FsConnectionType.HTTP.getDefaultPort());
         cause = new Exception("JUnit");
         testling = new CliException(error, config, cause);
     }

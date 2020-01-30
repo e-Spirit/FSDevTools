@@ -22,8 +22,7 @@
 
 package com.espirit.moddev.cli.api.configuration;
 
-import com.espirit.moddev.cli.api.FsConnectionMode;
-
+import com.espirit.moddev.connection.FsConnectionType;
 import de.espirit.firstspirit.access.project.ProjectScriptContext;
 import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.io.FileSystem;
@@ -35,117 +34,126 @@ import de.espirit.firstspirit.io.FileSystem;
  */
 public interface Config {
 
-    /**
-     * Get the FirstSpirit server host.
-     *
-     * @return the FirstSpirit server host
-     */
-    String getHost();
+	/**
+	 * Get the FirstSpirit server host.
+	 *
+	 * @return the FirstSpirit server host
+	 */
+	String getHost();
 
-    /**
-     * Get the FirstSpirit server port.
-     *
-     * @return the FirstSpirit server port
-     */
-    Integer getPort();
+	/**
+	 * Get the FirstSpirit server port.
+	 *
+	 * @return the FirstSpirit server port
+	 */
+	Integer getPort();
 
-    /**
-     * Get the proxy host for http/https connections.
-     *
-     * @return the proxy host for http/https connections
-     */
-    String getHttpProxyHost();
+	/**
+	 * Get the proxy host for http/https connections.
+	 *
+	 * @return the proxy host for http/https connections
+	 */
+	String getHttpProxyHost();
 
-    /**
-     * Get the proxy server port for http/https connections.
-     *
-     * @return the proxy server port for http/https connections
-     */
-    Integer getHttpProxyPort();
+	/**
+	 * Get the proxy server port for http/https connections.
+	 *
+	 * @return the proxy server port for http/https connections
+	 */
+	Integer getHttpProxyPort();
 
-    /**
-     * Get the connection mode used to connect to the FirstSpirit server.
-     *
-     * @return a {@link com.espirit.moddev.cli.api.FsConnectionMode} object that specifies the connection mode used to connect to the FirstSpirit server
-     */
-    FsConnectionMode getConnectionMode();
+	/**
+	 * Get the connection mode used to connect to the FirstSpirit server.
+	 *
+	 * @return a {@link FsConnectionType} object that specifies the connection mode used to connect to the FirstSpirit server
+	 */
+	FsConnectionType getConnectionMode();
 
-    /**
-     * Get the username used to authenticate against the FirstSpirit server.
-     *
-     * @return the username used to authenticate against the FirstSpirit server
-     */
-    String getUser();
+	/**
+	 * Get the username used to authenticate against the FirstSpirit server.
+	 *
+	 * @return the username used to authenticate against the FirstSpirit server
+	 */
+	String getUser();
 
-    /**
-     * Get the password used to authenticate against the FirstSpirit server.
-     *
-     * @return the password used to authenticate against the FirstSpirit server.
-     */
-    String getPassword();
+	/**
+	 * Get the password used to authenticate against the FirstSpirit server.
+	 *
+	 * @return the password used to authenticate against the FirstSpirit server.
+	 */
+	String getPassword();
 
-    /**
-     * Get the name of the project that will be synchronized.
-     *
-     * @return the name of the project that will be synchronized
-     */
-    String getProject();
+	/**
+	 * Get the name of the project that will be synchronized.
+	 *
+	 * @return the name of the project that will be synchronized
+	 */
+	String getProject();
 
-    /**
-     * Gets the synchronization directory as a {@link java.lang.String} identifier.
-     * Can be used to retrieve an actual file handle to a directory.
-     *
-     * @return the synchronization directory
-     */
-    String getSynchronizationDirectoryString();
+	/**
+	 * Gets the synchronization directory as a {@link java.lang.String} identifier.
+	 * Can be used to retrieve an actual file handle to a directory.
+	 *
+	 * @return the synchronization directory
+	 */
+	String getSynchronizationDirectoryString();
 
-    /**
-     * Indicates whether or not a directory for file synchronization should be created if absent.
-     * The default value is true.
-     *
-     * @return true if a directory should be created if absent, false if not
-     */
-    default boolean createSynchronizationDirectoryIfMissing() { return true; }
+	/**
+	 * Indicates whether or not a directory for file synchronization should be created if absent.
+	 * The default value is true.
+	 *
+	 * @return true if a directory should be created if absent, false if not
+	 */
+	default boolean createSynchronizationDirectoryIfMissing() {
+		return true;
+	}
 
-    /**
-     * Retrieves a directory for file synchronization.
-     *
-     * @param <F> the type of a FileHandle subclass
-     * @return a FileSystem handle
-     */
-    <F extends FileHandle> FileSystem<F> getSynchronizationDirectory();
+	/**
+	 * Retrieves a directory for file synchronization.
+	 *
+	 * @param <F> the type of a FileHandle subclass
+	 * @return a FileSystem handle
+	 */
+	<F extends FileHandle> FileSystem<F> getSynchronizationDirectory();
 
-    /**
-     * Indicates if this type of configuration needs a context to be initialized.
-     * An execution environment can evaluate this information to properly initialize commands, for example.
-     * The default value is true.
-     *
-     * @return a boolean value that indicates whether or not a context is required for this config.
-     */
-    default boolean needsContext() { return true; }
+	/**
+	 * Indicates if this type of configuration needs a context to be initialized.
+	 * An execution environment can evaluate this information to properly initialize commands, for example.
+	 * The default value is true.
+	 *
+	 * @return a boolean value that indicates whether or not a context is required for this config.
+	 */
+	default boolean needsContext() {
+		return true;
+	}
 
-    /**
-     * Set the context used by this configuration.
-     * Since not all configurations need a context, the default implementation is empty.
-     *
-     * @param context the context this configuration should use
-     */
-    default void setContext(ProjectScriptContext context) {}
+	/**
+	 * Set the context used by this configuration.
+	 * Since not all configurations need a context, the default implementation is empty.
+	 *
+	 * @param context the context this configuration should use
+	 */
+	default void setContext(ProjectScriptContext context) {
+	}
 
-    /**
-     * Indicates if the synchronized project specified by {@link #getProject()} should be activated if it is currently deactivated.
-     * The default value is true.
-     *
-     * @return a boolean value indicating if the synchronized project should be activated if it is currently deactivated
-     */
-    default boolean isActivateProjectIfDeactivated() { return true; }
+	/**
+	 * Indicates if the synchronized project specified by {@link #getProject()} should be activated if it is currently deactivated.
+	 * The default value is true.
+	 *
+	 * @return a boolean value indicating if the synchronized project should be activated if it is currently deactivated
+	 */
+	default boolean isActivateProjectIfDeactivated() {
+		return true;
+	}
 
-    /**
-     * Indicates if the project specified by {@link #getProject()} should be created if it does not exist. This
-     * default implementation returns false, because otherwise it would be difficult to detect possible errors
-     * due to missing projects.
-     *
-     * @return a boolean value that indicates if the synchronized project should be created if it does not exist.
-     */
-    default boolean isCreatingProjectIfMissing() { return false; }
+	/**
+	 * Indicates if the project specified by {@link #getProject()} should be created if it does not exist. This
+	 * default implementation returns false, because otherwise it would be difficult to detect possible errors
+	 * due to missing projects.
+	 *
+	 * @return a boolean value that indicates if the synchronized project should be created if it does not exist.
+	 */
+	default boolean isCreatingProjectIfMissing() {
+		return false;
+	}
 }

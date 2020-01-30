@@ -28,6 +28,7 @@ import com.espirit.moddev.cli.results.SimpleResult;
 import com.espirit.moddev.core.StringPropertiesMap;
 import com.espirit.moddev.projectservice.projectimport.ProjectImportParametersBuilder;
 import com.espirit.moddev.projectservice.projectimport.ProjectImporter;
+import com.espirit.moddev.shared.annotation.VisibleForTesting;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;
@@ -42,72 +43,87 @@ import java.io.File;
 
 @Command(name = "import", groupNames = {"project"}, description = "Imports a FirstSpirit project export into a FirstSpirit Server as a new project.")
 @Examples(
-        examples = {"fs-cli project import -h localhost -port 8000 project import --importProjectName \"newProjectName\" --projectFile \"D:\\my-project-export.tar.gz\"",
-                    "fs-cli project import --importProjectName \"newProjectName\" --projectFile \"D:\\my-project-export.tar.gz\" -dlm *:CREATE_NEW",
-                    "fs-cli project import --importProjectName \"newProjectName\" --projectFile \"D:\\my-project-export.tar.gz\" -dlm sourceLayer_A:targetLayer_A,sourceLayer_B:targetLayer_B"
-        },
-        descriptions = {"Imports the project export into a new project that is named newProjectName",
-                        "Import project and create for every unknown source schema a new target layer (use if uncertain)",
-                        "Import project and use specified mapping for source layers and existing target layers. The target layers must be attached to the project! (use with caution)"})
-public class ImportProjectCommand extends SimpleCommand<SimpleResult<Boolean>>{
+		examples = {"fs-cli -h localhost -port 8000 project import --importProjectName \"newProjectName\" --projectFile \"D:\\my-project-export.tar.gz\"",
+				"fs-cli project import --importProjectName \"newProjectName\" --projectFile \"D:\\my-project-export.tar.gz\" -dlm *:CREATE_NEW",
+				"fs-cli project import --importProjectName \"newProjectName\" --projectFile \"D:\\my-project-export.tar.gz\" -dlm sourceLayer_A:targetLayer_A,sourceLayer_B:targetLayer_B"
+		},
+		descriptions = {"Imports the project export into a new project that is named newProjectName",
+				"Import project and create for every unknown source schema a new target layer (use if uncertain)",
+				"Import project and use specified mapping for source layers and existing target layers. The target layers must be attached to the project! (use with caution)"})
+public class ImportProjectCommand extends SimpleCommand<SimpleResult<Boolean>> {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(ImportProjectCommand.class);
+	protected static final Logger LOGGER = LoggerFactory.getLogger(ImportProjectCommand.class);
 
-    @Option(type = OptionType.COMMAND, name = {"-ipn", "--importProjectName"}, description = "Name of the FirstSpirit target project where the import should go")
-    @Required
-    private String _projectName;
+	@Option(type = OptionType.COMMAND, name = {"-ipn", "--importProjectName"}, description = "Name of the FirstSpirit target project where the import should go", title = "projectName")
+	@Required
+	private String _projectName;
 
-    @Option(type = OptionType.COMMAND, name = {"-ipd", "--importProjectDescription"}, description = "Description of the FirstSpirit target project")
-    private String _projectDescription;
+	@Option(type = OptionType.COMMAND, name = {"-ipd", "--importProjectDescription"}, description = "Description of the FirstSpirit target project", title = "projectDescription")
+	private String _projectDescription;
 
-    @Option(type = OptionType.COMMAND, name = {"-pf", "--projectFile"}, description = "Path to the project export file that should be imported")
-    @Required
-    private String _projectFile;
+	@Option(type = OptionType.COMMAND, name = {"-pf", "--projectFile"}, description = "Path to the project export file that should be imported", title = "projectFile")
+	@Required
+	private String _projectFile;
 
-    @Option(type = OptionType.COMMAND, name = {"-fpa", "--forceProjectActivation"}, description = "Whether to force the project activation if the project is deactivated after import somehow. Default is false.")
-    private boolean _forceProjectActivation;
+	@Option(type = OptionType.COMMAND, name = {"-fpa", "--forceProjectActivation"}, description = "Whether to force the project activation if the project is deactivated after import somehow. Default is false.", title = "forceActivation")
+	private boolean _forceProjectActivation;
 
-    @Option(type = OptionType.COMMAND, name = {"-dlm", "--databaseLayerMapping"}, description = "Define a map-like layerMapping with comma-separated key-value pairs by : or =; . See command examples.")
-    private String _layerMapping;
+	@Option(type = OptionType.COMMAND, name = {"-dlm", "--databaseLayerMapping"}, description = "Define a map-like layerMapping with comma-separated key-value pairs by : or =; . See command examples.", title = "layerMapping")
+	private String _layerMapping;
 
-    @Override
-    public SimpleResult<Boolean> call() {
-        try (final Connection connection = create()) {
-            connection.connect();
-            return importProject(connection);
-        } catch (final Exception e) {
-            return new SimpleResult<>(e);
-        }
-    }
+	@Override
+	public SimpleResult<Boolean> call() {
+		try (final Connection connection = create()) {
+			connection.connect();
+			return importProject(connection);
+		} catch (final Exception e) {
+			return new SimpleResult<>(e);
+		}
+	}
 
-    @NotNull
-    private SimpleResult<Boolean> importProject(@NotNull final Connection connection) throws Exception {
-        // verify
-        if (_projectFile == null) {
-            return new SimpleResult<>(new IllegalArgumentException("Missing parameter for project file"));
-        }
+	@NotNull
+	private SimpleResult<Boolean> importProject(@NotNull final Connection connection) throws Exception {
+		// verify
+		if (_projectFile == null) {
+			return new SimpleResult<>(new IllegalArgumentException("Missing parameter for project file"));
+		}
 
-        // setup parameters
-        final ProjectImportParametersBuilder importParametersBuilder = new ProjectImportParametersBuilder()
-                .setProjectName(_projectName)
-                .setProjectFile(new File(_projectFile))
-                .setProjectDescription(_projectDescription)
-                .forceProjectActivation(_forceProjectActivation)
-                .setLayerMapping(new StringPropertiesMap(_layerMapping));
+		// setup parameters
+		final ProjectImportParametersBuilder importParametersBuilder = new ProjectImportParametersBuilder()
+				.setProjectName(_projectName)
+				.setProjectFile(new File(_projectFile))
+				.setProjectDescription(_projectDescription)
+				.forceProjectActivation(_forceProjectActivation)
+				.setLayerMapping(new StringPropertiesMap(_layerMapping));
 
-        // import project
-        final boolean imported = new ProjectImporter().importProject(connection, importParametersBuilder.create());
-        // return result
-        return new SimpleResult(imported ? true : new IllegalStateException("Import was not successful"));
-    }
+		// import project
+		final boolean imported = new ProjectImporter().importProject(connection, importParametersBuilder.create());
+		// return result
+		return new SimpleResult(imported ? true : new IllegalStateException("Import was not successful"));
+	}
 
-    @NotNull
-    private Connection create() {
-        return ConnectionBuilder.with(this).build();
-    }
+	@VisibleForTesting
+	public void setProjectFile(@NotNull final String projectFile) {
+		_projectFile = projectFile;
+	}
 
-    @Override
-    public boolean needsContext() {
-        return false;
-    }
+	@VisibleForTesting
+	public void setProjectName(@NotNull final String projectName) {
+		_projectName = projectName;
+	}
+
+	@VisibleForTesting
+	public void setProjectDescription(@NotNull final String projectDescription) {
+		_projectDescription = projectDescription;
+	}
+
+	@NotNull
+	private Connection create() {
+		return ConnectionBuilder.with(this).build();
+	}
+
+	@Override
+	public boolean needsContext() {
+		return false;
+	}
 }

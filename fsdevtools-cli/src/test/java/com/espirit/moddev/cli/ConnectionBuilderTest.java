@@ -22,8 +22,9 @@ package com.espirit.moddev.cli;
  *
  */
 
-import com.espirit.moddev.cli.api.FsConnectionMode;
 import com.espirit.moddev.cli.api.configuration.Config;
+import com.espirit.moddev.connection.FsConnectionType;
+import com.espirit.moddev.util.FsUtil;
 import de.espirit.firstspirit.access.Connection;
 
 import org.junit.Before;
@@ -42,7 +43,7 @@ import static org.mockito.Mockito.when;
 public class ConnectionBuilderTest {
 
     @DataPoints
-    public static FsConnectionMode[] testCases = FsConnectionMode.values();
+    public static FsConnectionType[] testCases = FsConnectionType.values();
 
     private ConnectionBuilder testling;
     private Config config;
@@ -54,19 +55,19 @@ public class ConnectionBuilderTest {
     }
 
     @Theory
-    public void testBuild(final FsConnectionMode mode) throws Exception {
+    public void testBuild(final FsConnectionType mode) throws Exception {
 
-        when(config.getHost()).thenReturn("localhost");
+        when(config.getHost()).thenReturn(FsUtil.VALUE_DEFAULT_HOST);
         when(config.getHttpProxyHost()).thenReturn("");
         when(config.getPort()).thenReturn(mode.getDefaultPort());
         when(config.getHttpProxyPort()).thenReturn(8080);
         when(config.getConnectionMode()).thenReturn(mode);
-        when(config.getUser()).thenReturn("Admin");
-        when(config.getPassword()).thenReturn("Admin");
+        when(config.getUser()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+        when(config.getPassword()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
 
         final Connection connection = testling.build();
 
-        assertThat(connection.getHost(), is("localhost"));
+        assertThat(connection.getHost(), is(FsUtil.VALUE_DEFAULT_HOST));
         assertThat(connection.getPort(), is(mode.getDefaultPort()));
     }
 
