@@ -227,14 +227,13 @@ public class ModuleInstaller {
      * @param descriptor The descriptor of the module whose project applications shall be installed
      * @param parameters
      */
-    private boolean installProjectApps(final ModuleDescriptor descriptor, final ModuleInstallationParameters parameters) {
+    private void installProjectApps(final ModuleDescriptor descriptor, final ModuleInstallationParameters parameters) {
         List<ComponentDescriptor> projectAppDescriptors = stream(descriptor.getComponents()).filter(it -> it instanceof ProjectAppDescriptor).collect(toList());
 
         String projectName = parameters.getProjectName();
         if (StringUtils.isNullOrEmpty(projectName)) {
             if (!projectAppDescriptors.isEmpty()) {
-                LOGGER.warn("Found project app descriptors, but can't install project apps without a project name given!");
-                return false;
+                LOGGER.info("Found project app descriptors, but can't install project apps without a project name given!");
             }
         } else {
             if (!projectAppDescriptors.isEmpty()) {
@@ -255,7 +254,6 @@ public class ModuleInstaller {
                 LOGGER.info("Installing project apps finished");
             }
         }
-        return true;
     }
 
     private void createProjectAppConfiguration(final String projectName, final String moduleName, final ComponentDescriptor projectAppDescriptor) {
@@ -430,9 +428,7 @@ public class ModuleInstaller {
             }
 
             // install project apps
-            if (!installProjectApps(moduleDescriptor.get(), parameters)) {
-                LOGGER.error("Project app installation not successful for module {}", moduleName);
-            }
+            installProjectApps(moduleDescriptor.get(), parameters);
 
             if (deploy) {
                 // install and deploy project web apps

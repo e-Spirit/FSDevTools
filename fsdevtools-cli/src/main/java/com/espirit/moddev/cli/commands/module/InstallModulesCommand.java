@@ -214,7 +214,7 @@ public class InstallModulesCommand extends SimpleCommand<InstallModulesResult> {
                 if (moduleInstaller.updateWebApps(updatedWebApps)) {
                     LOGGER.info("Web apps successfully deployed.");
                 } else {
-                    throw new IllegalStateException("One or more web apps could not be deployed.");
+                    throw new IllegalStateException("One or more web apps could not be deployed. Please see the server.log for details.");
                 }
             }
         }
