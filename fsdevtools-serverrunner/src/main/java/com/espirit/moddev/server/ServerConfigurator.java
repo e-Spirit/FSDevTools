@@ -1,5 +1,6 @@
 package com.espirit.moddev.server;
 
+import com.espirit.moddev.connection.FsConnectionType;
 import com.espirit.moddev.shared.annotation.VisibleForTesting;
 import com.espirit.moddev.util.ArchiveUtil;
 import com.espirit.moddev.util.FileUtil;
@@ -32,12 +33,16 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 import static com.espirit.moddev.util.FsUtil.DIR_CONF;
+import static com.espirit.moddev.util.FsUtil.DIR_JETTY_SERVICE;
+import static com.espirit.moddev.util.FsUtil.DIR_MODULES;
 import static com.espirit.moddev.util.FsUtil.DIR_SERVER;
 import static com.espirit.moddev.util.FsUtil.FILE_FS_LICENSE_CONF;
 import static com.espirit.moddev.util.FsUtil.FILE_FS_LOGGING_CONF;
 import static com.espirit.moddev.util.FsUtil.FILE_FS_SERVER_CONF;
 import static com.espirit.moddev.util.FsUtil.FILE_FS_WRAPPER_CONF;
 import static com.espirit.moddev.util.FsUtil.FILE_FS_WRAPPER_ISOLATED_CONF;
+import static com.espirit.moddev.util.FsUtil.FILE_JETTY_PROPERTIES;
+import static com.espirit.moddev.util.FsUtil.getPortFromConfig;
 
 public class ServerConfigurator {
 
@@ -55,6 +60,7 @@ public class ServerConfigurator {
 	private final List<String> _additionalVMArgs;
 	private int _xms;
 	private int _xmx;
+	private long _wrapperTimeout;
 
 	public ServerConfigurator(@NotNull final Path serverDir) {
 		_serverDir = serverDir.toAbsolutePath();
@@ -63,6 +69,7 @@ public class ServerConfigurator {
 		_additionalVMArgs = new ArrayList<>();
 		_xms = 4096;
 		_xmx = 4096;
+		_wrapperTimeout = 90;
 	}
 
 	/**
@@ -125,6 +132,12 @@ public class ServerConfigurator {
 		return this;
 	}
 
+	@NotNull
+	public ServerConfigurator setWrapperTimeout(final long timeout) {
+		_wrapperTimeout = timeout;
+		return this;
+	}
+
 	/**
 	 * Configures the server in the specified target directory.
 	 *
@@ -137,7 +150,8 @@ public class ServerConfigurator {
 		// update fs-server.conf, fs-logging.conf, fs-wrapper.conf and extract license file
 		updateServerConf(_serverDir, _serverConf);
 		updateLoggingConf(_serverDir, serverJar, _loggingConf);
-		updateWrapperConfFiles(_serverDir, _xms, _xmx, _additionalVMArgs);
+		updateJettyConf(_serverDir);
+		updateWrapperConfFiles(_serverDir, _xms, _xmx, _wrapperTimeout, _additionalVMArgs);
 		copyLicenseFile(_serverDir, _licenseFile);
 		// final message
 		LOGGER.info("Server in '" + _serverDir.toAbsolutePath() + "' successfully configured.");
@@ -183,6 +197,20 @@ public class ServerConfigurator {
 	}
 
 	@VisibleForTesting
+	static void updateJettyConf(@NotNull final Path serverDir) throws IOException {
+		final Path jettyDir = serverDir.resolve(DIR_CONF).resolve(DIR_MODULES).resolve(DIR_JETTY_SERVICE);
+		// check if the file exists
+		final Path jettyConf = jettyDir.resolve(FILE_JETTY_PROPERTIES);
+		if (!jettyConf.toFile().exists()) {
+			return;
+		}
+		// update the jetty configuration
+		final Map<String, String> config = new HashMap<>();
+		config.put("PORT", String.valueOf(getPortFromConfig(serverDir, FsConnectionType.HTTP)));
+		updateConfFile(jettyConf, config);
+	}
+
+	@VisibleForTesting
 	static void updateConfFile(@NotNull final Path targetFile, @NotNull final Map<String, String> config) throws IOException {
 		final File confFile = targetFile.toFile();
 		if (!confFile.exists()) {
@@ -225,7 +253,7 @@ public class ServerConfigurator {
 	}
 
 	@VisibleForTesting
-	static void updateWrapperConfFiles(@NotNull final Path serverDir, final int xms, final int xmx, @NotNull final List<String> additionalVMArgs) throws IOException {
+	static void updateWrapperConfFiles(@NotNull final Path serverDir, final int xms, final int xmx, final long wrapperTimeout, @NotNull final List<String> additionalVMArgs) throws IOException {
 		final Path confDir = serverDir.resolve(DIR_CONF);
 		if (!confDir.toFile().exists()) {
 			throw new FileNotFoundException("Directory '" + confDir.toAbsolutePath() + "' does not exist!");
@@ -240,6 +268,7 @@ public class ServerConfigurator {
 		}
 		config.put("wrapper.java.initmemory", String.valueOf(xms));
 		config.put("wrapper.java.maxmemory", String.valueOf(xmx));
+		config.put("wrapper.startup.timeout", String.valueOf(wrapperTimeout));
 		{
 			// fs-wrapper.conf
 			final Path wrapperConf = confDir.resolve(FILE_FS_WRAPPER_CONF);

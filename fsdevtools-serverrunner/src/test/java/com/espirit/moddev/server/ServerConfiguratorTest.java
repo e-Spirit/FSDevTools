@@ -1,5 +1,6 @@
 package com.espirit.moddev.server;
 
+import com.espirit.moddev.connection.FsConnectionType;
 import com.espirit.moddev.util.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
@@ -19,14 +20,17 @@ import java.util.HashMap;
 
 import static com.espirit.moddev.util.FsUtil.DIR_CONF;
 import static com.espirit.moddev.util.FsUtil.DIR_FIRSTSPIRIT_5;
+import static com.espirit.moddev.util.FsUtil.DIR_JETTY_SERVICE;
 import static com.espirit.moddev.util.FsUtil.DIR_LIB_ISOLATED;
 import static com.espirit.moddev.util.FsUtil.DIR_LIB_LEGACY;
+import static com.espirit.moddev.util.FsUtil.DIR_MODULES;
 import static com.espirit.moddev.util.FsUtil.DIR_SERVER;
 import static com.espirit.moddev.util.FsUtil.FILE_FS_LICENSE_CONF;
 import static com.espirit.moddev.util.FsUtil.FILE_FS_LOGGING_CONF;
 import static com.espirit.moddev.util.FsUtil.FILE_FS_SERVER_CONF;
 import static com.espirit.moddev.util.FsUtil.FILE_FS_WRAPPER_CONF;
 import static com.espirit.moddev.util.FsUtil.FILE_FS_WRAPPER_ISOLATED_CONF;
+import static com.espirit.moddev.util.FsUtil.FILE_JETTY_PROPERTIES;
 import static com.espirit.moddev.util.FsUtil.FILE_SERVER_JAR_ISOLATED;
 import static com.espirit.moddev.util.FsUtil.FILE_SERVER_JAR_LEGACY;
 import static org.junit.Assert.assertEquals;
@@ -331,10 +335,67 @@ public class ServerConfiguratorTest {
 		assertTrue("content mismatch", content.contains("anotherProperty=customValue"));
 	}
 
+	@Test
+	public void updateJettyConf_fileDoesNotExist() throws IOException {
+		// setup
+		final Path workingDir = _temp.getRoot().toPath().resolve("workingDir");
+		// test
+		ServerConfigurator.updateJettyConf(workingDir);
+		// verify
+		final Path jettyDir = workingDir.resolve(DIR_CONF).resolve(DIR_MODULES).resolve(DIR_JETTY_SERVICE);
+		final Path jettyConf = jettyDir.resolve(FILE_JETTY_PROPERTIES);
+		assertFalse("directory should not exist", jettyDir.toFile().exists());
+		assertFalse("file should not exist", jettyConf.toFile().exists());
+	}
+
+	@Test
+	public void updateJettyConf_defaultValues() throws IOException {
+		// setup
+		final Path workingDir = _temp.getRoot().toPath().resolve("workingDir");
+		final Path jettyDir = workingDir.resolve(DIR_CONF).resolve(DIR_MODULES).resolve(DIR_JETTY_SERVICE);
+		final Path jettyConf = jettyDir.resolve(FILE_JETTY_PROPERTIES);
+		final String configContent = "property=myValue\nPORT=abc\n";
+		FileUtil.mkDirs(jettyDir);
+		Files.write(jettyConf, configContent.getBytes(), StandardOpenOption.CREATE_NEW);
+		assertTrue("file should exist", jettyConf.toFile().exists());
+		// test
+		ServerConfigurator.updateJettyConf(workingDir);
+		// verify
+		final String content = new String(Files.readAllBytes(jettyConf), StandardCharsets.UTF_8);
+		assertTrue("content mismatch", content.contains("property=myValue"));
+		assertTrue("content mismatch", content.contains("PORT=" + FsConnectionType.HTTP.getDefaultPort()));
+	}
+
+	@Test
+	public void updateJettyConf_readValuesFromServerConf() throws IOException {
+		// setup
+		final Path workingDir = _temp.getRoot().toPath().resolve("workingDir");
+		// create server conf
+		final Path confDir = workingDir.resolve(DIR_CONF);
+		FileUtil.mkDirs(confDir);
+		final Path serverConf = confDir.resolve(FILE_FS_SERVER_CONF);
+		final String configContent = "HTTP_PORT=1234";
+		Files.write(serverConf, configContent.getBytes(), StandardOpenOption.CREATE_NEW);
+
+		// create jetty conf
+		final Path jettyDir = workingDir.resolve(DIR_CONF).resolve(DIR_MODULES).resolve(DIR_JETTY_SERVICE);
+		final Path jettyConf = jettyDir.resolve(FILE_JETTY_PROPERTIES);
+		final String jettyContent = "property=myValue\nPORT=abc\n";
+		FileUtil.mkDirs(jettyDir);
+		Files.write(jettyConf, jettyContent.getBytes(), StandardOpenOption.CREATE_NEW);
+		assertTrue("file should exist", jettyConf.toFile().exists());
+		// test
+		ServerConfigurator.updateJettyConf(workingDir);
+		// verify
+		final String content = new String(Files.readAllBytes(jettyConf), StandardCharsets.UTF_8);
+		assertTrue("content mismatch", content.contains("property=myValue"));
+		assertTrue("content mismatch", content.contains("PORT=1234"));
+	}
+
 	@Test(expected = FileNotFoundException.class)
 	public void updateWrapperConfFiles_dirDoesNotExist() throws IOException {
 		final Path workingDir = _temp.getRoot().toPath().resolve("workingDir");
-		ServerConfigurator.updateWrapperConfFiles(workingDir, 42, 1337, new ArrayList<>());
+		ServerConfigurator.updateWrapperConfFiles(workingDir, 42, 1337, 50, new ArrayList<>());
 	}
 
 	@Test(expected = FileNotFoundException.class)
@@ -354,7 +415,7 @@ public class ServerConfiguratorTest {
 		assertTrue("file should exist", isolatedConf.toFile().exists());
 
 		// test
-		ServerConfigurator.updateWrapperConfFiles(fs5Dir, 42, 1337, new ArrayList<>());
+		ServerConfigurator.updateWrapperConfFiles(fs5Dir, 42, 1337, 50, new ArrayList<>());
 	}
 
 	@Test(expected = FileNotFoundException.class)
@@ -374,7 +435,7 @@ public class ServerConfiguratorTest {
 		assertTrue("cannot delete file", isolatedFile.delete());
 
 		// test
-		ServerConfigurator.updateWrapperConfFiles(fs5Dir, 42, 1337, new ArrayList<>());
+		ServerConfigurator.updateWrapperConfFiles(fs5Dir, 42, 1337, 50, new ArrayList<>());
 	}
 
 	@Test
@@ -395,7 +456,7 @@ public class ServerConfiguratorTest {
 		final ArrayList<String> additionalVMArgs = new ArrayList<>();
 		additionalVMArgs.add("myFirstExtraVMArg");
 		additionalVMArgs.add("mySecondExtraVMArg");
-		ServerConfigurator.updateWrapperConfFiles(fs5Dir, 42, 1337, additionalVMArgs);
+		ServerConfigurator.updateWrapperConfFiles(fs5Dir, 42, 1337, 50, additionalVMArgs);
 
 		// verify
 		{
@@ -403,6 +464,7 @@ public class ServerConfiguratorTest {
 			final String content = new String(Files.readAllBytes(legacyConf), StandardCharsets.UTF_8);
 			assertTrue("content mismatch", content.contains("wrapper.java.initmemory=42"));
 			assertTrue("content mismatch", content.contains("wrapper.java.maxmemory=1337"));
+			assertTrue("content mismatch", content.contains("wrapper.startup.timeout=50"));
 			assertTrue("content mismatch", content.contains("wrapper.java.additional.79=anArgument"));
 			assertTrue("content mismatch", content.contains("wrapper.java.additional.80=myFirstExtraVMArg"));
 			assertTrue("content mismatch", content.contains("wrapper.java.additional.81=mySecondExtraVMArg"));
@@ -413,6 +475,7 @@ public class ServerConfiguratorTest {
 			final String content = new String(Files.readAllBytes(legacyConf), StandardCharsets.UTF_8);
 			assertTrue("content mismatch", content.contains("wrapper.java.initmemory=42"));
 			assertTrue("content mismatch", content.contains("wrapper.java.maxmemory=1337"));
+			assertTrue("content mismatch", content.contains("wrapper.startup.timeout=50"));
 			assertTrue("content mismatch", content.contains("wrapper.java.additional.79=anArgument"));
 			assertTrue("content mismatch", content.contains("wrapper.java.additional.80=myFirstExtraVMArg"));
 			assertTrue("content mismatch", content.contains("wrapper.java.additional.81=mySecondExtraVMArg"));

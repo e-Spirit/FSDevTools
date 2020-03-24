@@ -29,6 +29,7 @@ public enum FsUtil {
 	public static final String FILE_WRAPPER_EXCEPTION_FILE = FILE_WRAPPER_EXCEPTION_EXECUTABLE + ".txt";
 	public static final String FILE_FS_WRAPPER_ISOLATED_CONF = "fs-wrapper.isolated.conf";
 	public static final String FILE_SERVER_LOCK = ".fs.lock";
+	public static final String FILE_JETTY_PROPERTIES = "jetty.properties";
 
 	public static final String DIR_FIRSTSPIRIT_5 = "firstspirit5";
 	public static final String DIR_SERVER = "server";
@@ -36,6 +37,8 @@ public enum FsUtil {
 	public static final String DIR_LIB_ISOLATED = "lib-isolated";
 	public static final String DIR_LIB_LEGACY = "lib";
 	public static final String DIR_CONF = "conf";
+	public static final String DIR_MODULES = "modules";
+	public static final String DIR_JETTY_SERVICE = "FirstSpirit Jetty Server.JettyService";
 
 	public static final String PROPERTY_HOST = "HOST";
 	public static final String VALUE_DEFAULT_HOST = "localhost";
