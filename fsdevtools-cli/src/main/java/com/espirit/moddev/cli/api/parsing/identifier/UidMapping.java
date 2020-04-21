@@ -55,7 +55,6 @@ public enum UidMapping {
     DOCUMENTGROUP(Store.Type.SITESTORE, IDProvider.UidType.SITESTORE_LEAF, DocumentGroup.class),
     PAGEREF(Store.Type.SITESTORE, IDProvider.UidType.SITESTORE_LEAF, PageRef.class),
     PAGETEMPLATE(Store.Type.TEMPLATESTORE, IDProvider.UidType.TEMPLATESTORE, PageTemplate.class),
-    SCHEMA(Store.Type.TEMPLATESTORE, IDProvider.UidType.TEMPLATESTORE, Schema.class),
     SCRIPT(Store.Type.TEMPLATESTORE, IDProvider.UidType.TEMPLATESTORE, Script.class),
     SECTIONTEMPLATE(Store.Type.TEMPLATESTORE, IDProvider.UidType.TEMPLATESTORE, SectionTemplate.class),
     WORKFLOW(Store.Type.TEMPLATESTORE, IDProvider.UidType.TEMPLATESTORE, Workflow.class),

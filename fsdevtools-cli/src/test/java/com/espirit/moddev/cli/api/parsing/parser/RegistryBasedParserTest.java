@@ -31,6 +31,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -88,11 +89,14 @@ public class RegistryBasedParserTest {
         testling.registerParser(new RootNodeIdentifierParser());
         testling.registerParser(new UidIdentifierParser());
         testling.registerParser(new EntitiesIdentifierParser());
-        final List<Identifier> list = testling.parse(Arrays.asList("root:templatestore", "mediafolder:layout", "entities:news"));
-        Assert.assertEquals("List should contain two identifiers!", 3, list.size());
+        testling.registerParser(new SchemaIdentifierParser());
+        List<String> testIdentifiers = Arrays.asList("root:templatestore", "mediafolder:layout", "entities:news", "schema:products");
+        final List<Identifier> list = testling.parse(testIdentifiers);
+        Assert.assertEquals("List should contain " + testIdentifiers.size() + " elements.", testIdentifiers.size(), list.size());
         Assert.assertThat(list.contains(new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE)), equalTo(true));
         Assert.assertThat(list.contains(new UidIdentifier(UidMapping.MEDIAFOLDER, "layout")), equalTo(true));
         Assert.assertThat(list.contains(new EntitiesIdentifier("news")), equalTo(true));
+        Assert.assertThat(list.contains(new SchemaIdentifier("products", Collections.emptyMap()) ), equalTo(true));
     }
 
     @Test

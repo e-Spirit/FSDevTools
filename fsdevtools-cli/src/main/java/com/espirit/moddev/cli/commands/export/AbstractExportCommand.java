@@ -30,6 +30,7 @@ import com.espirit.moddev.cli.api.parsing.parser.PathIdentifierParser;
 import com.espirit.moddev.cli.api.parsing.parser.ProjectPropertiesParser;
 import com.espirit.moddev.cli.api.parsing.parser.RegistryBasedParser;
 import com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser;
+import com.espirit.moddev.cli.api.parsing.parser.SchemaIdentifierParser;
 import com.espirit.moddev.cli.api.parsing.parser.UidIdentifierParser;
 import com.espirit.moddev.cli.commands.SimpleCommand;
 import com.espirit.moddev.cli.commands.help.HelpCommand;
@@ -94,6 +95,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
         parser.registerParser(new EntitiesIdentifierParser());
         parser.registerParser(new UidIdentifierParser());
         parser.registerParser(new ProjectPropertiesParser());
+        parser.registerParser(new SchemaIdentifierParser());
         parser.registerParser(new PathIdentifierParser());
     }
 

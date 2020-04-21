@@ -23,7 +23,6 @@
 package com.espirit.moddev.cli.api.parsing.parser;
 
 import com.espirit.moddev.cli.api.parsing.identifier.EntitiesIdentifier;
-import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
@@ -55,7 +54,7 @@ public class EntitiesIdentifierParser  implements Parser<EntitiesIdentifier> {
             try(Scanner uidScanner = new Scanner(identifier)) {
                 uidScanner.useDelimiter(DELIMITER);
                 if (uidScanner.hasNext()) {
-                    final String firstPart = uidScanner.next();
+                    uidScanner.next(); // skip the first part, which should be "entities"
                     if (uidScanner.hasNext()) {
                         final String secondPart = uidScanner.next();
                         final EntitiesIdentifier entitiesIdentifier = new EntitiesIdentifier(secondPart);

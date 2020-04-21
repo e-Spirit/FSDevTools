@@ -28,10 +28,12 @@ import com.espirit.moddev.cli.api.parsing.parser.ProjectPropertiesParser;
 import com.espirit.moddev.cli.results.ExportResult;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.help.Examples;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Collectors;
 
 import static com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser.getAllStorePostfixes;
+import static com.espirit.moddev.cli.api.parsing.parser.SchemaIdentifierParser.CUSTOM_PREFIX_SCHEMA_OPTION;
 
 /**
  * This command can be used to export elements from all stores at the same time.
@@ -49,6 +51,8 @@ import static com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser
                 "export -- path:/PageStore/pageFolderUid/pageUid",
                 "export -- entities:products",
                 "export -- page:homepage entities:news",
+                "export -- schema:news",
+                "export -- schema:news[setExportGidMapping=true]",
                 "export -- projectproperty:LANGUAGES projectproperty:RESOLUTIONS",
                 "export -- projectproperty:ALL"
             },
@@ -60,6 +64,8 @@ import static com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser
                 "Exports the page identified by the path",
                 "Exports all entities of the content2 node 'products' according to the configured filter",
                 "Exports a page and news entities according to the configured filter",
+                "Exports the database schema 'news'",
+                "Exports the database schema 'news' with an additional Mapping.xml",
                 "Exports the project properties languages and resolutions",
                 "Exports all project properties"
             })
@@ -79,26 +85,40 @@ public class ExportCommand extends AbstractExportCommand {
                 + "1. Export elements based on uid with identifiers like 'pageref:pageRefUid'.\n" + TAB_SEQUENCE
                 + "Known prefixes for uid-based export:\n" + TAB_SEQUENCE + getUidPrefixesWithNewlineEvery5thElement() + "\n\r\n" + TAB_SEQUENCE
                 + "2. Export elements based on path 'path:/<STORE>/<UID>|<NAME>'.\n\r\n" + TAB_SEQUENCE
-                + "3. Export entities with identifiers like 'entities:<CONTENT2_UID>'.\n\r\n" + TAB_SEQUENCE
-                + "4. Export projectproperties with identifiers like 'projectproperty:RESOLUTIONS'\n" + TAB_SEQUENCE
+                + "3. Database schemas can be exported with or without options '" + CUSTOM_PREFIX_SCHEMA_OPTION + ":<schemaName>[<option>,<option2>]'\n\r\n" + TAB_SEQUENCE
+                + "4. Export entities (database contents) with identifiers like 'entities:<CONTENT2_UID>'.\n\r\n" + TAB_SEQUENCE
+                + "5. Export projectproperties with identifiers like 'projectproperty:RESOLUTIONS'\n" + TAB_SEQUENCE
                 + "Known project properties:\n" + TAB_SEQUENCE + ProjectPropertiesParser.getAllPossibleValues().stream().collect(Collectors.joining(", ")) + "\n\r\n" + TAB_SEQUENCE
-                + "5. Export store root nodes with identifiers like 'templatestore' or 'root:templatestore'\n\r" + TAB_SEQUENCE
+                + "6. Export store root nodes with identifiers like 'templatestore' or 'root:templatestore'\n\r" + TAB_SEQUENCE
                 + "Known root node identifiers: " + getAllStorePostfixes().keySet().stream().collect(Collectors.joining(", "));
     }
 
+    @NotNull
     private static String getUidPrefixesWithNewlineEvery5thElement() {
-        StringBuilder result = new StringBuilder();
+        final StringBuilder result = new StringBuilder();
+        // extra counter for line breaks (because of added uid "Schema"):
+        int uidNumber = 0;
         for(int i = 0; i <  UidMapping.values().length; i++) {
-            UidMapping currentMapping = UidMapping.values()[i];
-
+            final UidMapping currentMapping = UidMapping.values()[i];
             result.append(currentMapping.getPrefix());
-            if(i != UidMapping.values().length-1) {
-                result.append(",");
-            }
-            if(i != 0 && i % PREFIX_COUNT_PER_LINE == 0) {
-                result.append("\n\r" + TAB_SEQUENCE);
+            uidNumber = addCommaAndLineBreak(result, i, uidNumber);
+            // 'schema' disappeared from this list when SchemaIdentifier was introduced, but should still be here:
+            if (currentMapping.getPrefix().equalsIgnoreCase("pagetemplate")){
+                result.append("schema");
+                uidNumber = addCommaAndLineBreak(result, i, uidNumber);
             }
         }
         return result.toString();
     }
+
+    private static int addCommaAndLineBreak(@NotNull final StringBuilder result, final int itemNumber, final int uidNumber){
+        if(itemNumber != UidMapping.values().length-1) {
+            result.append(",");
+        }
+        if(uidNumber != 0 && uidNumber % PREFIX_COUNT_PER_LINE == 0) {
+            result.append("\n\r" + TAB_SEQUENCE);
+        }
+        return uidNumber + 1;
+    }
+
 }

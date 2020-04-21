@@ -8,7 +8,7 @@ In order to use FSDevTools various prerequisites must be considered.
 They are described in detail inside the zip or tar.gz file of the binary distribution.
 The following list is just a short overview.
 
-Since version **2.4** `FSDevTools` requires at least FirstSpirit **2019-07**. 
+Since version **2.4** `FSDevTools` requires at least FirstSpirit **2020-05**.
 
 Furthermore a correct `JAVA_HOME` environment variable, which points to a **Java 8** installation, must be set.
 
