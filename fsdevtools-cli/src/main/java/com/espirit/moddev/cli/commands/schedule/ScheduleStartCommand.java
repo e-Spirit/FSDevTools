@@ -12,19 +12,22 @@ import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ServicesBroker;
 import de.espirit.firstspirit.access.admin.ProjectStorage;
+import de.espirit.firstspirit.access.schedule.RunState;
 import de.espirit.firstspirit.access.schedule.ScheduleEntry;
 import de.espirit.firstspirit.access.schedule.ScheduleEntryControl;
 import de.espirit.firstspirit.access.schedule.ScheduleEntryRunningException;
+import de.espirit.firstspirit.access.schedule.ScheduleEntryState;
 import de.espirit.firstspirit.access.schedule.ScheduleStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
-
 
 @Command(name = "start", groupNames = "schedule", description = "Starts a schedule task with the name.")
 @Examples(examples = {
@@ -42,7 +45,6 @@ public class ScheduleStartCommand extends SimpleCommand<ScheduleStartResult> {
 	@Required
 	private String _scheduleName;
 
-
 	@Override
 	public ScheduleStartResult call() {
 		try (final Connection connection = getConnection()) {
@@ -52,7 +54,6 @@ public class ScheduleStartCommand extends SimpleCommand<ScheduleStartResult> {
 			return new ScheduleStartResult(e);
 		}
 	}
-
 
 	@VisibleForTesting
 	@NotNull
@@ -72,7 +73,6 @@ public class ScheduleStartCommand extends SimpleCommand<ScheduleStartResult> {
 		return connection.getBroker().requestSpecialist(ServicesBroker.TYPE).getService(AdminService.class);
 	}
 
-
 	@VisibleForTesting
 	@NotNull
 	ScheduleStartResult getServerScheduleEntries(@NotNull final ScheduleStorage scheduleStorage) throws ScheduleEntryRunningException, InterruptedException {
@@ -82,7 +82,6 @@ public class ScheduleStartCommand extends SimpleCommand<ScheduleStartResult> {
 		return new ScheduleStartResult(scheduleStartInformation);
 	}
 
-
 	@VisibleForTesting
 	@NotNull
 	ScheduleStartResult getProjectScheduleEntries(@NotNull final AdminService adminService, @NotNull final ScheduleStorage scheduleStorage) throws ScheduleEntryRunningException, InterruptedException {
@@ -90,7 +89,6 @@ public class ScheduleStartCommand extends SimpleCommand<ScheduleStartResult> {
 		final ScheduleStartInformation scheduleStartInformation = executeSchedule(scheduleEntry);
 		return new ScheduleStartResult(getProject(), scheduleStartInformation);
 	}
-
 
 	@VisibleForTesting
 	@Nullable
@@ -105,7 +103,6 @@ public class ScheduleStartCommand extends SimpleCommand<ScheduleStartResult> {
 		return getScheduleEntry(scheduleEntryList);
 	}
 
-
 	@VisibleForTesting
 	@NotNull
 	ScheduleStartInformation executeSchedule(@Nullable final ScheduleEntry scheduleEntry) throws ScheduleEntryRunningException, IllegalStateException, InterruptedException {
@@ -116,7 +113,7 @@ public class ScheduleStartCommand extends SimpleCommand<ScheduleStartResult> {
 			final Date startTime = new Date();
 			ScheduleEntryControl scheduleEntryControl = scheduleEntry.execute();
 			int counter = 0;
-			while (scheduleEntryControl.isRunning()) {
+			while (scheduleEntryControl.getState().getState() == RunState.NOT_STARTED || scheduleEntryControl.isRunning()) {
 				Thread.sleep(100);
 				scheduleEntryControl.refresh();
 				if (counter % 50 == 0) {
@@ -124,12 +121,58 @@ public class ScheduleStartCommand extends SimpleCommand<ScheduleStartResult> {
 				}
 				counter++;
 			}
+			final RunState state = scheduleEntryControl.getState().getState();
+			if (state == RunState.SUCCESS) {
+				LOGGER.info("Schedule task '" + scheduleEntry.getName() + "' finished.\n\nLast line of log:\n\n" + getLastLineFromLog(scheduleEntryControl.getState()));
+			} else {
+				if (state == RunState.FINISHED_WITH_ERRORS) {
+					LOGGER.warn("Schedule task '" + scheduleEntry.getName() + "' finished with errors.\n\nLOG:\n\n" + readLogfile(scheduleEntryControl.getState()));
+				} else if (state == RunState.ABORTED) {
+					throw new IllegalStateException("Schedule task aborted.\n\nLOG:\n\n" + readLogfile(scheduleEntryControl.getState()));
+				} else {
+					throw new IllegalStateException("Schedule task execution failed.\n\nLOG:\n\n" + readLogfile(scheduleEntryControl.getState()));
+				}
+			}
 			return new ScheduleStartInformation(scheduleEntry, startTime, new Date());
 		} else {
 			throw new IllegalStateException("Schedule task named '" + _scheduleName + "' does not exist!");
 		}
 	}
 
+	@NotNull
+	private String readLogfile(@NotNull final ScheduleEntryState scheduleEntryState) {
+		try {
+			final StringBuilder builder = new StringBuilder();
+			final LineNumberReader reader = new LineNumberReader(new InputStreamReader(scheduleEntryState.getLogfile(), StandardCharsets.UTF_8), 256);
+			String line;
+			while ((line = reader.readLine()) != null) {
+				builder.append(line);
+				builder.append('\n');
+			}
+			reader.close();
+			return builder.toString();
+		} catch (final Exception e) {
+			return "<ERROR READING LOG FILE>";
+		}
+	}
+
+	@NotNull
+	private String getLastLineFromLog(@NotNull final ScheduleEntryState scheduleEntryState) {
+		try {
+			final LineNumberReader reader = new LineNumberReader(new InputStreamReader(scheduleEntryState.getLogfile(), StandardCharsets.UTF_8), 256);
+			String lastLine = "";
+			String currentLine;
+			while ((currentLine = reader.readLine()) != null) {
+				if (!currentLine.trim().isEmpty()) {
+					lastLine = currentLine;
+				}
+			}
+			reader.close();
+			return lastLine;
+		} catch (final Exception e) {
+			return "<ERROR READING LOG FILE>";
+		}
+	}
 
 	@VisibleForTesting
 	@Nullable
@@ -142,7 +185,6 @@ public class ScheduleStartCommand extends SimpleCommand<ScheduleStartResult> {
 		return null;
 	}
 
-
 	@VisibleForTesting
 	@NotNull
 	Connection getConnection() {
@@ -150,7 +192,7 @@ public class ScheduleStartCommand extends SimpleCommand<ScheduleStartResult> {
 	}
 
 	@VisibleForTesting
-	void setScheduleName(final String scheduleName){
+	void setScheduleName(final String scheduleName) {
 		_scheduleName = scheduleName;
 	}
 }

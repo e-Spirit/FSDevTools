@@ -4,9 +4,11 @@ import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.admin.ProjectStorage;
 import de.espirit.firstspirit.access.project.Project;
+import de.espirit.firstspirit.access.schedule.RunState;
 import de.espirit.firstspirit.access.schedule.ScheduleEntry;
 import de.espirit.firstspirit.access.schedule.ScheduleEntryControl;
 import de.espirit.firstspirit.access.schedule.ScheduleEntryRunningException;
+import de.espirit.firstspirit.access.schedule.ScheduleEntryState;
 import de.espirit.firstspirit.access.schedule.ScheduleStorage;
 
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +17,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -41,6 +44,11 @@ public class ScheduleStartCommandTest {
 		//setup Command
 		final ScheduleStartCommand scheduleStartCommand = new ScheduleStartCommand();
 		scheduleStartCommand.setScheduleName(scheduleName);
+		// setup state check
+		final ScheduleEntryState taskState = mock(ScheduleEntryState.class);
+		when(taskState.getState()).thenReturn(RunState.SUCCESS);
+		when(scheduleEntryControl.getState()).thenReturn(taskState);
+		when(createdEntry.execute()).thenReturn(scheduleEntryControl);
 		//test
 		final ScheduleStartResult scheduleStartResult = scheduleStartCommand.getServerScheduleEntries(scheduleStorage);
 		//verify
@@ -76,6 +84,11 @@ public class ScheduleStartCommandTest {
 		final ScheduleStartCommand scheduleStartCommand = new ScheduleStartCommand();
 		scheduleStartCommand.setProject(projectName);
 		scheduleStartCommand.setScheduleName(scheduleName);
+		// setup state check
+		final ScheduleEntryState taskState = mock(ScheduleEntryState.class);
+		when(taskState.getState()).thenReturn(RunState.SUCCESS);
+		when(scheduleEntryControl.getState()).thenReturn(taskState);
+		when(createdEntry.execute()).thenReturn(scheduleEntryControl);
 		//test
 		final ScheduleStartResult scheduleStartResult = scheduleStartCommand.getProjectScheduleEntries(adminService, scheduleStorage);
 		//verify
@@ -110,6 +123,11 @@ public class ScheduleStartCommandTest {
 			}
 		};
 		scheduleStartCommand.setScheduleName(scheduleName);
+		// setup state check
+		final ScheduleEntryState taskState = mock(ScheduleEntryState.class);
+		when(taskState.getState()).thenReturn(RunState.SUCCESS);
+		when(scheduleEntryControl.getState()).thenReturn(taskState);
+		when(createdEntry.execute()).thenReturn(scheduleEntryControl);
 		// test
 		final ScheduleStartResult scheduleStartResult = scheduleStartCommand.getScheduleStartResult(mock(Connection.class));
 		// verify
@@ -153,6 +171,11 @@ public class ScheduleStartCommandTest {
 		};
 		scheduleStartCommand.setScheduleName(scheduleName);
 		scheduleStartCommand.setProject(projectName);
+		// setup state check
+		final ScheduleEntryState taskState = mock(ScheduleEntryState.class);
+		when(taskState.getState()).thenReturn(RunState.SUCCESS);
+		when(scheduleEntryControl.getState()).thenReturn(taskState);
+		when(createdEntry.execute()).thenReturn(scheduleEntryControl);
 		// test
 		final ScheduleStartResult scheduleStartResult = scheduleStartCommand.getScheduleStartResult(mock(Connection.class));
 		// verify
@@ -247,6 +270,9 @@ public class ScheduleStartCommandTest {
 		final ScheduleEntry createdEntry = ScheduleUtils.createScheduleEntry(1, scheduleName);
 		ScheduleEntryControl scheduleEntryControl = mock(ScheduleEntryControl.class);
 		when(scheduleEntryControl.isRunning()).thenReturn(false);
+		final ScheduleEntryState taskState = mock(ScheduleEntryState.class);
+		when(taskState.getState()).thenReturn(RunState.SUCCESS);
+		when(scheduleEntryControl.getState()).thenReturn(taskState);
 		when(createdEntry.execute()).thenReturn(scheduleEntryControl);
 		final ScheduleStartCommand scheduleStartCommand = new ScheduleStartCommand();
 		//test
