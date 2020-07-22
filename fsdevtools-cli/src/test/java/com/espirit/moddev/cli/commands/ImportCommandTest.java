@@ -23,7 +23,6 @@
 package com.espirit.moddev.cli.commands;
 
 import com.espirit.moddev.cli.CliConstants;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,30 +34,26 @@ import static org.junit.Assert.assertThat;
  */
 public class ImportCommandTest {
 
-    private ImportCommand testling;
+	private ImportCommand _testling;
 
-    @Before
-    public void setUp() throws Exception {
-        testling = new ImportCommand();
-    }
+	@Before
+	public void setUp() {
+		_testling = new ImportCommand();
+	}
 
-    /**
-     * Test is creating project if missing.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testIsCreatingProjectIfMissing() throws Exception {
-        assertThat("Expect true", testling.isCreatingProjectIfMissing(), is(Boolean.TRUE));
-    }
+	@Test
+	public void testIsCreatingProjectIfMissing() {
+		assertThat("Expect true", _testling.isCreatingProjectIfMissing(), is(Boolean.TRUE));
+	}
 
-    /**
-     * Test get import comment.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetImportComment() throws Exception {
-        assertThat("Expect null value", testling.getImportComment(), is("Imported by " + CliConstants.FS_CLI));
-    }
+	@Test
+	public void default_value_importScheduleEntryActiveState() {
+		assertThat("Expect false", _testling.importScheduleEntryActiveState, is(Boolean.FALSE));
+	}
+
+	@Test
+	public void testGetImportComment() {
+		assertThat("Expect null value", _testling.getImportComment(), is("Imported by " + CliConstants.FS_CLI));
+	}
+
 }

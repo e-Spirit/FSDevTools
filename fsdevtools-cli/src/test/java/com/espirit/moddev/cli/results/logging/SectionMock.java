@@ -153,6 +153,11 @@ public class SectionMock implements Section<SectionTemplate> {
     }
 
     @Override
+    public StoreElement getPreviousSibling() {
+        return null;
+    }
+
+    @Override
     public StoreElement getFirstChild() {
         return null;
     }

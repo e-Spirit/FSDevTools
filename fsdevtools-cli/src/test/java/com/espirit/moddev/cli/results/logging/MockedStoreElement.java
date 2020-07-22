@@ -207,6 +207,11 @@ public class MockedStoreElement implements IDProvider {
     }
 
     @Override
+    public StoreElement getPreviousSibling() {
+        return null;
+    }
+
+    @Override
     public StoreElement getFirstChild() {
         return null;
     }

@@ -304,6 +304,11 @@ public class Content2SectionMock implements Content2Section {
     }
 
     @Override
+    public StoreElement getPreviousSibling() {
+        return null;
+    }
+
+    @Override
     public StoreElement getFirstChild() {
         return null;
     }

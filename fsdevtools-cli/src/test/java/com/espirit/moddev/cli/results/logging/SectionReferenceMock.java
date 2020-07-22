@@ -154,6 +154,11 @@ public class SectionReferenceMock implements SectionReference<SectionTemplate> {
     }
 
     @Override
+    public StoreElement getPreviousSibling() {
+        return null;
+    }
+
+    @Override
     public StoreElement getFirstChild() {
         return null;
     }

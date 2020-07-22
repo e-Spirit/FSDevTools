@@ -31,12 +31,10 @@ import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;
 import com.github.rvesse.airline.annotations.help.Examples;
-
 import de.espirit.firstspirit.agency.OperationAgent;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ImportOperation;
 import de.espirit.firstspirit.transport.LayerMapper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +48,7 @@ import org.slf4j.LoggerFactory;
 @Examples(
         examples = {"fs-cli import -lm *:CREATE_NEW", "fs-cli import -lm my_schema:CREATE_NEW", "fs-cli import -lm *:derby_project14747_0",
         "fs-cli import -lm schema_a:derby_project14747_0,schema_b:derby_project14747_1"},
-        descriptions = 
+        descriptions =
                 {"Import project and create for every unknown source schema a new target layer (use if uncertain)",
                 "Import project and create for source schema 'my_schema' a new layer",
                 "Import project and redirect every unknown source schema into given target layer. The target layer must be attached to the project! (use with caution)",
@@ -71,6 +69,10 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
     /** The dont create entities. */
     @Option(name = {"--dont-create-entities"}, description = "Do not create entities when importing")
     private boolean dontCreateEntities;
+
+    /** import the schedule entry active state. */
+    @Option(name = {"--import-schedule-entry-active-state"}, description = "Import the active state for schedule entries during import")
+    boolean importScheduleEntryActiveState;
 
     /** The layer mapping. */
     @Option(name = {"-lm", "--layerMapping"},
@@ -108,6 +110,12 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
             importOperation.setIgnoreEntities(dontCreateEntities);
             importOperation.setRevisionComment(getImportComment());
             importOperation.setLayerMapper(configureLayerMapper());
+            // We do only override the settings if the 'importScheduleEntryActiveState'-flag is set to 'true'.
+            // This is only needed to prevent a hard dependency to the latest FirstSpirit version
+            // If the default value of this flag changes in FirstSpirit, we need to change this behaviour as well.
+            if (importScheduleEntryActiveState) {
+                importOperation.setImportScheduleEntryActiveState(true);
+            }
             final String syncDirStr = getSynchronizationDirectoryString();
             LOGGER.info("importing from directory '{}'", syncDirStr);
             final ImportOperation.Result result = importOperation.perform(getSynchronizationDirectory(syncDirStr));
