@@ -32,28 +32,39 @@ processResources {
     expand(project.properties)
 }
 
-task javaIntegrationTest(type: Test) {
-    group 'verification'
-    dependsOn(assemble, prepareIntegrationTest)
+if (rootProject.ext.useArtifactory) {
+    task javaIntegrationTest(type: Test) {
+        group 'verification'
+        dependsOn(assemble)
 
-    testClassesDirs = sourceSets.integrationTest.output.classesDirs
-    classpath = sourceSets.integrationTest.runtimeClasspath
+        testClassesDirs = sourceSets.integrationTest.output.classesDirs
+        classpath = sourceSets.integrationTest.runtimeClasspath
 
-    ///////////////////////////////////////////////////////
-    // set system property for integration tests
-    ///////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////
+        // set system property for integration tests
+        ///////////////////////////////////////////////////////
 
-    systemProperty("testHttpPort", String.valueOf(serverHttpPort))
-    systemProperty("testSocketPort", String.valueOf(serverSocketPort))
-    systemProperty("testLicenseFile", String.valueOf(rootProject.configurations.fsLicense.resolve().first().absolutePath))
-    systemProperty("testInstallerTar", String.valueOf(rootProject.configurations.testInstallerTar.resolve().first().absolutePath))
-    systemProperty("testServerJar", String.valueOf(rootProject.configurations.testServerJar.resolve().first().absolutePath))
-    systemProperty("testRuntimeJar", String.valueOf(rootProject.configurations.testRuntimeJar.resolve().first().absolutePath))
-}
-integrationTest.dependsOn(javaIntegrationTest)
+        systemProperty("testHttpPort", String.valueOf(serverHttpPort))
+        systemProperty("testSocketPort", String.valueOf(serverSocketPort))
+        systemProperty("testLicenseFile", String.valueOf(rootProject.configurations.fsLicense.resolve().first().absolutePath))
+        systemProperty("testInstallerTar", String.valueOf(rootProject.configurations.testInstallerTar.resolve().first().absolutePath))
+        systemProperty("testServerJar", String.valueOf(rootProject.configurations.testServerJar.resolve().first().absolutePath))
+        systemProperty("testRuntimeJar", String.valueOf(rootProject.configurations.testRuntimeJar.resolve().first().absolutePath))
+    }
 
-test {
-    systemProperty("fsLicenseFile", String.valueOf(rootProject.configurations.fsLicense.resolve().first().absolutePath))
+    task integrationTest() {
+        group 'verification'
+        dependsOn(javaIntegrationTest)
+        mustRunAfter rootProject.allprojects*.getTasksByName('test', false)
+    }
+
+    if (System.getProperty("isCI") != null) {
+        check.dependsOn(integrationTest)
+    }
+
+    test {
+        systemProperty("fsLicenseFile", String.valueOf(rootProject.configurations.fsLicense.resolve().first().absolutePath))
+    }
 }
 
 dependencies {

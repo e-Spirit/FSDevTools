@@ -1,4 +1,0 @@
-project:
-  type: service
-build-tool:
-  type: gradle-wrapper

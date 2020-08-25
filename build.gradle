@@ -12,20 +12,6 @@ buildscript {
     ext {
         fsRuntimeVersion = '5.2.200807'
     }
-
-    repositories {
-        maven {
-            url = "https://artifactory.e-spirit.de/artifactory/repo"
-            credentials {
-                username = artifactory_username
-                password = artifactory_password
-            }
-        }
-    }
-
-    dependencies {
-        classpath "de.espirit.firstspirit:fs-isolated-server:${fsRuntimeVersion}"
-    }
 }
 
 
@@ -38,8 +24,8 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '5.1.0'
     id 'org.ajoberstar.grgit' version '4.0.0'
     id 'maven-publish'
-    id 'de.espirit.process' version '0.0.2'
     id "com.github.breadmoirai.github-release" version "2.2.9"
+    id 'net.researchgate.release' version '2.8.1'
 }
 
 ///////////////////////////////////////////////////////
@@ -118,6 +104,8 @@ ext {
     // setup repositories
     releaseRepository = 'core-platform-mvn-release'
     snapshotRepository = 'core-platform-mvn-snapshot'
+
+    useArtifactory = project.hasProperty('artifactory_username') && project.hasProperty('artifactory_password')
 }
 
 ///////////////////////////////////////////////////////
@@ -179,41 +167,36 @@ test {
 
 allprojects {
     repositories {
-        maven {
-            url = "https://artifactory.e-spirit.de/artifactory/repo"
-            credentials {
-                username = artifactory_username
-                password = artifactory_password
-            }
-        }
-    }
-
-    apply plugin: 'maven-publish'
-    apply plugin: 'de.espirit.process'
-
-    group 'com.espirit.moddev.fsdevtools'
-    version project.version
-
-    ///////////////////////////////////////////////////////
-    // disable technical release
-    ///////////////////////////////////////////////////////
-    prepareTechnicalSupportRelease {
-        enabled = false
-    }
-
-    notifyTechnicalSupport {
-        enabled = false
-    }
-
-    publishing {
-        repositories {
+        if (rootProject.ext.useArtifactory) {
             maven {
+                url = "https://artifactory.e-spirit.de/artifactory/repo"
                 credentials {
                     username = artifactory_username
                     password = artifactory_password
                 }
+            }
+        } else {
+            mavenLocal()
+            mavenCentral()
+        }
+    }
 
-                url BuildUtils.getArtifactory(project.version, snapshotRepository, releaseRepository)
+    apply plugin: 'maven-publish'
+
+    group 'com.espirit.moddev.fsdevtools'
+    version project.version
+
+    publishing {
+        if (rootProject.ext.useArtifactory) {
+            repositories {
+                maven {
+                    credentials {
+                        username = artifactory_username
+                        password = artifactory_password
+                    }
+
+                    url BuildUtils.getArtifactory(project.version, snapshotRepository, releaseRepository)
+                }
             }
         }
     }
@@ -474,5 +457,24 @@ publishing {
             artifact assembleZip
             artifact assembleTarGz
         }
+    }
+}
+
+/**
+ * RELEASE MANAGEMENT
+ */
+
+///////////////////////////////////////////////////////
+// setup the release plugin
+///////////////////////////////////////////////////////
+
+release {
+    ignoredSnapshotDependencies = ['de.espirit.firstspirit:fs-license']
+}
+
+// publish artifacts after release
+allprojects { final p ->
+    afterEvaluate {
+        rootProject.afterReleaseBuild.dependsOn p.tasks.matching { it.name == 'publish' }
     }
 }
