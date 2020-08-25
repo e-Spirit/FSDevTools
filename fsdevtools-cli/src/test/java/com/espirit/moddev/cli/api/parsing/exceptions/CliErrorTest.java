@@ -22,6 +22,7 @@
 
 package com.espirit.moddev.cli.api.parsing.exceptions;
 
+import com.espirit.moddev.cli.CliConstants;
 import com.espirit.moddev.cli.exception.CliError;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.connection.FsConnectionType;
@@ -87,6 +88,11 @@ public class CliErrorTest {
             @Override
             public Integer getHttpProxyPort() {
                 return 8080;
+            }
+
+            @Override
+            public String getServletZone() {
+                return CliConstants.DEFAULT_SERVLET_ZONE.value();
             }
 
             @Override

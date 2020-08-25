@@ -27,6 +27,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author e-Spirit AG
@@ -93,6 +94,21 @@ public class GlobalConfigTest {
         config.setHttpProxyPort(customPort);
         assertEquals(customHost, config.getHttpProxyHost());
         assertEquals(customPort, config.getHttpProxyPort());
+    }
+
+    @Test
+    public void defaultServletZone() {
+        final GlobalConfig config = new GlobalConfig();
+        assertEquals(CliConstants.DEFAULT_SERVLET_ZONE.value(), config.getServletZone());
+    }
+
+
+    @Test
+    public void customServletZone() {
+        final String customServletZone = "customServletZone";
+        final GlobalConfig config = new GlobalConfig();
+        config.setServletZone(customServletZone);
+        assertEquals(customServletZone, config.getServletZone());
     }
 
 }

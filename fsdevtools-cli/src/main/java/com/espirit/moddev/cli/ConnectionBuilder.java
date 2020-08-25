@@ -104,13 +104,14 @@ public class ConnectionBuilder {
 		final String user = _config.getUser();
 		final Integer port = _config.getPort();
 		final String host = _config.getHost();
+		final String servletZone = _config.getServletZone();
 
 		// logging
 		final Object[] args = {host, port, user};
 		LOGGER.debug("Create connection for FirstSpirit server at '{}:{}' with user '{}'...", args);
 
 		// create connection
-		final Connection connection = ConnectionManager.getConnection(host, port, connectionMode.getFsMode(), user, _config.getPassword());
+		final Connection connection = ConnectionManager.getConnection(host, port, connectionMode.getFsMode(), servletZone, user, _config.getPassword());
 		return new DelegateConnection(connection);
 	}
 

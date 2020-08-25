@@ -57,6 +57,7 @@ public class ConnectionBuilderTest {
     @Theory
     public void testBuild(final FsConnectionType mode) throws Exception {
 
+        final String customServletZone = "/customServletZone";
         when(config.getHost()).thenReturn(FsUtil.VALUE_DEFAULT_HOST);
         when(config.getHttpProxyHost()).thenReturn("");
         when(config.getPort()).thenReturn(mode.getDefaultPort());
@@ -64,11 +65,14 @@ public class ConnectionBuilderTest {
         when(config.getConnectionMode()).thenReturn(mode);
         when(config.getUser()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
         when(config.getPassword()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+        when(config.getPassword()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+        when(config.getServletZone()).thenReturn(customServletZone);
 
         final Connection connection = testling.build();
 
         assertThat(connection.getHost(), is(FsUtil.VALUE_DEFAULT_HOST));
         assertThat(connection.getPort(), is(mode.getDefaultPort()));
+        assertThat(connection.getServletZone(), is(customServletZone));
     }
 
     @Test(expected = NullPointerException.class)

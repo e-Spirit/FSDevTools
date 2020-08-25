@@ -71,6 +71,9 @@ public class GlobalConfig implements Config {
 	@Option(type = OptionType.GLOBAL, name = {"-port"}, description = "FirstSpirit host's port. Default is 8000.", title = "port")
 	private Integer _port;
 
+	@Option(type = OptionType.GLOBAL, name = {"-sz", "--servletzone"}, description = "The FirstSpirit servlet zone. Default is /.", title = "servletzone")
+	private String _servletZone = CliConstants.DEFAULT_SERVLET_ZONE.value();
+
 	@Option(type = OptionType.GLOBAL, name = {"-hph", "--httpproxyhost"}, description = "Proxy host for HTTP/HTTPS connections.", title = "proxyHost")
 	private String _httpProxyHost;
 
@@ -180,6 +183,17 @@ public class GlobalConfig implements Config {
 	}
 
 	@Override
+	public String getServletZone() {
+		if (_servletZone == null) {
+			boolean environmentContainsServletZone = getEnvironment().containsKey(CliConstants.KEY_FS_SERVLETZONE.value());
+			if (environmentContainsServletZone) {
+				return getEnvironment().get(CliConstants.KEY_FS_SERVLETZONE.value()).trim();
+			}
+		}
+		return _servletZone;
+	}
+
+	@Override
 	public FsConnectionType getConnectionMode() {
 		if (_fsMode == null) {
 			boolean environmentContainsPort = getEnvironment().containsKey(CliConstants.KEY_FS_MODE.value());
@@ -271,6 +285,15 @@ public class GlobalConfig implements Config {
 	 */
 	public void setHost(String host) {
 		_host = host;
+	}
+
+	/**
+	 * Set the FirstSpirit server servlet zone.
+	 *
+	 * @param servletZone FirstSpirit servlet zone
+	 */
+	public void setServletZone(String servletZone) {
+		_servletZone = servletZone;
 	}
 
 	/**

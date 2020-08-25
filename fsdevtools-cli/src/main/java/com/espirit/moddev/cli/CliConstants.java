@@ -52,6 +52,11 @@ public enum CliConstants {
     DEFAULT_HOST(FsUtil.VALUE_DEFAULT_HOST),
 
     /**
+     * Default servlet zone cli constant.
+     */
+    DEFAULT_SERVLET_ZONE(null),
+
+    /**
      * Default connection mode cli constant.
      */
     DEFAULT_CONNECTION_MODE("HTTP"),
@@ -80,6 +85,11 @@ public enum CliConstants {
      * Key fs port cli constant.
      */
     KEY_FS_PORT("fsport"),
+
+    /**
+     * Key fs port cli constant.
+     */
+    KEY_FS_SERVLETZONE("fsservletzone"),
 
     /**
      * Key fs mode cli constant.

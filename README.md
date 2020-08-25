@@ -19,6 +19,7 @@ In first instance the following configurations are loaded from your system envir
 - **fsmode** - The FirstSpirit connection mode, either `HTTP`, `HTTPS` or `SOCKET`.
 - **fsuser** - The FirstSpirit user account to authenticate the connection.
 - **fspwd** - The FirstSpirit user's password.
+- **fsservletzone** - The FirstSpirit servlet zone.
 - **fsproject** - The FirstSpirit project name.
 
 In contrast to the other properties only the project property does not have a default value.

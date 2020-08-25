@@ -22,6 +22,7 @@
 
 package com.espirit.moddev.cli.legacy;
 
+import com.espirit.moddev.cli.CliConstants;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.SyncDirectoryFactory;
 
@@ -73,6 +74,11 @@ public class SyncDirectoryFactoryTest {
             @Override
             public Integer getHttpProxyPort() {
                 return 8080;
+            }
+
+            @Override
+            public String getServletZone() {
+                return CliConstants.DEFAULT_SERVLET_ZONE.value();
             }
 
             @Override

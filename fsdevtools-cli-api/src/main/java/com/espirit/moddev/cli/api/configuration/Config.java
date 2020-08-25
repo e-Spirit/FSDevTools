@@ -63,6 +63,13 @@ public interface Config {
 	Integer getHttpProxyPort();
 
 	/**
+	 * Get the FirstSpirit servlet zone.
+	 *
+	 * @return the servlet zone
+	 */
+	String getServletZone();
+
+	/**
 	 * Get the connection mode used to connect to the FirstSpirit server.
 	 *
 	 * @return a {@link FsConnectionType} object that specifies the connection mode used to connect to the FirstSpirit server

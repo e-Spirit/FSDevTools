@@ -74,6 +74,7 @@ public class TestResult extends SimpleResult {
         LOGGER.info("User: " + config.getUser());
         LOGGER.info("Host: " + config.getHost());
         LOGGER.info("Port: " + config.getPort());
+        LOGGER.info("Servlet zone: " + config.getServletZone());
         LOGGER.info("Connection Mode: " + config.getConnectionMode());
         LOGGER.info("Project: " + config.getProject());
     }
