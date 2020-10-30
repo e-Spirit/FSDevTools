@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2016 e-Spirit AG
+ * Copyright (C) 2020 e-Spirit AG
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import com.espirit.moddev.connection.FsConnectionType;
 import com.espirit.moddev.util.FsUtil;
 import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.io.FileSystem;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
@@ -98,6 +99,12 @@ public class CliErrorTest {
             @Override
             public FsConnectionType getConnectionMode() {
                 return null;
+            }
+
+            @NotNull
+            @Override
+            public String getResultFile() {
+                return FsUtil.VALUE_DEFAULT_RESULT_FILE;
             }
 
             @Override

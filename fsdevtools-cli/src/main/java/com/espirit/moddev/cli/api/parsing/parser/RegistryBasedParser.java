@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2016 e-Spirit AG
+ * Copyright (C) 2020 e-Spirit AG
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,9 +52,9 @@ public class RegistryBasedParser implements Parser<Identifier> {
     @Override
     public List<Identifier> parse(List<String> input) {
         List result = new ArrayList(input.size());
-        
+
         Map<Parser, List<String>> inputForParser = new HashedMap<Parser, List<String>>();
-        
+
         for(String currentInput : input) {
             boolean suitableParserRegistered = false;
             for(Parser currentParser : registeredParsers) {
@@ -74,7 +74,7 @@ public class RegistryBasedParser implements Parser<Identifier> {
                 throw new NoSuitableParserRegisteredException("No applicable parser found for input string " + currentInput);
             }
         }
-        
+
         for (Map.Entry<Parser, List<String>> entry : inputForParser.entrySet()) {
             Parser currentParser = entry.getKey();
             List parsed = currentParser.parse(entry.getValue());

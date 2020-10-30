@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2016 e-Spirit AG
+ * Copyright (C) 2020 e-Spirit AG
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ public final class GroupUtils {
                 result.add(classInfo.loadClass());
             }
         }
-        LOGGER.debug("Found " + result.size() + " commands. " + result.stream().map(Class::getSimpleName).collect(Collectors.joining(",")));
+        LOGGER.debug("Found " + result.size() + " command groups. " + result.stream().map(Class::getSimpleName).collect(Collectors.joining(",")));
         return result;
     }
 

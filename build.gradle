@@ -1,3 +1,25 @@
+/*
+ *
+ * *********************************************************************
+ * fsdevtools
+ * %%
+ * Copyright (C) 2020 e-Spirit AG
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * *********************************************************************
+ *
+ */
+
 import com.espirit.moddev.build.BuildUtils
 import org.apache.tools.ant.filters.FixCrLfFilter
 import org.apache.tools.ant.filters.ReplaceTokens
@@ -80,14 +102,13 @@ ext {
     // dependency versions
     airlineVersion = '2.7.2'
     apacheCommonsVersion = '3.8.1'
-    assertJVersion = '3.3.0'
+    assertJVersion = '3.17.2'
     classGraphVersion = '4.8.47'
     commonsCompressVersion = '1.19'
     fsWrapperVersion = '3.5.26'
     hamcrestCoreVersion = '2.1'
     hamcrestJavaVersion = '2.0.0.0'
     guavaVersion = '26.0-jre'
-    jacksonCoreVersion = '2.9.2'
     jacksonDatabindVersion = '2.9.9.3'
     junitVersion = '4.12'
     log4jVersion = '1.2.17'
@@ -223,11 +244,11 @@ subprojects {
         compileOnly group: 'de.espirit.firstspirit', name: 'fs-isolated-runtime', version: "${fsRuntimeVersion}"
         compile "org.slf4j:slf4j-api:${slf4japiVersion}"
 
-        testCompile group: 'de.espirit.firstspirit', name: 'fs-isolated-runtime', version: "${fsRuntimeVersion}"
         testCompile "junit:junit:${junitVersion}"
         testCompile "org.hamcrest:hamcrest-core:${hamcrestCoreVersion}"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
         testCompile "org.assertj:assertj-core:${assertJVersion}"
+        testCompile group: 'de.espirit.firstspirit', name: 'fs-isolated-runtime', version: "$firstSpiritVersion", ext: 'jar'
     }
 
     ///////////////////////////////////////////////////////
@@ -321,6 +342,27 @@ distTar {
 }
 
 ///////////////////////////////////////////////////////
+// assemble utility methods
+///////////////////////////////////////////////////////
+
+static List<File> getJsonSchemas(Project project) {
+    def files = new ArrayList<File>()
+    def dir = new File("${project.projectDir}/json-schema")
+    if (dir.exists()) {
+        files.add(dir)
+    }
+    project.subprojects { Project subProject ->
+        def subFiles = getJsonSchemas(subProject)
+        for (File file : subFiles) {
+            if (!files.contains(file)) {
+                files.add(file)
+            }
+        }
+    }
+    return files
+}
+
+///////////////////////////////////////////////////////
 // assembles the tar.gz file
 ///////////////////////////////////////////////////////
 
@@ -359,6 +401,10 @@ task assembleTarGz(type: Tar) {
     // copy fat jar
     into("fs-cli/lib") {
         from(shadowJar.getArchiveFile())
+    }
+    // include json schemas
+    into("fs-cli/docs/json-schema") {
+        from(getJsonSchemas(project));
     }
 }
 
@@ -400,6 +446,10 @@ task assembleZip(type: Zip) {
     // copy fat jar
     into("fs-cli/lib") {
         from(shadowJar.getArchiveFile())
+    }
+    // include json schemas
+    into("fs-cli/docs/json-schema") {
+        from(getJsonSchemas(project));
     }
 }
 

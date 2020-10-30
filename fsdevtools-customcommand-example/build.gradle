@@ -1,3 +1,0 @@
-dependencies {
-    compileOnly project(":fsdevtools-cli-api")
-}

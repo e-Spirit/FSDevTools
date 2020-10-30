@@ -1,17 +1,39 @@
+/*
+ *
+ * *********************************************************************
+ * fsdevtools
+ * %%
+ * Copyright (C) 2020 e-Spirit AG
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * *********************************************************************
+ *
+ */
+
 package com.espirit.moddev.cli.testcommands;
 
 import com.espirit.moddev.cli.api.result.Result;
 import com.espirit.moddev.cli.commands.help.HelpCommand;
 import com.espirit.moddev.cli.commands.help.HelpResult;
-import com.espirit.moddev.cli.commands.module.InstallModuleCommand;
-import com.espirit.moddev.cli.commands.project.ImportProjectCommand;
-import com.espirit.moddev.cli.commands.server.ServerStartCommand;
-import com.espirit.moddev.cli.commands.server.ServerStopCommand;
-import com.espirit.moddev.cli.commands.test.TestConnectionCommand;
+import com.espirit.moddev.cli.commands.module.installCommand.InstallModuleCommand;
+import com.espirit.moddev.cli.commands.module.installCommand.InstallModuleResult;
+import com.espirit.moddev.cli.commands.project.importCommand.ImportProjectCommand;
+import com.espirit.moddev.cli.commands.server.startCommand.ServerStartCommand;
+import com.espirit.moddev.cli.commands.server.stopCommand.ServerStopCommand;
+import com.espirit.moddev.cli.commands.test.connectionCommand.TestConnectionCommand;
 import com.espirit.moddev.cli.configuration.GlobalConfig;
-import com.espirit.moddev.cli.results.InstallModuleResult;
 import com.espirit.moddev.cli.results.SimpleResult;
-import com.espirit.moddev.cli.results.TestResult;
+import com.espirit.moddev.cli.commands.test.common.TestResult;
 import com.espirit.moddev.server.ServerConfigurator;
 import com.espirit.moddev.server.ServerInstaller;
 import com.espirit.moddev.util.FsUtil;
@@ -77,13 +99,21 @@ public class ServerRunnerIT {
 
 	@AfterClass
 	public static void after() {
-		if (_workingDir != null) {
-			// stop the server
-			final ServerStopCommand serverStopCommand = new ServerStopCommand();
-			serverStopCommand.setServerDir(_workingDir.toAbsolutePath().toString());
-			final SimpleResult<Boolean> stopResult = serverStopCommand.call();
-			if (stopResult.isError()) {
-				throw new IllegalStateException("Server did not stop", stopResult.getError());
+		try {
+			if (_workingDir != null) {
+				// stop the server
+				final ServerStopCommand serverStopCommand = new ServerStopCommand();
+				serverStopCommand.setServerDir(_workingDir.toAbsolutePath().toString());
+				final SimpleResult<Boolean> stopResult = serverStopCommand.call();
+				if (stopResult.isError()) {
+					throw new IllegalStateException("Server did not stop", stopResult.getError());
+				}
+			}
+		} finally {
+			try {
+				_temp.delete();
+			} catch (final Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}

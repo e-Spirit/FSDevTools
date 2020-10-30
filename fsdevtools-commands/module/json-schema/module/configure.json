@@ -1,0 +1,278 @@
+{
+    "type": "array",
+    "additionalItems": true,
+    "description": "Modules to configure.",
+	"title": "Module configurations",
+	"minItems": 1,
+    "items": {
+        "anyOf": [
+            {
+                "required": [
+                    "moduleName",
+                    "components"
+                ],
+                "title": "Module configuration",
+				"description": "Module to configure.",
+                "properties": {
+                    "moduleName": {
+					    "type": "string",
+                        "description": "The name of the module to configure.",
+                        "title": "Module Name"
+                    },
+                    "components": {
+                        "title": "Component configurations",
+                        "description": "Components to configure.",
+                        "type": "object",
+                        "properties": {
+                            "webComponents": {
+                                "title": "Web components configurations",
+                                "description": "Web components to configure.",
+                                "type": "array",
+                                "additionalItems": true,
+                                "items": {
+                                    "minItems": 1,
+                                    "anyOf": [
+                                        {
+                                            "description": "Web component to configure.",
+                                            "required": [
+                                                "componentName",
+                                                "webApps"
+                                            ],
+                                            "title": "webComponent",
+											"type": "object",
+                                            "properties": {
+												"componentName": {
+                                                    "description": "The name of the web component to configure.",
+                                                    "title": "componentName",
+													"type": "string"
+                                                },
+                                                "webApps": {
+                                                    "description": "The web apps to configure.",
+                                                    "title": "webApps",
+                                                    "minItems": 1,
+													"type": "array",
+                                                    "additionalItems": true,
+                                                    "items": {
+                                                        "anyOf": [
+                                                            {
+                                                                "description": "Web app to configure.",
+                                                                "required": [
+                                                                    "webAppName"
+                                                                ],
+                                                                "title": "webAppConfiguration",
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "webAppName": {
+                                                                        "description": "The name of the web app to configure.",
+                                                                        "title": "webAppName",
+																		"type": "string"
+                                                                    },
+                                                                    "projectName": {
+                                                                        "default": "",
+                                                                        "description": "Name of the project to configure the web app in. null for global web apps.",
+                                                                        "title": "projectName",
+																		"type": "string"
+                                                                    },
+                                                                    "deploy": {
+                                                                        "default": true,
+                                                                        "description": "Force re-deployment of the web app after configuration.",
+                                                                        "title": "deploy",
+																		"type": "boolean"
+                                                                    },
+																	"files": {
+																		"default": [],
+																		"description": "Array of files/directories to upload.",
+																		"title": "files",
+																		"type": "array",
+																		"additionalItems": true,
+																		"items": {
+																			"examples": [
+																				[
+																					"C:/test/",
+																					"C:/abc.json"
+																				],
+																				[
+																					"/home/myUserName/config.file"
+																				],
+																				[
+																					"/home/myUserName/directoryToUpload"
+																				]
+																			],
+																			"anyOf": [
+																				{
+																					"type": "string",
+																					"description": "The path (relative or absolute) to the file/directory to upload.",
+																					"title": "pathToFile"
+																				}
+																			]
+																		}
+																	}
+                                                                },
+                                                                "additionalProperties": true
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            "additionalProperties": true
+                                        }
+                                    ]
+                                }
+                            },
+                            "projectComponents": {
+                                "description": "Project components to configure.",
+                                "minItems": 1,
+                                "title": "Project component configurations",
+                                "type": "array",
+                                "additionalItems": true,
+                                "items": {
+                                    "anyOf": [
+                                        {
+                                            "description": "Project component to configure.",
+                                            "required": [
+                                                "componentName",
+                                                "projectApps"
+                                            ],
+                                            "title": "projectComponent",
+                                            "type": "object",
+                                            "properties": {
+                                                "componentName": {
+                                                    "description": "The name of the project component to configure.",
+                                                    "title": "componentName",
+													"type": "string"
+                                                },
+                                                "projectApps": {
+                                                    "description": "The project apps to configure.",
+                                                    "title": "projectApps",
+                                                    "type": "array",
+													"minItems": 1,
+                                                    "additionalItems": true,
+                                                    "items": {
+                                                        "anyOf": [
+                                                            {
+                                                                "description": "ProjectApp to configure.",
+                                                                "required": [
+                                                                    "projectName"
+                                                                ],
+                                                                "title": "projectApp",
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "projectName": {
+                                                                        "description": "The name of the project to add the project component to.",
+                                                                        "title": "projectName",
+																		"type": "string"
+                                                                    },
+                                                                    "files": {
+																		"default": [],
+																		"description": "Array of files/directories to upload.",
+																		"title": "files",
+																		"type": "array",
+																		"additionalItems": true,
+																		"items": {
+																			"examples": [
+																				[
+																					"C:/test/",
+																					"C:/abc.json"
+																				],
+																				[
+																					"/home/myUserName/config.file"
+																				],
+																				[
+																					"/home/myUserName/directoryToUpload"
+																				]
+																			],
+																			"anyOf": [
+																				{
+																					"type": "string",
+																					"description": "The path (relative or absolute) to the file/directory to upload.",
+																					"title": "pathToFile"
+																				}
+																			]
+																		}
+																	}
+                                                                },
+                                                                "additionalProperties": true
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            "additionalProperties": true
+                                        }
+                                    ]
+                                }
+                            },
+                            "services": {
+                                "title": "Service configurations",
+                                "description": "Array of services to configure.",
+                                "additionalItems": true,
+                                "items": {
+                                    "anyOf": [
+                                        {
+                                            "description": "Services to configure.",
+                                            "required": [
+                                                "serviceName"
+                                            ],
+                                            "title": "service configuration",
+                                            "type": "object",
+                                            "properties": {
+                                                "serviceName": {
+                                                    "description": "The name of the service to configure",
+                                                    "title": "serviceName",
+													"type": "string"
+                                                },
+                                                "autoStart": {
+                                                    "default": false,
+                                                    "description": "Add the service to the list of automatically started services.",
+                                                    "title": "autoStart",
+													"type": "boolean"
+                                                },
+                                                "restart": {
+                                                    "default": false,
+                                                    "description": "Force a restart of the service.",
+                                                    "title": "restart",
+													"type": "boolean"
+                                                },
+                                                "files": {
+                                                    "default": [],
+                                                    "description": "Array of files/directories to upload.",
+                                                    "title": "files",
+                                                    "type": "array",
+                                                    "additionalItems": true,
+                                                    "items": {
+                                                        "examples": [
+                                                            [
+                                                                "C:/test/",
+                                                                "C:/abc.json"
+                                                            ],
+                                                            [
+                                                                "/home/myUserName/config.file"
+                                                            ],
+                                                            [
+                                                                "/home/myUserName/directoryToUpload"
+                                                            ]
+                                                        ],
+                                                        "anyOf": [
+                                                            {
+															    "type": "string",
+                                                                "description": "The path (relative or absolute) to the file/directory to upload.",
+                                                                "title": "pathToFile"
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            },
+                                            "additionalProperties": true
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        "additionalProperties": true
+                    }
+                },
+                "additionalProperties": true
+            }
+        ]
+    }
+}

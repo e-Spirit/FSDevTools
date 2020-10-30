@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2016 e-Spirit AG
+ * Copyright (C) 2020 e-Spirit AG
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,16 +54,16 @@ public class ProjectPropertiesIdentifierTest {
         enumSet.add(PropertiesTransportOptions.ProjectPropertyType.GROUPS);
         enumSet.add(PropertiesTransportOptions.ProjectPropertyType.LANGUAGES);
         ProjectPropertiesIdentifier identifier = new ProjectPropertiesIdentifier(enumSet);
-        
+
         enumSet = EnumSet.noneOf(PropertiesTransportOptions.ProjectPropertyType.class);
         enumSet.add(PropertiesTransportOptions.ProjectPropertyType.GROUPS);
         enumSet.add(PropertiesTransportOptions.ProjectPropertyType.LANGUAGES);
         ProjectPropertiesIdentifier equalIdentifier = new ProjectPropertiesIdentifier(enumSet);
-        
+
         enumSet = EnumSet.noneOf(PropertiesTransportOptions.ProjectPropertyType.class);
         enumSet.add(PropertiesTransportOptions.ProjectPropertyType.LANGUAGES);
         ProjectPropertiesIdentifier notEqualIdentifier = new ProjectPropertiesIdentifier(enumSet);
-        
+
         assertThat("Expected two equal project properties identifier", identifier, equalTo(equalIdentifier));
         assertThat("Expected two different project properties identifier", identifier, not(equalTo(notEqualIdentifier)));
     }

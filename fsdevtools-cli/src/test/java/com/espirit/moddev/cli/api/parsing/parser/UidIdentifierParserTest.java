@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2016 e-Spirit AG
+ * Copyright (C) 2020 e-Spirit AG
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 import com.espirit.moddev.cli.api.parsing.identifier.UidMapping;
 import de.espirit.firstspirit.access.store.IDProvider;
 
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -81,7 +82,7 @@ public class UidIdentifierParserTest {
     public void testParse(List<String> uids) throws Exception {
         final List<UidIdentifier> list = testling.parse(uids);
 
-        assertThat("Expected PAGE but got: " + uids, list.get(0).getUidMapping(), is(UidMapping.PAGE));
+        assertThat("Expected PAGE but got: " + uids, list.get(0).getUidMapping(), Matchers.is(UidMapping.PAGE));
         assertThat("Expected 'myuid' but got: " + uids, list.get(0).getUid(), is("myuid"));
     }
 

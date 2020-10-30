@@ -1,152 +1,196 @@
+/*
+ *
+ * *********************************************************************
+ * fsdevtools
+ * %%
+ * Copyright (C) 2020 e-Spirit AG
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * *********************************************************************
+ *
+ */
+
 package com.espirit.moddev.shared.webapp;
 
 import com.espirit.moddev.shared.StringUtils;
-
 import de.espirit.firstspirit.access.project.Project;
+import de.espirit.firstspirit.agency.GlobalWebAppId;
+import de.espirit.firstspirit.agency.ProjectWebAppId;
 import de.espirit.firstspirit.agency.WebAppId;
 import de.espirit.firstspirit.module.WebEnvironment.WebScope;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
 
 import static de.espirit.firstspirit.module.WebEnvironment.WebScope.GLOBAL;
 import static java.util.Locale.UK;
 
 public interface WebAppIdentifier {
 
-    WebAppId createWebAppId(Project project);
-    WebScope getScope();
-    boolean isGlobal();
+	WebAppId createWebAppId(Project project);
 
-    WebAppIdentifier PREVIEW = forScope(WebScope.PREVIEW);
-    WebAppIdentifier STAGING = forScope(WebScope.STAGING);
-    WebAppIdentifier WEBEDIT = forScope(WebScope.WEBEDIT);
-    WebAppIdentifier LIVE = forScope(WebScope.LIVE);
+	WebScope getScope();
 
-    WebAppIdentifier FS5_ROOT = forGlobalWebApp("fs5root");
+	boolean isGlobal();
 
-    static WebAppIdentifier forScope(WebScope scope) {
-        return forScope(scope, null);
-    }
+	WebAppIdentifier PREVIEW = forScope(WebScope.PREVIEW);
+	WebAppIdentifier STAGING = forScope(WebScope.STAGING);
+	WebAppIdentifier WEBEDIT = forScope(WebScope.WEBEDIT);
+	WebAppIdentifier LIVE = forScope(WebScope.LIVE);
 
-    static WebAppIdentifier forGlobalWebApp(String globalWebAppName) {
-        return forScope(GLOBAL, globalWebAppName);
-    }
+	WebAppIdentifier FS5_ROOT = forGlobalWebApp("fs5root");
 
-    /**
-     * @param scope
-     * @param globalWebAppName
-     * @return
-     */
-    static WebAppIdentifier forScope(WebScope scope, String globalWebAppName) {
-        if(scope == null) {
-            throw new IllegalArgumentException("Scope for WebApp identifier shouldn't be null!");
-        }
+	@NotNull
+	static String getName(@NotNull final WebAppIdentifier webAppId) {
+		if (webAppId instanceof GlobalWebAppIdentifier) {
+			return "global(" + ((GlobalWebAppIdentifier) webAppId).getGlobalWebAppId() + ")";
+		} else {
+			return webAppId.toString();
+		}
+	}
 
-        if(GLOBAL.equals(scope)) {
-            if(StringUtils.isNullOrEmpty(globalWebAppName)) {
-                throw new IllegalArgumentException("WebApp name missing for global WebApp.");
-            }
-            return new GlobalWebAppIdentifier(globalWebAppName);
-        } else {
-            return new SimpleWebAppIdentifier(scope);
-        }
-    }
+	@NotNull
+	static String getName(@NotNull final WebAppId webAppId) {
+		if (webAppId instanceof GlobalWebAppId) {
+			return "global(" + ((GlobalWebAppId) webAppId).getGlobalId() + ")";
+		}
+		final ProjectWebAppId projectWebAppId = (ProjectWebAppId) webAppId;
+		return projectWebAppId.getProject().getName() + "(" + projectWebAppId.getWebScope().name().toLowerCase(Locale.UK) + ")";
+	}
 
-    static boolean isFs5RootWebApp(WebAppId candidate) {
-        return FS5_ROOT.createWebAppId(null).equals(candidate);
-    }
+	static WebAppIdentifier forScope(WebScope scope) {
+		return forScope(scope, null);
+	}
 
-    class GlobalWebAppIdentifier implements WebAppIdentifier {
-        private final String globalWebAppId;
+	static WebAppIdentifier forGlobalWebApp(String globalWebAppName) {
+		return forScope(GLOBAL, globalWebAppName);
+	}
 
-        private GlobalWebAppIdentifier(String globalWebAppId) {
-            this.globalWebAppId = globalWebAppId;
-        }
+	static WebAppIdentifier forScope(WebScope scope, String globalWebAppName) {
+		if (scope == null) {
+			throw new IllegalArgumentException("Scope for WebApp identifier shouldn't be null!");
+		}
 
-        @Override
-        public WebAppId createWebAppId(Project project) {
-            return WebAppId.Factory.create(globalWebAppId);
-        }
+		if (GLOBAL.equals(scope)) {
+			if (StringUtils.isNullOrEmpty(globalWebAppName)) {
+				throw new IllegalArgumentException("WebApp name missing for global WebApp.");
+			}
+			return new GlobalWebAppIdentifier(globalWebAppName);
+		} else {
+			return new SimpleWebAppIdentifier(scope);
+		}
+	}
 
-        @Override
-        public WebScope getScope() {
-            return GLOBAL;
-        }
+	static boolean isFs5RootWebApp(@NotNull final WebAppId candidate) {
+		return FS5_ROOT.createWebAppId(null).equals(candidate);
+	}
 
-        @Override
-        public boolean isGlobal() { return true; }
+	class GlobalWebAppIdentifier implements WebAppIdentifier {
+		private final String globalWebAppId;
 
+		private GlobalWebAppIdentifier(String globalWebAppId) {
+			this.globalWebAppId = globalWebAppId;
+		}
 
-        public String getGlobalWebAppId() {
-            return globalWebAppId;
-        }
+		@Override
+		public WebAppId createWebAppId(Project project) {
+			return WebAppId.Factory.create(globalWebAppId);
+		}
 
-        @Override
-        public String toString() {
-            return "global(" + globalWebAppId + ")";
-        }
+		@Override
+		public WebScope getScope() {
+			return GLOBAL;
+		}
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+		@Override
+		public boolean isGlobal() {
+			return true;
+		}
 
-            GlobalWebAppIdentifier that = (GlobalWebAppIdentifier) o;
+		public String getGlobalWebAppId() {
+			return globalWebAppId;
+		}
 
-            return globalWebAppId != null ? globalWebAppId.equals(that.globalWebAppId) : that.globalWebAppId == null;
-        }
+		@Override
+		public String toString() {
+			return "global(" + globalWebAppId + ")";
+		}
 
-        @Override
-        public int hashCode() {
-            return globalWebAppId != null ? globalWebAppId.hashCode() : 0;
-        }
-    }
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
 
-    class SimpleWebAppIdentifier implements WebAppIdentifier {
+			GlobalWebAppIdentifier that = (GlobalWebAppIdentifier) o;
 
-        private final WebScope scope;
+			return globalWebAppId != null ? globalWebAppId.equals(that.globalWebAppId) : that.globalWebAppId == null;
+		}
 
-        private SimpleWebAppIdentifier(WebScope scope) {
-            if(scope == null) {
-                throw new IllegalArgumentException("Local WebAppIdentifier requires a scope, but given scope is null.");
-            }
+		@Override
+		public int hashCode() {
+			return globalWebAppId != null ? globalWebAppId.hashCode() : 0;
+		}
+	}
 
-            this.scope = scope;
-        }
+	class SimpleWebAppIdentifier implements WebAppIdentifier {
 
-        @Override
-        public WebAppId createWebAppId(Project project) {
-            if(project == null) {
-                throw new IllegalArgumentException("Cannot create non global WebAppId with null project!");
-            }
-            return WebAppId.Factory.create(project, scope);
-        }
+		private final WebScope scope;
 
-        @Override
-        public WebScope getScope() {
-            return scope;
-        }
+		private SimpleWebAppIdentifier(WebScope scope) {
+			if (scope == null) {
+				throw new IllegalArgumentException("Local WebAppIdentifier requires a scope, but given scope is null.");
+			}
 
-        @Override
-        public boolean isGlobal() { return false; }
+			this.scope = scope;
+		}
 
-        @Override
-        public String toString() {
-            return scope.toString().toLowerCase(UK);
-        }
+		@Override
+		public WebAppId createWebAppId(Project project) {
+			if (project == null) {
+				throw new IllegalArgumentException("Cannot create non global WebAppId with null project!");
+			}
+			return WebAppId.Factory.create(project, scope);
+		}
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+		@Override
+		public WebScope getScope() {
+			return scope;
+		}
 
-            SimpleWebAppIdentifier that = (SimpleWebAppIdentifier) o;
+		@Override
+		public boolean isGlobal() {
+			return false;
+		}
 
-            return scope == that.scope;
-        }
+		@Override
+		public String toString() {
+			return scope.toString().toLowerCase(UK);
+		}
 
-        @Override
-        public int hashCode() {
-            return scope != null ? scope.hashCode() : 0;
-        }
-    }
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			SimpleWebAppIdentifier that = (SimpleWebAppIdentifier) o;
+
+			return scope == that.scope;
+		}
+
+		@Override
+		public int hashCode() {
+			return scope != null ? scope.hashCode() : 0;
+		}
+	}
 
 }

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2016 e-Spirit AG
+ * Copyright (C) 2020 e-Spirit AG
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 import de.espirit.firstspirit.transport.PropertiesTransportOptions;
 
 public class ProjectPropertiesIdentifier implements Identifier {
-    
+
     private final EnumSet<PropertiesTransportOptions.ProjectPropertyType> projectPropertyTypes;
 
     public ProjectPropertiesIdentifier(EnumSet<PropertiesTransportOptions.ProjectPropertyType> projectPropertyTypes) {
@@ -44,7 +44,7 @@ public class ProjectPropertiesIdentifier implements Identifier {
         final PropertiesTransportOptions options = exportOperation.configurePropertiesExport();
         options.setProjectPropertiesTransport(projectPropertyTypes);
     }
-    
+
     @Override
     public boolean equals(final Object o) {
         if(o == null || o.getClass() != this.getClass()) {

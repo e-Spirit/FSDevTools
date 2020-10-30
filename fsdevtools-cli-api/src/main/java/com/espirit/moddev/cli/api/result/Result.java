@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2016 e-Spirit AG
+ * Copyright (C) 2020 e-Spirit AG
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +35,8 @@ public interface Result<CUSTOM_RESULT_TYPE> {
     /**
      * Indicates whether a result is successful or not. Can tell a
      * surrounding environment that a Exception is available.
-     * 
-     * @return true if an error occured, otherwise false
+     *
+     * @return true if an error occurred, otherwise false
      */
     boolean isError();
 

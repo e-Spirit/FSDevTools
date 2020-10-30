@@ -127,4 +127,4 @@ local.properties
 /fsdevtools-cli/nbproject/
 fs-cli.log
 /build
-/*/build
+/**/build

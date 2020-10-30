@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2016 e-Spirit AG
+ * Copyright (C) 2020 e-Spirit AG
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
 
 package com.espirit.moddev.cli.testgroups.reflectiontest;
 
-import com.espirit.moddev.cli.groups.example.ExampleCustomGroup;
+import com.espirit.moddev.cli.commands.example.ExampleCustomGroup;
 import com.espirit.moddev.cli.reflection.GroupUtils;
 import org.junit.Assert;
 import org.junit.Test;
