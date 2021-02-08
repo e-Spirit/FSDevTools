@@ -47,6 +47,7 @@ public enum FsUtil {
 	public static final String FILE_FS_LICENSE_CONF = "fs-license.conf";
 	public static final String FILE_FS_WRAPPER_CONF = "fs-wrapper.conf";
 	public static final String FILE_WRAPPER_EXECUTABLE = "fs5";
+	public static final String FILE_FS_SERVER_EXECUTABLE = "fs-server";
 	public static final String FILE_WRAPPER_EXCEPTION_EXECUTABLE = "WRAPPER_ERROR";
 	public static final String FILE_WRAPPER_EXCEPTION_FILE = FILE_WRAPPER_EXCEPTION_EXECUTABLE + ".txt";
 	public static final String FILE_FS_WRAPPER_ISOLATED_CONF = "fs-wrapper.isolated.conf";

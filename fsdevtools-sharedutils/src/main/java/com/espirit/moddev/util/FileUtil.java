@@ -117,18 +117,20 @@ public enum FileUtil {
 	/**
 	 * Marks the {@link File executable} at the given {@link Path paths} as executable files.
 	 *
-	 * @param path        the root path for the given executables
+	 * @param basePath    the base path for the given executables
 	 * @param executables the relative paths of the executable to update
 	 * @throws IOException           if one (or more) {@link File files} could not be marked as executable
 	 * @throws FileNotFoundException if one (or more) files at the given {@link Path path} does not exist
 	 */
-	public static void setExecutable(@NotNull final Path path, @NotNull final Collection<String[]> executables) throws IOException {
-		for (final String[] executablePath : executables) {
-			Path executable = path;
-			for (final String pathElement : executablePath) {
-				executable = executable.resolve(pathElement);
+	public static void setExecutable(@NotNull final Path basePath, @NotNull final Collection<Path> executables) throws IOException {
+		for (final Path executable : executables) {
+			final Path path = basePath.resolve(executable);
+			final File file = path.toFile();
+			if (!file.exists()) {
+				// ignore non existing files
+				continue;
 			}
-			FileUtil.setExecutable(executable);
+			FileUtil.setExecutable(path);
 		}
 	}
 

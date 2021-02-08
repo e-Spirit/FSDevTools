@@ -24,7 +24,6 @@ package com.espirit.moddev.server;
 
 import com.espirit.moddev.util.ArchiveUtil;
 import com.espirit.moddev.util.FileUtil;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -94,12 +93,7 @@ public class ServerInstallerTest {
 		final Path targetDir = _temp.getRoot().toPath().resolve("target");
 		final Path installerTar = new File(getClass().getResource(TEST_INSTALLER_TAR_GZ).getFile()).toPath();
 		final Path serverJar = new File(getClass().getResource(TEST_SERVER_JAR).getFile()).toPath();
-		final ServerInstaller serverInstaller = new ServerInstaller(targetDir) {
-			@Override
-			void updateExecutables(@NotNull final Path serverDir) throws IOException {
-				// nothing to test..
-			}
-		};
+		final ServerInstaller serverInstaller = new ServerInstaller(targetDir);
 
 		// test
 		serverInstaller.setInstallerTarGz(installerTar);
@@ -125,12 +119,7 @@ public class ServerInstallerTest {
 		final Path targetDir = _temp.getRoot().toPath().resolve("target");
 		final Path installerTar = new File(getClass().getResource(TEST_INSTALLER_TAR_GZ).getFile()).toPath();
 		final Path serverJar = new File(getClass().getResource(TEST_ISOLATED_SERVER_JAR).getFile()).toPath();
-		final ServerInstaller serverInstaller = new ServerInstaller(targetDir) {
-			@Override
-			void updateExecutables(@NotNull final Path serverDir) throws IOException {
-				// nothing to test..
-			}
-		};
+		final ServerInstaller serverInstaller = new ServerInstaller(targetDir);
 
 		// test
 		serverInstaller.setInstallerTarGz(installerTar);

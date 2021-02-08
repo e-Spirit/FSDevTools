@@ -22,14 +22,15 @@
 
 package com.espirit.moddev.cli.commands.server.utils;
 
+import de.espirit.firstspirit.access.AdminService;
+import de.espirit.firstspirit.agency.RunLevelAgent;
+import de.espirit.firstspirit.server.RunLevel;
+
 import com.espirit.moddev.connection.FsConnection;
 import com.espirit.moddev.connection.FsConnectionConfig;
 import com.espirit.moddev.connection.FsConnectionType;
 import com.espirit.moddev.util.FsUtil;
 import com.espirit.moddev.util.OsUtil;
-import de.espirit.firstspirit.access.AdminService;
-import de.espirit.firstspirit.agency.RunLevelAgent;
-import de.espirit.firstspirit.server.RunLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -40,6 +41,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -54,6 +56,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
+
 public class ServerRunner {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ServerRunner.class);
@@ -66,35 +69,41 @@ public class ServerRunner {
 	private Duration _timeout = Duration.ofMinutes(10);
 
 	private final ExecutorService _executorService;
-	private AtomicReference<Future<Optional<Process>>> _serverTask = new AtomicReference<>();
+	private final AtomicReference<Future<Optional<Process>>> _serverTask = new AtomicReference<>();
 	private FsConnectionType _connectionType = FsConnectionType.HTTP;
 
 	private String _user;
 	private String _password;
 	private final AtomicBoolean _wrapperExecutionFailedToExecute = new AtomicBoolean();
 
+
 	public ServerRunner() {
 		_serverDir = null;
 		_executorService = Executors.newCachedThreadPool();
 	}
+
 
 	public ServerRunner(@NotNull final Path serverDir) {
 		_serverDir = serverDir.toAbsolutePath();
 		_executorService = Executors.newCachedThreadPool();
 	}
 
+
 	public void setTimeout(@NotNull final Duration timeout) {
 		_timeout = timeout;
 	}
+
 
 	public void setUserCredentials(@NotNull final String user, @NotNull final String password) {
 		_user = user;
 		_password = password;
 	}
 
+
 	public void setConnectionType(@NotNull final FsConnectionType connectionType) {
 		_connectionType = connectionType;
 	}
+
 
 	/**
 	 * Waits for a given condition, retrying if necessary, blocking the thread in between.
@@ -121,6 +130,7 @@ public class ServerRunner {
 		}
 	}
 
+
 	@NotNull
 	private Path getServerDir() {
 		if (_serverDir == null) {
@@ -128,6 +138,7 @@ public class ServerRunner {
 		}
 		return _serverDir;
 	}
+
 
 	public void start() throws IOException {
 		// start FirstSpirit server ...
@@ -170,9 +181,11 @@ public class ServerRunner {
 		}
 	}
 
+
 	private boolean wrapperFailedToExecute() {
 		return _wrapperExecutionFailedToExecute.get();
 	}
+
 
 	public void stop(@NotNull final FsConnectionConfig config) throws IOException {
 		final FsConnection connection = new FsConnection(config, true);
@@ -215,19 +228,29 @@ public class ServerRunner {
 		}
 	}
 
+
 	/**
 	 * Prepare system and generate startup parameter list. Performs side-effects on the pidFile system.
 	 *
 	 * @return startup parameter list
 	 */
 	@NotNull
-	private List<String> constructExecuteCommand(@NotNull final String fileName) {
-		final Path executable = getServerDir().resolve("bin").resolve(fileName).toAbsolutePath();
+	private List<String> constructExecuteCommand() {
+		// Try fs5 first
+		Path executable = getServerDir().resolve(FsUtil.DIR_BIN).resolve(FsUtil.FILE_WRAPPER_EXECUTABLE).toAbsolutePath();
+		if (Files.notExists(executable)) {
+			// switch to fs-server if legacy script is not present
+			executable = getServerDir().resolve(FsUtil.DIR_BIN).resolve(FsUtil.FILE_FS_SERVER_EXECUTABLE).toAbsolutePath();
+			if(Files.notExists(executable)) {
+				throw new IllegalStateException("Neither fs5 nor fs-server file exists");
+			}
+		}
 		List<String> commands = new ArrayList<>();
 		commands.add(executable.toString());
 		commands = com.espirit.moddev.util.OsUtil.convertForCurrentOs(commands);
 		return commands;
 	}
+
 
 	private synchronized void startFirstSpiritServer() {
 		// check if the ".fs.lock"-file exists
@@ -244,10 +267,11 @@ public class ServerRunner {
 		_serverTask.compareAndSet(null, startFirstSpiritServer(_executorService));
 	}
 
+
 	@NotNull
 	private Future<Optional<Process>> startFirstSpiritServer(@NotNull final ExecutorService executor) {
 		final boolean isWindows = OsUtil.isWindows();
-		final List<String> commands = constructExecuteCommand(FsUtil.FILE_WRAPPER_EXECUTABLE);
+		final List<String> commands = constructExecuteCommand();
 		if (isWindows) {
 			commands.add("console");
 		} else {

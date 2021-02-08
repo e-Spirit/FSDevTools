@@ -37,11 +37,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -55,19 +55,21 @@ public class ServerInstaller {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ServerInstaller.class);
 
-	private static final Collection<String[]> EXECUTABLES = Arrays.asList(
-			new String[]{DIR_BIN, FsUtil.FILE_WRAPPER_EXECUTABLE},
-			new String[]{DIR_BIN, FsUtil.FILE_WRAPPER_EXECUTABLE + ".cmd"},
-			new String[]{DIR_BIN, "wrapper.exe"},
-			new String[]{DIR_BIN, "wrapper-linux-x86-64"},
-			new String[]{DIR_BIN, "wrapper-macosx-universal-64"},
-			new String[]{DIR_BIN, "wrapper-windows-x86-64.exe"},
-			new String[]{DIR_SERVER, DIR_LIB_LEGACY, "libwrapper-linux-x86-64.so"},
-			new String[]{DIR_SERVER, DIR_LIB_LEGACY, "libwrapper-macosx-universal-64.jnilib"},
-			new String[]{DIR_SERVER, DIR_LIB_LEGACY, "wrapper-windows-x86-64.dll"},
-			new String[]{DIR_SERVER, DIR_LIB_ISOLATED, "libwrapper-linux-x86-64.so"},
-			new String[]{DIR_SERVER, DIR_LIB_ISOLATED, "libwrapper-macosx-universal-64.jnilib"},
-			new String[]{DIR_SERVER, DIR_LIB_ISOLATED, "wrapper-windows-x86-64.dll"}
+	private static final List<Path> EXECUTABLES = Arrays.asList(
+			Paths.get(DIR_BIN, FsUtil.FILE_WRAPPER_EXECUTABLE),
+			Paths.get(DIR_BIN, FsUtil.FILE_WRAPPER_EXECUTABLE + ".cmd"),
+			Paths.get(DIR_BIN, FsUtil.FILE_FS_SERVER_EXECUTABLE),
+			Paths.get(DIR_BIN, FsUtil.FILE_FS_SERVER_EXECUTABLE + ".bat"),
+			Paths.get(DIR_BIN, "wrapper.exe"),
+			Paths.get(DIR_BIN, "wrapper-linux-x86-64"),
+			Paths.get(DIR_BIN, "wrapper-macosx-universal-64"),
+			Paths.get(DIR_BIN, "wrapper-windows-x86-64.exe"),
+			Paths.get(DIR_SERVER, DIR_LIB_LEGACY, "libwrapper-linux-x86-64.so"),
+			Paths.get(DIR_SERVER, DIR_LIB_LEGACY, "libwrapper-macosx-universal-64.jnilib"),
+			Paths.get(DIR_SERVER, DIR_LIB_LEGACY, "wrapper-windows-x86-64.dll"),
+			Paths.get(DIR_SERVER, DIR_LIB_ISOLATED, "libwrapper-linux-x86-64.so"),
+			Paths.get(DIR_SERVER, DIR_LIB_ISOLATED, "libwrapper-macosx-universal-64.jnilib"),
+			Paths.get(DIR_SERVER, DIR_LIB_ISOLATED, "wrapper-windows-x86-64.dll")
 	);
 
 	@NotNull
@@ -197,9 +199,15 @@ public class ServerInstaller {
 	@VisibleForTesting
 	static void updateWrapperExecutable(@NotNull final Path serverDir, @NotNull final UUID uuid) throws IOException {
 		LOGGER.info("Updating wrapper executable...");
-		final Path wrapperExecutable = serverDir.resolve(DIR_BIN).resolve("fs5");
-		if (!wrapperExecutable.toFile().exists()) {
-			throw new FileNotFoundException("File '" + wrapperExecutable.toAbsolutePath() + "' does not exist!");
+		String appName = "fs5";
+		Path wrapperExecutable = serverDir.resolve(DIR_BIN).resolve(FsUtil.FILE_WRAPPER_EXECUTABLE).toAbsolutePath();
+		if (Files.notExists(wrapperExecutable)) {
+			// switch to fs-server if legacy script is not present
+			wrapperExecutable = serverDir.resolve(DIR_BIN).resolve(FsUtil.FILE_FS_SERVER_EXECUTABLE).toAbsolutePath();
+			if (Files.notExists(wrapperExecutable)) {
+				throw new FileNotFoundException("Neither fs5 nor fs-server file exists");
+			}
+			appName = "fs-server";
 		}
 
 		// edit lines
@@ -207,8 +215,8 @@ public class ServerInstaller {
 		final ArrayList<String> outputLines = new ArrayList<>();
 		final String uuidBase = uuid.toString().replaceAll("-", "_");
 		for (final String line : input) {
-			if (line.startsWith("APP_NAME=\"fs5\"")) {
-				outputLines.add("APP_NAME=\"fs5_" + uuidBase + "\"");
+			if (line.startsWith("APP_NAME=\"" + appName + "\"")) {
+				outputLines.add("APP_NAME=\"" + appName + "_" + uuidBase + "\"");
 			} else if (line.startsWith("APP_LONG_NAME=\"FirstSpirit 5\"")) {
 				outputLines.add("APP_LONG_NAME=\"FirstSpirit 5 - " + uuidBase + "\"");
 			} else {
