@@ -2,4 +2,10 @@ team: core-platform
 responsible:
   - reinartz
   - kafmann
-  - plaga
+artifacts:
+  - name: CLI Artifacts
+    location: "build/distributions"
+    pattern: "*.tar.gz"
+docker:
+  images:
+    - docker.artifactory.e-spirit.de/cxt/base:jdk-old-lts
