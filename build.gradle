@@ -205,7 +205,7 @@ allprojects {
     apply plugin: 'maven-publish'
 
     group 'com.espirit.moddev.fsdevtools'
-    version project.version
+    version rootProject.version
 
     publishing {
         if (rootProject.ext.useArtifactory) {

@@ -83,6 +83,7 @@ public class ServerConfigurator {
 	private int _xms;
 	private int _xmx;
 	private long _wrapperTimeout;
+	private boolean _enableServerRestartOnFailure;
 
 	public ServerConfigurator(@NotNull final Path serverDir) {
 		_serverDir = serverDir.toAbsolutePath();
@@ -92,6 +93,7 @@ public class ServerConfigurator {
 		_xms = 4096;
 		_xmx = 4096;
 		_wrapperTimeout = 90;
+		_enableServerRestartOnFailure = true;
 	}
 
 	/**
@@ -161,6 +163,18 @@ public class ServerConfigurator {
 	}
 
 	/**
+	 * Configures whether the server should automatically
+	 * be restarted after a crash
+	 *
+	 * @param enableServerRestartOnFailure {@code true}, if the JVM should be restarted after a crash,
+	 * {@code false} otherwise
+	 * @see #execute()
+	 */
+	public void setEnableServerRestartOnFailure(final boolean enableServerRestartOnFailure) {
+		_enableServerRestartOnFailure = enableServerRestartOnFailure;
+	}
+
+	/**
 	 * Configures the server in the specified target directory.
 	 *
 	 * @throws IOException if an I/O error occurs
@@ -173,7 +187,7 @@ public class ServerConfigurator {
 		updateServerConf(_serverDir, _serverConf);
 		updateLoggingConf(_serverDir, serverJar, _loggingConf);
 		updateJettyConf(_serverDir);
-		updateWrapperConfFiles(_serverDir, _xms, _xmx, _wrapperTimeout, _additionalVMArgs);
+		updateWrapperConfFiles(_serverDir, _xms, _xmx, _wrapperTimeout, _enableServerRestartOnFailure, _additionalVMArgs);
 		copyLicenseFile(_serverDir, _licenseFile);
 		// final message
 		LOGGER.info("Server in '" + _serverDir.toAbsolutePath() + "' successfully configured.");
@@ -275,7 +289,7 @@ public class ServerConfigurator {
 	}
 
 	@VisibleForTesting
-	static void updateWrapperConfFiles(@NotNull final Path serverDir, final int xms, final int xmx, final long wrapperTimeout, @NotNull final List<String> additionalVMArgs) throws IOException {
+	static void updateWrapperConfFiles(@NotNull final Path serverDir, final int xms, final int xmx, final long wrapperTimeout, final boolean enableRestart, @NotNull final List<String> additionalVMArgs) throws IOException {
 		final Path confDir = serverDir.resolve(DIR_CONF);
 		if (!confDir.toFile().exists()) {
 			throw new FileNotFoundException("Directory '" + confDir.toAbsolutePath() + "' does not exist!");
@@ -291,6 +305,7 @@ public class ServerConfigurator {
 		config.put("wrapper.java.initmemory", String.valueOf(xms));
 		config.put("wrapper.java.maxmemory", String.valueOf(xmx));
 		config.put("wrapper.startup.timeout", String.valueOf(wrapperTimeout));
+		config.put("wrapper.disable_restarts.automatic", String.valueOf(!enableRestart));
 		{
 			// fs-wrapper.conf
 			final Path wrapperConf = confDir.resolve(FILE_FS_WRAPPER_CONF);

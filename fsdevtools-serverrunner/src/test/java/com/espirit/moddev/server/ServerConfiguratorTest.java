@@ -417,7 +417,7 @@ public class ServerConfiguratorTest {
 	@Test(expected = FileNotFoundException.class)
 	public void updateWrapperConfFiles_dirDoesNotExist() throws IOException {
 		final Path workingDir = _temp.getRoot().toPath().resolve("workingDir");
-		ServerConfigurator.updateWrapperConfFiles(workingDir, 42, 1337, 50, new ArrayList<>());
+		ServerConfigurator.updateWrapperConfFiles(workingDir, 42, 1337, 50, false, new ArrayList<>());
 	}
 
 	@Test(expected = FileNotFoundException.class)
@@ -437,7 +437,7 @@ public class ServerConfiguratorTest {
 		assertTrue("file should exist", isolatedConf.toFile().exists());
 
 		// test
-		ServerConfigurator.updateWrapperConfFiles(fs5Dir, 42, 1337, 50, new ArrayList<>());
+		ServerConfigurator.updateWrapperConfFiles(fs5Dir, 42, 1337, 50, false, new ArrayList<>());
 	}
 
 	@Test(expected = FileNotFoundException.class)
@@ -457,7 +457,7 @@ public class ServerConfiguratorTest {
 		assertTrue("cannot delete file", isolatedFile.delete());
 
 		// test
-		ServerConfigurator.updateWrapperConfFiles(fs5Dir, 42, 1337, 50, new ArrayList<>());
+		ServerConfigurator.updateWrapperConfFiles(fs5Dir, 42, 1337, 50, false, new ArrayList<>());
 	}
 
 	@Test
@@ -478,7 +478,7 @@ public class ServerConfiguratorTest {
 		final ArrayList<String> additionalVMArgs = new ArrayList<>();
 		additionalVMArgs.add("myFirstExtraVMArg");
 		additionalVMArgs.add("mySecondExtraVMArg");
-		ServerConfigurator.updateWrapperConfFiles(fs5Dir, 42, 1337, 50, additionalVMArgs);
+		ServerConfigurator.updateWrapperConfFiles(fs5Dir, 42, 1337, 50, false, additionalVMArgs);
 
 		// verify
 		{
@@ -487,6 +487,7 @@ public class ServerConfiguratorTest {
 			assertTrue("content mismatch", content.contains("wrapper.java.initmemory=42"));
 			assertTrue("content mismatch", content.contains("wrapper.java.maxmemory=1337"));
 			assertTrue("content mismatch", content.contains("wrapper.startup.timeout=50"));
+			assertTrue("content mismatch", content.contains("wrapper.disable_restarts.automatic=true"));
 			assertTrue("content mismatch", content.contains("wrapper.java.additional.79=anArgument"));
 			assertTrue("content mismatch", content.contains("wrapper.java.additional.80=myFirstExtraVMArg"));
 			assertTrue("content mismatch", content.contains("wrapper.java.additional.81=mySecondExtraVMArg"));
