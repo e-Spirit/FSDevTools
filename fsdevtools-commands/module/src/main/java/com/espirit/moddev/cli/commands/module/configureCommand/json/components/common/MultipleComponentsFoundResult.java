@@ -47,7 +47,7 @@ public class MultipleComponentsFoundResult implements ExecutionErrorResult<Illeg
 		_componentNames = components
 				.stream()
 				.map(ComponentDescriptor::getName)
-				.collect(Collectors.joining(", ", "[", "]"));
+				.collect(Collectors.joining(", ", "[ ", " ]"));
 	}
 
 	@NotNull

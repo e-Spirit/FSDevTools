@@ -63,7 +63,7 @@ public final class GroupUtils {
                 result.add(classInfo.loadClass());
             }
         }
-        LOGGER.debug("Found " + result.size() + " command groups. " + result.stream().map(Class::getSimpleName).collect(Collectors.joining(",")));
+        LOGGER.debug("Found " + result.size() + " command groups. " + result.stream().map(Class::getSimpleName).collect(Collectors.joining(",", "[ ", " ]")));
         return result;
     }
 

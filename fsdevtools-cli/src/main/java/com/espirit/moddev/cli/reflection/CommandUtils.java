@@ -80,7 +80,7 @@ public final class CommandUtils {
                 }
             }
         }
-        LOGGER.debug("Found " + matchingClasses.size() + " commands. " + matchingClasses.stream().map(Class::getSimpleName).collect(Collectors.joining(",")));
+        LOGGER.debug("Found " + matchingClasses.size() + " commands. " + matchingClasses.stream().map(Class::getSimpleName).collect(Collectors.joining(",", "[ ", " ]")));
         return matchingClasses;
     }
 }

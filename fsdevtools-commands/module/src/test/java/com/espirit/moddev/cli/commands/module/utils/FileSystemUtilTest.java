@@ -173,7 +173,7 @@ public class FileSystemUtilTest {
 			final ExecutionResult result = FileSystemUtil.uploadFiles(Lists.newArrayList(emptyFolder.getAbsolutePath()), _fileSystem);
 			assertThat(result).isInstanceOf(ExecutionResults.class);
 			final ExecutionResults results = (ExecutionResults) result;
-			assertThat(results.isEmpty()).describedAs("[ " + results.stream().map(Object::toString).collect(Collectors.joining(", ")) + " ]").isTrue();
+			assertThat(results.isEmpty()).describedAs(results.stream().map(Object::toString).collect(Collectors.joining(", ", "[ ", " ]"))).isTrue();
 			verifyDirDoesNotExist(_fileSystem, "emptyDir");
 		} finally {
 			temporaryFolder.delete();

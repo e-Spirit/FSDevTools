@@ -28,13 +28,13 @@ import com.espirit.moddev.cli.api.result.ExecutionResults;
 import com.espirit.moddev.shared.annotation.VisibleForTesting;
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 import de.espirit.firstspirit.access.Connection;
-import de.espirit.firstspirit.agency.GlobalWebAppId;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
 import de.espirit.firstspirit.agency.WebAppId;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,8 +54,8 @@ public class WebAppUtil {
 	/**
 	 * Deploys the given {@link WebAppId web apps} and returns the {@link ExecutionResults results}.
 	 *
-	 * @param connection                   the {@link Connection} to use
-	 * @param webAppsToDeploy              the {@link WebAppId web apps} that should be deployed
+	 * @param connection      the {@link Connection} to use
+	 * @param webAppsToDeploy the {@link WebAppId web apps} that should be deployed
 	 * @return the {@link ExecutionResults results} for the deployment
 	 */
 	@NotNull
@@ -71,12 +71,15 @@ public class WebAppUtil {
 
 		// finally deploy
 		final ModuleAdminAgent moduleAdminAgent = connection.getBroker().requireSpecialist(ModuleAdminAgent.TYPE);
-		LOGGER.info("Deploying web apps [ {} ]...", distinctWebApps.stream().map(WebAppIdentifier::getName).collect(Collectors.joining(", ")));
+		LOGGER.info("Deploying web apps {}...", distinctWebApps.stream().map(WebAppIdentifier::getName).collect(Collectors.joining(", ", "[ ", " ]")));
+		final List<WebAppId> deployedWebApps = new ArrayList<>();
+		final List<WebAppId> failedWebApps = new ArrayList<>();
 		for (final WebAppId webAppId : distinctWebApps) {
 			// check for fs5root web app if the connection mode != SOCKET
 			if (isRootWebAppAndNotInSocketMode(connection, webAppId)) {
 				LOGGER.error(SOCKET_FS_5_ROOT_ERROR_MESSAGE);
-				results.add(new RootWebAppDeployNotAllowedResult());
+				results.add(new RootWebAppDeployNotAllowedResult(webAppId));
+				failedWebApps.add(webAppId);
 				continue;
 			}
 
@@ -85,12 +88,26 @@ public class WebAppUtil {
 			if (moduleAdminAgent.deployWebApp(webAppId)) {
 				LOGGER.info("Successfully deployed web app '{}'.", WebAppIdentifier.getName(webAppId));
 				results.add(new WebAppDeployedResult(webAppId));
+				deployedWebApps.add(webAppId);
 			} else {
 				LOGGER.error("Error deploying web app '{}'!", WebAppIdentifier.getName(webAppId));
 				results.add(new WebAppDeployFailedResult(webAppId));
+				failedWebApps.add(webAppId);
 			}
 		}
-		LOGGER.info("Web apps [ {} ] successfully deployed.", distinctWebApps.stream().map(WebAppIdentifier::getName).collect(Collectors.joining(", ")));
+		// logging
+		final String deployedWebAppNames = deployedWebApps.stream().map(WebAppIdentifier::getName).collect(Collectors.joining(", ", "[ ", " ]"));
+		final String failedWebAppNames = failedWebApps.stream().map(WebAppIdentifier::getName).collect(Collectors.joining(", ", "[ ", " ]"));
+		if (!deployedWebApps.isEmpty() && failedWebApps.isEmpty()) {
+			// deployed web apps only (no errors)
+			LOGGER.info("Successfully deployed webapps: {}.", deployedWebAppNames);
+		} else if (deployedWebApps.isEmpty() && !failedWebApps.isEmpty()) {
+			// failed web apps only (no successful deployment)
+			LOGGER.warn("Error deploying web apps: {}.", failedWebAppNames);
+		} else {
+			// deployed & failed web apps
+			LOGGER.warn("Finished webapp deployment with errors. Successful deployments = {}, failed deployments = {}.", deployedWebAppNames, failedWebAppNames);
+		}
 		return results;
 	}
 
@@ -102,19 +119,34 @@ public class WebAppUtil {
 		return WebAppIdentifier.isFs5RootWebApp(webAppId);
 	}
 
-	@VisibleForTesting
-	static class RootWebAppDeployNotAllowedResult implements ExecutionErrorResult<IllegalStateException> {
+	public static class AbstractWebAppDeployFailedResult implements ExecutionErrorResult<IllegalStateException> {
 
+		private final WebAppId _webAppId;
 		private final IllegalStateException _exception;
 
-		public RootWebAppDeployNotAllowedResult() {
+		public AbstractWebAppDeployFailedResult(@NotNull final WebAppId webAppId) {
+			_webAppId = webAppId;
 			_exception = new IllegalStateException(toString());
 		}
 
 		@NotNull
 		@Override
-		public IllegalStateException getException() {
+		public final IllegalStateException getException() {
 			return _exception;
+		}
+
+		@NotNull
+		public final WebAppId getWebAppId() {
+			return _webAppId;
+		}
+
+	}
+
+	@VisibleForTesting
+	static class RootWebAppDeployNotAllowedResult extends AbstractWebAppDeployFailedResult {
+
+		public RootWebAppDeployNotAllowedResult(@NotNull final WebAppId rootWebAppId) {
+			super(rootWebAppId);
 		}
 
 		@Override
@@ -144,28 +176,18 @@ public class WebAppUtil {
 	}
 
 	@VisibleForTesting
-	static class WebAppDeployFailedResult implements ExecutionErrorResult<IllegalStateException> {
+	static class WebAppDeployFailedResult extends AbstractWebAppDeployFailedResult {
 
 		@VisibleForTesting
 		static final String MESSAGE = "Error deploying web app '%s'!";
 
-		private final WebAppId _webAppId;
-		private final IllegalStateException _exception;
-
 		public WebAppDeployFailedResult(@NotNull final WebAppId webAppId) {
-			_webAppId = webAppId;
-			_exception = new IllegalStateException(toString());
-		}
-
-		@NotNull
-		@Override
-		public IllegalStateException getException() {
-			return _exception;
+			super(webAppId);
 		}
 
 		@Override
 		public String toString() {
-			return String.format(MESSAGE, WebAppIdentifier.getName(_webAppId));
+			return String.format(MESSAGE, WebAppIdentifier.getName(getWebAppId()));
 		}
 
 	}

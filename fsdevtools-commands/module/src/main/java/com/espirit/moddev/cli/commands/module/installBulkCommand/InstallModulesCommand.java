@@ -227,7 +227,11 @@ public class InstallModulesCommand extends SimpleCommand<InstallModulesResult> {
 			}
 			final ExecutionResults result = WebAppUtil.deployWebApps(connection, updatedWebApps);
 			if (result.hasError()) {
-				throw new IllegalStateException("One or more web apps could not be deployed. Please see the server.log for details.");
+				final String failedWebAppNames = result.stream()
+						.filter(executionResult -> executionResult instanceof WebAppUtil.AbstractWebAppDeployFailedResult)
+						.map(executionResult -> WebAppIdentifier.getName(((WebAppUtil.AbstractWebAppDeployFailedResult) executionResult).getWebAppId()))
+						.collect(Collectors.joining(", ","[ ", " ]"));
+				throw new IllegalStateException("Error deploying the following web apps: " + failedWebAppNames + " . Please see the server.log for more details.");
 			}
 		}
 		return new InstallModulesResult(results);

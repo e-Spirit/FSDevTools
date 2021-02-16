@@ -269,7 +269,7 @@ public class ConfigureModulesCommand extends SimpleCommand<ConfigureModulesComma
 			_moduleNames = modules
 					.stream()
 					.map(AbstractDescriptor::getModuleName)
-					.collect(Collectors.joining(", ", "[", "]"));
+					.collect(Collectors.joining(", ", "[ ", " ]"));
 		}
 
 		@NotNull
