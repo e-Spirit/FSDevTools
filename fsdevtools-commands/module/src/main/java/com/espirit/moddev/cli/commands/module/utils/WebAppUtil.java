@@ -29,6 +29,7 @@ import com.espirit.moddev.shared.annotation.VisibleForTesting;
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
+import de.espirit.firstspirit.agency.ProjectWebAppId;
 import de.espirit.firstspirit.agency.WebAppId;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -59,15 +60,18 @@ public class WebAppUtil {
 	 * @return the {@link ExecutionResults results} for the deployment
 	 */
 	@NotNull
-	public static ExecutionResults deployWebApps(@NotNull final Connection connection, @NotNull Collection<WebAppId> webAppsToDeploy) {
+	public static ExecutionResults deployWebApps(@NotNull final Connection connection, @NotNull final Collection<WebAppId> webAppsToDeploy) {
 		final ExecutionResults results = new ExecutionResults();
-		if (webAppsToDeploy.isEmpty()) {
+
+		// DEVEX-467: filter inactive projects and project local webapps without an active webserver
+		final Collection<WebAppId> filteredWebAppsToDeploy = filterWebApps(webAppsToDeploy);
+		if (filteredWebAppsToDeploy.isEmpty()) {
 			LOGGER.info("No web apps to deploy.");
 			return results;
 		}
 
 		// distinct web apps (using WebAppId#equals, which is correctly implemented)
-		final List<WebAppId> distinctWebApps = webAppsToDeploy.stream().distinct().collect(Collectors.toList());
+		final List<WebAppId> distinctWebApps = filteredWebAppsToDeploy.stream().distinct().collect(Collectors.toList());
 
 		// finally deploy
 		final ModuleAdminAgent moduleAdminAgent = connection.getBroker().requireSpecialist(ModuleAdminAgent.TYPE);
@@ -109,6 +113,26 @@ public class WebAppUtil {
 			LOGGER.warn("Finished webapp deployment with errors. Successful deployments = {}, failed deployments = {}.", deployedWebAppNames, failedWebAppNames);
 		}
 		return results;
+	}
+
+	@VisibleForTesting
+	@NotNull
+	static Collection<WebAppId> filterWebApps(@NotNull final Collection<WebAppId> webAppsToDeploy) {
+		final ArrayList<WebAppId> result = new ArrayList<>();
+		for (final WebAppId webAppId : webAppsToDeploy) {
+			if (webAppId instanceof ProjectWebAppId) {
+				final ProjectWebAppId projectWebAppId = (ProjectWebAppId) webAppId;
+				if (!projectWebAppId.getProject().isActive()) {
+					LOGGER.warn("Filtered project local web app for project '{}', project is inactive.", projectWebAppId.getProject().getName());
+					continue;
+				} else if (projectWebAppId.getProject().getActiveWebServer(projectWebAppId.getWebScope().name()) == null) {
+					LOGGER.warn("Filtered project local web app for project '{}', project has no active webserver set.", projectWebAppId.getProject().getName());
+					continue;
+				}
+			}
+			result.add(webAppId);
+		}
+		return result;
 	}
 
 	@VisibleForTesting

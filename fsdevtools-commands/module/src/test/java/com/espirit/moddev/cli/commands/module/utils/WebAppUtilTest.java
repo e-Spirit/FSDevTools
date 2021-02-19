@@ -27,17 +27,23 @@ import com.espirit.moddev.cli.api.result.ExecutionResults;
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 import com.google.common.collect.Lists;
 import de.espirit.firstspirit.access.Connection;
+import de.espirit.firstspirit.access.project.Project;
+import de.espirit.firstspirit.agency.GlobalWebAppId;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
+import de.espirit.firstspirit.agency.ProjectWebAppId;
 import de.espirit.firstspirit.agency.SpecialistsBroker;
 import de.espirit.firstspirit.agency.WebAppId;
+import de.espirit.firstspirit.module.WebEnvironment;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collection;
 import java.util.Collections;
 
 import static de.espirit.firstspirit.access.ConnectionManager.HTTP_MODE;
 import static de.espirit.firstspirit.access.ConnectionManager.SOCKET_MODE;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -83,6 +89,55 @@ public class WebAppUtilTest {
 	@Test
 	public void deployWebApps_emptyList() {
 		assertThat(WebAppUtil.deployWebApps(_connection, Collections.emptyList()).isEmpty()).isTrue();
+	}
+
+	@Test
+	public void filterWebApps_activeProject_with_webserver() {
+		// setup
+		final Project project = mock(Project.class);
+		when(project.isActive()).thenReturn(true);
+		when(project.getActiveWebServer(anyString())).thenReturn("testWebServer");
+		final ProjectWebAppId projectWebApp = mock(ProjectWebAppId.class);
+		when(projectWebApp.getWebScope()).thenReturn(WebEnvironment.WebScope.WEBEDIT);
+		when(projectWebApp.getProject()).thenReturn(project);
+		final GlobalWebAppId globalWebApp = mock(GlobalWebAppId.class);
+		// test
+		final Collection<WebAppId> webAppIds = WebAppUtil.filterWebApps(Lists.newArrayList(projectWebApp, globalWebApp));
+		// verify
+		assertThat(webAppIds).hasSize(2);
+		assertThat(webAppIds).containsExactly(projectWebApp, globalWebApp);
+	}
+
+	@Test
+	public void filterWebApps_inactiveProject() {
+		// setup
+		final Project project = mock(Project.class);
+		when(project.isActive()).thenReturn(false);
+		final ProjectWebAppId projectWebApp = mock(ProjectWebAppId.class);
+		when(projectWebApp.getProject()).thenReturn(project);
+		final GlobalWebAppId globalWebApp = mock(GlobalWebAppId.class);
+		// test
+		final Collection<WebAppId> webAppIds = WebAppUtil.filterWebApps(Lists.newArrayList(projectWebApp, globalWebApp));
+		// verify
+		assertThat(webAppIds).hasSize(1);
+		assertThat(webAppIds).containsExactly(globalWebApp);
+	}
+
+	@Test
+	public void filterWebApps_noActiveWebServer() {
+		// setup
+		final Project project = mock(Project.class);
+		when(project.isActive()).thenReturn(true);
+		when(project.getActiveWebServer(anyString())).thenReturn(null);
+		final ProjectWebAppId projectWebApp = mock(ProjectWebAppId.class);
+		when(projectWebApp.getWebScope()).thenReturn(WebEnvironment.WebScope.WEBEDIT);
+		when(projectWebApp.getProject()).thenReturn(project);
+		final GlobalWebAppId globalWebApp = mock(GlobalWebAppId.class);
+		// test
+		final Collection<WebAppId> webAppIds = WebAppUtil.filterWebApps(Lists.newArrayList(projectWebApp, globalWebApp));
+		// verify
+		assertThat(webAppIds).hasSize(1);
+		assertThat(webAppIds).containsExactly(globalWebApp);
 	}
 
 	@Test
