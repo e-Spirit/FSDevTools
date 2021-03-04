@@ -60,6 +60,8 @@ public class ServerInstaller {
 			Paths.get(DIR_BIN, FsUtil.FILE_WRAPPER_EXECUTABLE + ".cmd"),
 			Paths.get(DIR_BIN, FsUtil.FILE_FS_SERVER_EXECUTABLE),
 			Paths.get(DIR_BIN, FsUtil.FILE_FS_SERVER_EXECUTABLE + ".bat"),
+			Paths.get(DIR_BIN, FsUtil.FILE_FS_SERVER_EXECUTABLE + ".shconf"),
+			Paths.get(DIR_BIN, FsUtil.FILE_FS_SERVER_EXECUTABLE + "-custom.shconf"),
 			Paths.get(DIR_BIN, "wrapper.exe"),
 			Paths.get(DIR_BIN, "wrapper-linux-x86-64"),
 			Paths.get(DIR_BIN, "wrapper-macosx-universal-64"),
