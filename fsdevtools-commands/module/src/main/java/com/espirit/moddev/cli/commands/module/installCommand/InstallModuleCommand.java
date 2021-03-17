@@ -108,7 +108,8 @@ public class InstallModuleCommand extends SimpleCommand<InstallModuleResult> {
 		_fsm = fsm;
 	}
 
-	private InstallModuleResult installModule(Connection connection) {
+	@NotNull
+	private InstallModuleResult installModule(Connection connection) throws IOException {
 		String projectName = retrieveProjectNameOrFallback();
 
 		final ModuleInstallationConfiguration configuration = new ModuleInstallationConfiguration();
@@ -122,10 +123,8 @@ public class InstallModuleCommand extends SimpleCommand<InstallModuleResult> {
 		configuration.verify(connection);
 		final ModuleInstallationParameters parameters = ModuleInstallationParameters.forConfiguration(configuration);
 
-		Optional<ModuleAdminAgent.ModuleResult> result = new ModuleInstaller(connection).install(parameters, parameters.getDeploy());
-		return result
-				.map(moduleResult -> new InstallModuleResult(moduleResult.getDescriptor().getModuleName()))
-				.orElseGet(() -> new InstallModuleResult(_fsm, new IllegalStateException("Cannot get installation result for module " + _fsm)));
+		final ModuleAdminAgent.ModuleResult result = new ModuleInstaller(connection).install(parameters, parameters.getDeploy());
+		return new InstallModuleResult(result.getDescriptor().getModuleName());
 	}
 
 	private List<String> splitAndTrim(final String text) {

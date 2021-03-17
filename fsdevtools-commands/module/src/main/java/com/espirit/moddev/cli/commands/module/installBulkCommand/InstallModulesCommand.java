@@ -34,6 +34,7 @@ import com.espirit.moddev.cli.commands.module.utils.ModuleInstaller;
 import com.espirit.moddev.cli.commands.module.utils.WebAppUtil;
 import com.espirit.moddev.cli.results.SimpleResult;
 import com.espirit.moddev.shared.exception.MultiException;
+import com.espirit.moddev.shared.exception.WrappedException;
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
@@ -46,6 +47,7 @@ import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
 import de.espirit.firstspirit.agency.WebAppId;
+import de.espirit.firstspirit.server.module.ModuleException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +60,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.espirit.moddev.shared.webapp.WebAppIdentifier.isFs5RootWebApp;
@@ -199,7 +202,7 @@ public class InstallModulesCommand extends SimpleCommand<InstallModulesResult> {
 					}
 				}
 				totalInstallResult = installResult.map(moduleResult -> new InstallModuleResult(moduleResult.getDescriptor().getModuleName())).orElseGet(() -> {
-					final IllegalStateException exception = new IllegalStateException("Cannot get installation result for module " + singleParameter.getFsm());
+					final ModuleException exception = new ModuleException("Cannot get installation result for module " + singleParameter.getFsm());
 					return new InstallModuleResult(singleParameter.getFsm().toString(), exception);
 				});
 			} catch (final Exception installException) {
@@ -211,7 +214,11 @@ public class InstallModulesCommand extends SimpleCommand<InstallModulesResult> {
 		// return if we have an error
 		final boolean hasError = results.stream().anyMatch(SimpleResult::isError);
 		if (hasError) {
-			final List<Exception> exceptions = results.stream().filter(SimpleResult::isError).map(SimpleResult::getError).collect(Collectors.toList());
+			final List<Exception> exceptions = results
+					.stream()
+					.filter(SimpleResult::isError)
+					.map((Function<InstallModuleResult, Exception>) installModuleResult -> new WrappedException(String.format("'%s' -> %s", installModuleResult.getModuleName(), installModuleResult.getError().getMessage()), installModuleResult.getError()))
+					.collect(Collectors.toList());
 			return new InstallModulesResult(results, new MultiException("Error installing modules!", exceptions));
 		}
 
@@ -261,17 +268,14 @@ public class InstallModulesCommand extends SimpleCommand<InstallModulesResult> {
 	 * @param connection a connected FirstSpirit connection that is used to install the module
 	 * @param parameters a parameter bean that defines how the module should be installed
 	 * @return the optional {@link ModuleAdminAgent.ModuleResult}, which is empty on failure
+	 * @throws IOException may be thrown server side while installing the module
 	 */
-	public SingleModuleInstallResult installModule(Connection connection, ModuleInstallationParameters parameters) {
+	@NotNull
+	public SingleModuleInstallResult installModule(Connection connection, ModuleInstallationParameters parameters) throws IOException {
 		final ModuleInstaller moduleInstaller = new ModuleInstaller(connection);
-		final Optional<ModuleAdminAgent.ModuleResult> moduleResultOption = moduleInstaller.install(parameters, false);
-		if (moduleResultOption.isPresent()) {
-			final ModuleAdminAgent.ModuleResult moduleResult = moduleResultOption.get();
-			final ArrayList<WebAppId> updatedWebApps = new ArrayList<>(moduleResult.getUpdatedWebApps());
-			return new SingleModuleInstallResult(moduleResultOption.get(), updatedWebApps);
-		} else {
-			throw new IllegalStateException("Error installing fsm '" + parameters.getFsm() + "'!");
-		}
+		final ModuleAdminAgent.ModuleResult moduleInstallResult = moduleInstaller.install(parameters, false);
+		final ArrayList<WebAppId> updatedWebApps = new ArrayList<>(moduleInstallResult.getUpdatedWebApps());
+		return new SingleModuleInstallResult(moduleInstallResult, updatedWebApps);
 	}
 
 	private static class SingleModuleInstallResult {
