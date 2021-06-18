@@ -2,7 +2,7 @@
 
 FSDevTools is a project to optimize the developer experience (DX) with FirstSpirit.
 
-### Prerequisites
+## Prerequisites
 
 In order to use FSDevTools various prerequisites must be considered.
 They are described in detail inside the zip or tar.gz file of the binary distribution.
@@ -10,7 +10,7 @@ The following list is just a short overview.
 
 Since version **2.6.1** `FSDevTools` requires at least FirstSpirit **2020-08**.
 
-Furthermore a correct `JAVA_HOME` environment variable, which points to a **Java 8** installation, must be set.
+Furthermore a correct `JAVA_HOME` environment variable, which points to a **Java 8+** installation, must be set.
 
 In first instance the following configurations are loaded from your system environment with the corresponding key.
 
@@ -28,12 +28,16 @@ The default values of the other properties are used if neither an environment va
 
 It is possible to override all default values from the environment by passing actual command line options for them.
 
-### Usage
+## Additional Documentation
+
+Further information about how to use the FSDevTools in combination with Git can be found in the [FirstSpirit online documentation](https://docs.e-spirit.com/odfs/edocs/sync/introduction/index.html).
+
+## Usage
 Most of the information you need in order to use the command line tool can be found via the integrated help command `fs-cli help`.
 
 Additional information and examples are provided via the [command line interface usage page](documentation/CLI_USAGE.md).
 
-### Logging
+## Logging
 
 By default no log file will be written.
 Instead every command provides a more or less detailed, printed result in the command line.
@@ -62,7 +66,7 @@ Information about how to compile and extend this project is described in the [de
 
 ## Legal Notices
 
-FSDevTools is a product of [e-Spirit AG](http://www.e-spirit.com), Dortmund, Germany.
+FSDevTools is a product of [e-Spirit AG](https://www.e-spirit.com), Dortmund, Germany.
 
 Only a license agreed upon with e-Spirit AG is valid with respect to the user for using FSDevTools.
 
