@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2020 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit AG
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class LicenseTest {
 	private static final String[] DIRS_TO_IGNORE = new String[]{".idea", ".git", ".gradle", "build", "gradle", "out"};
 	private static final String[] FILES_TO_IGNORE = new String[]{"/gradle.properties"};
 
-	private static final String LICENSE_YEAR = "2020";
+	private static final String LICENSE_YEAR = "2021";
 
 	@Test
 	public void testLicenses() throws IOException {

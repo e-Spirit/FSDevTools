@@ -2,13 +2,26 @@
 
 FSDevTools is a project to optimize the developer experience (DX) with FirstSpirit.
 
+## Versioning scheme
+
+Since version **3.0.0**, the `FSDevTools` are using [semantic versioning 2.0.0](https://semver.org/#semantic-versioning-200) (MAJOR.MINOR.PATCH) as the version pattern.
+By using this scheme, users can now see if the `FSDevTools` has any breaking changes compared to the latest release, just by looking at the version number.
+
+Changes in the different parts of the version will have different meanings
+
+- MAJOR: we made some incompatible changes. The major version will also if the minimal required FirstSpirit version is changed. Please be careful if you update and take a close look at the [RELEASE NOTES](RELEASENOTES.md). 
+- MINOR: we added functionality in a backwards compatible manner
+- PATCH: we made backwards compatible bug fixes
+
+For the list of changes in a version, please take a look at the [RELEASE NOTES](RELEASENOTES.md).
+
 ## Prerequisites
 
 In order to use FSDevTools various prerequisites must be considered.
 They are described in detail inside the zip or tar.gz file of the binary distribution.
 The following list is just a short overview.
 
-Since version **2.6.1** `FSDevTools` requires at least FirstSpirit **2020-08**.
+Since version **3.0.0** `FSDevTools` requires at least FirstSpirit **2021-07**.
 
 Furthermore a correct `JAVA_HOME` environment variable, which points to a **Java 8+** installation, must be set.
 

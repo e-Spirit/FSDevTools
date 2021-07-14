@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2020 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit AG
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,9 +37,9 @@ import de.espirit.firstspirit.transport.PropertiesTransportOptions;
  */
 public class ProjectPropertiesParser implements Parser<ProjectPropertiesIdentifier> {
     protected static final Logger LOGGER = LoggerFactory.getLogger(ProjectPropertiesParser.class);
-    
+
     private static final Pattern DELIMITER = Pattern.compile("\\s*:\\s*");
-    
+
     public static final String CUSTOM_PREFIX_PROJECT_PROPERTIES = "projectproperty";
 
     /**
@@ -57,7 +57,7 @@ public class ProjectPropertiesParser implements Parser<ProjectPropertiesIdentifi
         }
 
         EnumSet<PropertiesTransportOptions.ProjectPropertyType> tempEnum = EnumSet.noneOf(PropertiesTransportOptions.ProjectPropertyType.class);
-        
+
         final List<ProjectPropertiesIdentifier> list = new ArrayList<>(input.size());
         for (final String identifier : input) {
             try(Scanner uidScanner = new Scanner(identifier)) {
@@ -103,5 +103,5 @@ public class ProjectPropertiesParser implements Parser<ProjectPropertiesIdentifi
         final String[] splitted = input.split(DELIMITER.pattern());
         return splitted.length == 2 && splitted[0].toLowerCase(Locale.UK).trim().equals(CUSTOM_PREFIX_PROJECT_PROPERTIES);
     }
-    
+
 }

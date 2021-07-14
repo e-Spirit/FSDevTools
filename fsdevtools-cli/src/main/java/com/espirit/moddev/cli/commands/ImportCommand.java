@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2020 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit AG
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,10 @@ package com.espirit.moddev.cli.commands;
 
 import com.espirit.moddev.cli.CliConstants;
 import com.espirit.moddev.cli.api.configuration.ImportConfig;
+import com.espirit.moddev.cli.commands.extsync.PermissionsMode;
+import com.espirit.moddev.cli.common.StringPropertiesMap;
 import com.espirit.moddev.cli.results.ImportResult;
 import com.espirit.moddev.cli.schema.SchemaUidToNameBasedLayerMapper;
-import com.espirit.moddev.cli.common.StringPropertiesMap;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;
@@ -34,6 +35,7 @@ import com.github.rvesse.airline.annotations.help.Examples;
 import de.espirit.firstspirit.agency.OperationAgent;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ImportOperation;
+import de.espirit.firstspirit.transport.ImportPermissionTransportOptions;
 import de.espirit.firstspirit.transport.LayerMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +76,14 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
     @Option(name = {"--import-schedule-entry-active-state"}, description = "Import the active state for schedule entries during import")
     boolean importScheduleEntryActiveState;
 
+    @Option(name = "--permissionMode",
+            description = "Set the permission mode for the import (default = NONE). Possible values are [NONE, ALL, STORE_ELEMENT, WORKFLOW]")
+    private PermissionsMode _permissionMode = PermissionsMode.ALL;
+
+    @Option(name = "--updateExistingPermissions",
+            description = "Overwrite permissions for already existing elements during import (default = false). Setting this will have no effect if the permission mode is set to NONE.")
+    private boolean _updateExistingPermissions;
+
     /** The layer mapping. */
     @Option(name = {"-lm", "--layerMapping"},
             description = "Defines how unknown layers should be mapped in the target; comma-separated key-value pairs by : or =; key is source schema UID; value is target layer name; see EXAMPLES for more information",
@@ -107,6 +117,9 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
         try {
             final OperationAgent operationAgent = getContext().requireSpecialist(OperationAgent.TYPE);
             final ImportOperation importOperation = operationAgent.getOperation(ImportOperation.TYPE);
+            final ImportPermissionTransportOptions permissionTransportOptions = importOperation.configurePermissionTransport();
+            permissionTransportOptions.setPermissionTransport(_permissionMode.getFirstSpiritPermissionMode());
+            permissionTransportOptions.setUpdateExistingPermissions(_updateExistingPermissions);
             importOperation.setIgnoreEntities(dontCreateEntities);
             importOperation.setRevisionComment(getImportComment());
             importOperation.setLayerMapper(configureLayerMapper());
