@@ -1,5 +1,9 @@
 # Release notes
 
+## Version 3.0.1
+
+* command "import": clarified error messages if project exists and is deactivated or maximum projects on server are exceeded
+
 ## Version 3.0.0
 
 * switched to [semantic versioning 2.0.0](https://semver.org/#semantic-versioning-200)

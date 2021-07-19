@@ -64,7 +64,7 @@ public enum CliError {
      */
     UNEXPECTED(CliErrorSevereness.FATAL);
 
-    private static ResourceBundle bundle = ResourceBundle.getBundle(CliError.class.getSimpleName());
+    private static final ResourceBundle RESOURCES = ResourceBundle.getBundle(CliError.class.getSimpleName());
 
     private final CliErrorSevereness severeness;
 
@@ -79,13 +79,13 @@ public enum CliError {
      * @return the error message
      */
     public String getMessage(Config config) {
-        final String bundleString = bundle.getString(name());
+        final String bundleString = RESOURCES.getString(name());
         if (config == null) {
-            return toString() + ": " + bundleString;
+            return this + ": " + bundleString;
         }
-        final Object[] args = {config.getHost(), config.getPort(), config.getConnectionMode(), config.getUser(), config.getPassword()};
+        final Object[] args = {config.getHost(), config.getPort(), config.getConnectionMode(), config.getUser()};
         final String formattedMessage = MessageFormat.format(bundleString, args);
-        return toString() + ": " + formattedMessage;
+        return this + ": " + formattedMessage;
     }
 
     /**
