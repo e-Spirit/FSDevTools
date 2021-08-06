@@ -28,14 +28,8 @@ plugins {
 
 sourceSets {
     integrationTest {
-        java {
-            compileClasspath += main.output
-            runtimeClasspath += main.output
-            srcDir file('src/integrationTest/java')
-        }
-        resources {
-            srcDir file('src/integrationTest/resources')
-        }
+        compileClasspath += main.output
+        runtimeClasspath += main.output
     }
 }
 
@@ -47,8 +41,8 @@ idea {
 }
 
 configurations {
-    integrationTestCompile.extendsFrom testCompile
-    integrationTestRuntime.extendsFrom testRuntime
+    integrationTestImplementation.extendsFrom testImplementation
+    integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
 }
 
 processResources {
@@ -96,20 +90,20 @@ if (rootProject.ext.useArtifactory) {
 }
 
 dependencies {
-    compile project(":fsdevtools-cli-api")
-    compile project(":fsdevtools-common")
-    compile project(":fsdevtools-commands")
-    compile project(":fsdevtools-serverrunner")
-    compile project(":fsdevtools-sharedutils")
+    implementation project(":fsdevtools-cli-api")
+    implementation project(":fsdevtools-common")
+    implementation project(":fsdevtools-commands")
+    implementation project(":fsdevtools-serverrunner")
+    implementation project(":fsdevtools-sharedutils")
 
-    compile "io.github.classgraph:classgraph:${classGraphVersion}"
+    implementation "io.github.classgraph:classgraph:${classGraphVersion}"
 
     // logging
-    compile "log4j:log4j:${log4jVersion}"
-    compile "org.slf4j:slf4j-log4j12:${slf4japiVersion}"
-    compile "org.slf4j:jcl-over-slf4j:${slf4japiVersion}"
-    compile "org.slf4j:jul-to-slf4j:${slf4japiVersion}"
+    implementation "log4j:log4j:${log4jVersion}"
+    implementation "org.slf4j:slf4j-log4j12:${slf4japiVersion}"
+    implementation "org.slf4j:jcl-over-slf4j:${slf4japiVersion}"
+    implementation "org.slf4j:jul-to-slf4j:${slf4japiVersion}"
 
-    testCompile 'com.github.stefanbirkner:system-rules:1.14.0'
-    testCompile project(":fsdevtools-commands:custom-command-example")
+    testImplementation 'com.github.stefanbirkner:system-rules:1.19.0'
+    testImplementation project(":fsdevtools-commands:custom-command-example")
 }

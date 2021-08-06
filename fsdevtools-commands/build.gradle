@@ -27,10 +27,10 @@ project.afterEvaluate {
 }
 
 dependencies {
-    compile project(":fsdevtools-commands:module")
-    compile project(":fsdevtools-commands:project")
-    compile project(":fsdevtools-commands:schedule")
-    compile project(":fsdevtools-commands:server")
-    compile project(":fsdevtools-commands:service")
-    compile project(":fsdevtools-commands:test")
+    api project(":fsdevtools-commands:module")
+    api project(":fsdevtools-commands:project")
+    api project(":fsdevtools-commands:schedule")
+    api project(":fsdevtools-commands:server")
+    api project(":fsdevtools-commands:service")
+    api project(":fsdevtools-commands:test")
 }

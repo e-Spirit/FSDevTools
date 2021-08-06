@@ -43,10 +43,10 @@ buildscript {
 
 plugins {
     id 'application'
-    id 'com.github.johnrengelman.shadow' version '5.1.0'
-    id 'org.ajoberstar.grgit' version '4.0.0'
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
+    id 'org.ajoberstar.grgit' version '4.1.0'
     id 'maven-publish'
-    id "com.github.breadmoirai.github-release" version "2.2.9"
+    id "com.github.breadmoirai.github-release" version "2.2.12"
     id 'net.researchgate.release' version '2.8.1'
 }
 
@@ -55,7 +55,7 @@ plugins {
 ///////////////////////////////////////////////////////
 
 wrapper {
-    gradleVersion = '5.5.1'
+    gradleVersion = '7.1.1'
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -65,7 +65,7 @@ wrapper {
 
 application {
     applicationName('fs-devtools')
-    mainClassName('com.espirit.moddev.cli.Main')
+    mainClass.set('com.espirit.moddev.cli.Main')
 }
 
 /**
@@ -100,22 +100,21 @@ ext {
     gitHash = grgit.head().id
 
     // dependency versions
-    airlineVersion = '2.7.2'
-    apacheCommonsVersion = '3.8.1'
-    assertJVersion = '3.17.2'
-    classGraphVersion = '4.8.47'
-    commonsCompressVersion = '1.19'
-    fsWrapperVersion = '3.5.26'
-    hamcrestCoreVersion = '2.1'
+    airlineVersion = '2.8.2'
+    apacheCommonsVersion = '3.12.0'
+    assertJVersion = '3.20.2'
+    classGraphVersion = '4.8.112'
+    commonsCompressVersion = '1.21'
+    hamcrestCoreVersion = '2.2'
     hamcrestJavaVersion = '2.0.0.0'
-    guavaVersion = '26.0-jre'
+    guavaVersion = '30.1.1-jre'
     jacksonDatabindVersion = '2.9.9.3'
-    junitVersion = '4.12'
+    junitVersion = '4.13.2'
     log4jVersion = '1.2.17'
-    lombokVersion = '1.18.10'
+    lombokVersion = '1.18.20'
     mockitoVersion = '2.1.0'
-    slf4japiVersion = '1.7.29'
-    slf4jLog4jVersion = '1.7.24'
+    slf4japiVersion = '1.7.31'
+    slf4jLog4jVersion = '1.7.32'
 
     // setup some variables
     firstSpiritVersion = fsRuntimeVersion
@@ -153,7 +152,7 @@ configurations {
 ///////////////////////////////////////////////////////
 
 dependencies {
-    compile project(":fsdevtools-cli")
+    implementation project(":fsdevtools-cli")
 
     // tests
     fsLicense group: 'de.espirit.firstspirit', name: 'fs-license', version: '5-SNAPSHOT', ext: 'conf'
@@ -229,7 +228,7 @@ allprojects {
 ///////////////////////////////////////////////////////
 
 subprojects {
-    apply plugin: 'java'
+    apply plugin: 'java-library'
 
     // setup java
     compileJava.options.encoding = 'UTF-8'
@@ -243,13 +242,13 @@ subprojects {
 
     dependencies {
         compileOnly group: 'de.espirit.firstspirit', name: 'fs-isolated-runtime', version: "${fsRuntimeVersion}"
-        compile "org.slf4j:slf4j-api:${slf4japiVersion}"
+        implementation "org.slf4j:slf4j-api:${slf4japiVersion}"
 
-        testCompile "junit:junit:${junitVersion}"
-        testCompile "org.hamcrest:hamcrest-core:${hamcrestCoreVersion}"
-        testCompile "org.mockito:mockito-core:${mockitoVersion}"
-        testCompile "org.assertj:assertj-core:${assertJVersion}"
-        testCompile group: 'de.espirit.firstspirit', name: 'fs-isolated-runtime', version: "$firstSpiritVersion", ext: 'jar'
+        testImplementation "junit:junit:${junitVersion}"
+        testImplementation "org.hamcrest:hamcrest-core:${hamcrestCoreVersion}"
+        testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+        testImplementation "org.assertj:assertj-core:${assertJVersion}"
+        testImplementation group: 'de.espirit.firstspirit', name: 'fs-isolated-runtime', version: "$firstSpiritVersion", ext: 'jar'
     }
 
     ///////////////////////////////////////////////////////
@@ -318,8 +317,8 @@ task cleanupIntegrationTestServer() {
 ///////////////////////////////////////////////////////
 
 shadowJar {
-    archiveName("fsdevtools-cli-" + project.version + ".jar")
-    destinationDir(file("$buildDir/shadowJAR"))
+    archiveFileName.set("fsdevtools-cli-${project.version}.jar")
+    destinationDirectory.set(file("$buildDir/shadowJAR"))
 }
 
 ///////////////////////////////////////////////////////
@@ -375,7 +374,7 @@ task assembleTarGz(type: Tar) {
     archiveVersion = project.version
     archiveExtension = "tar.gz"
     compression = Compression.GZIP
-    destinationDir(file("$buildDir/distributions"))
+    destinationDirectory.set(file("$buildDir/distributions"))
 
     // copy README.txt
     from("${project.projectDir}/archive/README.txt") {
@@ -420,7 +419,7 @@ task assembleZip(type: Zip) {
 
     archiveBaseName = "fs-cli"
     archiveVersion = project.version
-    destinationDir(file("$buildDir/distributions"))
+    destinationDirectory.set(file("$buildDir/distributions"))
 
     // copy README.txt
     from("${project.projectDir}/archive/README.txt") {
@@ -461,7 +460,7 @@ task assembleZip(type: Zip) {
 assemble.dependsOn(assembleTarGz, assembleZip)
 
 /**
- * GITHUB RELEASE MANAGEMENT
+ *  GITHUB RELEASE MANAGEMENT
  */
 
 ///////////////////////////////////////////////////////
@@ -481,19 +480,17 @@ if (project.hasProperty('github_fsdevtools_api_token')) {
 }
 
 // release is only allowed for master branch & no snapshots
-if (!BuildUtils.isSnapshotVersion(project.version)) {
-    def githubTask = project.tasks.findByName("githubRelease")
+if (!BuildUtils.isSnapshotVersion(version)) {
+    def githubTask = tasks.findByName("githubRelease")
     githubTask.dependsOn(assemble)
-    project.tasks.findByName("publish").dependsOn(githubTask)
+    tasks.findByName("publish").dependsOn(githubTask)
 } else {
     // disable githubRelease for non-master-branches/non-snapshots
-    task githubRelease(overwrite: true) {
-        group 'publishing'
-        enabled = false
-        finalizedBy {
-            // github release is not allowed for snapshots
-            logger.error("GitHub Release is only allowed on master branch!")
-        }
+    def githubTask = tasks.findByName("githubRelease")
+    githubTask.enabled = false
+    githubTask.finalizedBy {
+        // github release is not allowed for snapshots
+        logger.error("GitHub Release is only allowed on master branch!")
     }
 }
 

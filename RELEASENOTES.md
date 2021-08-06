@@ -1,5 +1,11 @@
 # Release notes
 
+## Version 3.0.2
+
+* updated Gradle to 7.1.1 (was 5.5.1)
+* updated dependent gradle plugins to latest versions
+* updated used libraries to latest versions
+
 ## Version 3.0.1
 
 * command "import": clarified error messages if project exists and is deactivated or maximum projects on server are exceeded

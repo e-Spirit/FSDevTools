@@ -21,8 +21,8 @@
  */
 
 dependencies {
-    compile project(":fsdevtools-cli-api")
-    compile project(":fsdevtools-common")
-    compile "log4j:log4j:${log4jVersion}"
+    implementation project(":fsdevtools-cli-api")
+    implementation project(":fsdevtools-common")
+    implementation "log4j:log4j:${log4jVersion}"
     testImplementation "org.slf4j:slf4j-log4j12:${slf4japiVersion}"
 }
