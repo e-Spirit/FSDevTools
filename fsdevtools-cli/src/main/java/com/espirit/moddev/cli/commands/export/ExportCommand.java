@@ -45,7 +45,6 @@ import static com.espirit.moddev.cli.api.parsing.parser.SchemaIdentifierParser.C
 @Examples(examples =
             {
                 "export -- pagetemplate:default page:homepage",
-                "export -- root:templatestore page:homepage",
                 "export -- templatestore page:homepage",
                 "export -- path:/templatestore/pagetemplates/folderName/folderToExport",
                 "export -- path:/PageStore/pageFolderUid/pageUid",
@@ -58,7 +57,6 @@ import static com.espirit.moddev.cli.api.parsing.parser.SchemaIdentifierParser.C
             },
             descriptions = {
                 "Exports a pagetemplate and a page",
-                "Exports the templatestore and a page",
                 "Exports the templatestore and a page",
                 "Exports the first occurrence of the folder named 'folderToExport' beneath folder 'folderName'",
                 "Exports the page identified by the path",

@@ -39,7 +39,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.espirit.moddev.cli.commands.schedule.Messages.EXCEPTION_PROJECT_NOT_FOUND;
 
-@Command(name = ScheduleCommandNames.LIST, groupNames = ScheduleCommandGroup.NAME, description = "Lists all schedules .")
+@Command(name = ScheduleCommandNames.LIST, groupNames = ScheduleCommandGroup.NAME, description = "Lists all schedules.")
 @Examples(
 		examples = {
 				"schedule list",

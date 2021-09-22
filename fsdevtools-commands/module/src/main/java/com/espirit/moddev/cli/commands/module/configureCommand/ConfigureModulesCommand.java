@@ -23,6 +23,7 @@
 package com.espirit.moddev.cli.commands.module.configureCommand;
 
 import com.espirit.moddev.cli.ConnectionBuilder;
+import com.espirit.moddev.cli.api.annotations.ParameterExamples;
 import com.espirit.moddev.cli.api.result.ExecutionErrorResult;
 import com.espirit.moddev.cli.api.result.ExecutionResult;
 import com.espirit.moddev.cli.api.result.ExecutionResults;
@@ -64,68 +65,68 @@ import java.util.stream.Collectors;
 @Examples(
 		examples = {
 				"module configure -mcf \"folder/configFile.json\"",
-				"simple example configFile.json:",
-				"extended/complex example configFile.json"
+				"[\n" +
+				"\t{\n" +
+				"\t\t\"moduleName\": \"myModuleName\",\n" +
+				"\t\t\"components\": {\n" +
+				"\t\t\t\"webComponents\": [\n" +
+				"\t\t\t\t{\n" +
+				"\t\t\t\t\t\"componentName\": \"myProjectWebComponentName\",\n" +
+				"\t\t\t\t\t\"webApps\": [\n" +
+				"\t\t\t\t\t\t{\n" +
+				"\t\t\t\t\t\t\t\"webAppName\": \"WEBEDIT\",\n" +
+				"\t\t\t\t\t\t}\n" +
+				"\t\t\t\t\t]\n" +
+				"\t\t\t\t}\n" +
+				"\t\t\t]\n" +
+				"\t\t}\n" +
+				"\t}\n" +
+				"]",
+				"[\n" +
+				"\t{\n" +
+				"\t\t\"moduleName\": \"myFirstModule\",\n" +
+				"\t\t\"components\": {\n" +
+				"\t\t\t\"webComponents\": [\n" +
+				"\t\t\t\t{\n" +
+				"\t\t\t\t\t\"componentName\": \"myGlobalWebComponentName\",\n" +
+				"\t\t\t\t\t\"webApps\": [\n" +
+				"\t\t\t\t\t\t{\n" +
+				"\t\t\t\t\t\t\t\"webAppName\": \"global(my_global_web_app_name)\",\n" +
+				"\t\t\t\t\t\t\t\"deploy\": false\n" +
+				"\t\t\t\t\t\t}\n" +
+				"\t\t\t\t\t]\n" +
+				"\t\t\t\t}\n" +
+				"\t\t\t],\n" +
+				"\t\t\t\"services\": [\n" +
+				"\t\t\t\t{\n" +
+				"\t\t\t\t\t\"serviceName\": \"myServiceName\",\n" +
+				"\t\t\t\t\t\"autoStart\": true\n" +
+				"\t\t\t\t}\n" +
+				"\t\t\t]\n" +
+				"\t\t}\n" +
+				"\t},\n" +
+				"\t{\n" +
+				"\t\t\"moduleName\": \"mySecondModuleName\",\n" +
+				"\t\t\"components\": {\n" +
+				"\t\t\t\"projectComponents\": [\n" +
+				"\t\t\t\t{\n" +
+				"\t\t\t\t\t\"componentName\": \"myProjectComponentName\",\n" +
+				"\t\t\t\t\t\"projectApps\": [\n" +
+				"\t\t\t\t\t\t{\n" +
+				"\t\t\t\t\t\t\t\"projectName\": \"myProjectName\",\n" +
+				"\t\t\t\t\t\t\t\"files\": [\"path/to/file01.json\", \"path/to/directory\"]\n" +
+				"\t\t\t\t\t\t}\n" +
+				"\t\t\t\t\t]\n" +
+				"\t\t\t\t}\n" +
+				"\t\t\t]\n" +
+				"\t\t}\n" +
+				"\t}\n" +
+				"]"
 		},
 		descriptions = {
 				"Configures the modules with the given configuration file.",
-				"[\n" +
-						"\t{\n" +
-						"\t\t\"moduleName\": \"myModuleName\",\n" +
-						"\t\t\"components\": {\n" +
-						"\t\t\t\"webComponents\": [\n" +
-						"\t\t\t\t{\n" +
-						"\t\t\t\t\t\"componentName\": \"myProjectWebComponentName\",\n" +
-						"\t\t\t\t\t\"webApps\": [\n" +
-						"\t\t\t\t\t\t{\n" +
-						"\t\t\t\t\t\t\t\"webAppName\": \"WEBEDIT\",\n" +
-						"\t\t\t\t\t\t}\n" +
-						"\t\t\t\t\t]\n" +
-						"\t\t\t\t}\n" +
-						"\t\t\t]\n" +
-						"\t\t}\n" +
-						"\t}\n" +
-						"]",
-				"[\n" +
-						"\t{\n" +
-						"\t\t\"moduleName\": \"myFirstModule\",\n" +
-						"\t\t\"components\": {\n" +
-						"\t\t\t\"webComponents\": [\n" +
-						"\t\t\t\t{\n" +
-						"\t\t\t\t\t\"componentName\": \"myGlobalWebComponentName\",\n" +
-						"\t\t\t\t\t\"webApps\": [\n" +
-						"\t\t\t\t\t\t{\n" +
-						"\t\t\t\t\t\t\t\"webAppName\": \"global(my_global_web_app_name)\",\n" +
-						"\t\t\t\t\t\t\t\"deploy\": false\n" +
-						"\t\t\t\t\t\t}\n" +
-						"\t\t\t\t\t]\n" +
-						"\t\t\t\t}\n" +
-						"\t\t\t],\n" +
-						"\t\t\t\"services\": [\n" +
-						"\t\t\t\t{\n" +
-						"\t\t\t\t\t\"serviceName\": \"myServiceName\",\n" +
-						"\t\t\t\t\t\"autoStart\": true,\n" +
-						"\t\t\t\t}\n" +
-						"\t\t\t]\n" +
-						"\t\t}\n" +
-						"\t},\n" +
-						"\t{\n" +
-						"\t\t\"moduleName\": \"mySecondModuleName\",\n" +
-						"\t\t\"components\": {\n" +
-						"\t\t\t\"projectComponents\": [\n" +
-						"\t\t\t\t{\n" +
-						"\t\t\t\t\t\"componentName\": \"myProjectComponentName\",\n" +
-						"\t\t\t\t\t\"projectApps\": [\n" +
-						"\t\t\t\t\t\t{\n" +
-						"\t\t\t\t\t\t\t\"projectName\": \"myProjectName\",\n" +
-						"\t\t\t\t\t\t\t\"files\": [\"path/to/file01.json\", \"path/to/directory\"],\n" +
-						"\t\t\t\t\t\t}\n" +
-						"\t\t\t\t\t]\n" +
-						"\t\t\t\t}\n" +
-						"\t\t\t]\n" +
-						"\t\t}\n" +
-						"\t}\n" +
-						"]"
+				"Simple example configFile.json:",
+				"Extended/complex example configFile.json"
 		}
 )
 public class ConfigureModulesCommand extends SimpleCommand<ConfigureModulesCommandResult> {
@@ -135,6 +136,16 @@ public class ConfigureModulesCommand extends SimpleCommand<ConfigureModulesComma
 	@Option(type = OptionType.COMMAND, name = {"-mcf", "--moduleConfigFile"}, description = "Path to the configuration json file", title = "configFile")
 	@com.github.rvesse.airline.annotations.restrictions.Path(mustExist = true, kind = PathKind.FILE, writable = false)
 	@Required
+	@ParameterExamples(
+			examples = {
+					"-mcf \"path/to/file.json\"",
+					"--moduleConfigFile \"C:/path/to/file.json\"",
+			},
+			descriptions = {
+					"Sets the config file to `path/to/file.json`.",
+					"Sets the config file to `C:/path/to/file.json`.",
+			}
+	)
 	private String _configFile;
 
 	@Override

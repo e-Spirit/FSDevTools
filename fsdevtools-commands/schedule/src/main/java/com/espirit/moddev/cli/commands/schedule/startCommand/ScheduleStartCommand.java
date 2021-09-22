@@ -57,10 +57,11 @@ import java.util.List;
 @Examples(
 		examples = {
 				"schedule start -n \"Clean up logs\"",
-				"schedule -p \"Mitras Energy\" start -n \"generate full\""
+				"-p \"Mithras Energy\" schedule start -n \"generate full\""
 		},
 		descriptions = {
-				"Starts a task from schedule with the name 'ScheduleName' on the Server"
+				"Starts a task from schedule with the name 'ScheduleName' on the Server",
+				"Starts a task from schedule with the name 'generate full' on the Server for the project \"Mithras Energy\""
 		}
 )
 public class ScheduleStartCommand extends SimpleCommand<ScheduleStartResult> {

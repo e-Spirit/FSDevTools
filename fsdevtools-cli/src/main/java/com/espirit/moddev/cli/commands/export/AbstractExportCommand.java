@@ -38,6 +38,7 @@ import com.espirit.moddev.cli.commands.help.HelpCommand;
 import com.espirit.moddev.cli.results.ExportResult;
 import com.github.rvesse.airline.annotations.Arguments;
 import com.github.rvesse.airline.annotations.Option;
+import com.github.rvesse.airline.annotations.restrictions.AllowedRawValues;
 import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.access.store.Store;
 import de.espirit.firstspirit.agency.OperationAgent;
@@ -52,7 +53,6 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -93,6 +93,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
 	@Option(name = "--permissionMode",
 			description = "Set the permission mode for the export (default = NONE). Possible values are [NONE, ALL, STORE_ELEMENT, WORKFLOW].",
 			title = "permissionMode")
+	@AllowedRawValues(ignoreCase = true, allowedValues = {"NONE", "ALL", "STORE_ELEMENT", "WORKFLOW"})
 	private PermissionsMode _permissionMode = PermissionsMode.NONE;
 
 

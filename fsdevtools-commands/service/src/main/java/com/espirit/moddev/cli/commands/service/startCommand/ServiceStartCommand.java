@@ -46,8 +46,8 @@ import static com.espirit.moddev.cli.commands.service.common.ServiceInfo.Service
 @Examples(
 		examples = {
 				"service start",
-				"service start --serviceNames \"UXBService\"",
-				"service start --serviceNames \"UXBService, AnotherService\""
+				"service start -n UXBService",
+				"service start --serviceNames UXBService,AnotherService"
 		},
 		descriptions = {
 				"Start the all services that have auto start enabled and are currently not running.",

@@ -34,7 +34,6 @@ import static com.espirit.moddev.cli.commands.service.common.ServiceInfo.Service
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.spy;
 
 public class ServiceProcessCommandTest extends ServiceProcessCommandBaseTest<AbstractServiceCommand> {
 
@@ -53,7 +52,7 @@ public class ServiceProcessCommandTest extends ServiceProcessCommandBaseTest<Abs
 				return new ServiceInfo(serviceName, STOPPED, STOPPED);
 			}
 		};
-		super.setUp(spy(instance));
+		super.setUp(instance);
 	}
 
 	@Test

@@ -23,7 +23,6 @@
 import com.espirit.moddev.build.BuildUtils
 import org.apache.tools.ant.filters.FixCrLfFilter
 import org.apache.tools.ant.filters.ReplaceTokens
-
 import java.util.regex.Pattern
 
 /**
@@ -102,7 +101,7 @@ ext {
     // dependency versions
     airlineVersion = '2.8.2'
     apacheCommonsVersion = '3.12.0'
-    assertJVersion = '3.20.2'
+    assertJVersion = '3.21.0'
     classGraphVersion = '4.8.112'
     commonsCompressVersion = '1.21'
     hamcrestCoreVersion = '2.2'
@@ -362,12 +361,41 @@ static List<File> getJsonSchemas(Project project) {
     return files
 }
 
+task createDocumentationJson(type: JavaExec) {
+    dependsOn(classes, "writeArtifactInfo")
+    group = "documentation"
+    description = "Run the main class with JavaExecTask"
+    classpath = project(":fsdevtools-docs-generator").sourceSets.main.runtimeClasspath
+    main = "com.espirit.moddev.cli.documentation.commands.CommandDocumentationGenerator"
+    args "--file", "${project(":fsdevtools-docs").projectDir}/build/assets/data.json"
+}
+
+task writeArtifactInfo(type: DefaultTask) {
+    group = "documentation"
+    doLast() {
+        String branchName = grgit.branch.current().name
+        String commit = grgit.head().abbreviatedId
+        String version = rootProject.version.toString()
+        if (System.getProperty("isCI") == null) {
+            version = "$version (DEV)"
+        }
+        mkdir("${project(":fsdevtools-docs").projectDir}/build/assets/")
+        new File("${project(":fsdevtools-docs").projectDir}/build/assets/", "application.json").text = """
+{
+  "version": "$version",
+  "branch": "$branchName",
+  "commit": "$commit"
+}
+"""
+    }
+}
+
 ///////////////////////////////////////////////////////
 // assembles the tar.gz file
 ///////////////////////////////////////////////////////
 
 task assembleTarGz(type: Tar) {
-    dependsOn(shadowJar)
+    dependsOn(shadowJar, "fsdevtools-docs:buildVueApp")
 
     group('build')
     archiveBaseName = "fs-cli"
@@ -406,6 +434,10 @@ task assembleTarGz(type: Tar) {
     into("fs-cli/docs/json-schema") {
         from(getJsonSchemas(project));
     }
+    // include documentation
+    from("fsdevtools-docs/dist/") {
+        into("fs-cli/docs")
+    }
 }
 
 ///////////////////////////////////////////////////////
@@ -413,7 +445,7 @@ task assembleTarGz(type: Tar) {
 ///////////////////////////////////////////////////////
 
 task assembleZip(type: Zip) {
-    dependsOn(shadowJar)
+    dependsOn(shadowJar, "fsdevtools-docs:buildVueApp")
 
     group('build')
 
@@ -450,6 +482,10 @@ task assembleZip(type: Zip) {
     // include json schemas
     into("fs-cli/docs/json-schema") {
         from(getJsonSchemas(project));
+    }
+    // include documentation
+    from("fsdevtools-docs/dist/") {
+        into("fs-cli/docs")
     }
 }
 

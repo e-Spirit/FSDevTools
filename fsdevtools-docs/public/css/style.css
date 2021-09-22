@@ -1,0 +1,192 @@
+
+body {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    background-color: #E8E7F3;
+}
+
+.noselect {
+    user-select: none;
+}
+
+#commandDescription {
+    font-family: "Source Sans Pro", Helvetica, Arial, sans-serif;
+    font-size: 1rem;
+    top: 360px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: 1200px;
+    display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
+    flex-direction: column;
+    max-width: 50%;
+    background-color: white;
+    padding: 0 4rem 3.5rem;
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+#commandDescription .icon img {
+    background-color: #4F4E76;
+    width: 50px;
+    height: 50px;
+    border: 1px solid #7B7C9B;
+}
+
+#commandDescription h2, #commandDescription h3 {
+    color: #252638;
+}
+
+#commandDescription .description {
+    color: #70707C;
+    display: none;
+}
+
+#commandDescription .links a {
+    display: block;
+    margin: 10px 10px 10px 20px;
+    color: #7B7B9F;
+}
+
+#commandDescription .more {
+    border-top: 1px solid #4D4F76;
+    margin-top: 20px;
+}
+
+#commandDescription .more a {
+    display: block;
+    color: #282739;
+    text-transform: uppercase;
+    margin-top: 10px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+/* MARKDOWN RELATED */
+
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+}
+
+h2, h3, h4, h5, h6  {
+    margin-block-start: 0;
+    margin-block-end: 0;
+}
+
+h1 {
+    color: #000000;
+    font-size: 20pt;
+}
+
+h2 {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 18px;
+}
+
+h3 {
+    font-size: 16px;
+    margin-top: 1.4rem;
+    margin-bottom: 0.5rem;
+}
+
+h4 {
+    font-size: 14px;
+    margin-top: 0;
+    margin-bottom: 0.4rem;
+}
+
+h5 {
+    font-size: 12px;
+}
+
+h6 {
+    color: #777777;
+    background-color: inherit;
+    font-size: 12px;
+}
+
+hr {
+    height: 0.2em;
+    border: 0;
+    color: #CCCCCC;
+    background-color: #CCCCCC;
+}
+
+p, blockquote, ul, ol, dl, li, table, pre {
+    margin: 15px 0;
+}
+
+img {
+    max-width: 100%;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table, th, td {
+    border: 1px solid #484848;
+    border-radius: 3px;
+    padding: 5px;
+}
+
+tr:nth-child(even) {
+    background-color: #e4e4e4;
+}
+
+a, a:visited {
+    color: #4183C4;
+    background-color: inherit;
+    text-decoration: none;
+}
+
+button {
+    font-size: 10pt;
+    padding: 4px 6px;
+    border-radius: 5px;
+    border: 1px solid #bbb;
+    background-color: #eee;
+}
+
+span {
+    width: 100%;
+}
+
+code, pre {
+    font-family: "Roboto Mono", Monaco, courier, monospace;;
+    font-size: 0.85em;
+    border-radius: 3px;
+    background-color: #e6e6e6;
+}
+
+code {
+    color: #d63200;
+    padding: 3px 5px;
+    margin: 0 2px;
+    border-radius: 2px;
+    white-space: nowrap;
+}
+
+pre {
+    border: 1px solid #CCCCCC;
+    overflow: auto;
+    padding: 4px 8px;
+}
+
+pre > code {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}

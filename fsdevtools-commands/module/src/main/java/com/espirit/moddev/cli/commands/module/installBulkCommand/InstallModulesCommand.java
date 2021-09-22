@@ -23,6 +23,7 @@
 package com.espirit.moddev.cli.commands.module.installBulkCommand;
 
 import com.espirit.moddev.cli.ConnectionBuilder;
+import com.espirit.moddev.cli.api.annotations.ParameterExamples;
 import com.espirit.moddev.cli.api.result.ExecutionResults;
 import com.espirit.moddev.cli.commands.SimpleCommand;
 import com.espirit.moddev.cli.commands.module.ModuleCommandGroup;
@@ -76,21 +77,21 @@ import static de.espirit.firstspirit.access.ConnectionManager.SOCKET_MODE;
 		examples = {
 				"module installBulk -mcf \"folder/configFile.json\"",
 				"module installBulk -mcf \"myConfigFile.json\" --deployWebApps false",
-				"example configFile.json:"
+				"[\n" +
+				"\t{\n" +
+				"\t\t\"fsm\": \"H:\\\\path\\\\fs-saml-login-1.1.fsm\"\n" +
+				"\t},\n" +
+				"\t{\n" +
+				"\t\t\"fsm\": \"C:\\\\path\\\\fs-tpp-api-1.2.11-SNAPSHOT.fsm\",\n" +
+				"\t\t\"moduleProjectName\": \"Mithras\",\n" +
+				"\t\t\"webAppScopes\" : [ \"webedit\", \"global(fs5root)\" ]\n" +
+				"\t}\n" +
+				"]"
 		},
 		descriptions = {
 				"Installs the modules of the given configuration file and deploys all related webapps.",
 				"Installs the modules of the given configuration file but does not deploy the related webapps.",
-				"[\n" +
-						"\t{\n" +
-						"\t\t\"fsm\": \"H:\\\\path\\\\fs-saml-login-1.1.fsm\"\n" +
-						"\t},\n" +
-						"\t{\n" +
-						"\t\t\"fsm\": \"C:\\\\path\\\\fs-tpp-api-1.2.11-SNAPSHOT.fsm\",\n" +
-						"\t\t\"moduleProjectName\": \"Mithras\",\n" +
-						"\t\t\"webAppScopes\" : [ \"webedit\", \"global(fs5root)\" ]\n" +
-						"\t}\n" +
-						"]\n"
+				"Example configFile.json:"
 		}
 )
 public class InstallModulesCommand extends SimpleCommand<InstallModulesResult> {
@@ -100,11 +101,31 @@ public class InstallModulesCommand extends SimpleCommand<InstallModulesResult> {
 	@Option(type = OptionType.COMMAND, name = {"-mcf", "--moduleConfigFile"}, description = "Path to the configuration json file", title = "configFile")
 	@com.github.rvesse.airline.annotations.restrictions.Path(mustExist = true, kind = PathKind.FILE, writable = false)
 	@Required
+	@ParameterExamples(
+			examples = {
+					"-mcf \"path/to/file.json\"",
+					"--moduleConfigFile \"C:/path/to/file.json\"",
+			},
+			descriptions = {
+					"Sets the config file to `path/to/file.json`.",
+					"Sets the config file to `C:/path/to/file.json`.",
+			}
+	)
 	private String _configFile;
 
 	@Option(type = OptionType.COMMAND, name = {"-dwa", "--deployWebApps"}, description = "Define whether all related web apps of the modules should be immediately deployed after the installation or not [true = deploy (default) | false = no deploy]", title = "deployWebApps")
 	@Once
-	private String _deploy = String.valueOf(true);
+	@ParameterExamples(
+			examples = {
+					"-dwa true",
+					"--deployWebApps false"
+			},
+			descriptions = {
+					"Sets the flag to `true`.",
+					"Sets the flag to `false`.",
+			}
+	)
+	private boolean _deploy = true;
 
 	@Override
 	public InstallModulesResult call() {
@@ -258,7 +279,7 @@ public class InstallModulesCommand extends SimpleCommand<InstallModulesResult> {
 	}
 
 	private boolean shouldDeploy() {
-		return Boolean.TRUE.toString().equalsIgnoreCase(_deploy);
+		return _deploy;
 	}
 
 	/**

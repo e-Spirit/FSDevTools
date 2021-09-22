@@ -128,3 +128,7 @@ local.properties
 fs-cli.log
 /build
 /**/build
+
+# ignore data.json to avoid release problems
+/data.json
+/fsdevtools-docs/node_modules

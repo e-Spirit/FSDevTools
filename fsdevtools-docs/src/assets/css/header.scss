@@ -1,0 +1,59 @@
+$headerHoverColor: #1a6376;
+
+.header {
+  display: flex;
+  border-bottom: 1px solid #CCCCCC;
+  justify-items: center;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+}
+
+.clickable {
+  & .button {
+    transition: background-color 0.3s;
+  }
+
+  & .button:hover {
+    background-color: $headerHoverColor;
+  }
+
+  & .topic {
+    flex-grow: 1;
+    cursor: pointer;
+
+    color: white;
+    & .text {
+      transition: color 0.3s;
+      color: #252638;
+    }
+
+    &:hover {
+      & .text {
+        color: $headerHoverColor;
+      }
+
+      & .button {
+        background-color: $headerHoverColor;
+      }
+    }
+  }
+}
+
+.headline-2 {
+  font-family: "Source Sans Pro", Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.headline-3 {
+  font-family: "Source Sans Pro", Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.headline-4 {
+  font-family: "Source Sans Pro", Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+}

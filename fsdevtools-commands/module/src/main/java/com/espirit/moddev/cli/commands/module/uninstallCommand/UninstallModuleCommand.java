@@ -46,7 +46,7 @@ import java.io.IOException;
 @Command(name = ModuleCommandNames.UNINSTALL, groupNames = ModuleCommandGroup.NAME, description = "Uninstalls a FirstSpirit module from a FirstSpirit Server.")
 @Examples(
 		examples = {
-				"fs-cli module uninstall -h localhost -p 8000 --moduleName \"abtesting\" --projectName \"Mithras Energy\""
+				"module uninstall -h localhost -p 8000 --moduleName \"abtesting\" --projectName \"Mithras Energy\""
 		},
 		descriptions = {
 				"Uninstalls the abtesting module and removes all components from the Mithras Energy project"

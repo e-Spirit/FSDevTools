@@ -56,32 +56,4 @@ public class PermissionsModeTest {
 		}
 	}
 
-	@Test
-	public void toPermissionsMode_fsMode_lowerCase() {
-		for (final PermissionsMode mode : PermissionsMode.values()) {
-			assertEquals(mode, PermissionsMode.toPermissionsMode(mode.getFirstSpiritPermissionMode().name().toLowerCase(Locale.ROOT)));
-		}
-	}
-
-	@Test
-	public void toPermissionsMode_fsMode_without_underscore() {
-		for (final PermissionsMode mode : PermissionsMode.values()) {
-			assertEquals(mode, PermissionsMode.toPermissionsMode(mode.getFirstSpiritPermissionMode().name().replaceAll("_", "")));
-		}
-	}
-
-	@Test
-	public void toPermissionsMode_fsMode_with_minus() {
-		for (final PermissionsMode mode : PermissionsMode.values()) {
-			assertEquals(mode, PermissionsMode.toPermissionsMode(mode.getFirstSpiritPermissionMode().name().replaceAll("_", "-")));
-		}
-	}
-
-	@Test
-	public void toPermissionsMode_fsMode_without_permissionsPrefix() {
-		for (final PermissionsMode mode : PermissionsMode.values()) {
-			assertEquals(mode, PermissionsMode.toPermissionsMode(mode.getFirstSpiritPermissionMode().name().replaceAll("_PERMISSIONS", "-")));
-		}
-	}
-
 }

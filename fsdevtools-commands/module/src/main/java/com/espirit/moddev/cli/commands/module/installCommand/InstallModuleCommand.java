@@ -72,7 +72,7 @@ public class InstallModuleCommand extends SimpleCommand<InstallModuleResult> {
 	@Required
 	private String _fsm;
 
-	@Option(type = OptionType.COMMAND, name = {"-mpn", "--moduleProjectName"}, description = "Name of the FirstSpirit target project where the application's components should be installed to. Optional.", title = "moduleProjectName")
+	@Option(type = OptionType.COMMAND, name = {"-mpn", "--moduleProjectName"}, description = "Name of the FirstSpirit target project where the application's components should be installed to.", title = "moduleProjectName")
 	private String _projectName;
 
 	@Option(type = OptionType.COMMAND, name = {"-scf", "--serviceConfigurationFiles"}, description = "Define a map-like configuration file for services of the given module - comma-separated value pairs with service name and configuration path file.", title = "serviceConfigurationFiles")
@@ -81,17 +81,17 @@ public class InstallModuleCommand extends SimpleCommand<InstallModuleResult> {
 	private String _projectAppConfigurationFile;
 	@Option(type = OptionType.COMMAND, name = {"-was", "--webAppScopes"}, description = "Define a map-like configuration for webapp scopes of the given module - comma-separated values from the FirstSpirit WebScope enum."
 			+ " The FS WebScope enum contains the following keys:\n"
-			+ "'GLOBAL'\n"
-			+ "'LIVE'\n"
-			+ "'PREVIEW'\n"
-			+ "'STAGING'\n"
-			+ "'WEBEDIT'\n"
-			+ " For global webapps, use 'global(WebAppId)'.", title = "webAppScopes")
+			+ "'GLOBAL',\n"
+			+ "'LIVE',\n"
+			+ "'PREVIEW',\n"
+			+ "'STAGING',\n"
+			+ "'WEBEDIT'.\n"
+			+ "For global webapps, use 'global(WebAppId)'.")
 	private String _webAppScopes;
 	@Option(type = OptionType.COMMAND, name = {"-wacf", "--webAppConfigurationFiles"}, description = "Define a map-like configuration for the webapps of the given module - with comma-separated key-values.", title = "webAppConfigurationFiles")
 	private String _webAppConfigurationFiles;
 	@Option(type = OptionType.COMMAND, name = {"-dwa", "--deployWebApps"}, description = "Define whether all related webapps of the module should be immediately deployed after the installation or not [true = deploy (default) | false = no deploy]", title = "deployWebApps")
-	private String _deploy = String.valueOf(true);
+	private boolean _deploy = true;
 
 	@Override
 	public InstallModuleResult call() {
@@ -116,7 +116,7 @@ public class InstallModuleCommand extends SimpleCommand<InstallModuleResult> {
 		configuration.setFsm(_fsm);
 		configuration.setModuleProjectName(projectName);
 		configuration.setWebAppScopes(splitAndTrim(_webAppScopes));
-		configuration.setDeploy(_deploy);
+		configuration.setDeploy(Boolean.toString(_deploy));
 		configuration.setProjectAppConfigurationFile(_projectAppConfigurationFile);
 		configuration.setServiceConfigurationFiles(splitAndTrim(_serviceConfigurationsFiles));
 		configuration.setWebAppConfigurationFiles(splitAndTrim(_webAppConfigurationFiles));

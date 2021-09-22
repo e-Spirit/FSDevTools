@@ -44,9 +44,9 @@ import java.io.File;
 @Command(name = ProjectCommandNames.IMPORT, groupNames = ProjectCommandGroup.NAME, description = "Imports a FirstSpirit project export into a FirstSpirit Server as a new project.")
 @Examples(
 		examples = {
-				"fs-cli -h localhost -port 8000 project import --importProjectName \"newProjectName\" --projectFile \"D:\\my-project-export.tar.gz\"",
-				"fs-cli project import --importProjectName \"newProjectName\" --projectFile \"D:\\my-project-export.tar.gz\" -dlm *:CREATE_NEW",
-				"fs-cli project import --importProjectName \"newProjectName\" --projectFile \"D:\\my-project-export.tar.gz\" -dlm sourceLayer_A:targetLayer_A,sourceLayer_B:targetLayer_B"
+				"project import --importProjectName \"newProjectName\" --projectFile \"D:\\my-project-export.tar.gz\"",
+				"project import --importProjectName \"newProjectName\" --projectFile \"D:\\my-project-export.tar.gz\" -dlm *:CREATE_NEW",
+				"project import --importProjectName \"newProjectName\" --projectFile \"D:\\my-project-export.tar.gz\" -dlm sourceLayer_A:targetLayer_A,sourceLayer_B:targetLayer_B"
 		},
 		descriptions = {
 				"Imports the project export into a new project that is named newProjectName",

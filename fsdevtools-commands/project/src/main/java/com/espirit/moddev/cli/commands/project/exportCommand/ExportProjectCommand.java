@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 @Command(name = ProjectCommandNames.EXPORT, groupNames = ProjectCommandGroup.NAME, description = "Exports an existing FirstSpirit project from a FirstSpirit Server.")
 @Examples(
 		examples = {
-				"fs-cli -h localhost -port 8000 project export -epn \"Mithras Energy\" -epp \"D:\\my-server-exports\""
+				"project export -epn \"Mithras Energy\" -epp \"D:\\my-server-exports\""
 		},
 		descriptions = {
 				"Exports the project \"Mithras Energy\""
@@ -57,7 +57,7 @@ public class ExportProjectCommand extends SimpleCommand<SimpleResult<Boolean>> {
 	@Option(type = OptionType.COMMAND, name = {"-def", "--deleteExportFiles"}, description = "Whether to delete the export files on the server after they have been downloaded.")
 	private boolean deleteExportFiles;
 	@Option(type = OptionType.COMMAND, name = {"-mrc", "--maxRevisionCount"}, description = "Maximum number of revisions to export.")
-	private long maxRevisionCount = -1;
+	private long maxRevisionCount = -1L;
 	@Option(type = OptionType.COMMAND, name = {"-sde", "--skipDeletedElements"}, description = "Do not add deleted elements to the export.")
 	private boolean skipDeletedElements;
 

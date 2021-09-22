@@ -60,16 +60,6 @@ public enum PermissionsMode {
 			if (isInsensitiveEqual(name, input)) {
 				return permissionMode;
 			}
-			// fallback to FirstSpirit PermissionMode
-			final String fsModeName = permissionMode.getFirstSpiritPermissionMode().name();
-			if (isInsensitiveEqual(fsModeName, input)) {
-				return permissionMode;
-			}
-			// fallback to FirstSpirit PermissionMode - but without the _PERMISSIONS-Postfix
-			final String fsModeShortName = fsModeName.replaceAll("_PERMISSIONS", "");
-			if (isInsensitiveEqual(fsModeShortName, input)) {
-				return permissionMode;
-			}
 		}
 		throw new IllegalArgumentException(String.format("Permission mode '%s' is invalid, possible values are %s.", input, Arrays.toString(PermissionsMode.values())));
 	}

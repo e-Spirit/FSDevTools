@@ -1,0 +1,78 @@
+.info-icon {
+  mask: url("../img/info.png");
+  mask-size: contain;
+  mask-repeat: no-repeat;
+}
+
+.expand-icon {
+  mask: url('../img/expand.png');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+}
+
+.expand-all-icon {
+  mask: url('../img/expand-all.png');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+}
+
+.collapse-all-icon {
+  mask: url('../img/collapse-all.png');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+}
+
+.copy-icon {
+  mask: url('../img/copy.png');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+}
+
+.check-icon {
+  mask: url('../img/check.png');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+}
+
+.copyButton {
+  transition: background-color 0.3s;
+  background-color: #d63200;;
+  min-width: 14px;
+  max-width: 14px;
+  width: 14px;
+  min-height: 14px;
+  max-height: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+.copyButton:hover {
+  background-color: #356db1;
+}
+
+.info-button {
+  background-color: lightgray;
+  min-width: 20px;
+  max-width: 20px;
+  width: 20px;
+  min-height: 20px;
+  max-height: 20px;
+  height: 20px;
+  margin-left: 5px;
+  cursor: pointer;
+  float: right;
+}
+
+.toggleButton {
+  background-color: black;
+  min-width: 20px;
+  max-width: 20px;
+  width: 20px;
+  min-height: 20px;
+  max-height: 20px;
+  height: 20px;
+  float: left;
+  margin-right: 5px;
+  cursor: pointer;
+  transform: rotate(-90deg);
+}

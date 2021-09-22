@@ -36,9 +36,9 @@ import de.espirit.firstspirit.access.Connection;
 @Command(name = ProjectCommandNames.DELETE, groupNames = ProjectCommandGroup.NAME, description = "Deletes an existing FirstSpirit project from a FirstSpirit Server.")
 @Examples(
 		examples = {
-				"fs-cli -h localhost -p 8000 project delete -dpn \"Mithras Energy\""
+				"project delete -dpn \"Mithras Energy\""
 		},
-		descriptions = {"Deletes project \"Mithras Energy\" from the specified server."
+		descriptions = {"Deletes project \"Mithras Energy\"."
 		}
 )
 public class DeleteProjectCommand extends SimpleCommand<SimpleResult> {

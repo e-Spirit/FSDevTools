@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 @Command(name = ProjectCommandNames.ACTIVATE_WEBSERVER, groupNames = ProjectCommandGroup.NAME, description = "Activates a web server for a number of project's web scopes")
 @Examples(
 		examples = {
-				"fs-cli project activatewebserver -wpn \"existingProjectName\" -was \"WEBEDIT\" -wsn \"FirstSpirit Jetty\" -fwa"
+				"project activatewebserver -wpn \"existingProjectName\" -was \"WEBEDIT\" -wsn \"FirstSpirit Jetty\" -fwa"
 		},
 		descriptions = {
 				"Undeploys web app scope 'WEBEDIT' from an old web server, activates web server 'FirstSpirit Jetty' and deploys the given web app scope 'WEBEDIT' to the new web server."

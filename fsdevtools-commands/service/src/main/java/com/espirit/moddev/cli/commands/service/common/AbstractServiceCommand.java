@@ -22,8 +22,11 @@
 
 package com.espirit.moddev.cli.commands.service.common;
 
+import com.espirit.moddev.cli.api.annotations.ParameterExamples;
+import com.espirit.moddev.cli.api.annotations.ParameterType;
 import com.espirit.moddev.cli.commands.SimpleCommand;
 import com.espirit.moddev.cli.utils.ServiceUtils;
+import com.espirit.moddev.shared.annotation.VisibleForTesting;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;
 import de.espirit.firstspirit.access.ServiceNotFoundException;
@@ -45,7 +48,18 @@ public abstract class AbstractServiceCommand extends SimpleCommand<ServiceProces
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractServiceCommand.class);
 
-	@Option(type = OptionType.COMMAND, name = {"-n", "--serviceNames"}, description = "Comma separated list of Names of the FirstSpirit services to be processed. Optional. If not provided, all services with auto start enabled will be processed.")
+	@Option(type = OptionType.COMMAND, name = {"-n", "--serviceNames"}, description = "Comma separated list of names of the FirstSpirit services to be processed. If not provided, all services with auto start enabled will be processed.")
+	@ParameterExamples(
+			examples = {
+					"--serviceNames firstService,secondService",
+					"-n myService",
+			},
+			descriptions = {
+					"Sets the given services to 'firstService' and 'secondService'.",
+					"Sets the given services to 'myService'.",
+			}
+	)
+	@ParameterType(name = "List<String>")
 	private String _serviceNames;
 
 	@Override
@@ -65,8 +79,9 @@ public abstract class AbstractServiceCommand extends SimpleCommand<ServiceProces
 	 *
 	 * @param serviceNames the services that should be processed as comma separated string
 	 */
-	public void setServiceNames(String serviceNames) {
-		this._serviceNames = serviceNames;
+	@VisibleForTesting
+	public void setServiceNames(@NotNull final String serviceNames) {
+		_serviceNames = serviceNames;
 	}
 
 	/**

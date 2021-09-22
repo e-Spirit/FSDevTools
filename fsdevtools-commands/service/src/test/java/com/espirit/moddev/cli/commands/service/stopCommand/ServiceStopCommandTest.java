@@ -46,7 +46,7 @@ public class ServiceStopCommandTest extends ServiceProcessCommandBaseTest<Servic
 
     @Before
     public void setUp() {
-        super.setUp(ServiceStopCommand.class);
+        super.setUp(new ServiceStopCommand());
         result = testling.call();
     }
 
