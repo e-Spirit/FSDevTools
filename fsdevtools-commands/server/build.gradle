@@ -23,6 +23,6 @@
 dependencies {
     implementation project(":fsdevtools-cli-api")
     implementation project(":fsdevtools-common")
-    implementation "log4j:log4j:${log4jVersion}"
-    testImplementation "org.slf4j:slf4j-log4j12:${slf4japiVersion}"
+    implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+    testImplementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
 }

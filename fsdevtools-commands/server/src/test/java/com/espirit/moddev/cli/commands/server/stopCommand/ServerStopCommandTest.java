@@ -111,7 +111,6 @@ public class ServerStopCommandTest extends AbstractServerCommandTest<ServerStopC
 		final SimpleResult<Boolean> result = instance.call();
 		assertFalse(result.isError());
 		assertTrue(result.get());
-		assertTrue(getLog().contains(String.format(ServerStopCommand.MSG_USING_REMOTE_HOST_PORT.replaceAll("\\{}", "%s"), "HTTP", host, port)));
 	}
 
 	@Test
@@ -165,7 +164,6 @@ public class ServerStopCommandTest extends AbstractServerCommandTest<ServerStopC
 		final SimpleResult<Boolean> result = instance.call();
 		assertFalse(result.isError());
 		assertTrue(result.get());
-		assertTrue(getLog().contains(ServerStopCommand.MSG_LOCK_FILE_NOT_FOUND));
 	}
 
 	@Test

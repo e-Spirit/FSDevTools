@@ -1,5 +1,10 @@
 # Release notes
 
+## Version 4.0.0
+
+* moved to Log4J 2.17.2
+* updated used libraries to latest versions
+
 ## Version 3.0.2
 
 * updated Gradle to 7.1.1 (was 5.5.1)

@@ -99,25 +99,24 @@ ext {
     gitHash = grgit.head().id
 
     // dependency versions
-    airlineVersion = '2.8.2'
+    airlineVersion = '2.8.5'
     apacheCommonsVersion = '3.12.0'
-    assertJVersion = '3.21.0'
-    classGraphVersion = '4.8.112'
+    assertJVersion = '3.22.0'
+    classGraphVersion = '4.8.143'
     commonsCompressVersion = '1.21'
     hamcrestCoreVersion = '2.2'
     hamcrestJavaVersion = '2.0.0.0'
-    guavaVersion = '30.1.1-jre'
-    jacksonDatabindVersion = '2.9.9.3'
+    guavaVersion = '31.1-jre'
+    jacksonDatabindVersion = '2.13.2.2'
     junitVersion = '4.13.2'
-    log4jVersion = '1.2.17'
-    lombokVersion = '1.18.20'
-    mockitoVersion = '2.1.0'
-    slf4japiVersion = '1.7.31'
-    slf4jLog4jVersion = '1.7.32'
+    log4jVersion = '2.17.2'
+    lombokVersion = '1.18.22'
+    mockitoVersion = '4.4.0'
+    slf4japiVersion = '1.7.36'
 
     // setup some variables
     firstSpiritVersion = fsRuntimeVersion
-    javaVersion = JavaVersion.VERSION_1_8
+    javaVersion = JavaVersion.VERSION_11
     projectName = 'FirstSpirit CLI'
     projectVersion = project.version
 
@@ -314,6 +313,16 @@ task cleanupIntegrationTestServer() {
 ///////////////////////////////////////////////////////
 // creates the fat jar (which is included in the distribution in "/lib/...")
 ///////////////////////////////////////////////////////
+
+jar {
+    manifest {
+        attributes(
+            'Manifest-Version': "1.0",
+            'Main-Class': "com.espirit.moddev.cli.Main",
+            'Multi-Release': "true",
+        )
+    }
+}
 
 shadowJar {
     archiveFileName.set("fsdevtools-cli-${project.version}.jar")

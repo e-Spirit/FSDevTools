@@ -22,19 +22,6 @@
 
 package com.espirit.moddev.cli.commands.module.configureCommand.json.components;
 
-import com.espirit.moddev.cli.api.result.ExecutionResult;
-import com.espirit.moddev.cli.api.result.ExecutionResults;
-import com.espirit.moddev.cli.commands.module.configureCommand.json.JsonTestUtil;
-import com.espirit.moddev.cli.commands.module.configureCommand.json.components.common.ComponentNotFoundResult;
-import com.espirit.moddev.cli.commands.module.configureCommand.json.components.common.MultipleComponentsFoundResult;
-import com.espirit.moddev.cli.commands.module.configureCommand.json.components.common.NoProjectNameDefinedResult;
-import com.espirit.moddev.cli.commands.module.configureCommand.json.components.common.ProjectNotFoundResult;
-import com.espirit.moddev.cli.commands.module.utils.FileSystemUtil;
-import com.espirit.moddev.cli.configuration.GlobalConfig;
-import com.espirit.moddev.shared.webapp.WebAppIdentifier;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
@@ -46,6 +33,20 @@ import de.espirit.firstspirit.module.WebEnvironment;
 import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
 import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
 import de.espirit.firstspirit.server.module.ModuleException;
+
+import com.espirit.moddev.cli.api.result.ExecutionResult;
+import com.espirit.moddev.cli.api.result.ExecutionResults;
+import com.espirit.moddev.cli.commands.module.configureCommand.json.JsonTestUtil;
+import com.espirit.moddev.cli.commands.module.configureCommand.json.components.common.ComponentNotFoundResult;
+import com.espirit.moddev.cli.commands.module.configureCommand.json.components.common.MultipleComponentsFoundResult;
+import com.espirit.moddev.cli.commands.module.configureCommand.json.components.common.NoProjectNameDefinedResult;
+import com.espirit.moddev.cli.commands.module.configureCommand.json.components.common.ProjectNotFoundResult;
+import com.espirit.moddev.cli.commands.module.utils.FileSystemUtil;
+import com.espirit.moddev.cli.configuration.GlobalConfig;
+import com.espirit.moddev.shared.webapp.WebAppIdentifier;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
@@ -56,7 +57,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-
 import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_COMPONENT_NAME;
 import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_FILES;
 import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_WEB_APPS;
@@ -149,8 +149,8 @@ public class ComponentWebAppsTest {
 		// test
 		try {
 			_objectMapper.readValue(json, ComponentWebApps.class);
-			failBecauseExceptionWasNotThrown(InvalidDefinitionException.class);
-		} catch (final InvalidDefinitionException e) {
+			failBecauseExceptionWasNotThrown(JsonMappingException.class);
+		} catch (final JsonMappingException e) {
 			Assertions.assertThat(e.getCause()).isExactlyInstanceOf(NullPointerException.class);
 		}
 	}
@@ -163,8 +163,8 @@ public class ComponentWebAppsTest {
 		// test
 		try {
 			_objectMapper.readValue(json, ComponentWebApps.class);
-			failBecauseExceptionWasNotThrown(InvalidDefinitionException.class);
-		} catch (final InvalidDefinitionException e) {
+			failBecauseExceptionWasNotThrown(JsonMappingException.class);
+		} catch (final JsonMappingException e) {
 			Assertions.assertThat(e.getCause()).isExactlyInstanceOf(IllegalArgumentException.class);
 		}
 	}
@@ -177,8 +177,8 @@ public class ComponentWebAppsTest {
 		// test
 		try {
 			_objectMapper.readValue(json, ComponentWebApps.class);
-			failBecauseExceptionWasNotThrown(InvalidDefinitionException.class);
-		} catch (final InvalidDefinitionException e) {
+			failBecauseExceptionWasNotThrown(JsonMappingException.class);
+		} catch (final JsonMappingException e) {
 			Assertions.assertThat(e.getCause()).isExactlyInstanceOf(IllegalArgumentException.class);
 		}
 	}
@@ -200,8 +200,8 @@ public class ComponentWebAppsTest {
 		// test
 		try {
 			_objectMapper.readValue(json, ComponentWebApps.class);
-			failBecauseExceptionWasNotThrown(InvalidDefinitionException.class);
-		} catch (final InvalidDefinitionException e) {
+			failBecauseExceptionWasNotThrown(JsonMappingException.class);
+		} catch (final JsonMappingException e) {
 			Assertions.assertThat(e.getCause()).isExactlyInstanceOf(IllegalArgumentException.class);
 		}
 	}
@@ -268,8 +268,8 @@ public class ComponentWebAppsTest {
 		// test
 		try {
 			_objectMapper.readValue(json, ComponentWebApps.WebApp.class);
-			failBecauseExceptionWasNotThrown(InvalidDefinitionException.class);
-		} catch (final InvalidDefinitionException e) {
+			failBecauseExceptionWasNotThrown(JsonMappingException.class);
+		} catch (final JsonMappingException e) {
 			Assertions.assertThat(e.getCause()).isExactlyInstanceOf(NullPointerException.class);
 		}
 	}
@@ -282,8 +282,8 @@ public class ComponentWebAppsTest {
 		// test
 		try {
 			_objectMapper.readValue(json, ComponentWebApps.WebApp.class);
-			failBecauseExceptionWasNotThrown(InvalidDefinitionException.class);
-		} catch (final InvalidDefinitionException e) {
+			failBecauseExceptionWasNotThrown(JsonMappingException.class);
+		} catch (final JsonMappingException e) {
 			Assertions.assertThat(e.getCause()).isExactlyInstanceOf(IllegalArgumentException.class);
 		}
 	}

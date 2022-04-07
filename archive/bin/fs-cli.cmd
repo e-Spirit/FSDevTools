@@ -13,4 +13,4 @@ if %BYTECODE_VERSION% gtr 52  (
 )
 
 REM EXECUTE CLI
-call "%java_cmd%" %VM_ARGS% -Xmx512m -Dlog4j.configuration=file:"%CLI_DIR%conf/log4j.properties" -cp "%CLI_DIR%\lib\*" com.espirit.moddev.cli.Main %*"
+call "%java_cmd%" %VM_ARGS% -Xmx512m -Dlog4j.configurationFile="%CLI_DIR%conf/log4j2.xml" -cp "%CLI_DIR%\lib\*" com.espirit.moddev.cli.Main %*"

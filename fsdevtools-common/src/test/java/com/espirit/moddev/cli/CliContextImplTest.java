@@ -22,11 +22,6 @@
 
 package com.espirit.moddev.cli;
 
-import com.espirit.moddev.cli.api.CliContext;
-import com.espirit.moddev.cli.api.configuration.Config;
-import com.espirit.moddev.cli.api.configuration.ImportConfig;
-import com.espirit.moddev.connection.FsConnectionType;
-import com.espirit.moddev.util.FsUtil;
 import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.BaseContext;
 import de.espirit.firstspirit.access.Connection;
@@ -35,14 +30,12 @@ import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.agency.BrokerAgent;
 import de.espirit.firstspirit.agency.LanguageAgent;
 import de.espirit.firstspirit.agency.SpecialistsBroker;
-import org.apache.log4j.Appender;
-import org.apache.log4j.Category;
-import org.apache.log4j.Layout;
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.ErrorHandler;
-import org.apache.log4j.spi.Filter;
-import org.apache.log4j.spi.LoggingEvent;
-import org.apache.log4j.varia.FallbackErrorHandler;
+
+import com.espirit.moddev.cli.api.CliContext;
+import com.espirit.moddev.cli.api.configuration.Config;
+import com.espirit.moddev.cli.api.configuration.ImportConfig;
+import com.espirit.moddev.connection.FsConnectionType;
+import com.espirit.moddev.util.FsUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,11 +45,10 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -78,7 +70,6 @@ public class CliContextImplTest {
 	private CliContext testling;
 	private SpecialistsBroker specialistsBroker;
 	private Connection connection;
-	private AssertAppender assertAppender;
 
 	@Before
 	public void setUp() throws Exception {
@@ -115,8 +106,6 @@ public class CliContextImplTest {
 		when(specialistsBroker.requestSpecialist(LanguageAgent.TYPE)).thenReturn(agent);
 
 		testling = new TestContext(clientConfig);
-
-		assertAppender = new AssertAppender();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -178,118 +167,6 @@ public class CliContextImplTest {
 		testling = new TestContext(clientConfig);
 		Assert.assertNull(testling.getSpecialistsBroker());
 		testling.requestSpecialist(LanguageAgent.TYPE);
-	}
-
-	@Test
-	public void testLoggingDebug() throws Exception {
-		//No NullPointerExceptions should be thrown
-		Logger.getLogger(CliContextImpl.class).addAppender(assertAppender);
-		testling.logDebug("debug");
-		assertThat("Expected a specific value: " + assertAppender.getMessage(), assertAppender.getMessage(), containsString("debug"));
-	}
-
-	@Test
-	public void testLoggingInfo() throws Exception {
-		//No NullPointerExceptions should be thrown
-		Logger.getLogger(CliContextImpl.class).addAppender(assertAppender);
-		testling.logInfo("info");
-		assertThat("Expected a specific value: " + assertAppender.getMessage(), assertAppender.getMessage(), containsString("info"));
-	}
-
-	@Test
-	public void testLoggingWarning() throws Exception {
-		//No NullPointerExceptions should be thrown
-		Logger.getLogger(CliContextImpl.class).addAppender(assertAppender);
-		testling.logWarning("warning");
-		assertThat("Expected a specific value: " + assertAppender.getMessage(), assertAppender.getMessage(), containsString("warning"));
-	}
-
-	@Test
-	public void testLoggingError() throws Exception {
-		//No NullPointerExceptions should be thrown
-		Logger.getLogger(CliContextImpl.class).addAppender(assertAppender);
-		testling.logError("error");
-		assertThat("Expected a specific value: " + assertAppender.getMessage(), assertAppender.getMessage(), containsString("error"));
-	}
-
-	@Test
-	public void testLoggingErrorWithException() throws Exception {
-		//No NullPointerExceptions should be thrown
-		Logger.getLogger(CliContextImpl.class).addAppender(assertAppender);
-		testling.logError("error with exception", new Exception("JUnit"));
-		assertThat("Expected a specific value: " + assertAppender.getMessage(), assertAppender.getMessage(), containsString("error with exception"));
-	}
-
-	private static class AssertAppender implements Appender {
-
-		private final FallbackErrorHandler fallbackErrorHandler = new FallbackErrorHandler();
-		private StringBuilder message = new StringBuilder();
-
-		public String getMessage() {
-			return message.toString();
-		}
-
-		@Override
-		public void addFilter(final Filter filter) {
-
-		}
-
-		@Override
-		public Filter getFilter() {
-			return null;
-		}
-
-		@Override
-		public void clearFilters() {
-
-		}
-
-		@Override
-		public void close() {
-
-		}
-
-		@Override
-		public void doAppend(final LoggingEvent loggingEvent) {
-			if (loggingEvent.getLogger() == Category.getInstance(CliContextImpl.class)) {
-				message.append(loggingEvent.getMessage().toString());
-			}
-		}
-
-		@Override
-		public String getName() {
-			return getClass().getSimpleName();
-		}
-
-		@Override
-		public void setErrorHandler(final ErrorHandler errorHandler) {
-
-		}
-
-		@Override
-		public ErrorHandler getErrorHandler() {
-			return fallbackErrorHandler;
-		}
-
-		@Override
-		public void setLayout(final Layout layout) {
-
-		}
-
-		@Override
-		public Layout getLayout() {
-			return null;
-		}
-
-		@Override
-		public void setName(final String s) {
-
-		}
-
-		@Override
-		public boolean requiresLayout() {
-			return false;
-		}
 	}
 
 	private class TestContext extends CliContextImpl {

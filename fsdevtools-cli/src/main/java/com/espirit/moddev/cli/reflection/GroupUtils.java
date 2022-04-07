@@ -26,7 +26,8 @@ import com.github.rvesse.airline.annotations.Group;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -40,7 +41,7 @@ import java.util.stream.Collectors;
  */
 public final class GroupUtils {
 
-    private static final Logger LOGGER = Logger.getLogger(GroupUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GroupUtils.class);
 
     private GroupUtils() {
         // Not used

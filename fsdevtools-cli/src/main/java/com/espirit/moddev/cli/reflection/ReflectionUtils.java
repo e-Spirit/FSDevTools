@@ -24,7 +24,8 @@ package com.espirit.moddev.cli.reflection;
 
 import com.espirit.moddev.cli.api.annotations.Description;
 import com.espirit.moddev.cli.api.command.Command;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -42,7 +43,7 @@ import java.util.Map;
  */
 public final class ReflectionUtils {
 
-	private static final Logger LOGGER = Logger.getLogger(ReflectionUtils.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionUtils.class);
 
 	private ReflectionUtils() {
 		// Not used
@@ -161,7 +162,7 @@ public final class ReflectionUtils {
 			} catch (NoSuchMethodException e) {
 				// This case doesn't have to be handled, because it is perfectly fine, when such a method
 				// does not exist
-				LOGGER.trace(e);
+				LOGGER.trace(e.getMessage(), e);
 			}
 		}
 

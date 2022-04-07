@@ -28,9 +28,11 @@ import com.espirit.moddev.cli.commands.module.configureCommand.json.components.C
 import com.espirit.moddev.cli.commands.module.configureCommand.json.components.ConfigurationContext;
 import com.espirit.moddev.cli.commands.module.configureCommand.json.components.common.ComponentNotFoundResult;
 import com.espirit.moddev.cli.configuration.GlobalConfig;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import com.google.common.collect.Lists;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
@@ -107,8 +109,8 @@ public class ModuleConfigurationTest {
 		// test
 		try {
 			_objectMapper.readValue(json, ModuleConfiguration.class);
-			failBecauseExceptionWasNotThrown(InvalidDefinitionException.class);
-		} catch (final InvalidDefinitionException e) {
+			failBecauseExceptionWasNotThrown(JsonMappingException.class);
+		} catch (final JsonMappingException e) {
 			assertThat(e.getCause()).isExactlyInstanceOf(NullPointerException.class);
 		}
 	}
@@ -126,8 +128,8 @@ public class ModuleConfigurationTest {
 		// test
 		try {
 			_objectMapper.readValue(json, ModuleConfiguration.class);
-			failBecauseExceptionWasNotThrown(InvalidDefinitionException.class);
-		} catch (final InvalidDefinitionException e) {
+			failBecauseExceptionWasNotThrown(JsonMappingException.class);
+		} catch (final JsonMappingException e) {
 			assertThat(e.getCause()).isExactlyInstanceOf(IllegalArgumentException.class);
 		}
 	}
@@ -158,8 +160,8 @@ public class ModuleConfigurationTest {
 		// test
 		try {
 			_objectMapper.readValue(json, ModuleConfiguration.class);
-			failBecauseExceptionWasNotThrown(InvalidDefinitionException.class);
-		} catch (final InvalidDefinitionException e) {
+			failBecauseExceptionWasNotThrown(JsonMappingException.class);
+		} catch (final JsonMappingException e) {
 			assertThat(e.getCause()).isExactlyInstanceOf(NullPointerException.class);
 		}
 	}

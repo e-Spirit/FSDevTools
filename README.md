@@ -54,24 +54,12 @@ Additional information and examples are provided via the [command line interface
 
 By default no log file will be written.
 Instead every command provides a more or less detailed, printed result in the command line.
-Both, a finer logging level and the generation of a log file can be configured in the Log4J logging properties file `/conf/log4j.properties`.
+Both, a finer logging level and the generation of a log file can be configured in the Log4J logging properties file `/conf/log4j2.xml`.
 
 If you need an even more detailed error logging, you can use the global option **-e**. 
 With **-e**, you get an additional exception stacktrace in some cases.
 
-To generate a log file you need to set `logfile` as an additional parameter for `log4j.rootLogger` and add the following lines to the properties file:
-
-```
-### Log to file
-log4j.appender.logfile=org.apache.log4j.DailyRollingFileAppender
-log4j.appender.logfile.File=fs-filesync.log
-log4j.appender.logfile.DatePattern='_'yyyy-MM-dd'.log'
-log4j.appender.logfile.layout=org.apache.log4j.PatternLayout
-log4j.appender.logfile.layout.ConversionPattern=%d %5p %C{1} - %m%n
-log4j.appender.logfile.Threshold=DEBUG
-```
-
-For more information about the Log4J configuration please consult the [Log4J manual](https://logging.apache.org/log4j/1.2/manual.html).
+For more information about the Log4J configuration please consult the [Log4J manual](https://logging.apache.org/log4j/2.x/manual/).
 
 ## Developer Documentation
 

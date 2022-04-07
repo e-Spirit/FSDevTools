@@ -13,6 +13,6 @@ if [ "${BYTECODE_VERSION}" -gt 52 ]; then
   VM_ARGS="--add-opens=java.base/sun.reflect.annotation=ALL-UNNAMED"
 fi
 
-$JAVACMD $VM_ARGS -Xmx512m -Dlog4j.configuration=file:"${FS_CLI_DIR}conf/log4j.properties" -cp "${FS_CLI_DIR}/lib/*" com.espirit.moddev.cli.Main "$@";
+$JAVACMD $VM_ARGS -Xmx512m -Dlog4j.configurationFile="${FS_CLI_DIR}conf/log4j2.xml" -cp "${FS_CLI_DIR}/lib/*" com.espirit.moddev.cli.Main "$@";
 RETVAL=$?;
 exit ${RETVAL};

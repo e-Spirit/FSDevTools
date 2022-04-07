@@ -22,39 +22,14 @@
 
 package com.espirit.moddev.cli.commands.server.common;
 
-import com.espirit.moddev.cli.commands.server.common.AbstractServerCommand;
 import com.espirit.moddev.connection.FsConnectionType;
 import com.espirit.moddev.util.FsUtil;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
-import org.apache.log4j.WriterAppender;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
 import org.junit.Test;
-
-import java.io.StringWriter;
 
 import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractServerCommandTest<T extends AbstractServerCommand> {
-
-	private static StringWriter _log;
-
-	@Before
-	public void setup() {
-		_log = new StringWriter();
-		final WriterAppender appender = new WriterAppender(new SimpleLayout(), _log);
-		appender.setImmediateFlush(true);
-		BasicConfigurator.configure(appender);
-		Logger.getRootLogger().setLevel(Level.DEBUG);
-	}
-
-	@NotNull
-	protected String getLog() {
-		return _log.toString();
-	}
 
 	@NotNull
 	protected abstract T createTestling();
