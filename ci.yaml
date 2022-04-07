@@ -8,4 +8,4 @@ artifacts:
     pattern: "*.*"
 docker:
   images:
-    - docker.artifactory.e-spirit.de/cxt/base:jdk-old-lts
+    - docker.artifactory.e-spirit.de/cxt/base:jdk-lts
