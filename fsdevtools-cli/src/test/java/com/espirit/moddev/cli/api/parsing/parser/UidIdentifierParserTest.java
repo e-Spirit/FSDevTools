@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,77 +23,75 @@
 package com.espirit.moddev.cli.api.parsing.parser;
 
 import com.espirit.moddev.cli.api.parsing.exceptions.UnregisteredPrefixException;
-
 import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 import com.espirit.moddev.cli.api.parsing.identifier.UidMapping;
-import de.espirit.firstspirit.access.store.IDProvider;
-
 import org.hamcrest.Matchers;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
-@RunWith(Theories.class)
 public class UidIdentifierParserTest {
-
-    @DataPoints
-    public static List[] testcases =
-        new List[]{ Arrays.asList("page:myuid"),
-                    Arrays.asList("PAGE:myuid"),
-                    Arrays.asList("PAGE :myuid"),
-                    Arrays.asList("PAGE : myuid")};
 
     private UidIdentifierParser testling;
 
-    @Before
-    public void setUp() {
-        testling = new UidIdentifierParser();
+    @NotNull
+    private static Stream<List<String>> parameterSet() {
+        return Stream.of(List.of("page:myuid"),
+                List.of("PAGE:myuid"),
+                List.of("PAGE :myuid"),
+                List.of("PAGE : myuid"));
     }
 
-
-    @Theory
-    public void testAppliesTo(List<String> uids) throws Exception {
-        for(String current : uids) {
+    @ParameterizedTest
+    @MethodSource("parameterSet")
+    public void testAppliesTo(@NotNull final List<String> uids) {
+        for (String current : uids) {
             boolean appliesTo = testling.appliesTo(current);
-            Assert.assertTrue("Parser should apply to string " + current, appliesTo);
+            assertTrue(appliesTo, "Parser should apply to string " + current);
         }
+    }
+
+    @ParameterizedTest
+    @MethodSource("parameterSet")
+    public void testParse(@NotNull final List<String> uids) {
+        final List<UidIdentifier> list = testling.parse(uids);
+        assertThat("Expected PAGE but got: " + uids, list.get(0).getUidMapping(), Matchers.is(UidMapping.PAGE));
+        assertThat("Expected 'myuid' but got: " + uids, list.get(0).getUid(), is("myuid"));
+    }
+
+    @BeforeEach
+    public void setUp() {
+        testling = new UidIdentifierParser();
     }
 
     @Test
     public void testDontApplyTo() {
         boolean appliesTo = testling.appliesTo("pagexyz :bla");
-        Assert.assertFalse("Parser should apply to string pagexyz :bla", appliesTo);
+        assertFalse(appliesTo, "Parser should apply to string pagexyz :bla");
     }
 
-    @Theory
-    public void testParse(List<String> uids) throws Exception {
-        final List<UidIdentifier> list = testling.parse(uids);
 
-        assertThat("Expected PAGE but got: " + uids, list.get(0).getUidMapping(), Matchers.is(UidMapping.PAGE));
-        assertThat("Expected 'myuid' but got: " + uids, list.get(0).getUid(), is("myuid"));
+    @Test
+    public void testParseWithNonExistentPrefix() {
+        assertThrows(UnregisteredPrefixException.class, () -> testling.parse(Arrays.asList("xxxxx:myuid")));
     }
 
-    @Test(expected = UnregisteredPrefixException.class)
-    public void testParseWithNonExistentPrefix() throws Exception {
-        testling.parse(Arrays.asList("xxxxx:myuid"));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testParseWithNoStore() throws Exception {
-        testling.parse(Arrays.asList("myuid"));
+    @Test
+    public void testParseWithNoStore() {
+        assertThrows(IllegalArgumentException.class, () -> testling.parse(Arrays.asList("myuid")));
     }
 
 }

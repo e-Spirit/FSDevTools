@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ package com.espirit.moddev.cli.api.result;
  * through exceptions.
  *
  * @param <CUSTOM_RESULT_TYPE> the result type.
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 public interface Result<CUSTOM_RESULT_TYPE> {
 

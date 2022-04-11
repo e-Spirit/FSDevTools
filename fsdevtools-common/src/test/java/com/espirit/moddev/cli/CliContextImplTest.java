@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,18 +36,17 @@ import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.api.configuration.ImportConfig;
 import com.espirit.moddev.connection.FsConnectionType;
 import com.espirit.moddev.util.FsUtil;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -56,22 +55,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
-@RunWith(Theories.class)
 public class CliContextImplTest {
-
-	@DataPoints
-	public static BaseContext.Env[]
-			testcases =
-			{null, BaseContext.Env.PREVIEW, BaseContext.Env.WEBEDIT, BaseContext.Env.DROP, BaseContext.Env.FS_BUTTON};
 
 	private ImportConfig clientConfig;
 	private CliContext testling;
 	private SpecialistsBroker specialistsBroker;
 	private Connection connection;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		clientConfig = mock(ImportConfig.class);
 		when(clientConfig.getHost()).thenReturn("host");
@@ -108,9 +101,9 @@ public class CliContextImplTest {
 		testling = new TestContext(clientConfig);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testConstructor() throws Exception {
-		new CliContextImpl(null);
+		Assertions.assertThrows(IllegalArgumentException.class, () -> new CliContextImpl(null));
 	}
 
 	@Test
@@ -135,7 +128,8 @@ public class CliContextImplTest {
 		verify(firstSpiritConnection, times(1)).close();
 	}
 
-	@Theory
+	@ParameterizedTest
+	@EnumSource(value = BaseContext.Env.class, names = {"PREVIEW", "WEBEDIT", "DROP", "FS_BUTTON"})
 	public void testIsRest(final BaseContext.Env environment) throws Exception {
 		assertThat("Expected false", testling.is(environment), is(Boolean.FALSE));
 	}
@@ -146,26 +140,28 @@ public class CliContextImplTest {
 	}
 
 	@Test
-	public void testRequireSpecialist() throws Exception {
+	public void testRequireSpecialist() {
 		when(testling.getSpecialistsBroker()).thenReturn(specialistsBroker);
 		final LanguageAgent languageAgent = testling.requireSpecialist(LanguageAgent.TYPE);
 		assertThat("Expected a non-null value", languageAgent, is(notNullValue()));
 		verify(specialistsBroker, times(1)).requireSpecialist(LanguageAgent.TYPE);
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void testRequireSpecialistWithNullBroker() throws Exception {
-		testling = spy(new TestContext(clientConfig));
-		when(testling.getSpecialistsBroker()).thenReturn(null);
-		final LanguageAgent languageAgent = testling.requireSpecialist(LanguageAgent.TYPE);
-		assertThat("Expected a null value for a null specialistBroker", languageAgent, is(nullValue()));
+	@Test
+	public void testRequireSpecialistWithNullBroker() {
+		Assertions.assertThrows(IllegalStateException.class, () -> {
+			testling = spy(new TestContext(clientConfig));
+			when(testling.getSpecialistsBroker()).thenReturn(null);
+			final LanguageAgent languageAgent = testling.requireSpecialist(LanguageAgent.TYPE);
+			assertThat("Expected a null value for a null specialistBroker", languageAgent, is(nullValue()));
+		});
 	}
 
 	@Test
 	public void testRequestSpecialist() throws Exception {
 		when(clientConfig.getProject()).thenReturn(null);
 		testling = new TestContext(clientConfig);
-		Assert.assertNull(testling.getSpecialistsBroker());
+		assertNull(testling.getSpecialistsBroker());
 		testling.requestSpecialist(LanguageAgent.TYPE);
 	}
 

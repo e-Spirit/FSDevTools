@@ -95,9 +95,9 @@ available at [http://contributor-covenant.org/version/1/4/][version-covenant].
 
 ## Legal Notices
 
-FSDevTools is a product of [e-Spirit AG][homepage-eSpirit], Dortmund, Germany.
+FSDevTools is a product of [e-Spirit GmbH][homepage-eSpirit], Dortmund, Germany.
 
-Only a license agreed upon with e-Spirit AG is valid with respect to the user for using FSDevTools.
+Only a license agreed upon with e-Spirit GmbH is valid with respect to the user for using FSDevTools.
 
 [homepage-eSpirit]: http://www.e-spirit.com
 

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
 /**
  * This utility class provides methods for testing with the firstspirit template store.
  *
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 public class StoreTestUtil {
 
@@ -133,7 +133,7 @@ public class StoreTestUtil {
      * that the firstspirit implementations consciously don't do. So this is should only be used in
      * testing environments for mocking.
      *
-     * @author e-Spirit AG
+     * @author e-Spirit GmbH
      */
     public static class SimpleListable implements Listable<IDProvider> {
         List<IDProvider> children = new ArrayList<>();

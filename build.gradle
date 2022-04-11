@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,7 +108,7 @@ ext {
     hamcrestJavaVersion = '2.0.0.0'
     guavaVersion = '31.1-jre'
     jacksonDatabindVersion = '2.13.2.2'
-    junitVersion = '4.13.2'
+    junitVersion = '5.8.2'
     log4jVersion = '2.17.2'
     lombokVersion = '1.18.22'
     mockitoVersion = '4.4.0'
@@ -132,13 +132,7 @@ ext {
 ///////////////////////////////////////////////////////
 
 configurations {
-    fsLicense
-    demoProject
-    demoProjectWithDB
-    testInstallerTar
-    testServerJar
     testRuntimeJar
-    testCliArchive
 }
 
 /**
@@ -153,11 +147,6 @@ dependencies {
     implementation project(":fsdevtools-cli")
 
     // tests
-    fsLicense group: 'de.espirit.firstspirit', name: 'fs-license', version: '5-SNAPSHOT', ext: 'conf'
-    demoProject 'com.espirit.moddev:pm-demo-without-db:1.0'
-    demoProjectWithDB 'com.espirit.moddev:pm-demo-with-db:1.0'
-    testInstallerTar group: 'de.espirit.firstspirit', name: 'fs-install', version: '1.0.2', ext: 'tar.gz'
-    testServerJar group: 'de.espirit.firstspirit', name: 'fs-isolated-server', version: "$firstSpiritVersion", ext: 'jar'
     testRuntimeJar group: 'de.espirit.firstspirit', name: 'fs-isolated-runtime', version: "$firstSpiritVersion", ext: 'jar'
 }
 
@@ -175,10 +164,6 @@ dependencies {
 List<Integer> ports = BuildUtils.guessFreePorts()
 ext.serverHttpPort = ports.get(0)
 ext.serverSocketPort = ports.get(1)
-
-test {
-    useJUnitPlatform()
-}
 
 ///////////////////////////////////////////////////////
 // configure all projects
@@ -242,7 +227,9 @@ subprojects {
         compileOnly group: 'de.espirit.firstspirit', name: 'fs-isolated-runtime', version: "${fsRuntimeVersion}"
         implementation "org.slf4j:slf4j-api:${slf4japiVersion}"
 
-        testImplementation "junit:junit:${junitVersion}"
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+        testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+        testImplementation("org.junit.jupiter:junit-jupiter-params:${junitVersion}")
         testImplementation "org.hamcrest:hamcrest-core:${hamcrestCoreVersion}"
         testImplementation "org.mockito:mockito-core:${mockitoVersion}"
         testImplementation "org.assertj:assertj-core:${assertJVersion}"
@@ -280,29 +267,9 @@ subprojects {
             }
         }
     }
-}
 
-/**
- * INTEGRATION TESTS
- */
-
-///////////////////////////////////////////////////////
-// manual clean up task
-///////////////////////////////////////////////////////
-
-task cleanupIntegrationTestServer() {
-    group 'firstspirit'
-    doFirst {
-        def directory = new File("$buildDir/fs");
-        if (directory.exists()) {
-            if (!directory.deleteDir()) {
-                throw new IllegalStateException("Could not delete directory '$directory'!")
-            } else {
-                logger.info("Directory '$directory' deleted.")
-            }
-        } else {
-            logger.info("Nothing to delete.")
-        }
+    test {
+        useJUnitPlatform()
     }
 }
 

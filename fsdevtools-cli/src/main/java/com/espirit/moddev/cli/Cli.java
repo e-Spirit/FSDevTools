@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_RESULT;
  * call System.exit() with an appropriate error code in case of regular termination or
  * in case of an exception.
  *
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 public final class Cli {
 

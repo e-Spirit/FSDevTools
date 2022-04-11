@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ package com.espirit.moddev.cli;
 import com.espirit.moddev.cli.api.result.ExecutionResult;
 import com.espirit.moddev.cli.api.result.ExecutionResults;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,74 +36,75 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
+
 
 public class LicenseTest {
 
-	private static final String[] EXTENSIONS_TO_CHECK = new String[]{".java", ".gradle", ".groovy", ".properties"};
-	private static final String[] DIRS_TO_IGNORE = new String[]{".idea", ".git", ".gradle", "build", "gradle", "out"};
-	private static final String[] FILES_TO_IGNORE = new String[]{"/gradle.properties"};
+    private static final String[] EXTENSIONS_TO_CHECK = new String[]{".java", ".gradle", ".groovy", ".properties"};
+    private static final String[] DIRS_TO_IGNORE = new String[]{".idea", ".git", ".gradle", "build", "gradle", "out"};
+    private static final String[] FILES_TO_IGNORE = new String[]{"/gradle.properties"};
 
-	private static final String LICENSE_YEAR = "2021";
+    private static final String LICENSE_YEAR = "2021";
 
-	@Test
-	public void testLicenses() throws IOException {
-		final ExecutionResults executionResults = testPath(Paths.get("").resolve("../"));
-		if (!executionResults.isEmpty()) {
-			final ArrayList<String> errors = new ArrayList<>();
-			errors.add("The following files have mismatched license headers:");
-			executionResults.stream().forEach(executionResult -> errors.add(" - " + executionResult.toString()));
-			fail(String.join("\n", errors));
-		}
-	}
+    @Test
+    public void testLicenses() throws IOException {
+        final ExecutionResults executionResults = testPath(Paths.get("").resolve("../"));
+        if (!executionResults.isEmpty()) {
+            final ArrayList<String> errors = new ArrayList<>();
+            errors.add("The following files have mismatched license headers:");
+            executionResults.stream().forEach(executionResult -> errors.add(" - " + executionResult.toString()));
+            fail(String.join("\n", errors));
+        }
+    }
 
-	@NotNull
-	private ExecutionResults testPath(@NotNull final Path path) throws IOException {
-		final ExecutionResults results = new ExecutionResults();
-		final File dir = path.toFile();
-		final File[] files = dir.listFiles(file -> {
-			final String fileName = file.getName();
-			if (file.isDirectory()) {
-				for (final String dirToIgnore : DIRS_TO_IGNORE) {
-					if (fileName.equalsIgnoreCase(dirToIgnore)) {
-						return false;
-					}
-				}
-				return true;
-			}
-			if (file.isFile()) {
-				for (final String fileToIgnore : FILES_TO_IGNORE) {
-					final String filePath = file.toPath().toString().replaceAll("\\\\", "/").replaceAll("\\.\\./", "/");
-					if (filePath.equals(fileToIgnore)) {
-						return false;
-					}
-				}
-				for (final String extension : EXTENSIONS_TO_CHECK) {
-					if (fileName.toLowerCase(Locale.ENGLISH).endsWith(extension)) {
-						return true;
-					}
-				}
-			}
-			return false;
-		});
+    @NotNull
+    private ExecutionResults testPath(@NotNull final Path path) throws IOException {
+        final ExecutionResults results = new ExecutionResults();
+        final File dir = path.toFile();
+        final File[] files = dir.listFiles(file -> {
+            final String fileName = file.getName();
+            if (file.isDirectory()) {
+                for (final String dirToIgnore : DIRS_TO_IGNORE) {
+                    if (fileName.equalsIgnoreCase(dirToIgnore)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            if (file.isFile()) {
+                for (final String fileToIgnore : FILES_TO_IGNORE) {
+                    final String filePath = file.toPath().toString().replaceAll("\\\\", "/").replaceAll("\\.\\./", "/");
+                    if (filePath.equals(fileToIgnore)) {
+                        return false;
+                    }
+                }
+                for (final String extension : EXTENSIONS_TO_CHECK) {
+                    if (fileName.toLowerCase(Locale.ENGLISH).endsWith(extension)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        });
 
-		if (files != null) {
-			for (final File file : files) {
-				if (file.isDirectory()) {
-					results.add(testPath(file.toPath()));
-				} else if (file.isFile()) {
-					final String fileContent = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
-					if (!fileContent.contains("Copyright (C) " + LICENSE_YEAR + " e-Spirit AG") || !fileContent.contains("http://www.apache.org/licenses/LICENSE-2.0")) {
-						results.add(new ExecutionResult() {
-							@Override
-							public String toString() {
-								return file.toPath().toString().replaceAll("\\\\", "/").replaceAll("\\.\\./", "/");
-							}
-						});
-					}
-				}
-			}
-		}
-		return results;
-	}
+        if (files != null) {
+            for (final File file : files) {
+                if (file.isDirectory()) {
+                    results.add(testPath(file.toPath()));
+                } else if (file.isFile()) {
+                    final String fileContent = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+                    if (!fileContent.contains("Copyright (C) " + LICENSE_YEAR + " e-Spirit GmbH") || !fileContent.contains("http://www.apache.org/licenses/LICENSE-2.0")) {
+                        results.add(new ExecutionResult() {
+                            @Override
+                            public String toString() {
+                                return file.toPath().toString().replaceAll("\\\\", "/").replaceAll("\\.\\./", "/");
+                            }
+                        });
+                    }
+                }
+            }
+        }
+        return results;
+    }
 }

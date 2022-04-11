@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import com.espirit.moddev.cli.configuration.GlobalConfig;
  * execution environment.
  *
  * @param <RESULT_TYPE> the result type that is returned when a command of this class is called
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 public abstract class SimpleCommand<RESULT_TYPE extends Result> extends GlobalConfig implements Command<RESULT_TYPE> {
     @Override

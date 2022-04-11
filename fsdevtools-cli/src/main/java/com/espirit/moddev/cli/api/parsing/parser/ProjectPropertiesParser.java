@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import de.espirit.firstspirit.transport.PropertiesTransportOptions;
 
 /**
  *
- * @author kohlbrecher
+ * @author e-Spirit GmbH
  */
 public class ProjectPropertiesParser implements Parser<ProjectPropertiesIdentifier> {
     protected static final Logger LOGGER = LoggerFactory.getLogger(ProjectPropertiesParser.class);

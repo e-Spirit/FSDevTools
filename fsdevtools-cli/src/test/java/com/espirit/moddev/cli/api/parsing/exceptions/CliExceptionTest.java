@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,53 +27,48 @@ import com.espirit.moddev.cli.exception.CliError;
 import com.espirit.moddev.cli.exception.CliException;
 import com.espirit.moddev.connection.FsConnectionType;
 import com.espirit.moddev.util.FsUtil;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.stream.Stream;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
-@RunWith(Parameterized.class)
 public class CliExceptionTest {
 
     private Config config;
     private Exception cause;
 
-    @Parameterized.Parameters
-    public static Collection<CliError> provideErrors() {
-        final Collection<CliError> list = Arrays.asList(CliError.values());
-        return list;
-    }
-
     private CliException testling;
-    private CliError error;
 
-    public CliExceptionTest(final CliError error) {
-        this.error = error;
+    @NotNull
+    private static Stream<Arguments> provideParameters() {
+        return Stream.of(Arguments.of((Object[]) CliError.values()));
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         config = mock(Config.class);
         when(config.getUser()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
         when(config.getHost()).thenReturn(FsUtil.VALUE_DEFAULT_HOST);
         when(config.getPort()).thenReturn(FsConnectionType.HTTP.getDefaultPort());
         cause = new Exception("JUnit");
-        testling = new CliException(error, config, cause);
     }
 
-    @Test
-    public void testToString() throws Exception {
+    @ParameterizedTest
+    @MethodSource("provideParameters")
+    public void testToString(final CliError error) throws Exception {
+        testling = new CliException(error, config, cause);
         assertThat("Expected a specific value", testling.toString(), is(error.getMessage(config)));
     }
 
@@ -82,4 +77,5 @@ public class CliExceptionTest {
         testling = new CliException(cause);
         assertThat("Expected a specific value", testling.toString(), is("JUnit"));
     }
+
 }

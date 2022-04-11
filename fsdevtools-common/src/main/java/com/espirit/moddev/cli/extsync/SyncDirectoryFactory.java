@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import java.io.File;
 /**
  * Helper class to create the synchronization directory if needed.
  *
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 public class SyncDirectoryFactory {
 

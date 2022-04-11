@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import com.espirit.moddev.cli.api.command.Command;
 import com.espirit.moddev.cli.api.annotations.Description;
 
 /**
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 @com.github.rvesse.airline.annotations.Command(name = "command_with_non_string_description_method")
 public final class CommandWithNonStringDescriptionMethod implements Command {

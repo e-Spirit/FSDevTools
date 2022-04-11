@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,28 +22,21 @@
 
 package com.espirit.moddev.cli.api.parsing.identifier;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.theories.Theories;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
-@RunWith(Theories.class)
 public class PathIdentifierTest {
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNullStore() {
-        new PathIdentifier(null);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new PathIdentifier(null));
     }
 
 
@@ -57,4 +50,5 @@ public class PathIdentifierTest {
         final PathIdentifier nonEqualIdentifier = new PathIdentifier("/templatestore/blubs");
         assertThat(nonEqualIdentifier).describedAs("non equal identifier").isNotEqualTo(identifier);
     }
+
 }

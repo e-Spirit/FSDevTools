@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,92 +23,91 @@
 package com.espirit.moddev.cli.configuration;
 
 import com.espirit.moddev.cli.CliConstants;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 public class GlobalConfigTest {
 
-    @Test
-    public void userIsNotFetchedFromEnvironmentIfConfigured() {
-        final GlobalConfig config = new GlobalConfig();
-        config.setUser("abc");
-        config.getEnvironment().clear();
-        config.getEnvironment().put(CliConstants.KEY_FS_USER.value(), "xyz");
+	@Test
+	public void userIsNotFetchedFromEnvironmentIfConfigured() {
+		final GlobalConfig config = new GlobalConfig();
+		config.setUser("abc");
+		config.getEnvironment().clear();
+		config.getEnvironment().put(CliConstants.KEY_FS_USER.value(), "xyz");
 
-        assertEquals("abc", config.getUser());
-    }
+		assertEquals("abc", config.getUser());
+	}
 
-    @Test
-    public void userIsFetchedFromEnvironmentIfNotConfigured() {
-        final GlobalConfig config = new GlobalConfig();
-        config.getEnvironment().clear();
-        config.getEnvironment().put(CliConstants.KEY_FS_USER.value(), "xyz");
+	@Test
+	public void userIsFetchedFromEnvironmentIfNotConfigured() {
+		final GlobalConfig config = new GlobalConfig();
+		config.getEnvironment().clear();
+		config.getEnvironment().put(CliConstants.KEY_FS_USER.value(), "xyz");
 
-        assertEquals("xyz", config.getUser());
-    }
+		assertEquals("xyz", config.getUser());
+	}
 
-    @Test
-    public void defaultUserIsReturnedIfNoUserIsConfigured() {
-        final GlobalConfig config = new GlobalConfig();
-        config.getEnvironment().clear();
+	@Test
+	public void defaultUserIsReturnedIfNoUserIsConfigured() {
+		final GlobalConfig config = new GlobalConfig();
+		config.getEnvironment().clear();
 
-        assertEquals(CliConstants.DEFAULT_USER.value(), config.getUser());
-    }
+		assertEquals(CliConstants.DEFAULT_USER.value(), config.getUser());
+	}
 
-    @Test
-    public void nullProjectIsReturnedIfNoProjectIsConfigured() {
-        final GlobalConfig config = new GlobalConfig();
+	@Test
+	public void nullProjectIsReturnedIfNoProjectIsConfigured() {
+		final GlobalConfig config = new GlobalConfig();
 
-        config.getEnvironment().clear();
-        Assert.assertNull(config.getProject());
-    }
+		config.getEnvironment().clear();
+		assertNull(config.getProject());
+	}
 
-    @Test
-    public void defaultHTTPProxySettings() {
-        final GlobalConfig config = new GlobalConfig();
-        assertEquals("", config.getHttpProxyHost());
-        assertEquals(Integer.valueOf(8080), config.getHttpProxyPort());
-    }
+	@Test
+	public void defaultHTTPProxySettings() {
+		final GlobalConfig config = new GlobalConfig();
+		assertEquals("", config.getHttpProxyHost());
+		assertEquals(Integer.valueOf(8080), config.getHttpProxyPort());
+	}
 
-    @Test
-    public void nullHTTPProxySettings() {
-        final GlobalConfig config = new GlobalConfig();
-        config.setHttpProxyHost(null);
-        config.setHttpProxyPort(null);
-        assertEquals("", config.getHttpProxyHost());
-        assertEquals(Integer.valueOf(8080), config.getHttpProxyPort());
-    }
+	@Test
+	public void nullHTTPProxySettings() {
+		final GlobalConfig config = new GlobalConfig();
+		config.setHttpProxyHost(null);
+		config.setHttpProxyPort(null);
+		assertEquals("", config.getHttpProxyHost());
+		assertEquals(Integer.valueOf(8080), config.getHttpProxyPort());
+	}
 
-    @Test
-    public void customHTTPProxySettings() {
-        final String customHost = "myHost";
-        final Integer customPort = Integer.valueOf(1337);
-        final GlobalConfig config = new GlobalConfig();
-        config.setHttpProxyHost(customHost);
-        config.setHttpProxyPort(customPort);
-        assertEquals(customHost, config.getHttpProxyHost());
-        assertEquals(customPort, config.getHttpProxyPort());
-    }
+	@Test
+	public void customHTTPProxySettings() {
+		final String customHost = "myHost";
+		final Integer customPort = Integer.valueOf(1337);
+		final GlobalConfig config = new GlobalConfig();
+		config.setHttpProxyHost(customHost);
+		config.setHttpProxyPort(customPort);
+		assertEquals(customHost, config.getHttpProxyHost());
+		assertEquals(customPort, config.getHttpProxyPort());
+	}
 
-    @Test
-    public void defaultServletZone() {
-        final GlobalConfig config = new GlobalConfig();
-        assertEquals(CliConstants.DEFAULT_SERVLET_ZONE.value(), config.getServletZone());
-    }
+	@Test
+	public void defaultServletZone() {
+		final GlobalConfig config = new GlobalConfig();
+		assertEquals(CliConstants.DEFAULT_SERVLET_ZONE.value(), config.getServletZone());
+	}
 
 
-    @Test
-    public void customServletZone() {
-        final String customServletZone = "customServletZone";
-        final GlobalConfig config = new GlobalConfig();
-        config.setServletZone(customServletZone);
-        assertEquals(customServletZone, config.getServletZone());
-    }
+	@Test
+	public void customServletZone() {
+		final String customServletZone = "customServletZone";
+		final GlobalConfig config = new GlobalConfig();
+		config.setServletZone(customServletZone);
+		assertEquals(customServletZone, config.getServletZone());
+	}
 
 }

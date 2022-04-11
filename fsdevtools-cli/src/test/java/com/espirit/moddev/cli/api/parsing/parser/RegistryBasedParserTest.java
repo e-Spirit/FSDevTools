@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,29 +25,32 @@ package com.espirit.moddev.cli.api.parsing.parser;
 import com.espirit.moddev.cli.api.parsing.identifier.*;
 import com.google.common.collect.Lists;
 import de.espirit.firstspirit.access.store.IDProvider;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RegistryBasedParserTest {
 
     private RegistryBasedParser testling;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         testling = new RegistryBasedParser();
     }
-    @Test(expected = IllegalArgumentException.class)
+
+    @Test
     public void registerNullParser() {
-        testling.registerParser(null);
+        assertThrows(IllegalArgumentException.class, () -> testling.registerParser(null));
     }
+
     @Test
     public void registerParser() {
         Parser parser = new Parser() {
@@ -62,8 +65,8 @@ public class RegistryBasedParserTest {
             }
         };
         boolean registeredParser = testling.registerParser(parser);
-        Assert.assertTrue("Parser wasn't registered successfully", registeredParser);
-        Assert.assertTrue("Parser wasn't unregistered successfully", testling.unregisterParser(parser));
+        assertTrue(registeredParser, "Parser wasn't registered successfully");
+        assertTrue(testling.unregisterParser(parser), "Parser wasn't unregistered successfully");
     }
 
     @Test
@@ -79,9 +82,9 @@ public class RegistryBasedParserTest {
                 return input.startsWith("xxx");
             }
         });
-        Assert.assertTrue("Parser wasn't registered successfully", registeredParser);
-        Assert.assertTrue("Parser should delegate appliesTo to registered parsers", testling.appliesTo("xxxaaa"));
-        Assert.assertFalse("Parser should not apply to other input strings", testling.appliesTo("aaabbb"));
+        assertTrue(registeredParser, "Parser wasn't registered successfully");
+        assertTrue(testling.appliesTo("xxxaaa"), "Parser should delegate appliesTo to registered parsers");
+        assertFalse(testling.appliesTo("aaabbb"), "Parser should not apply to other input strings");
     }
 
     @Test
@@ -92,11 +95,11 @@ public class RegistryBasedParserTest {
         testling.registerParser(new SchemaIdentifierParser());
         List<String> testIdentifiers = Arrays.asList("root:templatestore", "mediafolder:layout", "entities:news", "schema:products");
         final List<Identifier> list = testling.parse(testIdentifiers);
-        Assert.assertEquals("List should contain " + testIdentifiers.size() + " elements.", testIdentifiers.size(), list.size());
-        Assert.assertThat(list.contains(new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE)), equalTo(true));
-        Assert.assertThat(list.contains(new UidIdentifier(UidMapping.MEDIAFOLDER, "layout")), equalTo(true));
-        Assert.assertThat(list.contains(new EntitiesIdentifier("news")), equalTo(true));
-        Assert.assertThat(list.contains(new SchemaIdentifier("products", Collections.emptyMap()) ), equalTo(true));
+        assertEquals(testIdentifiers.size(), list.size(), "List should contain " + testIdentifiers.size() + " elements.");
+        assertThat(list.contains(new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE)), equalTo(true));
+        assertThat(list.contains(new UidIdentifier(UidMapping.MEDIAFOLDER, "layout")), equalTo(true));
+        assertThat(list.contains(new EntitiesIdentifier("news")), equalTo(true));
+        assertThat(list.contains(new SchemaIdentifier("products", Collections.emptyMap())), equalTo(true));
     }
 
     @Test
@@ -105,7 +108,8 @@ public class RegistryBasedParserTest {
             @Override
             public List<Identifier> parse(List<String> input) {
                 return new ArrayList<Identifier>() {{
-                    add((storeAgent, useReleaseState, exportOperation) -> {});
+                    add((storeAgent, useReleaseState, exportOperation) -> {
+                    });
                 }};
             }
 
@@ -118,7 +122,8 @@ public class RegistryBasedParserTest {
             @Override
             public List<Identifier> parse(List<String> input) {
                 return new ArrayList<Identifier>() {{
-                    add((storeAgent, useReleaseState, exportOperation) -> {});
+                    add((storeAgent, useReleaseState, exportOperation) -> {
+                    });
                 }};
             }
 
@@ -131,7 +136,8 @@ public class RegistryBasedParserTest {
             @Override
             public List<Identifier> parse(List<String> input) {
                 return new ArrayList<Identifier>() {{
-                    add((storeAgent, useReleaseState, exportOperation) -> {});
+                    add((storeAgent, useReleaseState, exportOperation) -> {
+                    });
                 }};
             }
 
@@ -142,12 +148,12 @@ public class RegistryBasedParserTest {
         });
         testling.registerParser(new UidIdentifierParser());
 
-        Assert.assertTrue(testling.appliesTo("pagetemplate:homepage"));
-        Assert.assertTrue(testling.appliesTo("path:/TemplateStore/Pagetemplates/FOLDER_NAME/UID"));
-        Assert.assertTrue(testling.appliesTo("entities:Produkte"));
-        Assert.assertTrue(testling.appliesTo("projectprops:RESOLUTION"));
+        assertTrue(testling.appliesTo("pagetemplate:homepage"));
+        assertTrue(testling.appliesTo("path:/TemplateStore/Pagetemplates/FOLDER_NAME/UID"));
+        assertTrue(testling.appliesTo("entities:Produkte"));
+        assertTrue(testling.appliesTo("projectprops:RESOLUTION"));
 
         List<Identifier> result = testling.parse(Lists.newArrayList("path:/TemplateStore/Pagetemplates/<FOLDER_NAME>/UID", "entities:Produkte", "projectprops:RESOLUTION", "pagetemplate:homepage", "projectprops:COMMON"));
-        Assert.assertEquals(4, result.size());
+        assertEquals(4, result.size());
     }
 }

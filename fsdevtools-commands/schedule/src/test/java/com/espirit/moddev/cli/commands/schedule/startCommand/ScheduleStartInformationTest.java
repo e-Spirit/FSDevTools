@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,13 @@
 
 package com.espirit.moddev.cli.commands.schedule.startCommand;
 
-import com.espirit.moddev.cli.commands.schedule.utils.ScheduleTestUtils;
 import de.espirit.firstspirit.access.schedule.ScheduleEntry;
 
-import org.junit.Test;
+import com.espirit.moddev.cli.commands.schedule.utils.ScheduleTestUtils;
+import org.junit.jupiter.api.Test;
 
 import java.util.Date;
-
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class ScheduleStartInformationTest {
@@ -43,10 +42,10 @@ public class ScheduleStartInformationTest {
 		//test
 		final ScheduleStartInformation scheduleStartInformation = new ScheduleStartInformation(entry, start, finish);
 		//verify
-		assertEquals("entry mismatch", entry, scheduleStartInformation.getScheduleEntry());
-		assertEquals("start time mismatch", start, scheduleStartInformation.getStartTime());
-		assertEquals("finish time mismatch", finish, scheduleStartInformation.getFinishTime());
-		assertEquals("duration mismatch", 100, scheduleStartInformation.getDuration());
+		assertEquals(entry, scheduleStartInformation.getScheduleEntry(), "entry mismatch");
+		assertEquals(start, scheduleStartInformation.getStartTime(), "start time mismatch");
+		assertEquals(finish, scheduleStartInformation.getFinishTime(), "finish time mismatch");
+		assertEquals(100, scheduleStartInformation.getDuration(), "duration mismatch");
 	}
 
 }

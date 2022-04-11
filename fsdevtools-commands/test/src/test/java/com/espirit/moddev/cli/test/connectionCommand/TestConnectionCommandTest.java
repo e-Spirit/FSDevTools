@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,19 +25,20 @@ package com.espirit.moddev.cli.test.connectionCommand;
 import com.espirit.moddev.cli.api.result.Result;
 
 import com.espirit.moddev.cli.commands.test.connectionCommand.TestConnectionCommand;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import de.espirit.firstspirit.access.Connection;
 
-import org.junit.Before;
-import org.junit.Test;
 
 import java.io.IOException;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -48,7 +49,7 @@ public class TestConnectionCommandTest {
     private TestConnectionCommand testling;
     private Connection connection;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         connection = mock(Connection.class);
         testling = new TestConnectionCommand(){

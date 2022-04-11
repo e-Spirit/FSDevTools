@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 /**
  * Specialization of the generic {@link SimpleResult} class that holds a list of {@link InstallModulesResult multiple InstallModulesResults}.
  *
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  * @see InstallModuleResult
  */
 public class InstallModulesResult extends SimpleResult<List<InstallModuleResult>> {

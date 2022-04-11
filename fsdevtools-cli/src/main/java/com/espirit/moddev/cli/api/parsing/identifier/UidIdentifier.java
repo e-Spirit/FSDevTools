@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * This class encapsulates a uid and its {@link de.espirit.firstspirit.access.store.IDProvider.UidType} and therewith provides a full qualified representation of the uid.
  * It also allows to parse an arbitrary number of {@link java.lang.String} representations of combinations of uids and {@link de.espirit.firstspirit.access.store.IDProvider.UidType}s to instances of this class.
  *
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 public class UidIdentifier implements Identifier {
     protected static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(UidIdentifier.class);

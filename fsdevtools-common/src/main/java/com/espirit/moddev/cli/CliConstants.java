@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import com.espirit.moddev.util.FsUtil;
 /**
  * Constants that are used in the context of FirstSpirit and the cli classes.
  *
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 public enum CliConstants {
 

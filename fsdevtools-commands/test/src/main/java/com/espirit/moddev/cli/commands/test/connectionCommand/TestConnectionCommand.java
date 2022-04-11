@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import de.espirit.firstspirit.access.Connection;
 /**
  * Command for connection testing. Creating a connection to FirstSpirit leads to a successful or unsuccessful result.
  *
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 @com.github.rvesse.airline.annotations.Command(name = TestCommandNames.CONNECTION, groupNames = TestCommandGroup.NAME, description = "Testing a FirstSpirit connection")
 public class TestConnectionCommand extends GlobalConfig implements Command<TestResult> {

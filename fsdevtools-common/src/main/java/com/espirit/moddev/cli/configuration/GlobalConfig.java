@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ import java.util.Locale;
  * Some getters return the value of a corresponding environment variable, if the provided
  * value is empty or no value is provided at all.
  *
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 public class GlobalConfig implements Config {
 

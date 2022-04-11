@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,48 +23,50 @@
 package com.espirit.moddev.shared.webapp;
 
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.espirit.moddev.shared.webapp.WebAppIdentifier.forGlobalWebApp;
 import static com.espirit.moddev.shared.webapp.WebAppIdentifier.forScope;
-import static de.espirit.firstspirit.module.WebEnvironment.WebScope.*;
+import static de.espirit.firstspirit.module.WebEnvironment.WebScope.GLOBAL;
+import static de.espirit.firstspirit.module.WebEnvironment.WebScope.PREVIEW;
+import static de.espirit.firstspirit.module.WebEnvironment.WebScope.STAGING;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WebAppIdentifierTest {
 
-    @Test
-    public void testEqualIdentifiers() {
-        Assert.assertEquals("Identifiers for Global WebApps with the same WebApp Id should be equal.",
-                forGlobalWebApp("fs5root"), forGlobalWebApp("fs5root"));
+	@Test
+	public void testEqualIdentifiers() {
+		assertEquals(forGlobalWebApp("fs5root"), forGlobalWebApp("fs5root"));
 
-        Assert.assertNotEquals("Identifiers for Global WebApps with different WebApp Ids should not be equal.",
-                forGlobalWebApp("xyz"), forGlobalWebApp("abc"));
+		assertNotEquals(forGlobalWebApp("xyz"), forGlobalWebApp("abc"));
 
-        Assert.assertEquals("Identifiers for the same scope should be equal.",
-                forScope(PREVIEW), forScope(PREVIEW));
+		assertEquals(forScope(PREVIEW), forScope(PREVIEW));
 
-        Assert.assertNotEquals("Identifiers for the same project but different scopes should not be equal.",
-                forScope(PREVIEW), forScope(STAGING));
-    }
-    @Test
-    public void testFactoryForSimpleWebAppIdentifier() {
-        WebAppIdentifier identifier = forScope(PREVIEW);
-        Assert.assertNotNull(identifier);
-        Assert.assertEquals("preview", identifier.toString());
-    }
+		assertNotEquals(forScope(PREVIEW), forScope(STAGING));
+	}
 
-    @Test
-    public void testFactoryWebAppNameForGlobalWebAppIdentifier() {
-        WebAppIdentifier parsed = forGlobalWebApp("fs5root");
-        Assert.assertTrue(parsed instanceof WebAppIdentifier.GlobalWebAppIdentifier);
-        Assert.assertEquals(GLOBAL, parsed.getScope());
-        Assert.assertEquals("fs5root", ((WebAppIdentifier.GlobalWebAppIdentifier) parsed).getGlobalWebAppId());
-    }
+	@Test
+	public void testFactoryForSimpleWebAppIdentifier() {
+		WebAppIdentifier identifier = forScope(PREVIEW);
+		assertNotNull(identifier);
+		assertEquals("preview", identifier.toString());
+	}
 
-    @Test
-    public void testFactoryForPreviewWebAppIdentifier() {
-        WebAppIdentifier identifier = forScope(PREVIEW);
-        Assert.assertNotNull(identifier);
-        Assert.assertEquals("preview", identifier.toString());
-    }
+	@Test
+	public void testFactoryWebAppNameForGlobalWebAppIdentifier() {
+		WebAppIdentifier parsed = forGlobalWebApp("fs5root");
+		assertTrue(parsed instanceof WebAppIdentifier.GlobalWebAppIdentifier);
+		assertEquals(GLOBAL, parsed.getScope());
+		assertEquals("fs5root", ((WebAppIdentifier.GlobalWebAppIdentifier) parsed).getGlobalWebAppId());
+	}
+
+	@Test
+	public void testFactoryForPreviewWebAppIdentifier() {
+		WebAppIdentifier identifier = forScope(PREVIEW);
+		assertNotNull(identifier);
+		assertEquals("preview", identifier.toString());
+	}
 }

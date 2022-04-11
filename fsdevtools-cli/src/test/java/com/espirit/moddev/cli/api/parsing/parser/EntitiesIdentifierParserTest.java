@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,61 +23,66 @@
 package com.espirit.moddev.cli.api.parsing.parser;
 
 import com.espirit.moddev.cli.api.parsing.identifier.EntitiesIdentifier;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(Theories.class)
+
 public class EntitiesIdentifierParserTest {
-
-    @DataPoints
-    public static List[] testcases =
-            new List[]{ Arrays.asList("entities:myuid"),
-                    Arrays.asList("ENTITIES:myuid"),
-                    Arrays.asList("ENTITIES :myuid"),
-                    Arrays.asList("ENTITIES : myuid")};
 
     private EntitiesIdentifierParser testling;
 
-    @Before
+    @NotNull
+    private static Stream<Arguments> parameterSet() {
+        return Stream.of(
+                Arguments.of(List.of("entities:myuid")),
+                Arguments.of(List.of("ENTITIES :myuid")),
+                Arguments.of(List.of("ENTITIES : myuid"))
+        );
+    }
+
+    @BeforeEach
     public void setUp() {
         testling = new EntitiesIdentifierParser();
     }
 
-
-    @Theory
-    public void testAppliesTo(List<String> uids) throws Exception {
-        for(String current : uids) {
+    @ParameterizedTest
+    @MethodSource("parameterSet")
+    public void testAppliesTo(List<String> uids) {
+        for (String current : uids) {
             boolean appliesTo = testling.appliesTo(current);
-            assertTrue("Parser should apply to string " + current, appliesTo);
+            assertTrue(appliesTo, "Parser should apply to string " + current);
         }
     }
 
     @Test
-    public void parse() throws Exception {
+    public void parse() {
         List<EntitiesIdentifier> result = testling.parse(Arrays.asList("entities:xyz"));
         assertEquals(1, result.size());
         assertEquals(new EntitiesIdentifier("xyz"), result.get(0));
     }
 
     @Test
-    public void testAppliesTo() throws Exception {
+    public void testAppliesTo() {
         assertTrue(testling.appliesTo("entities:products"));
     }
+
     @Test
-    public void testDontApplyTo() throws Exception {
+    public void testDontApplyTo() {
         assertFalse(testling.appliesTo("asdasd"));
     }
+
     @Test
-    public void testDontApplyToStartsWithEntitiesIdentifier() throws Exception {
+    public void testDontApplyToStartsWithEntitiesIdentifier() {
         assertFalse(testling.appliesTo("entitiesaasd:asd"));
     }
 

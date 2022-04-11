@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,25 +22,22 @@
 
 package com.espirit.moddev.cli.commands.project.exportCommand;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
 
 /**
  * Unit tests for ProjectExportParametersBuilder.
  */
 public class ProjectExportParametersBuilderTest {
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
 
     private ProjectExportParametersBuilder testling;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         testling = new ProjectExportParametersBuilder();
     }
@@ -58,13 +55,9 @@ public class ProjectExportParametersBuilderTest {
      */
     @Test
     public void testBuildWithMissingParametersThrowsException() {
-        // Arrange
-
-        // Assert
-        exception.expect(IllegalArgumentException.class);
-
-        // Act
-        testling.build();
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            testling.build();
+        });
     }
 
     /**

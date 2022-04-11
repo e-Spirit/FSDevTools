@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ import static com.espirit.moddev.cli.api.parsing.parser.SchemaIdentifierParser.C
  * This command can be used to export elements from all stores at the same time.
  * It makes use of its command arguments to retrieve elements for the export.
  *
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 @Command(name = "export")
 @Examples(examples =

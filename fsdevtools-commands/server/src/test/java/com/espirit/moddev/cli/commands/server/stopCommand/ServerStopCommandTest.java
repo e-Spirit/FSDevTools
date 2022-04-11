@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,21 +23,20 @@
 package com.espirit.moddev.cli.commands.server.stopCommand;
 
 import com.espirit.moddev.cli.commands.server.common.AbstractServerCommandTest;
-import com.espirit.moddev.cli.commands.server.stopCommand.ServerStopCommand;
+import com.espirit.moddev.cli.commands.server.utils.ServerRunner;
 import com.espirit.moddev.cli.results.SimpleResult;
 import com.espirit.moddev.connection.FsConnectionConfig;
-import com.espirit.moddev.cli.commands.server.utils.ServerRunner;
 import com.espirit.moddev.util.FsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 public class ServerStopCommandTest extends AbstractServerCommandTest<ServerStopCommand> {
 

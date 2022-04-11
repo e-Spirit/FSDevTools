@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import com.github.rvesse.airline.annotations.Group;
 /**
  * {@link com.github.rvesse.airline.annotations.Group} that contains commands like testing the connection to FirstSpirit.
  *
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 @Group(name = TestCommandGroup.NAME, description = "Test connections, projects and more.", defaultCommand = TestConnectionCommand.class)
 public class TestCommandGroup {

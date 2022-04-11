@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,15 @@
 
 package com.espirit.moddev.cli.commands.module.configureCommand.json.components;
 
+import de.espirit.firstspirit.access.Connection;
+import de.espirit.firstspirit.access.ServiceNotFoundException;
+import de.espirit.firstspirit.agency.ModuleAdminAgent;
+import de.espirit.firstspirit.agency.SpecialistsBroker;
+import de.espirit.firstspirit.io.FileSystem;
+import de.espirit.firstspirit.io.MemoryFileSystem;
+import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
+import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
+
 import com.espirit.moddev.cli.api.result.ExecutionErrorResult;
 import com.espirit.moddev.cli.api.result.ExecutionResult;
 import com.espirit.moddev.cli.api.result.ExecutionResults;
@@ -31,20 +40,12 @@ import com.espirit.moddev.cli.configuration.GlobalConfig;
 import com.espirit.moddev.util.JacksonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import de.espirit.firstspirit.access.Connection;
-import de.espirit.firstspirit.access.ServiceNotFoundException;
-import de.espirit.firstspirit.agency.ModuleAdminAgent;
-import de.espirit.firstspirit.agency.SpecialistsBroker;
-import de.espirit.firstspirit.io.FileSystem;
-import de.espirit.firstspirit.io.MemoryFileSystem;
-import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
-import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
 import org.assertj.core.util.Lists;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-
 import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_AUTO_START;
 import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_FILES;
 import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_RESTART;
@@ -78,7 +79,7 @@ public class ServicesTest {
 	private ModuleDescriptor _moduleDescriptor;
 	private ComponentDescriptor _serviceDescriptor;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		_objectMapper = JacksonUtil.createInputMapper();
 
@@ -115,13 +116,15 @@ public class ServicesTest {
 		assertThat(service.getFiles()).hasSize(0);
 	}
 
-	@Test(expected = MismatchedInputException.class)
+	@Test
 	public void deserialize_serviceName_is_undefined() throws IOException {
 		// setup
 		final String json = toJsonObject(createMap(createEntry(ATTR_AUTO_START, true)));
 
 		// test
-		_objectMapper.readValue(json, Service.class);
+		Assertions.assertThrows(MismatchedInputException.class, () -> {
+			_objectMapper.readValue(json, Service.class);
+		});
 	}
 
 	@Test

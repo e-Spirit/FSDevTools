@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,37 +25,38 @@ package com.espirit.moddev.cli.legacy;
 import com.espirit.moddev.cli.CliConstants;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.extsync.SyncDirectoryFactory;
-
 import com.espirit.moddev.connection.FsConnectionType;
 import com.espirit.moddev.util.FsUtil;
 import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.io.FileSystem;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
+import java.util.UUID;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 /**
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 public class SyncDirectoryFactoryTest {
 
 
-    @Rule
-    public TemporaryFolder _temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public File _temporaryFolder;
 
     private SyncDirectoryFactory _testling;
     private File _syncDir;
 
-    @Before
-    public void setUp() throws Exception {
-        _syncDir = _temporaryFolder.newFolder();
+    @BeforeEach
+    public void setUp() {
+        _syncDir = _temporaryFolder.toPath().resolve(UUID.randomUUID().toString()).toFile();
         _testling = new SyncDirectoryFactory(new Config() {
             @Override
             public String getHost() {
@@ -127,37 +128,34 @@ public class SyncDirectoryFactoryTest {
     }
 
     @Test
-    public void testCheckAndCreateSyncDirIfNeeded() throws Exception {
+    public void testCheckAndCreateSyncDirIfNeeded() {
         _testling.checkAndCreateSyncDirIfNeeded(_syncDir.getAbsolutePath());
 
-        assertTrue("Expect sync dir exists", _syncDir.exists());
+        assertTrue(_syncDir.exists(), "Expect sync dir exists");
     }
 
     @Test
-    public void testCheckAndCreateSyncDir() throws Exception {
-        _syncDir = new File(_temporaryFolder.newFolder(), "mySyncDir");
+    public void testCheckAndCreateSyncDir() {
+        _syncDir = new File(_temporaryFolder, "mySyncDir");
 
-        assertFalse("Expect sync dir is missing", _syncDir.exists());
-
-        _testling.checkAndCreateSyncDirIfNeeded(_syncDir.getAbsolutePath());
-
-        assertTrue("Expect sync dir exists", _syncDir.exists());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCheckAndCreateSyncDirIfNeededException() throws Exception {
-        _syncDir = _temporaryFolder.newFile();
+        assertFalse(_syncDir.exists(), "Expect sync dir is missing");
 
         _testling.checkAndCreateSyncDirIfNeeded(_syncDir.getAbsolutePath());
+
+        assertTrue(_syncDir.exists(), "Expect sync dir exists");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testCheckAndCreateSyncDirIfNeededEmpty() throws Exception {
-        _testling.checkAndCreateSyncDirIfNeeded("");
+    @Test
+    public void testCheckAndCreateSyncDirIfNeededEmpty() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            _testling.checkAndCreateSyncDirIfNeeded("");
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testCheckAndCreateSyncDirIfNeededNull() throws Exception {
-        _testling.checkAndCreateSyncDirIfNeeded(null);
+    @Test
+    public void testCheckAndCreateSyncDirIfNeededNull() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            _testling.checkAndCreateSyncDirIfNeeded(null);
+        });
     }
 }

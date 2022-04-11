@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,10 +27,12 @@ import com.espirit.moddev.cli.commands.example.ExampleCustomCommand;
 import com.espirit.moddev.cli.commands.export.ExportCommand;
 import com.espirit.moddev.cli.reflection.CommandUtils;
 import com.espirit.moddev.cli.reflection.ReflectionUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CommandUtilsTest {
 
@@ -47,7 +49,7 @@ public class CommandUtilsTest {
     @Test
     public void packageScanRetrievesCorrectCommandClassCount() {
         Set<Class<? extends Command>> commandClassesInPackage = CommandUtils.scanForCommandClasses(DEFAULT_COMMAND_TEST_PACKAGE_NAME);
-        Assert.assertEquals(EXPECTED_COMMANDCLASSES_IN_TESTCOMMANDSPACKAGE, commandClassesInPackage.size());
+        assertEquals(EXPECTED_COMMANDCLASSES_IN_TESTCOMMANDSPACKAGE, commandClassesInPackage.size());
     }
 
     /**
@@ -57,35 +59,35 @@ public class CommandUtilsTest {
     @Test
     public void classpathScanRetrievesAllCommandClasses() {
         Set<Class<? extends Command>> commandClassesInClasspath = CommandUtils.scanForCommandClasses();
-        Assert.assertTrue("Classpath scan should retrieve custom command class", commandClassesInClasspath.contains(ExampleCustomCommand.class));
+        assertTrue(commandClassesInClasspath.contains(ExampleCustomCommand.class));
     }
 
     public static class ReflectionTest {
         @Test
         public void readsCommandDescriptionFromAnnotatedMethodTest() {
-            Assert.assertEquals("Description is expected to be xyz non null from getMyCustomDescription()",
-                    "xyz", ReflectionUtils.getDescriptionFromClass(CommandWithDescriptionAnnotation.class));
+            assertEquals("xyz", ReflectionUtils.getDescriptionFromClass(CommandWithDescriptionAnnotation.class));
         }
+
         @Test
         public void readsCommandDescriptionFromNonAnnotatedMethodWithNamingConventionTest() {
-            Assert.assertEquals("Description is expected to be abc non null from getDescription()",
-                    "abc", ReflectionUtils.getDescriptionFromClass(CommandWithDescriptionMethod.class));
+            assertEquals("abc", ReflectionUtils.getDescriptionFromClass(CommandWithDescriptionMethod.class));
         }
+
         @Test
         public void readsCommandDescriptionAsEmptyFromDescriptionMethodReturnsVoidTest() {
-            Assert.assertTrue("Description is expected to be empty from getDescription()",
-                    ReflectionUtils.getDescriptionFromClass(CommandWithVoidDescriptionMethod.class).isEmpty());
+            assertTrue(ReflectionUtils.getDescriptionFromClass(CommandWithVoidDescriptionMethod.class).isEmpty());
         }
+
         @Test
         public void readsCommandDescriptionAsEmptyFromDescriptionMethodReturnsNonStringTest() {
-            Assert.assertTrue("Description is expected to be empty from getDescription()",
-                              ReflectionUtils.getDescriptionFromClass(CommandWithNonStringDescriptionMethod.class).isEmpty());
+            assertTrue(ReflectionUtils.getDescriptionFromClass(CommandWithNonStringDescriptionMethod.class).isEmpty());
         }
+
         @Test
         public void readsCommandDescriptionExportCommand() {
             final String expectedMsgPart = "ALL, COMMON, CUSTOM_PROPERTIES, RESOLUTIONS, GROUPS, SCHEDULE_ENTRIES, TEMPLATE_SETS, FONTS, MODULE_CONFIGURATIONS, LANGUAGES, USERS";
             final String msg = ReflectionUtils.getDescriptionFromClass(ExportCommand.class);
-            Assert.assertTrue("wrong project properties msg. was=\n" + msg, msg.contains(expectedMsgPart));
+            assertTrue(msg.contains(expectedMsgPart));
         }
     }
 }

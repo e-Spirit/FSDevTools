@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ package com.espirit.moddev.cli.testcommands.reflectiontest;
 import com.espirit.moddev.cli.api.command.Command;
 
 /**
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 @com.github.rvesse.airline.annotations.Command(name = "command_with_description_after_convention")
 public final class CommandWithDescriptionMethod implements Command {

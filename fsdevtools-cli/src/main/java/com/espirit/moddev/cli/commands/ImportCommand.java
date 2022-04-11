@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Command that executes a FirstSpirit ImportOperation. Uses a FirstSpirit context.
  *
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 @Command(name = "import", description = "Imports a FirstSpirit project into a FirstSpirit Server.")
 @Examples(

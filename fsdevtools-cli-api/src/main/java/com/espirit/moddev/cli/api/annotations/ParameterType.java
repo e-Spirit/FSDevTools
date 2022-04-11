@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
 /**
  * This is a marker interface that can be used to define a parameter type.
  *
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

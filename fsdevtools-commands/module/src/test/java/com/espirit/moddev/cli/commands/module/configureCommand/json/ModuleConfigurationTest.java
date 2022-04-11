@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,10 @@
 
 package com.espirit.moddev.cli.commands.module.configureCommand.json;
 
+import de.espirit.firstspirit.access.Connection;
+import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
+import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
+
 import com.espirit.moddev.cli.api.result.ExecutionErrorResult;
 import com.espirit.moddev.cli.api.result.ExecutionResults;
 import com.espirit.moddev.cli.commands.module.configureCommand.json.components.Components;
@@ -30,18 +34,13 @@ import com.espirit.moddev.cli.commands.module.configureCommand.json.components.c
 import com.espirit.moddev.cli.configuration.GlobalConfig;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import com.google.common.collect.Lists;
-import de.espirit.firstspirit.access.Connection;
-import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
-import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
 import org.jetbrains.annotations.Nullable;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -50,7 +49,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-
 import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_COMPONENTS;
 import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_MODULE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,15 +64,15 @@ public class ModuleConfigurationTest {
 
 	private static final String MODULE_NAME = "testModule";
 
-	@Rule
-	public final TemporaryFolder _temporaryFolder = new TemporaryFolder();
+	@TempDir
+	public File _temporaryFolder;
 
 	private ObjectMapper _objectMapper;
 	private ModuleDescriptor _moduleDescriptor;
 	private Connection _connection;
 	private ConfigurationContext _context;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		_objectMapper = JsonTestUtil.createMapper();
 		_moduleDescriptor = mock(ModuleDescriptor.class);
@@ -83,7 +81,7 @@ public class ModuleConfigurationTest {
 		_context = new ConfigurationContext(_connection, mock(GlobalConfig.class));
 	}
 
-	@Test(expected = MismatchedInputException.class)
+	@Test
 	public void deserialize_module_name_is_not_defined() throws IOException {
 		// setup
 		final String json = JsonTestUtil.toJsonObject(
@@ -93,7 +91,9 @@ public class ModuleConfigurationTest {
 		);
 
 		// test
-		_objectMapper.readValue(json, ModuleConfiguration.class);
+		Assertions.assertThrows(MismatchedInputException.class, () -> {
+			_objectMapper.readValue(json, ModuleConfiguration.class);
+		});
 	}
 
 	@Test
@@ -134,7 +134,7 @@ public class ModuleConfigurationTest {
 		}
 	}
 
-	@Test(expected = MismatchedInputException.class)
+	@Test
 	public void deserialize_components_is_not_defined() throws IOException {
 		// setup
 		final String json = JsonTestUtil.toJsonObject(
@@ -144,7 +144,9 @@ public class ModuleConfigurationTest {
 		);
 
 		// test
-		_objectMapper.readValue(json, ModuleConfiguration.class);
+		Assertions.assertThrows(MismatchedInputException.class, () -> {
+			_objectMapper.readValue(json, ModuleConfiguration.class);
+		});
 	}
 
 	@Test
@@ -207,7 +209,7 @@ public class ModuleConfigurationTest {
 		final String moduleName1 = "module1";
 		final String moduleName2 = "module2";
 		final String json = _objectMapper.writeValueAsString(Lists.newArrayList(new ModuleConfiguration(moduleName1, new Components()), new ModuleConfiguration(moduleName2, new Components())));
-		final File file = _temporaryFolder.newFile("testFile.json");
+		final File file = _temporaryFolder.toPath().resolve("testFile.json").toFile();
 		final FileOutputStream fileOutputStream = new FileOutputStream(file, true);
 		fileOutputStream.write(json.getBytes());
 		fileOutputStream.flush();
@@ -222,9 +224,11 @@ public class ModuleConfigurationTest {
 		assertThat(((List<ModuleConfiguration>) deserialized).get(1).getModuleName()).isEqualTo(moduleName2);
 	}
 
-	@Test(expected = FileNotFoundException.class)
-	public void fromFile_file_does_not_exist() throws IOException {
-		ModuleConfiguration.fromPath(new File("fileDoesNotExist.json").getAbsolutePath());
+	@Test
+	public void fromFile_file_does_not_exist() {
+		Assertions.assertThrows(FileNotFoundException.class, () -> {
+			ModuleConfiguration.fromPath(new File("fileDoesNotExist.json").getAbsolutePath());
+		});
 	}
 
 	@Test

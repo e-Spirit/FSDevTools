@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,15 @@
 
 package com.espirit.moddev.cli.commands.module.configureCommand;
 
+import de.espirit.firstspirit.access.Connection;
+import de.espirit.firstspirit.access.ConnectionManager;
+import de.espirit.firstspirit.agency.GlobalWebAppId;
+import de.espirit.firstspirit.agency.ModuleAdminAgent;
+import de.espirit.firstspirit.agency.SpecialistsBroker;
+import de.espirit.firstspirit.agency.WebAppId;
+import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
+import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
+
 import com.espirit.moddev.cli.api.result.ExecutionResult;
 import com.espirit.moddev.cli.api.result.ExecutionResults;
 import com.espirit.moddev.cli.commands.module.configureCommand.json.ModuleConfiguration;
@@ -32,22 +41,14 @@ import com.espirit.moddev.cli.commands.module.configureCommand.json.components.c
 import com.espirit.moddev.cli.commands.module.utils.WebAppUtil;
 import com.espirit.moddev.cli.configuration.GlobalConfig;
 import com.google.common.collect.Lists;
-import de.espirit.firstspirit.access.Connection;
-import de.espirit.firstspirit.access.ConnectionManager;
-import de.espirit.firstspirit.agency.GlobalWebAppId;
-import de.espirit.firstspirit.agency.ModuleAdminAgent;
-import de.espirit.firstspirit.agency.SpecialistsBroker;
-import de.espirit.firstspirit.agency.WebAppId;
-import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
-import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -66,7 +67,7 @@ public class ConfigureModulesCommandTest {
 	private Connection _connection;
 	private ModuleDescriptor _moduleDescriptor;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		// integrative tests
 		_moduleDescriptor = mock(ModuleDescriptor.class);
@@ -223,10 +224,12 @@ public class ConfigureModulesCommandTest {
 		verify(moduleConfiguration2, times(1)).configure(_context, moduleDescriptor2);
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void configureModules_empty_list() {
 		final ConfigureModulesCommand command = new ConfigureModulesCommand();
-		command.configureModules(_context, Collections.emptyList());
+		Assertions.assertThrows(IllegalStateException.class, () -> {
+			command.configureModules(_context, Collections.emptyList());
+		});
 	}
 
 	@Test

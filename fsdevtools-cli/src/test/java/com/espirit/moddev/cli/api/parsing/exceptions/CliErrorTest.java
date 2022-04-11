@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,53 +23,45 @@
 package com.espirit.moddev.cli.api.parsing.exceptions;
 
 import com.espirit.moddev.cli.CliConstants;
-import com.espirit.moddev.cli.exception.CliError;
 import com.espirit.moddev.cli.api.configuration.Config;
+import com.espirit.moddev.cli.exception.CliError;
 import com.espirit.moddev.connection.FsConnectionType;
 import com.espirit.moddev.util.FsUtil;
 import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.io.FileSystem;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 /**
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
-@RunWith(Theories.class)
 public class CliErrorTest {
-
-    @DataPoints
-    public static CliError[] testCases = CliError.values();
 
     private ResourceBundle bundle = ResourceBundle.getBundle(CliError.class.getSimpleName());
 
 
     @Test
     public void testToString() throws Exception {
-        assertThat("Expecting a specific value", CliError.AUTHENTICATION.toString(),
-                   containsString("code " + CliError.AUTHENTICATION.getErrorCode()));
-
+        assertThat("Expecting a specific value", CliError.AUTHENTICATION.toString(), containsString("code " + CliError.AUTHENTICATION.getErrorCode()));
     }
 
-    @Theory
-    public void testGetMessageNullConfig(CliError testCase) throws Exception {
+    @ParameterizedTest
+    @EnumSource(CliError.class)
+    public void testGetMessageNullConfig(CliError testCase) {
         assertThat("Expect non-null value", testCase.getMessage(null), is(notNullValue()));
     }
 
-    @Theory
-    public void testGetMessageConfig(CliError testCase) throws Exception {
+    @ParameterizedTest
+    @EnumSource(CliError.class)
+    public void testGetMessageConfig(CliError testCase) {
         final Config config = new Config() {
             @Override
             public String getHost() {
@@ -140,6 +132,7 @@ public class CliErrorTest {
         };
         final Object[] args = {config.getHost(), config.getPort(), config.getConnectionMode(), config.getUser(), config.getPassword()};
         assertThat("Expect non-null value", testCase.getMessage(config),
-                   is(testCase.toString() + ": " + MessageFormat.format(bundle.getString(testCase.name()), args)));
+                is(testCase.toString() + ": " + MessageFormat.format(bundle.getString(testCase.name()), args)));
     }
+
 }

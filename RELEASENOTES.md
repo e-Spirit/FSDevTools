@@ -2,7 +2,9 @@
 
 ## Version 4.0.0
 
+* fixed error in start script (WIN only)
 * moved to Log4J 2.17.2
+* moved to JUnit 5
 * updated used libraries to latest versions
 
 ## Version 3.0.2

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ package com.espirit.moddev.cli.api.parsing.exceptions;
  * States, that a given prefix is not within the registered ones.
  * Prefixes are meant to identify FirstSpirit elements in specific namespaces.
  *
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 public class UnregisteredPrefixException extends RuntimeException {
 

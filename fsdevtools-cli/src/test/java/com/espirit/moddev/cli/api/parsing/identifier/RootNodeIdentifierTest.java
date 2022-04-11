@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,23 +23,18 @@
 package com.espirit.moddev.cli.api.parsing.identifier;
 
 import de.espirit.firstspirit.access.store.IDProvider;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 
 public class RootNodeIdentifierTest {
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
     @Test
     public void testNullUidType() {
-        expectedException.expect(IllegalArgumentException.class);
-        new RootNodeIdentifier(null);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new RootNodeIdentifier(null));
     }
 
     @Test
@@ -55,7 +50,6 @@ public class RootNodeIdentifierTest {
 
     @Test
     public void testExceptionOnWrongUidTypeForStoreRoot() {
-        expectedException.expect(IllegalArgumentException.class);
-        new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE_FORMATTEMPLATE);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE_FORMATTEMPLATE));
     }
 }

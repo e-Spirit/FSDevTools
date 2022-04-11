@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,15 @@
 
 package com.espirit.moddev.cli.commands.schedule.startCommand;
 
-import com.espirit.moddev.cli.commands.schedule.utils.ScheduleTestUtils;
 import de.espirit.firstspirit.access.schedule.ScheduleEntry;
 
-import org.junit.Test;
+import com.espirit.moddev.cli.commands.schedule.utils.ScheduleTestUtils;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class ScheduleStartResultTest {
@@ -40,9 +43,9 @@ public class ScheduleStartResultTest {
 		//test
 		final ScheduleStartResult result = new ScheduleStartResult(information);
 		//verify
-		assertNull("project must be null", result.getProjectName());
-		assertEquals("entry id mismatch", entry.getId(), result.getScheduleStartInformation().getScheduleEntry().getId());
-		assertEquals("entry name mismatch", entry.getName(), result.getScheduleStartInformation().getScheduleEntry().getName());
+		assertNull(result.getProjectName(), "project must be null");
+		assertEquals(entry.getId(), result.getScheduleStartInformation().getScheduleEntry().getId(), "entry id mismatch");
+		assertEquals(entry.getName(), result.getScheduleStartInformation().getScheduleEntry().getName(), "entry name mismatch");
 	}
 
 	@Test
@@ -54,9 +57,9 @@ public class ScheduleStartResultTest {
 		//test
 		final ScheduleStartResult result = new ScheduleStartResult(projectName, information);
 		//verify
-		assertEquals("project name mismatch", projectName, result.getProjectName());
-		assertEquals("entry id mismatch", entry.getId(), result.getScheduleStartInformation().getScheduleEntry().getId());
-		assertEquals("entry name mismatch", entry.getName(), result.getScheduleStartInformation().getScheduleEntry().getName());
+		assertEquals(projectName, result.getProjectName(), "project name mismatch");
+		assertEquals(entry.getId(), result.getScheduleStartInformation().getScheduleEntry().getId(), "entry id mismatch");
+		assertEquals(entry.getName(), result.getScheduleStartInformation().getScheduleEntry().getName(), "entry name mismatch");
 	}
 
 	@Test
@@ -66,10 +69,10 @@ public class ScheduleStartResultTest {
 		//test
 		final ScheduleStartResult result = new ScheduleStartResult(new RuntimeException(exceptionMessage));
 		//verify
-		assertTrue("result should be an error result", result.isError());
-		assertNotNull("exception must be != null", result.getError());
-		assertEquals("exception class mismatch", RuntimeException.class, result.getError().getClass());
-		assertEquals("message mismatch", exceptionMessage, result.getError().getMessage());
+		assertTrue(result.isError(), "result should be an error result");
+		assertNotNull(result.getError(), "exception must be != null");
+		assertEquals(RuntimeException.class, result.getError().getClass(), "exception class mismatch");
+		assertEquals(exceptionMessage, result.getError().getMessage(), "message mismatch");
 	}
 
 	@Test
@@ -81,7 +84,7 @@ public class ScheduleStartResultTest {
 		//test
 		final String log = result.buildLog();
 		//verify
-		assertTrue("topic mismatch", log.contains(String.format(ScheduleStartResult.MESSAGE_TOPIC_SERVER_SIDE, information.getScheduleEntry().getName(), information.getDuration())));
+		assertTrue(log.contains(String.format(ScheduleStartResult.MESSAGE_TOPIC_SERVER_SIDE, information.getScheduleEntry().getName(), information.getDuration())));
 	}
 
 	@Test
@@ -94,6 +97,6 @@ public class ScheduleStartResultTest {
 		//test
 		final String log = result.buildLog();
 		//verify
-		assertTrue("topic mismatch", log.contains(String.format(ScheduleStartResult.MESSAGE_TOPIC_PROJECT_BOUND, information.getScheduleEntry().getName(), information.getDuration())));
+		assertTrue(log.contains(String.format(ScheduleStartResult.MESSAGE_TOPIC_PROJECT_BOUND, information.getScheduleEntry().getName(), information.getDuration())));
 	}
 }

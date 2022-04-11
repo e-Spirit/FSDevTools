@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import java.io.IOException;
@@ -58,7 +59,7 @@ public class ComponentsTest {
 	private Connection _connection;
 	private ConfigurationContext _context;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		_objectMapper = JsonTestUtil.createMapper();
 		_moduleDescriptor = mock(ModuleDescriptor.class);

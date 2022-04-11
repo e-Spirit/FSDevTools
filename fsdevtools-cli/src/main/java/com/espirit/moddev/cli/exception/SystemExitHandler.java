@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Listener that will exit the cli application with {@link System#exit(int)} if an error occurs.
  *
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 public final class SystemExitHandler implements CliEventHandler {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(SystemExitHandler.class);

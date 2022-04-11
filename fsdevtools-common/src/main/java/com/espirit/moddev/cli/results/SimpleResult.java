@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * General {@link com.espirit.moddev.cli.api.result.Result} implementation.
  * @param <CUSTOM_RESULT_TYPE> Type of the result produced by the command
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 public class SimpleResult<CUSTOM_RESULT_TYPE> implements Result<CUSTOM_RESULT_TYPE> {
 

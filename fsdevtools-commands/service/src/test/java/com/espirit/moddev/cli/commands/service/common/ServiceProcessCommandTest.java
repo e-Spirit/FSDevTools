@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,21 +23,21 @@
 package com.espirit.moddev.cli.commands.service.common;
 
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
+
 import org.jetbrains.annotations.NotNull;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
-
 import static com.espirit.moddev.cli.commands.service.common.ServiceInfo.ServiceStatus.STOPPED;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ServiceProcessCommandTest extends ServiceProcessCommandBaseTest<AbstractServiceCommand> {
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		final AbstractServiceCommand instance = new AbstractServiceCommand() {
 			@NotNull
@@ -75,7 +75,7 @@ public class ServiceProcessCommandTest extends ServiceProcessCommandBaseTest<Abs
 
 		ServiceProcessResult result = testling.call();
 
-		Assert.assertEquals("Exactly three service results should be found!", 3, result.get().size());
+		assertEquals(3, result.get().size(), "Exactly three service results should be found!");
 	}
 
 	@Test
@@ -84,7 +84,7 @@ public class ServiceProcessCommandTest extends ServiceProcessCommandBaseTest<Abs
 		testling.setServiceNames("TestService");
 		ServiceProcessResult result = testling.call();
 
-		Assert.assertEquals("Exactly one service result should be found!", 1, result.get().size());
+		assertEquals(1, result.get().size(), "Exactly one service result should be found!");
 	}
 
 	@Test
@@ -102,7 +102,7 @@ public class ServiceProcessCommandTest extends ServiceProcessCommandBaseTest<Abs
 		testling.setServiceNames("TestService, TestService3");
 		ServiceProcessResult result = testling.call();
 
-		Assert.assertEquals("Exactly two services results should be found!", 2, result.get().size());
+		assertEquals(2, result.get().size(), "Exactly two services results should be found!");
 	}
 
 	@Test

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,93 +24,93 @@ package com.espirit.moddev.cli.api.parsing.parser;
 
 import com.espirit.moddev.cli.api.parsing.identifier.PathIdentifier;
 import org.assertj.core.api.Assertions;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
-@RunWith(Theories.class)
 public class PathIdentifierParserTest {
-
-    @DataPoints
-    public static List[] testcases =
-            new List[]{Collections.singletonList("path:/TemplateStore/PageTemplates/hurz"),
-                    Collections.singletonList("PATH:/TemplateStore/PageTemplates/hurz"),
-                    Collections.singletonList("path :/TemplateStore/PageTemplates/hurz"),
-                    Collections.singletonList("path : /TemplateStore/PageTemplates/hurz")};
 
     private PathIdentifierParser testling;
 
-    @Before
+    @NotNull
+    private static Stream<List<String>> parameterSet() {
+        return Stream.of(Collections.singletonList("path:/TemplateStore/PageTemplates/hurz"),
+                Collections.singletonList("PATH:/TemplateStore/PageTemplates/hurz"),
+                Collections.singletonList("path :/TemplateStore/PageTemplates/hurz"),
+                Collections.singletonList("path : /TemplateStore/PageTemplates/hurz"));
+    }
+
+    @BeforeEach
     public void setUp() {
         testling = new PathIdentifierParser();
     }
 
+    @ParameterizedTest
+    @MethodSource("parameterSet")
+    public void testParse(List<String> paths) {
+        final List<PathIdentifier> list = testling.parse(paths);
 
-    @Theory
-    public void testAppliesTo(List<String> paths) throws Exception {
-        for(String current : paths) {
+        assertThat(list).hasSize(1);
+        assertThat(list.get(0).getPath()).isEqualTo("/TemplateStore/PageTemplates/hurz");
+    }
+
+    @ParameterizedTest
+    @MethodSource("parameterSet")
+    public void testAppliesTo(List<String> paths) {
+        for (String current : paths) {
             boolean appliesTo = testling.appliesTo(current);
-            Assert.assertTrue("Parser should apply to string " + current, appliesTo);
+            assertTrue(appliesTo, "Parser should apply to string " + current);
         }
     }
 
     @Test
     public void testDontApplyTo() {
         boolean appliesTo = testling.appliesTo("pathxyz :bla");
-        Assert.assertFalse("Parser should apply to string pathxyz :bla", appliesTo);
-    }
-
-
-    @Theory
-    public void testParse(List<String> paths) throws Exception {
-        final List<PathIdentifier> list = testling.parse(paths);
-
-        Assertions.assertThat(list).hasSize(1);
-        assertThat(list.get(0).getPath()).isEqualTo("/TemplateStore/PageTemplates/hurz");
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testParseWithNonExistentPrefix() throws Exception {
-        testling.parse(Collections.singletonList("xxxxx:myPath"));
+        assertFalse(appliesTo, "Parser should apply to string pathxyz :bla");
     }
 
 
     @Test
-    public void testParseMultiple() throws Exception {
+    public void testParseWithNonExistentPrefix() {
+        assertThrows(IllegalArgumentException.class, () -> testling.parse(Collections.singletonList("xxxxx:myPath")));
+    }
+
+
+    @Test
+    public void testParseMultiple() {
         final List<PathIdentifier> parse = testling.parse(Arrays.asList("path:/TemplateStore/PageTemplates/first", "path:/PageStore/folder"));
         Assertions.assertThat(parse).hasSize(2);
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testEmptyPath() throws Exception {
-        testling.parse(Collections.singletonList("path:"));
+    @Test
+    public void testEmptyPath() {
+        assertThrows(IllegalArgumentException.class, () -> testling.parse(Collections.singletonList("path:")));
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testEmptyPathWhitespaces() throws Exception {
-        testling.parse(Collections.singletonList("path: "));
+    @Test
+    public void testEmptyPathWhitespaces() {
+        assertThrows(IllegalArgumentException.class, () -> testling.parse(Collections.singletonList("path: ")));
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testNoLeadingSlash() throws Exception {
-        testling.parse(Collections.singletonList("path:TemplateStore/PageTemplates/first"));
+    @Test
+    public void testNoLeadingSlash() {
+        assertThrows(IllegalArgumentException.class, () -> testling.parse(Collections.singletonList("path:TemplateStore/PageTemplates/first")));
     }
 }

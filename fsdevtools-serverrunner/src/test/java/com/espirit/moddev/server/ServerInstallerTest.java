@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ package com.espirit.moddev.server;
 
 import com.espirit.moddev.util.ArchiveUtil;
 import com.espirit.moddev.util.FileUtil;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -39,7 +39,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import static com.espirit.moddev.util.FsUtil.DIR_BIN;
 import static com.espirit.moddev.util.FsUtil.DIR_CONF;
 import static com.espirit.moddev.util.FsUtil.DIR_FIRSTSPIRIT_5;
@@ -52,9 +51,9 @@ import static com.espirit.moddev.util.FsUtil.FILE_FS_WRAPPER_ISOLATED_CONF;
 import static com.espirit.moddev.util.FsUtil.FILE_SERVER_JAR_ISOLATED;
 import static com.espirit.moddev.util.FsUtil.FILE_SERVER_JAR_LEGACY;
 import static com.espirit.moddev.util.FsUtil.FILE_WRAPPER_EXECUTABLE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ServerInstallerTest {
 
@@ -62,35 +61,35 @@ public class ServerInstallerTest {
 	private static final String TEST_SERVER_JAR = "/" + FILE_SERVER_JAR_LEGACY;
 	private static final String TEST_ISOLATED_SERVER_JAR = "/" + FILE_SERVER_JAR_ISOLATED;
 
-	@Rule
-	public TemporaryFolder _temp = new TemporaryFolder();
+	@TempDir
+	public File _temp;
 
-	@Test(expected = IllegalStateException.class)
-	public void execute_installerNull() throws IOException {
+	@Test
+	public void execute_installerNull() {
 		// setup
-		final Path targetDir = _temp.getRoot().toPath().resolve("target");
+		final Path targetDir = _temp.toPath().resolve("target");
 		final ServerInstaller serverInstaller = new ServerInstaller(targetDir);
 		serverInstaller.setServerJar(Paths.get("my.jar"));
 
 		// test
-		serverInstaller.execute();
+		Assertions.assertThrows(IllegalStateException.class, serverInstaller::execute);
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void execute_serverJarNull() throws IOException {
+	@Test
+	public void execute_serverJarNull() {
 		// setup
-		final Path targetDir = _temp.getRoot().toPath().resolve("target");
+		final Path targetDir = _temp.toPath().resolve("target");
 		final ServerInstaller serverInstaller = new ServerInstaller(targetDir);
 		serverInstaller.setInstallerTarGz(Paths.get("my.jar"));
 
 		// test
-		serverInstaller.execute();
+		Assertions.assertThrows(IllegalStateException.class, serverInstaller::execute);
 	}
 
 	@Test
 	public void execute_legacy() throws IOException {
 		// setup
-		final Path targetDir = _temp.getRoot().toPath().resolve("target");
+		final Path targetDir = _temp.toPath().resolve("target");
 		final Path installerTar = new File(getClass().getResource(TEST_INSTALLER_TAR_GZ).getFile()).toPath();
 		final Path serverJar = new File(getClass().getResource(TEST_SERVER_JAR).getFile()).toPath();
 		final ServerInstaller serverInstaller = new ServerInstaller(targetDir);
@@ -109,14 +108,14 @@ public class ServerInstallerTest {
 		toCheck.add(targetDir.resolve(DIR_SERVER).resolve(DIR_LIB_LEGACY).resolve(FILE_SERVER_JAR_LEGACY));
 
 		for (final Path path : toCheck) {
-			assertTrue("file '" + path + "' should exist", path.toFile().exists());
+			assertTrue(path.toFile().exists(), "file '" + path + "' should exist");
 		}
 	}
 
 	@Test
 	public void execute_isolated() throws IOException {
 		// setup
-		final Path targetDir = _temp.getRoot().toPath().resolve("target");
+		final Path targetDir = _temp.toPath().resolve("target");
 		final Path installerTar = new File(getClass().getResource(TEST_INSTALLER_TAR_GZ).getFile()).toPath();
 		final Path serverJar = new File(getClass().getResource(TEST_ISOLATED_SERVER_JAR).getFile()).toPath();
 		final ServerInstaller serverInstaller = new ServerInstaller(targetDir);
@@ -135,75 +134,75 @@ public class ServerInstallerTest {
 		toCheck.add(targetDir.resolve(DIR_SERVER).resolve(DIR_LIB_ISOLATED).resolve(FILE_SERVER_JAR_ISOLATED));
 
 		for (final Path path : toCheck) {
-			assertTrue("file '" + path + "' should exist", path.toFile().exists());
+			assertTrue(path.toFile().exists(), "file '" + path + "' should exist");
 		}
 	}
 
 	@Test
 	public void cleanupTargetDirectory() throws IOException {
 		// create a temporal directory with content
-		final Path targetDir = _temp.getRoot().toPath().resolve("target");
+		final Path targetDir = _temp.toPath().resolve("target");
 		final Path installerTar = new File(getClass().getResource(TEST_INSTALLER_TAR_GZ).getFile()).toPath();
 		FileUtil.mkDirs(targetDir);
 		ArchiveUtil.decompressTarGz(installerTar, targetDir);
 
 		// test
-		assertTrue("target dir should exist with children", targetDir.toFile().list().length > 0);
+		assertTrue(targetDir.toFile().list().length > 0, "target dir should exist with children");
 		ServerInstaller.cleanupTargetDirectory(targetDir);
 
 		// verify
-		assertFalse("target dir should not exist", targetDir.toFile().exists());
+		assertFalse(targetDir.toFile().exists(), "target dir should not exist");
 	}
 
 	@Test
 	public void decompressInstaller() throws IOException {
 		// setup
-		final Path targetDir = _temp.getRoot().toPath().resolve("target");
+		final Path targetDir = _temp.toPath().resolve("target");
 		final Path installerTar = new File(getClass().getResource(TEST_INSTALLER_TAR_GZ).getFile()).toPath();
 
 		// test
-		assertFalse("server dir should not exist", targetDir.toFile().exists());
+		assertFalse(targetDir.toFile().exists(), "server dir should not exist");
 		ServerInstaller.decompressInstaller(targetDir, installerTar);
 
 		// verify
-		assertTrue("server dir should exist with children", targetDir.toFile().list().length > 0);
+		assertTrue(targetDir.toFile().list().length > 0, "server dir should exist with children");
 	}
 
 	@Test
 	public void removeUnneededDirectory() throws IOException {
 		// create a temporal directory with content
-		final Path targetDir = _temp.getRoot().toPath().resolve("target");
+		final Path targetDir = _temp.toPath().resolve("target");
 		final Path fsTargetDir = targetDir.resolve(DIR_FIRSTSPIRIT_5);
 		final Path installerTar = new File(getClass().getResource(TEST_INSTALLER_TAR_GZ).getFile()).toPath();
 		ServerInstaller.decompressInstaller(targetDir, installerTar);
-		assertTrue(DIR_FIRSTSPIRIT_5 + " dir should exist", fsTargetDir.toFile().exists());
+		assertTrue(fsTargetDir.toFile().exists(), DIR_FIRSTSPIRIT_5 + " dir should exist");
 
 		// test
 		ServerInstaller.removeUnneededDirectory(targetDir);
 
 		// verify
-		assertFalse(DIR_FIRSTSPIRIT_5 + " dir should have been deleted", fsTargetDir.toFile().exists());
+		assertFalse(fsTargetDir.toFile().exists(), DIR_FIRSTSPIRIT_5 + " dir should have been deleted");
 	}
 
 	@Test
 	public void removeUnneededDirectory_directoryDoesNotExist() throws IOException {
 		// setup
-		final Path targetDir = _temp.getRoot().toPath().resolve("target");
+		final Path targetDir = _temp.toPath().resolve("target");
 		final Path fsTargetDir = targetDir.resolve(DIR_FIRSTSPIRIT_5);
-		assertFalse(DIR_FIRSTSPIRIT_5 + " dir should not exist", fsTargetDir.toFile().exists());
+		assertFalse(fsTargetDir.toFile().exists(), DIR_FIRSTSPIRIT_5 + " dir should not exist");
 
 		// test
 		ServerInstaller.removeUnneededDirectory(targetDir);
 
 		// verify
-		assertFalse("targetDir dir should still exist", targetDir.toFile().exists());
-		assertFalse(DIR_FIRSTSPIRIT_5 + " dir should not exist", fsTargetDir.toFile().exists());
+		assertFalse(targetDir.toFile().exists(), "targetDir dir should still exist");
+		assertFalse(fsTargetDir.toFile().exists(), DIR_FIRSTSPIRIT_5 + " dir should not exist");
 	}
 
 	@Test
 	public void copyServerJar_legacy() throws IOException {
 		// setup
-		final Path targetDir = _temp.getRoot().toPath().resolve("target");
+		final Path targetDir = _temp.toPath().resolve("target");
 		final Path serverDir = targetDir.resolve("fs-server");
 		final Path serverJar = new File(getClass().getResource(TEST_SERVER_JAR).getFile()).toPath();
 
@@ -213,14 +212,14 @@ public class ServerInstallerTest {
 		// verify
 		final Path legacyJar = serverDir.resolve(DIR_SERVER).resolve(DIR_LIB_LEGACY).resolve("fs-server.jar");
 		final Path isolatedJar = serverDir.resolve(DIR_SERVER).resolve(DIR_LIB_ISOLATED).resolve("fs-isolated-server.jar");
-		assertTrue("legacy server jar should have been copied", legacyJar.toFile().exists());
-		assertFalse("isolated server jar should not exist", isolatedJar.toFile().exists());
+		assertTrue(legacyJar.toFile().exists(), "legacy server jar should have been copied");
+		assertFalse(isolatedJar.toFile().exists(), "isolated server jar should not exist");
 	}
 
 	@Test
 	public void copyServerJar_isolated() throws IOException {
 		// setup
-		final Path targetDir = _temp.getRoot().toPath().resolve("target");
+		final Path targetDir = _temp.toPath().resolve("target");
 		final Path serverDir = targetDir.resolve("fs-server");
 		final Path serverJar = new File(getClass().getResource(TEST_ISOLATED_SERVER_JAR).getFile()).toPath();
 
@@ -230,30 +229,32 @@ public class ServerInstallerTest {
 		// verify
 		final Path legacyJar = serverDir.resolve(DIR_SERVER).resolve(DIR_LIB_LEGACY).resolve("fs-server.jar");
 		final Path isolatedJar = serverDir.resolve(DIR_SERVER).resolve(DIR_LIB_ISOLATED).resolve("fs-isolated-server.jar");
-		assertTrue("isolated server jar should have been copied", isolatedJar.toFile().exists());
-		assertFalse("legacy server jar should not exist", legacyJar.toFile().exists());
+		assertTrue(isolatedJar.toFile().exists(), "isolated server jar should have been copied");
+		assertFalse(legacyJar.toFile().exists(), "legacy server jar should not exist");
 	}
 
-	@Test(expected = FileNotFoundException.class)
-	public void updateWrapperExecutable_fileDoesNotExist() throws IOException {
+	@Test
+	public void updateWrapperExecutable_fileDoesNotExist() {
 		// setup
-		final Path workingDir = _temp.getRoot().toPath().resolve("workingDir");
+		final Path workingDir = _temp.toPath().resolve("workingDir");
 		final Path fs5Dir = workingDir.resolve(DIR_FIRSTSPIRIT_5);
 		final Path configFile = fs5Dir.resolve(DIR_BIN).resolve(FILE_WRAPPER_EXECUTABLE);
-		assertFalse("file should not exist", configFile.toFile().exists());
+		assertFalse(configFile.toFile().exists(), "file should not exist");
 
 		// test
-		ServerInstaller.updateWrapperExecutable(fs5Dir, UUID.randomUUID());
+		Assertions.assertThrows(FileNotFoundException.class, () -> {
+			ServerInstaller.updateWrapperExecutable(fs5Dir, UUID.randomUUID());
+		});
 	}
 
 	@Test
 	public void updateWrapperExecutable() throws IOException {
 		// setup
-		final Path workingDir = _temp.getRoot().toPath().resolve("workingDir");
+		final Path workingDir = _temp.toPath().resolve("workingDir");
 		final Path fs5Dir = workingDir.resolve(DIR_FIRSTSPIRIT_5);
 		final Path binDir = fs5Dir.resolve(DIR_BIN);
 		final Path configFile = binDir.resolve(FILE_WRAPPER_EXECUTABLE);
-		assertFalse("file should not exist", configFile.toFile().exists());
+		assertFalse(configFile.toFile().exists(), "file should not exist");
 		final String originalContent = "MAXNOFILES=10000\n" +
 				"# Application\n" +
 				"APP_NAME=\"fs5\"\n" +
@@ -263,7 +264,7 @@ public class ServerInstallerTest {
 
 		FileUtil.mkDirs(binDir);
 		Files.write(configFile, originalContent.getBytes(), StandardOpenOption.CREATE_NEW);
-		assertTrue("file should exist", configFile.toFile().exists());
+		assertTrue(configFile.toFile().exists(), "file should exist");
 
 		// test
 		final UUID uuid = UUID.nameUUIDFromBytes("myUUID".getBytes());
@@ -277,7 +278,7 @@ public class ServerInstallerTest {
 				"APP_NAME_SECOND=\"one\"\n" +
 				"APP_LONG_NAME_SECOND=\"two\"\n";
 		final String updatedContent = new String(Files.readAllBytes(configFile), StandardCharsets.UTF_8).replaceAll("\\r", "");
-		assertEquals("content mismatch", expectedContent, updatedContent);
+		assertEquals(expectedContent, updatedContent, "content mismatch");
 	}
 
 }

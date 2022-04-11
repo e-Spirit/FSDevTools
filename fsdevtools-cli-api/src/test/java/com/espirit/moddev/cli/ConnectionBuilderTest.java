@@ -5,7 +5,7 @@ package com.espirit.moddev.cli;
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"),
  * you may not use this file except in compliance with the License.
@@ -26,37 +26,31 @@ import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.connection.FsConnectionType;
 import com.espirit.moddev.util.FsUtil;
 import de.espirit.firstspirit.access.Connection;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(Theories.class)
 public class ConnectionBuilderTest {
-
-    @DataPoints
-    public static FsConnectionType[] testCases = FsConnectionType.values();
 
     private ConnectionBuilder testling;
     private Config config;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         config = mock(Config.class);
         testling = ConnectionBuilder.with(config);
     }
 
-    @Theory
-    public void testBuild(final FsConnectionType mode) throws Exception {
-
+    @ParameterizedTest
+    @EnumSource(FsConnectionType.class)
+    public void testBuild(final FsConnectionType mode) {
         final String customServletZone = "/customServletZone";
         when(config.getHost()).thenReturn(FsUtil.VALUE_DEFAULT_HOST);
         when(config.getHttpProxyHost()).thenReturn("");
@@ -75,8 +69,9 @@ public class ConnectionBuilderTest {
         assertThat(connection.getServletZone(), is(customServletZone));
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testWithNull() throws Exception {
-        ConnectionBuilder.with(null);
+    @Test
+    public void testWithNull() {
+        Assertions.assertThrows(NullPointerException.class, () -> ConnectionBuilder.with(null));
     }
+
 }

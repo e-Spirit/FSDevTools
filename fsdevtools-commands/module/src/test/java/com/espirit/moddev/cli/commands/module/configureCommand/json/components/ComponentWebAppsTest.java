@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,8 +49,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.util.Lists;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -99,7 +99,7 @@ public class ComponentWebAppsTest {
 	private WebAppIdentifier _globalWebApp;
 	private WebAppIdentifier _projectWebApp;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		_objectMapper = JsonTestUtil.createMapper();
 
@@ -132,13 +132,15 @@ public class ComponentWebAppsTest {
 		_projectWebApp = WebAppIdentifier.forScope(WebEnvironment.WebScope.WEBEDIT);
 	}
 
-	@Test(expected = MismatchedInputException.class)
+	@Test
 	public void deserialize_componentName_is_undefined() throws IOException {
 		// setup
 		final String json = JsonTestUtil.toJsonObject(JsonTestUtil.createMap(JsonTestUtil.createEntry(ATTR_WEB_APPS, GLOBAL_APPS_AMOUNT_1)));
 
 		// test
-		_objectMapper.readValue(json, ComponentWebApps.class);
+		org.junit.jupiter.api.Assertions.assertThrows(MismatchedInputException.class, () -> {
+			_objectMapper.readValue(json, ComponentWebApps.class);
+		});
 	}
 
 	@Test
@@ -183,13 +185,15 @@ public class ComponentWebAppsTest {
 		}
 	}
 
-	@Test(expected = MismatchedInputException.class)
+	@Test
 	public void deserialize_webApps_are_undefined() throws IOException {
 		// setup
 		final String json = JsonTestUtil.toJsonObject(JsonTestUtil.createMap(JsonTestUtil.createEntry(ATTR_COMPONENT_NAME, "myProjectComponent")));
 
 		// test
-		_objectMapper.readValue(json, ComponentWebApps.class);
+		org.junit.jupiter.api.Assertions.assertThrows(MismatchedInputException.class, () -> {
+			_objectMapper.readValue(json, ComponentWebApps.class);
+		});
 	}
 
 	@Test
@@ -242,22 +246,26 @@ public class ComponentWebAppsTest {
 		}
 	}
 
-	@Test(expected = MismatchedInputException.class)
+	@Test
 	public void deserialize_webApp_project_is_undefined() throws IOException {
 		// setup
 		final String json = JsonTestUtil.toJsonObject(JsonTestUtil.createMap(JsonTestUtil.createEntry(ATTR_FILES, new String[0])));
 
 		// test
-		_objectMapper.readValue(json, ComponentWebApps.WebApp.class);
+		org.junit.jupiter.api.Assertions.assertThrows(MismatchedInputException.class, () -> {
+			_objectMapper.readValue(json, ComponentWebApps.WebApp.class);
+		});
 	}
 
-	@Test(expected = MismatchedInputException.class)
+	@Test
 	public void deserialize_webApp_files_are_undefined() throws IOException {
 		// setup
 		final String json = JsonTestUtil.toJsonObject(JsonTestUtil.createMap(JsonTestUtil.createEntry(ATTR_FILES, new String[0])));
 
 		// test
-		_objectMapper.readValue(json, ComponentWebApps.WebApp.class);
+		org.junit.jupiter.api.Assertions.assertThrows(MismatchedInputException.class, () -> {
+			_objectMapper.readValue(json, ComponentWebApps.WebApp.class);
+		});
 	}
 
 	@Test

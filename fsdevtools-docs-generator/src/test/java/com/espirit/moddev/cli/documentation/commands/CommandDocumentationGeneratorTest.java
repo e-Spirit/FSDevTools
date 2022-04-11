@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,8 @@ import io.github.classgraph.FieldInfo;
 import io.github.classgraph.FieldInfoList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,7 +65,7 @@ public class CommandDocumentationGeneratorTest {
 
 	private CommandDocumentationGenerator _generator;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		_generator = new CommandDocumentationGenerator(CommandTextRenderer::new);
 	}

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * The type Environment encapsulates the system environment variables to make them testable.
  *
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 public class Environment {
 

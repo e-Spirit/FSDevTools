@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  * This class is a utility class for group extraction. It offers some convenience methods that use reflection to scan packages, read classes and
  * annotations etc.
  *
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 public final class GroupUtils {
 

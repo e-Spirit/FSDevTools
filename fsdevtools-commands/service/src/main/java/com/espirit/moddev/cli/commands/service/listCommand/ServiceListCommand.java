@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import java.util.List;
 /**
  * Command class that can list FirstSpirit services.
  *
- * @author Andreas Straub
+ * @author e-Spirit GmbH
  */
 @Command(name = ServiceCommandNames.LIST, groupNames = ServiceCommandGroup.NAME, description = "Lists all services with name that can be found on the FirstSpirit.")
 @Examples(

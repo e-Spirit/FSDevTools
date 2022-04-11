@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,165 +23,165 @@
 package com.espirit.moddev.cli.api.parsing.parser;
 
 import com.espirit.moddev.cli.api.parsing.identifier.SchemaIdentifier;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static com.espirit.moddev.cli.api.parsing.parser.SchemaIdentifierParser.CUSTOM_PREFIX_SCHEMA_OPTION;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(Theories.class)
 public class SchemaIdentifierParserTest {
-	@DataPoints
-	public static List[] testcases =
-			new List[]{Arrays.asList(CUSTOM_PREFIX_SCHEMA_OPTION + ":Products[exportallentities]"),
-					Arrays.asList("schema: SimpleSchema"), // just using CUSTOM_PREFIX_SCHEMA_OPTION to keep this list more readable
-					Arrays.asList("schema: Products[ExportAllEntities]"),
-					Arrays.asList("schema: Products[ExportAllEntities=true]"),
-					Arrays.asList("schema: names[ExportAllEntities=false]"),
-					Arrays.asList("schema :names[ExportGidMapping]"),
-					Arrays.asList("schema :names[ExportGidMapping=false]"),
-					Arrays.asList("schema : names[addEntity=entityId]")};
 
-	private SchemaIdentifierParser testling;
+    @NotNull
+    private static Stream<List<String>> parameterSet() {
+        return Stream.of(List.of(CUSTOM_PREFIX_SCHEMA_OPTION + ":Products[exportallentities]"),
+                List.of("schema: SimpleSchema"), // just using CUSTOM_PREFIX_SCHEMA_OPTION to keep this list more readable
+                List.of("schema: Products[ExportAllEntities]"),
+                List.of("schema: Products[ExportAllEntities=true]"),
+                List.of("schema: names[ExportAllEntities=false]"),
+                List.of("schema :names[ExportGidMapping]"),
+                List.of("schema :names[ExportGidMapping=false]"),
+                List.of("schema : names[addEntity=entityId]"));
+    }
 
-	@Before
-	public void setUp() {
-		testling = new SchemaIdentifierParser();
-	}
+    private SchemaIdentifierParser testling;
 
-	@After
-	public void resetValidOptions() {
-		SchemaIdentifier.resetValidSchemaOptions();
-	}
+    @BeforeEach
+    public void setUp() {
+        testling = new SchemaIdentifierParser();
+    }
 
-	@Theory
-	public void testAppliesTo(List<String> uids) {
-		for (String current : uids) {
-			boolean appliesTo = testling.appliesTo(current);
-			Assert.assertTrue("Parser should apply to string " + current, appliesTo);
-		}
-	}
+    @AfterEach
+    public void resetValidOptions() {
+        SchemaIdentifier.resetValidSchemaOptions();
+    }
 
-	@Test
-	public void parse() {
-		List<SchemaIdentifier> result = testling.parse(Collections.singletonList("entities:xyz"));
-		assertEquals(1, result.size());
-		assertEquals(new SchemaIdentifier("xyz", Collections.emptyMap()), result.get(0));
-	}
+    @ParameterizedTest
+    @MethodSource("parameterSet")
+    public void testAppliesTo(List<String> uids) {
+        for (String current : uids) {
+            boolean appliesTo = testling.appliesTo(current);
+            assertTrue(appliesTo);
+        }
+    }
 
-	@Test
-	public void parseWithOptions() {
-		SchemaIdentifier.VALID_SCHEMA_OPTIONS.addAll(Arrays.asList("option1", "option2", "option3"));
-		List<SchemaIdentifier> result = testling.parse(Collections.singletonList("entities:xyz[option1=switch1|option2=switch2|option3=switch3]"));
-		assertEquals(1, result.size());
-		assertEquals(getExpectedSchemaIdentifier(), result.get(0));
-	}
+    @Test
+    public void parse() {
+        List<SchemaIdentifier> result = testling.parse(Collections.singletonList("entities:xyz"));
+        assertEquals(1, result.size());
+        assertEquals(new SchemaIdentifier("xyz", Collections.emptyMap()), result.get(0));
+    }
 
-	@Test
-	public void parseSchemaOptions() {
-		SchemaIdentifier.VALID_SCHEMA_OPTIONS.addAll(Arrays.asList("option1", "option2", "option3WithoutEquals", "option4WithoutValue", "option5", "option6"));
-		final String entitiesUidWithOptions = "[option1=switch1|option2=switch2|option3WithoutEquals|option4WithoutValue=|||option5=afterTriplePipe|option6=normal_again]";
-		Map<String, String> schemaOptionsMap = SchemaIdentifierParser.parseSchemaOptions(entitiesUidWithOptions);
-		assertEquals("switch1", schemaOptionsMap.get("option1"));
-		assertEquals("switch2", schemaOptionsMap.get("option2"));
-		Assert.assertNull("", schemaOptionsMap.get("option3WithoutEquals"));
-		Assert.assertNull("", schemaOptionsMap.get("option4WithoutValue"));
-		assertEquals("afterTriplePipe", schemaOptionsMap.get("option5"));
-		assertEquals("normal_again", schemaOptionsMap.get("option6"));
-	}
+    @Test
+    public void parseWithOptions() {
+        SchemaIdentifier.VALID_SCHEMA_OPTIONS.addAll(List.of("option1", "option2", "option3"));
+        List<SchemaIdentifier> result = testling.parse(Collections.singletonList("entities:xyz[option1=switch1|option2=switch2|option3=switch3]"));
+        assertEquals(1, result.size());
+        assertEquals(getExpectedSchemaIdentifier(), result.get(0));
+    }
 
-	@Test
-	public void parseSchemaOptions_exportGidMapping() {
-		{
-			final Map<String, String> options = SchemaIdentifierParser.parseSchemaOptions("[exportgidMapping=true]");
-			assertEquals(1, options.size());
-			assertEquals("true", options.values().iterator().next());
-		}
-		{
-			final Map<String, String> options = SchemaIdentifierParser.parseSchemaOptions("[exportGidMapping=false]");
-			assertEquals(1, options.size());
-			assertEquals("false", options.values().iterator().next());
-		}
-		{
-			final Map<String, String> options = SchemaIdentifierParser.parseSchemaOptions("[EXPORTGIDMAPPING=unknown]");
-			assertEquals(1, options.size());
-			assertEquals("unknown", options.values().iterator().next());
-		}
-	}
+    @Test
+    public void parseSchemaOptions() {
+        SchemaIdentifier.VALID_SCHEMA_OPTIONS.addAll(List.of("option1", "option2", "option3WithoutEquals", "option4WithoutValue", "option5", "option6"));
+        final String entitiesUidWithOptions = "[option1=switch1|option2=switch2|option3WithoutEquals|option4WithoutValue=|||option5=afterTriplePipe|option6=normal_again]";
+        Map<String, String> schemaOptionsMap = SchemaIdentifierParser.parseSchemaOptions(entitiesUidWithOptions);
+        assertEquals("switch1", schemaOptionsMap.get("option1"));
+        assertEquals("switch2", schemaOptionsMap.get("option2"));
+        assertNull(schemaOptionsMap.get("option3WithoutEquals"));
+        assertNull(schemaOptionsMap.get("option4WithoutValue"));
+        assertEquals("afterTriplePipe", schemaOptionsMap.get("option5"));
+        assertEquals("normal_again", schemaOptionsMap.get("option6"));
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void parseSchemaOptions_invalidOption() {
-		SchemaIdentifierParser.parseSchemaOptions("[option1=switch1]");
-	}
+    @Test
+    public void parseSchemaOptions_exportGidMapping() {
+        {
+            final Map<String, String> options = SchemaIdentifierParser.parseSchemaOptions("[exportgidMapping=true]");
+            assertEquals(1, options.size());
+            assertEquals("true", options.values().iterator().next());
+        }
+        {
+            final Map<String, String> options = SchemaIdentifierParser.parseSchemaOptions("[exportGidMapping=false]");
+            assertEquals(1, options.size());
+            assertEquals("false", options.values().iterator().next());
+        }
+        {
+            final Map<String, String> options = SchemaIdentifierParser.parseSchemaOptions("[EXPORTGIDMAPPING=unknown]");
+            assertEquals(1, options.size());
+            assertEquals("unknown", options.values().iterator().next());
+        }
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void parseSchemaOptions_illegalInputFormat_test1() {
-		assertEquals(0, SchemaIdentifierParser.parseSchemaOptions("option1=switch1").size());
-	}
+    @Test
+    public void parseSchemaOptions_invalidOption() {
+        assertThrows(IllegalArgumentException.class, () -> SchemaIdentifierParser.parseSchemaOptions("[option1=switch1]"));
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void parseSchemaOptions_illegalInputFormat_test2() {
-		assertEquals(0, SchemaIdentifierParser.parseSchemaOptions("[option1=switch1").size());
-	}
+    @Test
+    public void parseSchemaOptions_illegalInputFormat_test1() {
+        assertThrows(IllegalArgumentException.class, () -> SchemaIdentifierParser.parseSchemaOptions("option1=switch1"));
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void parseSchemaOptions_illegalInputFormat_test3() {
-		assertEquals(0, SchemaIdentifierParser.parseSchemaOptions("option1=switch1]").size());
-	}
+    @Test
+    public void parseSchemaOptions_illegalInputFormat_test2() {
+        assertThrows(IllegalArgumentException.class, () -> SchemaIdentifierParser.parseSchemaOptions("[option1=switch1"));
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void parseSchemaOptions_illegalInputFormat_test4() {
-		assertEquals(0, SchemaIdentifierParser.parseSchemaOptions(" [option1=switch1]").size());
-	}
+    @Test
+    public void parseSchemaOptions_illegalInputFormat_test3() {
+        assertThrows(IllegalArgumentException.class, () -> SchemaIdentifierParser.parseSchemaOptions("option1=switch1]"));
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void parseSchemaOptions_illegalInputFormat_test5() {
-		assertEquals(0, SchemaIdentifierParser.parseSchemaOptions("[option1=switch1] ").size());
-	}
+    @Test
+    public void parseSchemaOptions_illegalInputFormat_test4() {
+        assertThrows(IllegalArgumentException.class, () -> SchemaIdentifierParser.parseSchemaOptions(" [option1=switch1]"));
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void parseSchemaOptions_illegalInputFormat_test6() {
-		assertEquals(0, SchemaIdentifierParser.parseSchemaOptions(" [option1=switch1] ").size());
-	}
+    @Test
+    public void parseSchemaOptions_illegalInputFormat_test5() {
+        assertThrows(IllegalArgumentException.class, () -> SchemaIdentifierParser.parseSchemaOptions("[option1=switch1] "));
+    }
 
-	@Test
-	public void getSchemaIdentifier() {
-		SchemaIdentifier.VALID_SCHEMA_OPTIONS.addAll(Arrays.asList("option1", "option2", "option3"));
-		SchemaIdentifier identifierWithOptions = SchemaIdentifierParser.getSchemaIdentifier("xyz[option1=switch1|option2=switch2|option3=switch3]");
-		assertEquals(getExpectedSchemaIdentifier(), identifierWithOptions);
+    @Test
+    public void parseSchemaOptions_illegalInputFormat_test6() {
+        assertThrows(IllegalArgumentException.class, () -> SchemaIdentifierParser.parseSchemaOptions(" [option1=switch1] "));
+    }
 
-		SchemaIdentifier identifierWithoutOptions = SchemaIdentifierParser.getSchemaIdentifier("entitiesUidNoDelimiterBracket");
-		assertEquals(new SchemaIdentifier("entitiesUidNoDelimiterBracket", Collections.emptyMap()), identifierWithoutOptions);
-	}
+    @Test
+    public void getSchemaIdentifier() {
+        SchemaIdentifier.VALID_SCHEMA_OPTIONS.addAll(List.of("option1", "option2", "option3"));
+        SchemaIdentifier identifierWithOptions = SchemaIdentifierParser.getSchemaIdentifier("xyz[option1=switch1|option2=switch2|option3=switch3]");
+        assertEquals(getExpectedSchemaIdentifier(), identifierWithOptions);
 
-	private SchemaIdentifier getExpectedSchemaIdentifier() {
-		HashMap<String, String> expectedSchemaOptions = new HashMap<>();
-		expectedSchemaOptions.put("option1", "switch1");
-		expectedSchemaOptions.put("option2", "switch2");
-		expectedSchemaOptions.put("option3", "switch3");
-		return new SchemaIdentifier("xyz", expectedSchemaOptions);
-	}
+        SchemaIdentifier identifierWithoutOptions = SchemaIdentifierParser.getSchemaIdentifier("entitiesUidNoDelimiterBracket");
+        assertEquals(new SchemaIdentifier("entitiesUidNoDelimiterBracket", Collections.emptyMap()), identifierWithoutOptions);
+    }
 
-	@Test
-	public void testDontApplyTo() {
-		Assert.assertFalse(testling.appliesTo("asdasd"));
-	}
+    private SchemaIdentifier getExpectedSchemaIdentifier() {
+        HashMap<String, String> expectedSchemaOptions = new HashMap<>();
+        expectedSchemaOptions.put("option1", "switch1");
+        expectedSchemaOptions.put("option2", "switch2");
+        expectedSchemaOptions.put("option3", "switch3");
+        return new SchemaIdentifier("xyz", expectedSchemaOptions);
+    }
 
-	@Test
-	public void testDontApplyToStartsWithSchemaIdentifier() {
-		Assert.assertFalse(testling.appliesTo("schemaaasd:asd"));
-	}
+    @Test
+    public void testDontApplyTo() {
+        assertFalse(testling.appliesTo("asdasd"));
+    }
+
+    @Test
+    public void testDontApplyToStartsWithSchemaIdentifier() {
+        assertFalse(testling.appliesTo("schemaaasd:asd"));
+    }
 
 }

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ import java.util.concurrent.Callable;
  * known commands. This implementation uses the default commands and groups via the
  * Cli class.
  *
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 @Command(
         name = HelpCommand.COMMAND_NAME,

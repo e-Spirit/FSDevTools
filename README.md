@@ -67,9 +67,9 @@ Information about how to compile and extend this project is described in the [de
 
 ## Legal Notices
 
-FSDevTools is a product of [e-Spirit AG](https://www.e-spirit.com), Dortmund, Germany.
+FSDevTools is a product of [e-Spirit GmbH](https://www.e-spirit.com), Dortmund, Germany.
 
-Only a license agreed upon with e-Spirit AG is valid with respect to the user for using FSDevTools.
+Only a license agreed upon with e-Spirit GmbH is valid with respect to the user for using FSDevTools.
 
 ## Disclaimer
 

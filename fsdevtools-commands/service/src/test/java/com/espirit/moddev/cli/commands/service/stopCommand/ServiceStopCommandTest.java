@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,28 +22,25 @@
 
 package com.espirit.moddev.cli.commands.service.stopCommand;
 
-import com.espirit.moddev.cli.commands.service.common.ServiceProcessCommandBaseTest;
 import com.espirit.moddev.cli.commands.service.common.ServiceInfo;
+import com.espirit.moddev.cli.commands.service.common.ServiceProcessCommandBaseTest;
 import com.espirit.moddev.cli.commands.service.common.ServiceProcessResult;
 import de.espirit.firstspirit.access.ServiceNotFoundException;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static com.espirit.moddev.cli.commands.service.common.ServiceInfo.ServiceStatus.RUNNING;
 import static com.espirit.moddev.cli.commands.service.common.ServiceInfo.ServiceStatus.STOPPED;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ServiceStopCommandTest extends ServiceProcessCommandBaseTest<ServiceStopCommand> {
+
     private ServiceProcessResult result;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         super.setUp(new ServiceStopCommand());
         result = testling.call();
@@ -54,6 +51,7 @@ public class ServiceStopCommandTest extends ServiceProcessCommandBaseTest<Servic
         verify(mockModuleAdminAgent, never()).stopService("StoppedTestService");
         verify(mockModuleAdminAgent, never()).stopService("StoppedTestService2");
     }
+
     @Test
     public void allStoppedServicesAreReturned() {
         assertThat(result.get(), hasItem(new ServiceInfo("StoppedTestService", STOPPED, STOPPED)));
@@ -72,8 +70,9 @@ public class ServiceStopCommandTest extends ServiceProcessCommandBaseTest<Servic
 
     @Test
     public void noParams_totalNumberOfResults_equalsNumberOfServices() {
-        Assert.assertEquals("Exactly three service results should be found!", 3, result.get().size());
+        assertEquals(3, result.get().size(), "Exactly three service results should be found!");
     }
+
     @Test
     public void multipleParams_nonExistingServices_resultIsException() {
         when(mockModuleAdminAgent.isRunning("NonExistentService")).thenReturn(true);
@@ -83,8 +82,8 @@ public class ServiceStopCommandTest extends ServiceProcessCommandBaseTest<Servic
         result = testling.call();
 
         //if there is a better way to test this, be sure to tell me izgoel@e-spirit.com
-        assert(result.isError());
-        Assert.assertEquals(result.getError().getClass(), ServiceNotFoundException.class);
+        assert (result.isError());
+        assertEquals(result.getError().getClass(), ServiceNotFoundException.class);
     }
 }
 

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ import java.util.concurrent.Callable;
  * connection available to the command.
  *
  * @param <RESULT_TYPE> the custom result type for this command class
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 public interface Command<RESULT_TYPE extends Result> extends Callable<RESULT_TYPE> {
 }

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,15 @@ package com.espirit.moddev.cli.testgroups.reflectiontest;
 
 import com.espirit.moddev.cli.commands.example.ExampleCustomGroup;
 import com.espirit.moddev.cli.reflection.GroupUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 public class GroupUtilsTest {
 
@@ -39,13 +41,13 @@ public class GroupUtilsTest {
     @Test
     public void packageScanRetrievesCorrectCommandClassCount() {
         final Set<Class<?>> groupClassesInPackage = GroupUtils.scanForGroupClasses(DEFAULT_GROUP_TEST_PACKAGE_NAME);
-        Assert.assertEquals(5, groupClassesInPackage.size());
+        assertEquals(5, groupClassesInPackage.size());
     }
 
     @Test
     public void classpathScanRetrievesExampleGroup() {
         final Set<Class<?>> groupClassesInPackage = GroupUtils.scanForGroupClasses("");
-        Assert.assertTrue("Expected example group class to be found", groupClassesInPackage.contains(ExampleCustomGroup.class));
+        assertTrue(groupClassesInPackage.contains(ExampleCustomGroup.class), "Expected example group class to be found");
     }
 
 }

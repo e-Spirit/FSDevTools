@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ import static com.espirit.moddev.cli.commands.service.common.ServiceInfo.Service
 /**
  * Command class that can restart a FirstSpirit services.
  *
- * @author Andreas Straub
+ * @author e-Spirit GmbH
  */
 @Command(name = ServiceCommandNames.RESTART, groupNames = ServiceCommandGroup.NAME, description = "Restarts a FirstSpirit service. Starts, even if it's not running.")
 @Examples(

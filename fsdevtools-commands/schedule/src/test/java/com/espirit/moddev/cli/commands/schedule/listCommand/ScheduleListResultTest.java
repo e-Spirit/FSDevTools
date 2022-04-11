@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,15 +25,14 @@ package com.espirit.moddev.cli.commands.schedule.listCommand;
 import com.espirit.moddev.cli.commands.schedule.utils.ScheduleTestUtils;
 import de.espirit.firstspirit.access.schedule.ScheduleEntry;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ScheduleListResultTest {
 
@@ -46,12 +45,12 @@ public class ScheduleListResultTest {
 		// test
 		final ScheduleListResult scheduleListResult = new ScheduleListResult(list);
 		// verify
-		assertNull("project must be null", scheduleListResult.getProjectName());
+		assertNull(scheduleListResult.getProjectName());
 		final List<ScheduleEntry> entryList = scheduleListResult.getScheduleEntryList();
-		assertEquals("entry size mismatch", 1, entryList.size());
+		assertEquals(1, entryList.size(), "entry size mismatch");
 		final ScheduleEntry entry = entryList.get(0);
-		assertEquals("entry id mismatch", createdEntry.getId(), entry.getId());
-		assertEquals("entry name mismatch", createdEntry.getName(), entry.getName());
+		assertEquals(createdEntry.getId(), entry.getId(), "entry id mismatch");
+		assertEquals(createdEntry.getName(), entry.getName(), "entry name mismatch");
 	}
 
 	@Test
@@ -64,12 +63,12 @@ public class ScheduleListResultTest {
 		// test
 		final ScheduleListResult scheduleListResult = new ScheduleListResult(projectName, list);
 		// verify
-		assertEquals("project name mismatch", projectName, scheduleListResult.getProjectName());
+		assertEquals(projectName, scheduleListResult.getProjectName(), "project name mismatch");
 		final List<ScheduleEntry> entryList = scheduleListResult.getScheduleEntryList();
-		assertEquals("entry size mismatch", 1, entryList.size());
+		assertEquals(1, entryList.size(), "entry size mismatch");
 		final ScheduleEntry entry = entryList.get(0);
-		assertEquals("entry id mismatch", createdEntry.getId(), entry.getId());
-		assertEquals("entry name mismatch", createdEntry.getName(), entry.getName());
+		assertEquals(createdEntry.getId(), entry.getId(), "entry id mismatch");
+		assertEquals(createdEntry.getName(), entry.getName(), "entry name mismatch");
 	}
 
 	@Test
@@ -79,10 +78,10 @@ public class ScheduleListResultTest {
 		// test
 		final ScheduleListResult scheduleListResult = new ScheduleListResult(new RuntimeException(exceptionMessage));
 		// verify
-		assertTrue("result should be an error result", scheduleListResult.isError());
-		assertNotNull("exception must be != null", scheduleListResult.getError());
-		assertEquals("exception class mismatch", RuntimeException.class, scheduleListResult.getError().getClass());
-		assertEquals("message mismatch", exceptionMessage, scheduleListResult.getError().getMessage());
+		assertTrue(scheduleListResult.isError(), "result should be an error result");
+		assertNotNull(scheduleListResult.getError(), "exception must be != null");
+		assertEquals(RuntimeException.class, scheduleListResult.getError().getClass(), "exception class mismatch");
+		assertEquals(exceptionMessage, scheduleListResult.getError().getMessage(), "message mismatch");
 	}
 
 	@Test
@@ -95,9 +94,9 @@ public class ScheduleListResultTest {
 		// test
 		final String log = scheduleListResult.buildLog();
 		// verify
-		assertTrue("topic mismatch", log.contains(ScheduleListResult.MESSAGE_TOPIC_SERVER_SIDE));
-		assertTrue("entry not found in log", log.contains("- " + createdEntry.getName()));
-		assertEquals("entry found multiple times", 1, StringUtils.countMatches(log, "- " + createdEntry.getName()));
+		assertTrue(log.contains(ScheduleListResult.MESSAGE_TOPIC_SERVER_SIDE), "topic mismatch");
+		assertTrue(log.contains("- " + createdEntry.getName()), "entry not found in log");
+		assertEquals(1, StringUtils.countMatches(log, "- " + createdEntry.getName()), "entry found multiple times");
 	}
 
 	@Test
@@ -111,9 +110,9 @@ public class ScheduleListResultTest {
 		// test
 		final String log = scheduleListResult.buildLog();
 		// verify
-		assertTrue("topic mismatch", log.contains(String.format(ScheduleListResult.MESSAGE_TOPIC_PROJECT_BOUND, projectName)));
-		assertTrue("entry not found in log", log.contains("- " + createdEntry.getName()));
-		assertEquals("entry found multiple times", 1, StringUtils.countMatches(log, "- " + createdEntry.getName()));
+		assertTrue(log.contains(String.format(ScheduleListResult.MESSAGE_TOPIC_PROJECT_BOUND, projectName)), "topic mismatch");
+		assertTrue(log.contains("- " + createdEntry.getName()), "entry not found in log");
+		assertEquals(1, StringUtils.countMatches(log, "- " + createdEntry.getName()), "entry found multiple times");
 	}
 
 }

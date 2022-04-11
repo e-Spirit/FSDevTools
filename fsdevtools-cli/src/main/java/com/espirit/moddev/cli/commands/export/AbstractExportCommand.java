@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ import java.util.List;
  * This class gathers shared logic and options for different export commands. It can be extended for custom implementations of uid filtering, or to
  * override configurations.
  *
- * @author e -Spirit AG
+ * @author e-Spirit GmbH
  */
 public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> {
 

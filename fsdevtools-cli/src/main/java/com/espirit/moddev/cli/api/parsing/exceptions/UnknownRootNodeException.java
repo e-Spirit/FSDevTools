@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ package com.espirit.moddev.cli.api.parsing.exceptions;
 /**
  * States, that a given FirstSpirit root node identifier is not a known one.
  *
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 public class UnknownRootNodeException extends RuntimeException {
 

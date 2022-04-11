@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,9 @@ import com.espirit.moddev.cli.api.result.ExecutionErrorResult;
 import com.espirit.moddev.cli.api.result.ExecutionResults;
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 import com.google.common.collect.Lists;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.agency.GlobalWebAppId;
@@ -34,8 +37,6 @@ import de.espirit.firstspirit.agency.ProjectWebAppId;
 import de.espirit.firstspirit.agency.SpecialistsBroker;
 import de.espirit.firstspirit.agency.WebAppId;
 import de.espirit.firstspirit.module.WebEnvironment;
-import org.junit.Before;
-import org.junit.Test;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -53,7 +54,7 @@ public class WebAppUtilTest {
 	private SpecialistsBroker _broker;
 	private ModuleAdminAgent _moduleAdminAgent;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		_connection = mock(Connection.class);
 		_broker = mock(SpecialistsBroker.class);

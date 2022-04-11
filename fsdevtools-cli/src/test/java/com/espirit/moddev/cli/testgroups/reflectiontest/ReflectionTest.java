@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,44 +23,38 @@
 package com.espirit.moddev.cli.testgroups.reflectiontest;
 
 import com.espirit.moddev.cli.reflection.ReflectionUtils;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
-
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 public class ReflectionTest {
 
     @Test
     public void readsGroupDescriptionFromAnnotatedMethodTest() {
-        assertEquals("Description is expected to be xyz non null from getMyCustomDescription()",
-                     "xyz", ReflectionUtils.getDescriptionFromClass(GroupWithDescriptionAnnotation.class));
+        assertEquals("xyz", ReflectionUtils.getDescriptionFromClass(GroupWithDescriptionAnnotation.class));
     }
 
     @Test
     public void readsGroupDescriptionFromNonAnnotatedMethodWithNamingConventionTest() {
-        assertEquals("Description is expected to be abc non null from getDescription()",
-                     "abc", ReflectionUtils.getDescriptionFromClass(GroupWithDescriptionMethod.class));
+        assertEquals("abc", ReflectionUtils.getDescriptionFromClass(GroupWithDescriptionMethod.class));
     }
 
     @Test
     public void readsGroupDescriptionAsEmptyFromDescriptionMethodReturnsVoidTest() {
-        assertTrue("Description is expected to be empty from getDescription()",
-                   ReflectionUtils.getDescriptionFromClass(GroupWithVoidDescriptionMethod.class).isEmpty());
+        assertTrue(ReflectionUtils.getDescriptionFromClass(GroupWithVoidDescriptionMethod.class).isEmpty());
     }
 
     @Test
     public void readsGroupDescriptionAsEmptyFromDescriptionMethodReturnsNonStringTest() {
-        assertTrue("Description is expected to be empty from getDescription()",
-                   ReflectionUtils.getDescriptionFromClass(GroupWithNonStringDescriptionMethod.class).isEmpty());
+        assertTrue(ReflectionUtils.getDescriptionFromClass(GroupWithNonStringDescriptionMethod.class).isEmpty());
     }
 
     @Test
     public void readsGroupWithoutDescriptionAnnotationAndVoidDescriptionMethodTest() {
-        assertTrue("Description is expected to be empty from getDescription()",
-                   ReflectionUtils.getDescriptionFromClass(GroupWithoutDescriptionAnnotationAndVoidDescriptionMethod.class).isEmpty());
+        assertTrue(ReflectionUtils.getDescriptionFromClass(GroupWithoutDescriptionAnnotationAndVoidDescriptionMethod.class).isEmpty());
     }
 }

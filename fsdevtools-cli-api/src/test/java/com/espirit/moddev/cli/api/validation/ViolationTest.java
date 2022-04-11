@@ -5,7 +5,7 @@ package com.espirit.moddev.cli.api.validation;
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"),
  * you may not use this file except in compliance with the License.
@@ -22,18 +22,18 @@ package com.espirit.moddev.cli.api.validation;
  *
  */
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
 
 public class ViolationTest {
 
     private Violation _testling;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         _testling = new Violation("field", "is wrong!");
     }

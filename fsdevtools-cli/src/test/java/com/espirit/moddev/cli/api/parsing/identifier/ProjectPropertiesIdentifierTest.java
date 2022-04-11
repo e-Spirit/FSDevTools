@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,30 +22,24 @@
 
 package com.espirit.moddev.cli.api.parsing.identifier;
 
+import de.espirit.firstspirit.transport.PropertiesTransportOptions;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.util.EnumSet;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.theories.Theories;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-
-import de.espirit.firstspirit.transport.PropertiesTransportOptions;
 
 /**
- *
- * @author kohlbrecher
+ * @author e-Spirit GmbH
  */
-@RunWith(Theories.class)
 public class ProjectPropertiesIdentifierTest {
-     @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNullStore() {
-        new ProjectPropertiesIdentifier(null);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new ProjectPropertiesIdentifier(null));
     }
 
     @Test

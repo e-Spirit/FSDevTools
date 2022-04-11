@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,25 +26,6 @@ plugins {
     id 'idea'
 }
 
-sourceSets {
-    integrationTest {
-        compileClasspath += main.output
-        runtimeClasspath += main.output
-    }
-}
-
-idea {
-    module {
-        testSourceDirs += file('src/integrationTest/java')
-        testResourceDirs += file('src/integrationTest/resources')
-    }
-}
-
-configurations {
-    integrationTestImplementation.extendsFrom testImplementation
-    integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
-}
-
 processResources {
     outputs.upToDateWhen { false }
     expand(project.properties)
@@ -52,41 +33,6 @@ processResources {
 
 project.afterEvaluate {
     BuildUtils.disablePublishing(project);
-}
-
-if (rootProject.ext.useArtifactory) {
-    task javaIntegrationTest(type: Test) {
-        group 'verification'
-        dependsOn(assemble)
-
-        testClassesDirs = sourceSets.integrationTest.output.classesDirs
-        classpath = sourceSets.integrationTest.runtimeClasspath
-
-        ///////////////////////////////////////////////////////
-        // set system property for integration tests
-        ///////////////////////////////////////////////////////
-
-        systemProperty("testHttpPort", String.valueOf(serverHttpPort))
-        systemProperty("testSocketPort", String.valueOf(serverSocketPort))
-        systemProperty("testLicenseFile", String.valueOf(rootProject.configurations.fsLicense.resolve().first().absolutePath))
-        systemProperty("testInstallerTar", String.valueOf(rootProject.configurations.testInstallerTar.resolve().first().absolutePath))
-        systemProperty("testServerJar", String.valueOf(rootProject.configurations.testServerJar.resolve().first().absolutePath))
-        systemProperty("testRuntimeJar", String.valueOf(rootProject.configurations.testRuntimeJar.resolve().first().absolutePath))
-    }
-
-    task integrationTest() {
-        group 'verification'
-        dependsOn(javaIntegrationTest)
-        mustRunAfter rootProject.allprojects*.getTasksByName('test', false)
-    }
-
-    if (System.getProperty("isCI") != null) {
-        check.dependsOn(integrationTest)
-    }
-
-    test {
-        systemProperty("fsLicenseFile", String.valueOf(rootProject.configurations.fsLicense.resolve().first().absolutePath))
-    }
 }
 
 dependencies {
@@ -102,6 +48,5 @@ dependencies {
     implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
     implementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
 
-    testImplementation 'com.github.stefanbirkner:system-rules:1.19.0'
     testImplementation project(":fsdevtools-commands:custom-command-example")
 }

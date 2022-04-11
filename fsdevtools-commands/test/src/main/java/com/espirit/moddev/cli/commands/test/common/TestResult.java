@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Specialization of {@link SimpleResult} that can be used in conjunction with test project commands.
  *
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 public class TestResult extends SimpleResult<Void> {
 

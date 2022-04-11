@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,49 +29,41 @@ import de.espirit.firstspirit.access.store.mediastore.Media;
 import de.espirit.firstspirit.access.store.mediastore.MediaStoreRoot;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
-@RunWith(Theories.class)
 public class UidIdentifierTest {
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-    @DataPoints
-    public static String[] uids = {"", " ", null};
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testNullStore() {
-        new UidIdentifier(null, "");
+    @NotNull
+    private static Stream<String> parameterSet() {
+        return Stream.of("", " ", null);
     }
 
-    @Theory
+    @ParameterizedTest
+    @MethodSource("parameterSet")
     public void testEmptyOrNullUid(String uid) {
-        expectedException.expect(IllegalArgumentException.class);
-
-        new UidIdentifier(UidMapping.PAGEREF, uid);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new UidIdentifier(UidMapping.PAGEREF, uid));
     }
 
-    @Theory
+    @ParameterizedTest
+    @MethodSource("parameterSet")
     public void testEmptyOrNullUidWithSubStore(String uid) {
-        expectedException.expect(IllegalArgumentException.class);
-
-        new UidIdentifier(null, uid);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new UidIdentifier(null, uid));
     }
 
     @Test
@@ -101,13 +93,13 @@ public class UidIdentifierTest {
 
     @Test
     public void addToExportOperationWithNonMatchingClass() {
-        expectedException.expect(IDProviderNotFoundException.class);
-        ExportOperation exportOperation = createMediaElementAndExportItWithGivenUidMappingUidType(UidMapping.PAGE);
+        assertThrows(IDProviderNotFoundException.class, () -> createMediaElementAndExportItWithGivenUidMappingUidType(UidMapping.PAGE));
     }
 
     /**
      * Mocks a MediaStore and adds a dummy object X of type Media to it. Afterwards creates an ExportOperation
      * and adds an identifier matching X's uid to it, but uses the passed uidMappings uidType.
+     *
      * @param uidMapping the mapping from which the uidType is retrieved that is used for adding an element to
      *                   the export operation
      * @return the created ExportOperation mock

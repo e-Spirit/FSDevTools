@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,26 +22,25 @@
 
 package com.espirit.moddev.util;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Path;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileUtilTest {
 
-	@Rule
-	public TemporaryFolder _temp = new TemporaryFolder();
+	@TempDir
+	public File _temp;
 
 	@Test
 	public void moveUp() throws IOException {
-		final Path tempPath = _temp.getRoot().toPath();
+		final Path tempPath = _temp.toPath();
 		final Path subPath = tempPath.resolve("sub");
 		final String dirName = "dir";
 		final Path subDirPath = subPath.resolve(dirName);
@@ -58,16 +57,16 @@ public class FileUtilTest {
 		// move
 		FileUtil.moveContentsUp(subPath);
 		// verify
-		assertTrue("directory should still exist", subPath.toFile().exists());
-		assertFalse("directory should have been moved (deleted)", subDirPath.toFile().exists());
-		assertTrue("directory should have been moved (created)", tempPath.resolve(dirName).toFile().exists());
-		assertFalse("file should have been moved (deleted)", filePath.toFile().exists());
-		assertTrue("file should have been moved (created)", tempPath.resolve(fileName).toFile().exists());
+		assertTrue(subPath.toFile().exists(), "directory should still exist");
+		assertFalse(subDirPath.toFile().exists(), "directory should have been moved (deleted)");
+		assertTrue(tempPath.resolve(dirName).toFile().exists(), "directory should have been moved (created)");
+		assertFalse(filePath.toFile().exists(), "file should have been moved (deleted)");
+		assertTrue(tempPath.resolve(fileName).toFile().exists(), "file should have been moved (created)");
 	}
 
 	@Test
 	public void deleteDirectory() throws IOException {
-		final Path tempPath = _temp.getRoot().toPath();
+		final Path tempPath = _temp.toPath();
 		final Path subPath = tempPath.resolve("sub");
 		final Path subDirPath = subPath.resolve("dir");
 		FileUtil.mkDirs(subDirPath);
@@ -75,19 +74,19 @@ public class FileUtilTest {
 		// delete
 		FileUtil.deleteDirectory(subPath);
 		// verify
-		assertFalse("directory should have been deleted", subDirPath.toFile().exists());
-		assertFalse("directory should have been deleted", subPath.toFile().exists());
+		assertFalse(subDirPath.toFile().exists(), "directory should have been deleted");
+		assertFalse(subPath.toFile().exists(), "directory should have been deleted");
 	}
 
 	@Test
 	public void mkDirs() throws IOException {
-		final Path tempPath = _temp.getRoot().toPath();
+		final Path tempPath = _temp.toPath();
 		final Path pathToCreate = tempPath.resolve("sub").resolve("dir");
 		assertFalse(pathToCreate.toFile().exists());
 		// create
 		FileUtil.mkDirs(pathToCreate);
 		// verify
-		assertTrue("file should have been created", pathToCreate.toFile().exists());
+		assertTrue(pathToCreate.toFile().exists(), "file should have been created");
 	}
 
 }

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,70 +22,60 @@
 
 package com.espirit.moddev.cli.common;
 
-import com.espirit.moddev.cli.common.StringPropertiesMap;
-
 import org.hamcrest.Matchers;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.FromDataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Stream;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-@RunWith(Theories.class)
 public class StringPropertiesMapTest {
 
-    @DataPoints("valid strings")
-    public static String[] validPropertiesStrings = {"abc=123, def=456", "abc=123,def=456", "abc=123,def=456", "abc=123,def=456",
-            "abc=123" + System.lineSeparator() + "def=456", "abc=123 , def=456", " abc = 123 , def = 456 ", "abc:123,def:456",
-    " abc : 123 , def : 456 "};
 
-    @DataPoints("invalid strings")
-    public static String[] invalidPropertiesStrings = {"abc=123;def=456", "abc=123 def=456"};
-
-    @DataPoints("illegal strings")
-    public static String[] illegalPropertiesStrings = {"", " ", "\t", null};
-
-    @Theory
-    public void testValidStringConstructor(@FromDataPoints("valid strings") final String propertiesString) {
-        StringPropertiesMap constructed = new StringPropertiesMap(propertiesString);
-
-        final Collection<String> values = constructed.values();
-        Assert.assertThat("Wrong count of parsed entries: " + propertiesString, values, Matchers.hasSize(2));
-        Assert.assertThat("Wrong parsed values " + values + " for " + propertiesString, values, Matchers.containsInAnyOrder("123", "456"));
-
-        final Set<String> keys = constructed.keySet();
-        Assert.assertThat("Wrong parsed keys:  " + keys + " for " + propertiesString, keys, Matchers.containsInAnyOrder("abc", "def"));
+    @NotNull
+    private static Stream<String> parameterSet_testValidStringConstructor() {
+        return Stream.of("abc=123, def=456", "abc=123,def=456", "abc=123,def=456", "abc=123,def=456",
+                "abc=123" + System.lineSeparator() + "def=456", "abc=123 , def=456", " abc = 123 , def = 456 ", "abc:123,def:456",
+                " abc : 123 , def : 456 ");
     }
 
-    @Theory
-    public void testInvalidStringConstructor(@FromDataPoints("invalid strings") final String propertiesString) {
-        StringPropertiesMap constructed = new StringPropertiesMap(propertiesString);
+    @ParameterizedTest
+    @MethodSource("parameterSet_testValidStringConstructor")
+    public void testValidStringConstructor(@NotNull final String property) {
+        StringPropertiesMap constructed = new StringPropertiesMap(property);
 
-        Assert.assertThat("Wrong count of parsed entries!", constructed.values(), Matchers.hasSize(1));
+        final Collection<String> values = constructed.values();
+        assertThat("Wrong count of parsed entries: " + property, values, Matchers.hasSize(2));
+        assertThat("Wrong parsed values " + values + " for " + property, values, Matchers.containsInAnyOrder("123", "456"));
+
+        final Set<String> keys = constructed.keySet();
+        assertThat("Wrong parsed keys:  " + keys + " for " + property, keys, Matchers.containsInAnyOrder("abc", "def"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"abc=123;def=456", "abc=123 def=456"})
+    public void testInvalidStringConstructor(@NotNull final String property) {
+        StringPropertiesMap constructed = new StringPropertiesMap(property);
+        assertThat("Wrong count of parsed entries!", constructed.values(), Matchers.hasSize(1));
     }
 
     @Test
     public void testParameterlessConstructor() {
         StringPropertiesMap map = new StringPropertiesMap();
-
-        Assert.assertThat("Paramaterless constructor should create empty map!", map.values(), Matchers.is(Matchers.empty()));
+        assertThat("Parameterless constructor should create empty map!", map.values(), Matchers.is(Matchers.empty()));
     }
 
-    @Theory(nullsAccepted = true)
-    public void testCostructorWithIllegalArgument(@FromDataPoints("illegal strings") String source) {
+    @ParameterizedTest
+    @ValueSource(strings = {"", " ", "\t"})
+    public void testConstructorWithIllegalArgument(@NotNull final String source) {
         StringPropertiesMap constructed = new StringPropertiesMap(source);
-
-        Assert.assertThat("Illegal constructor parameter should create empty map!", constructed.values(), Matchers.is(Matchers.empty()));
+        assertThat("Illegal constructor parameter should create empty map!", constructed.values(), Matchers.is(Matchers.empty()));
     }
 
 }

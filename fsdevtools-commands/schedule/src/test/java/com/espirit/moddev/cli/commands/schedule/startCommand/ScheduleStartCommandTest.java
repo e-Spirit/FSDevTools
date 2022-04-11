@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@
 
 package com.espirit.moddev.cli.commands.schedule.startCommand;
 
-import com.espirit.moddev.cli.commands.schedule.utils.ScheduleTestUtils;
 import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.admin.ProjectStorage;
@@ -34,15 +33,18 @@ import de.espirit.firstspirit.access.schedule.ScheduleEntryRunningException;
 import de.espirit.firstspirit.access.schedule.ScheduleEntryState;
 import de.espirit.firstspirit.access.schedule.ScheduleStorage;
 
+import com.espirit.moddev.cli.commands.schedule.utils.ScheduleTestUtils;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Date;
-
 import static com.espirit.moddev.cli.commands.schedule.Messages.EXCEPTION_PROJECT_NOT_FOUND;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -75,9 +77,9 @@ public class ScheduleStartCommandTest {
 		//test
 		final ScheduleStartResult scheduleStartResult = scheduleStartCommand.getServerScheduleEntries(scheduleStorage);
 		//verify
-		assertNull("project must be null", scheduleStartResult.getProjectName());
-		assertEquals("entry id mismatch", createdEntry.getId(), scheduleStartResult.getScheduleStartInformation().getScheduleEntry().getId());
-		assertEquals("entry name mismatch", createdEntry.getName(), scheduleStartResult.getScheduleStartInformation().getScheduleEntry().getName());
+		assertNull(scheduleStartResult.getProjectName(), "project must be null");
+		assertEquals(createdEntry.getId(), scheduleStartResult.getScheduleStartInformation().getScheduleEntry().getId(), "entry id mismatch");
+		assertEquals(createdEntry.getName(), scheduleStartResult.getScheduleStartInformation().getScheduleEntry().getName(), "entry name mismatch");
 	}
 
 	@Test
@@ -115,9 +117,9 @@ public class ScheduleStartCommandTest {
 		//test
 		final ScheduleStartResult scheduleStartResult = scheduleStartCommand.getProjectScheduleEntries(adminService, scheduleStorage);
 		//verify
-		assertEquals("project name mismatch", projectName, scheduleStartResult.getProjectName());
-		assertEquals("entry id mismatch", createdEntry.getId(), scheduleStartResult.getScheduleStartInformation().getScheduleEntry().getId());
-		assertEquals("entry name mismatch", createdEntry.getName(), scheduleStartResult.getScheduleStartInformation().getScheduleEntry().getName());
+		assertEquals(projectName, scheduleStartResult.getProjectName(), "project name mismatch");
+		assertEquals(createdEntry.getId(), scheduleStartResult.getScheduleStartInformation().getScheduleEntry().getId(), "entry id mismatch");
+		assertEquals(createdEntry.getName(), scheduleStartResult.getScheduleStartInformation().getScheduleEntry().getName(), "entry name mismatch");
 	}
 
 	@Test
@@ -154,10 +156,10 @@ public class ScheduleStartCommandTest {
 		// test
 		final ScheduleStartResult scheduleStartResult = scheduleStartCommand.getScheduleStartResult(mock(Connection.class));
 		// verify
-		assertNull("project must be null", scheduleStartResult.getProjectName());
+		assertNull(scheduleStartResult.getProjectName(), "project must be null");
 		final ScheduleEntry entry = scheduleStartResult.getScheduleStartInformation().getScheduleEntry();
-		assertEquals("entry id mismatch", createdEntry.getId(), entry.getId());
-		assertEquals("entry name mismatch", createdEntry.getName(), entry.getName());
+		assertEquals(createdEntry.getId(), entry.getId(), "entry id mismatch");
+		assertEquals(createdEntry.getName(), entry.getName(), "entry name mismatch");
 	}
 
 	@Test
@@ -202,10 +204,10 @@ public class ScheduleStartCommandTest {
 		// test
 		final ScheduleStartResult scheduleStartResult = scheduleStartCommand.getScheduleStartResult(mock(Connection.class));
 		// verify
-		assertEquals("project name mismatch", projectName, scheduleStartResult.getProjectName());
+		assertEquals(projectName, scheduleStartResult.getProjectName(), "project name mismatch");
 		final ScheduleEntry entry = scheduleStartResult.getScheduleStartInformation().getScheduleEntry();
-		assertEquals("entry id mismatch", createdEntry.getId(), entry.getId());
-		assertEquals("entry name mismatch", createdEntry.getName(), entry.getName());
+		assertEquals(createdEntry.getId(), entry.getId(), "entry id mismatch");
+		assertEquals(createdEntry.getName(), entry.getName(), "entry name mismatch");
 	}
 
 	@Test
@@ -234,8 +236,8 @@ public class ScheduleStartCommandTest {
 		//test
 		final ScheduleEntry testEntry = scheduleStartCommand.getProjectScheduleEntry(adminService, scheduleStorage);
 		//verify
-		assertEquals("entry id mismatch", createdEntry.getId(), testEntry.getId());
-		assertEquals("entry name mismatch", createdEntry.getName(), testEntry.getName());
+		assertEquals(createdEntry.getId(), testEntry.getId(), "entry id mismatch");
+		assertEquals(createdEntry.getName(), testEntry.getName(), "entry name mismatch");
 	}
 
 	@Test
@@ -266,7 +268,7 @@ public class ScheduleStartCommandTest {
 			final ScheduleEntry testEntry = scheduleStartCommand.getProjectScheduleEntry(adminService, scheduleStorage);
 			failBecauseExceptionWasNotThrown(IllegalStateException.class);
 		} catch (final IllegalStateException e) {
-			assertTrue("exception message mismatch", e.getMessage().contains(String.format(EXCEPTION_PROJECT_NOT_FOUND, projectName)));
+			assertTrue(e.getMessage().contains(String.format(EXCEPTION_PROJECT_NOT_FOUND, projectName)), "exception message mismatch");
 		}
 	}
 
@@ -282,8 +284,8 @@ public class ScheduleStartCommandTest {
 		//test
 		final ScheduleEntry testEntry = scheduleStartCommand.getScheduleEntry(entryList);
 		//verify
-		assertEquals("entry id mismatch", createdEntry.getId(), testEntry.getId());
-		assertEquals("entry name mismatch", createdEntry.getName(), testEntry.getName());
+		assertEquals(createdEntry.getId(), testEntry.getId(), "entry id mismatch");
+		assertEquals(createdEntry.getName(), testEntry.getName(), "entry name mismatch");
 	}
 
 	@Test
@@ -301,8 +303,8 @@ public class ScheduleStartCommandTest {
 		//test
 		final ScheduleStartInformation testInformation = scheduleStartCommand.executeSchedule(createdEntry);
 		//verify
-		assertEquals("entry id mismatch", createdEntry.getId(), testInformation.getScheduleEntry().getId());
-		assertEquals("entry name mismatch", createdEntry.getName(), testInformation.getScheduleEntry().getName());
+		assertEquals(testInformation.getScheduleEntry().getId(), createdEntry.getId(), "entry id mismatch");
+		assertEquals(createdEntry.getName(), testInformation.getScheduleEntry().getName(), "entry name mismatch");
 
 	}
 
@@ -319,8 +321,8 @@ public class ScheduleStartCommandTest {
 		// test
 		final ScheduleStartResult result = command.call();
 		// verify
-		assertTrue("error result expected", result.isError());
-		assertNotNull("exception expected", result.getError());
-		assertEquals("exception class mismatch", UnsupportedOperationException.class, result.getError().getClass());
+		assertTrue(result.isError(), "error result expected");
+		assertNotNull(result.getError(), "exception expected");
+		assertEquals(UnsupportedOperationException.class, result.getError().getClass(), "exception class mismatch");
 	}
 }

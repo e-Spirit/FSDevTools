@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,79 +25,61 @@ package com.espirit.moddev.cli.api.parsing.parser;
 import com.espirit.moddev.cli.api.parsing.exceptions.UnknownRootNodeException;
 import com.espirit.moddev.cli.api.parsing.identifier.RootNodeIdentifier;
 import de.espirit.firstspirit.access.store.IDProvider;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.FromDataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.isA;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(Theories.class)
 public class RootNodeIdentifierParserTest {
 
-    @DataPoints("applyable")
-    public static List[] applyable =
-            new List[]{ Arrays.asList("root:myuid"),
-                    Arrays.asList("ROOT:myuid"),
-                    Arrays.asList("ROOT :myuid"),
-                    Arrays.asList("ROOT : myuid"),
-                    Arrays.asList("contentstore"),
-                    Arrays.asList("globalstore"),
-                    Arrays.asList("templatestore"),
-                    Arrays.asList("pagestore"),
-                    Arrays.asList("sitestore")};
-
-    @DataPoints("parsable")
-    public static List[] parsable =
-            new List[]{Arrays.asList("ROOT : contentstore"),
-                    Arrays.asList("contentstore"),
-                    Arrays.asList("globalstore"),
-                    Arrays.asList("templatestore"),
-                    Arrays.asList("pagestore"),
-                    Arrays.asList("sitestore")};
 
     private RootNodeIdentifierParser testling;
 
-    @Before
+
+    @BeforeEach
     public void setUp() {
         testling = new RootNodeIdentifierParser();
     }
 
-    @Theory
-    public void testAppliesTo(@FromDataPoints("applyable") List<String> uids) throws Exception {
-        for(String current : uids) {
-            boolean appliesTo = testling.appliesTo(current);
-            Assert.assertTrue("Parser should apply to string " + current, appliesTo);
-        }
-    }
-
-    @Test(expected = UnknownRootNodeException.class)
-    public void testParseWithNonExistingStore() throws Exception {
-        testling.parse(Arrays.asList("root:xyz"));
+    @ParameterizedTest
+    @ValueSource(strings = {"root:myuid", "ROOT:myuid", "ROOT :myuid", "ROOT : myuid", "contentstore", "globalstore", "templatestore", "pagestore", "sitestore"})
+    public void testAppliesTo(@NotNull final String uid) {
+        boolean appliesTo = testling.appliesTo(uid);
+        assertTrue(appliesTo, "Parser should apply to string " + uid);
     }
 
     @Test
-    public void testParseWithTemplateStoreRoot() throws Exception {
+    public void testParseWithNonExistingStore() {
+        assertThrows(UnknownRootNodeException.class, () -> testling.parse(List.of("root:xyz")));
+    }
+
+    @Test
+    public void testParseWithTemplateStoreRoot() {
         testling.parse(Arrays.asList("root:templatestore"));
     }
+
     @Test
-    public void testParseStoreRootRequestWithExistingStore() throws Exception {
+    public void testParseStoreRootRequestWithExistingStore() {
         final List<RootNodeIdentifier> list = testling.parse(Arrays.asList("root:templatestore"));
-        Assert.assertThat(list.contains(new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE)), equalTo(true));
+        assertThat(list.contains(new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE)), equalTo(true));
     }
 
-    @Theory
-    public void testParseNakedStoreRoot(@FromDataPoints("parsable") List<String> uids) throws Exception {
-        final List<RootNodeIdentifier> list = testling.parse(uids);
-        Assert.assertThat(list.size(), equalTo(1));
-        Assert.assertThat(list.get(0), isA(RootNodeIdentifier.class));
+    @ParameterizedTest
+    @ValueSource(strings = {"ROOT : contentstore", "contentstore", "globalstore", "templatestore", "pagestore", "sitestore"})
+    public void testParseNakedStoreRoot(@NotNull final String uid) {
+        final List<RootNodeIdentifier> list = testling.parse(Collections.singletonList(uid));
+        assertThat(list.size(), equalTo(1));
+        assertThat(list.get(0), isA(RootNodeIdentifier.class));
     }
 }

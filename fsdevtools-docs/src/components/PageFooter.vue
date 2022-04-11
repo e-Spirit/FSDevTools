@@ -5,7 +5,7 @@
             <div class="info-button info-icon" @click="toggleArtifactInfo"></div>
         </div>
         <div>
-            <span>© 2005 - 2020 e-Spirit AG</span>
+            <span>© 2005 - 2020 e-Spirit GmbH</span>
             <span>Alle Rechte vorbehalten</span>
             <span><a href="https://www.e-spirit.com/de/datenschutzerklaerung/">Datenschutz</a></span>
             <span><a href="https://www.e-spirit.com/de/impressum/">Impressum</a></span>

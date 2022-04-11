@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,45 +23,44 @@
 package com.espirit.moddev.util;
 
 import com.espirit.moddev.connection.FsConnectionType;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
-
 import static com.espirit.moddev.util.FsUtil.DIR_CONF;
 import static com.espirit.moddev.util.FsUtil.FILE_FS_SERVER_CONF;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FsUtilTest {
 
-	@Rule
-	public TemporaryFolder _temp = new TemporaryFolder();
+	@TempDir
+	public File _temp;
 
 	@Test
 	public void lockFileExists() throws IOException {
-		final Path rootPath = _temp.getRoot().toPath();
-		assertFalse("lock file should not exist", FsUtil.lockFileExists(rootPath));
+		final Path rootPath = _temp.toPath();
+		assertFalse(FsUtil.lockFileExists(rootPath), "lock file should not exist");
 		// create mock lock file
 		final Path lockFilePath = rootPath.resolve(FsUtil.FILE_SERVER_LOCK);
 		try (final OutputStream outputStream = new FileOutputStream(lockFilePath.toFile())) {
 			outputStream.write("myText.txt".getBytes());
 		}
 		// re-test
-		assertTrue("lock file should exist", FsUtil.lockFileExists(rootPath));
+		assertTrue(FsUtil.lockFileExists(rootPath), "lock file should exist");
 	}
 
 	@Test
 	public void licenseFileExists() throws IOException {
-		final Path rootPath = _temp.getRoot().toPath();
-		assertFalse("license file should not exist", FsUtil.licenseFileExists(rootPath));
+		final Path rootPath = _temp.toPath();
+		assertFalse(FsUtil.licenseFileExists(rootPath), "license file should not exist");
 		// create mock license file
 		final Path confDir = rootPath.resolve(DIR_CONF);
 		FileUtil.mkDirs(confDir);
@@ -70,29 +69,29 @@ public class FsUtilTest {
 			outputStream.write("myText.txt".getBytes());
 		}
 		// re-test
-		assertTrue("license file should exist", FsUtil.licenseFileExists(rootPath));
+		assertTrue(FsUtil.licenseFileExists(rootPath), "license file should exist");
 	}
 
 	@Test
 	public void isIsolatedJar() {
-		assertFalse("server jar should be legacy", FsUtil.isIsolatedJar(Paths.get("fs-server.jar")));
-		assertTrue("server jar should be isolated", FsUtil.isIsolatedJar(Paths.get("fs-isolated-server.jar")));
-		assertFalse("runtime jar should be legacy", FsUtil.isIsolatedJar(Paths.get("fs-runtime.jar")));
-		assertTrue("runtime jar should be isolated", FsUtil.isIsolatedJar(Paths.get("fs-isolated-runtime.jar")));
+		assertFalse(FsUtil.isIsolatedJar(Paths.get("fs-server.jar")), "server jar should be legacy");
+		assertTrue(FsUtil.isIsolatedJar(Paths.get("fs-isolated-server.jar")), "server jar should be isolated");
+		assertFalse(FsUtil.isIsolatedJar(Paths.get("fs-runtime.jar")), "runtime jar should be legacy");
+		assertTrue(FsUtil.isIsolatedJar(Paths.get("fs-isolated-runtime.jar")), "runtime jar should be isolated");
 	}
 
 	@Test
 	public void getPropertyFromConfig_fileDoesNotExist() {
-		final Path rootPath = _temp.getRoot().toPath();
+		final Path rootPath = _temp.toPath();
 		final Path configFile = rootPath.resolve(FILE_FS_SERVER_CONF);
 		final String fallbackValue = "defaultValue";
 		final String result = FsUtil.getPropertyFromConfig(configFile, "propertyName", fallbackValue);
-		assertEquals("value mismatch", fallbackValue, result);
+		assertEquals(fallbackValue, result);
 	}
 
 	@Test
 	public void getPropertyFromConfig_propertyDoesNotExist() throws IOException {
-		final Path rootPath = _temp.getRoot().toPath();
+		final Path rootPath = _temp.toPath();
 		// create file
 		final Path configFile = rootPath.resolve(FILE_FS_SERVER_CONF);
 		final String fallbackValue = "defaultValue";
@@ -102,12 +101,12 @@ public class FsUtilTest {
 			properties.store(outputStream, null);
 		}
 		final String result = FsUtil.getPropertyFromConfig(configFile, "propertyName", fallbackValue);
-		assertEquals("value mismatch", fallbackValue, result);
+		assertEquals(fallbackValue, result);
 	}
 
 	@Test
 	public void getPropertyFromConfig_propertyExists() throws IOException {
-		final Path rootPath = _temp.getRoot().toPath();
+		final Path rootPath = _temp.toPath();
 		// create file
 		final Path configFile = rootPath.resolve(FILE_FS_SERVER_CONF);
 		final Properties properties = new Properties();
@@ -117,12 +116,12 @@ public class FsUtilTest {
 			properties.store(outputStream, null);
 		}
 		final String result = FsUtil.getPropertyFromConfig(configFile, "propertyName", "defaultValue");
-		assertEquals("value mismatch", expectedValue, result);
+		assertEquals(expectedValue, result);
 	}
 
 	@Test
 	public void getHostFromConfig_defaultValue() throws IOException {
-		final Path rootPath = _temp.getRoot().toPath();
+		final Path rootPath = _temp.toPath();
 		// create file
 		final Path confDir = rootPath.resolve(DIR_CONF);
 		FileUtil.mkDirs(confDir);
@@ -133,12 +132,12 @@ public class FsUtilTest {
 			properties.store(outputStream, null);
 		}
 		final String result = FsUtil.getHostFromConfig(rootPath);
-		assertEquals("host fallback mismatch", FsUtil.VALUE_DEFAULT_HOST, result);
+		assertEquals(FsUtil.VALUE_DEFAULT_HOST, result);
 	}
 
 	@Test
 	public void getHostFromConfig_customValue() throws IOException {
-		final Path rootPath = _temp.getRoot().toPath();
+		final Path rootPath = _temp.toPath();
 		// create file
 		final Path confDir = rootPath.resolve(DIR_CONF);
 		FileUtil.mkDirs(confDir);
@@ -150,12 +149,12 @@ public class FsUtilTest {
 			properties.store(outputStream, null);
 		}
 		final String result = FsUtil.getHostFromConfig(rootPath);
-		assertEquals("host mismatch", expectedValue, result);
+		assertEquals(expectedValue, result);
 	}
 
 	@Test
 	public void getPortFromConfig_defaultValue_HTTP() throws IOException {
-		final Path rootPath = _temp.getRoot().toPath();
+		final Path rootPath = _temp.toPath();
 		// create file
 		final Path confDir = rootPath.resolve(DIR_CONF);
 		FileUtil.mkDirs(confDir);
@@ -166,12 +165,12 @@ public class FsUtilTest {
 			properties.store(outputStream, null);
 		}
 		final int result = FsUtil.getPortFromConfig(rootPath, FsConnectionType.HTTP);
-		assertEquals("port http fallback mismatch", FsConnectionType.HTTP.getDefaultPort(), result);
+		assertEquals(FsConnectionType.HTTP.getDefaultPort(), result);
 	}
 
 	@Test
 	public void getPortFromConfig_customValue_NAN_HTTP() throws IOException {
-		final Path rootPath = _temp.getRoot().toPath();
+		final Path rootPath = _temp.toPath();
 		// create file
 		final Path confDir = rootPath.resolve(DIR_CONF);
 		FileUtil.mkDirs(confDir);
@@ -182,12 +181,12 @@ public class FsUtilTest {
 			properties.store(outputStream, null);
 		}
 		final int result = FsUtil.getPortFromConfig(rootPath, FsConnectionType.HTTP);
-		assertEquals("port http fallback mismatch", FsConnectionType.HTTP.getDefaultPort(), result);
+		assertEquals(FsConnectionType.HTTP.getDefaultPort(), result);
 	}
 
 	@Test
 	public void getPortFromConfig_customValue_HTTP() throws IOException {
-		final Path rootPath = _temp.getRoot().toPath();
+		final Path rootPath = _temp.toPath();
 		// create file
 		final Path confDir = rootPath.resolve(DIR_CONF);
 		FileUtil.mkDirs(confDir);
@@ -199,12 +198,12 @@ public class FsUtilTest {
 			properties.store(outputStream, null);
 		}
 		final int result = FsUtil.getPortFromConfig(rootPath, FsConnectionType.HTTP);
-		assertEquals("port http mismatch", portValue, result);
+		assertEquals(portValue, result);
 	}
 
 	@Test
 	public void getPortFromConfig_defaultValue_HTTPS() throws IOException {
-		final Path rootPath = _temp.getRoot().toPath();
+		final Path rootPath = _temp.toPath();
 		// create file
 		final Path confDir = rootPath.resolve(DIR_CONF);
 		FileUtil.mkDirs(confDir);
@@ -215,12 +214,12 @@ public class FsUtilTest {
 			properties.store(outputStream, null);
 		}
 		final int result = FsUtil.getPortFromConfig(rootPath, FsConnectionType.HTTPS);
-		assertEquals("port https fallback mismatch", FsConnectionType.HTTPS.getDefaultPort(), result);
+		assertEquals(FsConnectionType.HTTPS.getDefaultPort(), result);
 	}
 
 	@Test
 	public void getPortFromConfig_customValue_NAN_HTTPS() throws IOException {
-		final Path rootPath = _temp.getRoot().toPath();
+		final Path rootPath = _temp.toPath();
 		// create file
 		final Path confDir = rootPath.resolve(DIR_CONF);
 		FileUtil.mkDirs(confDir);
@@ -231,12 +230,12 @@ public class FsUtilTest {
 			properties.store(outputStream, null);
 		}
 		final int result = FsUtil.getPortFromConfig(rootPath, FsConnectionType.HTTPS);
-		assertEquals("port https fallback mismatch", FsConnectionType.HTTPS.getDefaultPort(), result);
+		assertEquals(FsConnectionType.HTTPS.getDefaultPort(), result);
 	}
 
 	@Test
 	public void getPortFromConfig_customValue_HTTPS() throws IOException {
-		final Path rootPath = _temp.getRoot().toPath();
+		final Path rootPath = _temp.toPath();
 		// create file
 		final Path confDir = rootPath.resolve(DIR_CONF);
 		FileUtil.mkDirs(confDir);
@@ -248,12 +247,12 @@ public class FsUtilTest {
 			properties.store(outputStream, null);
 		}
 		final int result = FsUtil.getPortFromConfig(rootPath, FsConnectionType.HTTPS);
-		assertEquals("port https mismatch", portValue, result);
+		assertEquals(portValue, result);
 	}
 
 	@Test
 	public void getPortFromConfig_defaultValue_SOCKET() throws IOException {
-		final Path rootPath = _temp.getRoot().toPath();
+		final Path rootPath = _temp.toPath();
 		// create file
 		final Path confDir = rootPath.resolve(DIR_CONF);
 		FileUtil.mkDirs(confDir);
@@ -264,12 +263,12 @@ public class FsUtilTest {
 			properties.store(outputStream, null);
 		}
 		final int result = FsUtil.getPortFromConfig(rootPath, FsConnectionType.SOCKET);
-		assertEquals("port socket fallback mismatch", FsConnectionType.SOCKET.getDefaultPort(), result);
+		assertEquals(FsConnectionType.SOCKET.getDefaultPort(), result);
 	}
 
 	@Test
 	public void getPortFromConfig_customValue_NAN_SOCKET() throws IOException {
-		final Path rootPath = _temp.getRoot().toPath();
+		final Path rootPath = _temp.toPath();
 		// create file
 		final Path confDir = rootPath.resolve(DIR_CONF);
 		FileUtil.mkDirs(confDir);
@@ -280,12 +279,12 @@ public class FsUtilTest {
 			properties.store(outputStream, null);
 		}
 		final int result = FsUtil.getPortFromConfig(rootPath, FsConnectionType.SOCKET);
-		assertEquals("port socket fallback mismatch", FsConnectionType.SOCKET.getDefaultPort(), result);
+		assertEquals(FsConnectionType.SOCKET.getDefaultPort(), result);
 	}
 
 	@Test
 	public void getPortFromConfig_customValue_SOCKET() throws IOException {
-		final Path rootPath = _temp.getRoot().toPath();
+		final Path rootPath = _temp.toPath();
 		// create file
 		final Path confDir = rootPath.resolve(DIR_CONF);
 		FileUtil.mkDirs(confDir);
@@ -297,7 +296,7 @@ public class FsUtilTest {
 			properties.store(outputStream, null);
 		}
 		final int result = FsUtil.getPortFromConfig(rootPath, FsConnectionType.SOCKET);
-		assertEquals("port socket mismatch", portValue, result);
+		assertEquals(portValue, result);
 	}
 
 }

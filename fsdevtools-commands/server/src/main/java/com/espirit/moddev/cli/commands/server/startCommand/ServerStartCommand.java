@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit AG
+ * Copyright (C) 2021 e-Spirit GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ import java.time.Duration;
  * This Command can start a FirstSpirit server. Uses ServerRunner implementations to achieve
  * It makes use of its command arguments to decide which server to start.
  *
- * @author e-Spirit AG
+ * @author e-Spirit GmbH
  */
 @Command(name = ServerCommandNames.START, groupNames = ServerCommandGroup.NAME, description = "Starts a FirstSpirit server in the given directory." +
 		"WARNING: If you execute commands asynchronously, you may end up in unpredictable behavior.")
