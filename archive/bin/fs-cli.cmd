@@ -9,7 +9,7 @@ for /f "tokens=*" %%a in ('call "%javap_cmd%" -verbose java.lang.Object ^| finds
 for /f "tokens=3 delims= " %%A in ("%BYTECODE_VERSION%") do set /a BYTECODE_VERSION=%%A
 set VM_ARGS=
 if %BYTECODE_VERSION% gtr 52  (
-  set VM_ARGS=--add-opens=java.base/sun.reflect.annotation=ALL-UNNAMED
+  set VM_ARGS=--add-opens=java.base/sun.reflect.annotation=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED
 )
 
 REM EXECUTE CLI
