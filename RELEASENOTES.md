@@ -1,5 +1,10 @@
 # Release notes
 
+## Version 4.0.1
+
+* added missing add-opens for JDK 17
+* updated Gradle to 7.5.1 (was 7.1.1)
+
 ## Version 4.0.0
 
 * fixed error in start script (WIN only)
