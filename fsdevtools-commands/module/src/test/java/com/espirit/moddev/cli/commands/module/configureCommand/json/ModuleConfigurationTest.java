@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+
 import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_COMPONENTS;
 import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_MODULE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;

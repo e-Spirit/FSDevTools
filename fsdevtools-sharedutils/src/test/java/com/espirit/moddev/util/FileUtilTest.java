@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,19 @@
 
 package com.espirit.moddev.util;
 
+import org.assertj.core.api.Assertions;
+import org.assertj.core.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -89,4 +94,18 @@ public class FileUtilTest {
 		assertTrue(pathToCreate.toFile().exists(), "file should have been created");
 	}
 
+	@Test
+	void writeIntoFile(@TempDir final Path tempDir) throws IOException {
+		// GIVEN
+		final Path tempFilePath = tempDir.resolve("test-file");
+		final File testFile = tempFilePath.toFile();
+		Assumptions.assumeThat(testFile.createNewFile()).isTrue();
+		try (final ByteArrayInputStream is = new ByteArrayInputStream("test content".getBytes())) {
+			// WHEN
+			FileUtil.writeIntoFile(is, testFile);
+		}
+		// THEN
+		final String fileContent = Files.readString(tempFilePath);
+		Assertions.assertThat(fileContent).isEqualTo("test content");
+	}
 }

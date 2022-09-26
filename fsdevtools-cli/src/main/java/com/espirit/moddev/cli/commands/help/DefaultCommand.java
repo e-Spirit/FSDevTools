@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,29 +41,29 @@ import java.util.List;
 @com.github.rvesse.airline.annotations.Command(name = "DefaultCommand", hidden = true)
 public class DefaultCommand implements Command<HelpResult> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCommand.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCommand.class);
 
-    @Arguments
-    protected List<String> args = new ArrayList<>();
+	@Arguments
+	protected List<String> args = new ArrayList<>();
 
-    @Override
-    public HelpResult call() throws Exception {
-        HelpResult result = callStandardHelpCommand();
+	@Override
+	public HelpResult call() throws Exception {
+		HelpResult result = callStandardHelpCommand();
 
-        if(args.isEmpty()) {
-            GlobalMetadata<Object> metadata = result.get();
-            return new HelpResult(metadata);
-        } else {
-            // enforce exit code 1 with error
-            final String unknownCommand = args.stream().reduce((t, u) -> t + " " + u).orElse("");
-            final Exception error = new UnknownCommandException(unknownCommand);
-            return new HelpResult(error);
-        }
-    }
+		if (args.isEmpty()) {
+			GlobalMetadata<Object> metadata = result.get();
+			return new HelpResult(metadata);
+		} else {
+			// enforce exit code 1 with error
+			final String unknownCommand = args.stream().reduce((t, u) -> t + " " + u).orElse("");
+			final Exception error = new UnknownCommandException(unknownCommand);
+			return new HelpResult(error);
+		}
+	}
 
-    private static HelpResult callStandardHelpCommand() {
-        LOGGER.info("\nSee help for more information:\n");
-        final HelpCommand helpCommand = new HelpCommand();
-        return helpCommand.call();
-    }
+	private static HelpResult callStandardHelpCommand() {
+		LOGGER.info("\nSee help for more information:\n");
+		final HelpCommand helpCommand = new HelpCommand();
+		return helpCommand.call();
+	}
 }

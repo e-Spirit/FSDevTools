@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,121 +41,119 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 /**
  * @author e-Spirit GmbH
  */
 public class SyncDirectoryFactoryTest {
 
+	@TempDir
+	public File _temporaryFolder;
 
-    @TempDir
-    public File _temporaryFolder;
+	private SyncDirectoryFactory _testling;
+	private File _syncDir;
 
-    private SyncDirectoryFactory _testling;
-    private File _syncDir;
+	@BeforeEach
+	public void setUp() {
+		_syncDir = _temporaryFolder.toPath().resolve(UUID.randomUUID().toString()).toFile();
+		_testling = new SyncDirectoryFactory(new Config() {
+			@Override
+			public String getHost() {
+				return FsUtil.VALUE_DEFAULT_HOST;
+			}
 
-    @BeforeEach
-    public void setUp() {
-        _syncDir = _temporaryFolder.toPath().resolve(UUID.randomUUID().toString()).toFile();
-        _testling = new SyncDirectoryFactory(new Config() {
-            @Override
-            public String getHost() {
-                return FsUtil.VALUE_DEFAULT_HOST;
-            }
+			@Override
+			public Integer getPort() {
+				return FsConnectionType.HTTP.getDefaultPort();
+			}
 
-            @Override
-            public Integer getPort() {
-                return FsConnectionType.HTTP.getDefaultPort();
-            }
+			@Override
+			public String getHttpProxyHost() {
+				return "";
+			}
 
-            @Override
-            public String getHttpProxyHost() {
-                return "";
-            }
+			@Override
+			public Integer getHttpProxyPort() {
+				return 8080;
+			}
 
-            @Override
-            public Integer getHttpProxyPort() {
-                return 8080;
-            }
+			@Override
+			public String getServletZone() {
+				return CliConstants.DEFAULT_SERVLET_ZONE.value();
+			}
 
-            @Override
-            public String getServletZone() {
-                return CliConstants.DEFAULT_SERVLET_ZONE.value();
-            }
+			@Override
+			public FsConnectionType getConnectionMode() {
+				return null;
+			}
 
-            @Override
-            public FsConnectionType getConnectionMode() {
-                return null;
-            }
+			@Override
+			public String getUser() {
+				return FsUtil.VALUE_DEFAULT_USER;
+			}
 
-            @Override
-            public String getUser() {
-                return FsUtil.VALUE_DEFAULT_USER;
-            }
+			@Override
+			public String getPassword() {
+				return FsUtil.VALUE_DEFAULT_USER;
+			}
 
-            @Override
-            public String getPassword() {
-                return FsUtil.VALUE_DEFAULT_USER;
-            }
+			@NotNull
+			@Override
+			public String getResultFile() {
+				return FsUtil.VALUE_DEFAULT_RESULT_FILE;
+			}
 
-            @NotNull
-            @Override
-            public String getResultFile() {
-                return FsUtil.VALUE_DEFAULT_RESULT_FILE;
-            }
+			@Override
+			public String getProject() {
+				return null;
+			}
 
-            @Override
-            public String getProject() {
-                return null;
-            }
+			@Override
+			public String getSynchronizationDirectoryString() {
+				return "test";
+			}
 
-            @Override
-            public String getSynchronizationDirectoryString() {
-                return "test";
-            }
+			@Override
+			public <F extends FileHandle> FileSystem<F> getSynchronizationDirectory() {
+				return null;
+			}
 
-            @Override
-            public <F extends FileHandle> FileSystem<F> getSynchronizationDirectory() {
-                return null;
-            }
+			@Override
+			public boolean isActivateProjectIfDeactivated() {
+				return false;
+			}
 
-            @Override
-            public boolean isActivateProjectIfDeactivated() {
-                return false;
-            }
+		});
+	}
 
-        });
-    }
+	@Test
+	public void testCheckAndCreateSyncDirIfNeeded() {
+		_testling.checkAndCreateSyncDirIfNeeded(_syncDir.getAbsolutePath());
 
-    @Test
-    public void testCheckAndCreateSyncDirIfNeeded() {
-        _testling.checkAndCreateSyncDirIfNeeded(_syncDir.getAbsolutePath());
+		assertTrue(_syncDir.exists(), "Expect sync dir exists");
+	}
 
-        assertTrue(_syncDir.exists(), "Expect sync dir exists");
-    }
+	@Test
+	public void testCheckAndCreateSyncDir() {
+		_syncDir = new File(_temporaryFolder, "mySyncDir");
 
-    @Test
-    public void testCheckAndCreateSyncDir() {
-        _syncDir = new File(_temporaryFolder, "mySyncDir");
+		assertFalse(_syncDir.exists(), "Expect sync dir is missing");
 
-        assertFalse(_syncDir.exists(), "Expect sync dir is missing");
+		_testling.checkAndCreateSyncDirIfNeeded(_syncDir.getAbsolutePath());
 
-        _testling.checkAndCreateSyncDirIfNeeded(_syncDir.getAbsolutePath());
+		assertTrue(_syncDir.exists(), "Expect sync dir exists");
+	}
 
-        assertTrue(_syncDir.exists(), "Expect sync dir exists");
-    }
+	@Test
+	public void testCheckAndCreateSyncDirIfNeededEmpty() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> {
+			_testling.checkAndCreateSyncDirIfNeeded("");
+		});
+	}
 
-    @Test
-    public void testCheckAndCreateSyncDirIfNeededEmpty() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            _testling.checkAndCreateSyncDirIfNeeded("");
-        });
-    }
-
-    @Test
-    public void testCheckAndCreateSyncDirIfNeededNull() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            _testling.checkAndCreateSyncDirIfNeeded(null);
-        });
-    }
+	@Test
+	public void testCheckAndCreateSyncDirIfNeededNull() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> {
+			_testling.checkAndCreateSyncDirIfNeeded(null);
+		});
+	}
 }

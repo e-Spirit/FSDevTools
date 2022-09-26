@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,40 +41,40 @@ import java.util.stream.Collectors;
  */
 public final class GroupUtils {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GroupUtils.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(GroupUtils.class);
 
-    private GroupUtils() {
-        // Not used
-    }
+	private GroupUtils() {
+		// Not used
+	}
 
-    /**
-     * Scans the classpath for classes that are annotated with airline's {@link Group} annotation.
-     * Ignores abstract classes.
-     *
-     * @param packagesToScan is a String with comma separated packages that should be scanned. Excluded packages
-     *                       are prefixed with - (minus). If all packages should be scanned, just pass an empty String, or use
-     *                       scanForCommandClasses without parameter.
-     * @return a set of matching classes
-     */
-    public static Set<Class<?>> scanForGroupClasses(String packagesToScan) {
-        final Set<Class<?>> result = new HashSet<>();
-        final ClassGraph classGraph = new ClassGraph().enableAnnotationInfo().whitelistPackages(packagesToScan);
-        try (final ScanResult scanResult = classGraph.scan()) {
-            for (final ClassInfo classInfo : scanResult.getClassesWithAnnotation(Group.class.getName())) {
-                result.add(classInfo.loadClass());
-            }
-        }
-        LOGGER.debug("Found " + result.size() + " command groups. " + result.stream().map(Class::getSimpleName).collect(Collectors.joining(",", "[ ", " ]")));
-        return result;
-    }
+	/**
+	 * Scans the classpath for classes that are annotated with airline's {@link Group} annotation.
+	 * Ignores abstract classes.
+	 *
+	 * @param packagesToScan is a String with comma separated packages that should be scanned. Excluded packages
+	 *                       are prefixed with - (minus). If all packages should be scanned, just pass an empty String, or use
+	 *                       scanForCommandClasses without parameter.
+	 * @return a set of matching classes
+	 */
+	public static Set<Class<?>> scanForGroupClasses(String packagesToScan) {
+		final Set<Class<?>> result = new HashSet<>();
+		final ClassGraph classGraph = new ClassGraph().enableAnnotationInfo().whitelistPackages(packagesToScan);
+		try (final ScanResult scanResult = classGraph.scan()) {
+			for (final ClassInfo classInfo : scanResult.getClassesWithAnnotation(Group.class.getName())) {
+				result.add(classInfo.loadClass());
+			}
+		}
+		LOGGER.debug("Found " + result.size() + " command groups. " + result.stream().map(Class::getSimpleName).collect(Collectors.joining(",", "[ ", " ]")));
+		return result;
+	}
 
-    /**
-     * Scans the whole classpath for classes that are annotated with airline's {@link Group} annotation.
-     * Uses scanForGroupClasses
-     *
-     * @return a set of matching classes
-     */
-    public static Set<Class<?>> scanForGroupClasses() {
-        return scanForGroupClasses("");
-    }
+	/**
+	 * Scans the whole classpath for classes that are annotated with airline's {@link Group} annotation.
+	 * Uses scanForGroupClasses
+	 *
+	 * @return a set of matching classes
+	 */
+	public static Set<Class<?>> scanForGroupClasses() {
+		return scanForGroupClasses("");
+	}
 }

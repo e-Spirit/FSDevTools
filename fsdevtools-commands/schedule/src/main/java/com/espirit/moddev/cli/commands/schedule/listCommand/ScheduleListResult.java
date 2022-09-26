@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * Represents a {@link com.espirit.moddev.cli.api.result.Result} for a list of {@link ScheduleEntry schedule entries}.
  */
@@ -45,7 +44,6 @@ public class ScheduleListResult extends SimpleResult<List<ScheduleEntry>> {
 	private final String _projectName;
 	private final List<ScheduleEntry> _scheduleEntryList;
 
-
 	/**
 	 * Constructor to use for server sided {@link ScheduleEntry schedule entries}.
 	 *
@@ -55,7 +53,6 @@ public class ScheduleListResult extends SimpleResult<List<ScheduleEntry>> {
 	public ScheduleListResult(@NotNull final List<ScheduleEntry> scheduleEntryList) {
 		this(null, scheduleEntryList);
 	}
-
 
 	/**
 	 * Constructor to use for project bound {@link ScheduleEntry schedule entries}.
@@ -68,7 +65,6 @@ public class ScheduleListResult extends SimpleResult<List<ScheduleEntry>> {
 		_scheduleEntryList = scheduleEntryList;
 	}
 
-
 	/**
 	 * Constructor to use if an exception occurs.
 	 *
@@ -80,20 +76,17 @@ public class ScheduleListResult extends SimpleResult<List<ScheduleEntry>> {
 		_projectName = null;
 	}
 
-
 	@VisibleForTesting
 	@Nullable
 	String getProjectName() {
 		return _projectName;
 	}
 
-
 	@VisibleForTesting
 	@NotNull
 	List<ScheduleEntry> getScheduleEntryList() {
 		return _scheduleEntryList;
 	}
-
 
 	@Override
 	public void log() {
@@ -102,7 +95,6 @@ public class ScheduleListResult extends SimpleResult<List<ScheduleEntry>> {
 		}
 		LOGGER.info(buildLog());
 	}
-
 
 	@VisibleForTesting
 	@NotNull

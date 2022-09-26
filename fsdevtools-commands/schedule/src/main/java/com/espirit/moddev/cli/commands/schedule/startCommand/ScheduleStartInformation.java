@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,14 +28,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
 
-
 public class ScheduleStartInformation {
 
 	private final ScheduleEntry _scheduleEntry;
 	private final Date _startTime;
 	private final Date _finishTime;
 	private final long _duration;
-
 
 	public ScheduleStartInformation(@NotNull final ScheduleEntry scheduleEntry, @NotNull final Date startTime, @NotNull final Date finishTime) {
 		_scheduleEntry = scheduleEntry;
@@ -44,24 +42,20 @@ public class ScheduleStartInformation {
 		_duration = _finishTime.getTime() - _startTime.getTime();
 	}
 
-
 	@NotNull
 	public ScheduleEntry getScheduleEntry() {
 		return _scheduleEntry;
 	}
-
 
 	@NotNull
 	public Date getStartTime() {
 		return _startTime;
 	}
 
-
 	@NotNull
 	public Date getFinishTime() {
 		return _finishTime;
 	}
-
 
 	public long getDuration() {
 		return _duration;

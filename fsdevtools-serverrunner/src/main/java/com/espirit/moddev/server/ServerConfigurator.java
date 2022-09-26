@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -167,7 +167,7 @@ public class ServerConfigurator {
 	 * be restarted after a crash
 	 *
 	 * @param enableServerRestartOnFailure {@code true}, if the JVM should be restarted after a crash,
-	 * {@code false} otherwise
+	 *                                     {@code false} otherwise
 	 * @see #execute()
 	 */
 	public void setEnableServerRestartOnFailure(final boolean enableServerRestartOnFailure) {

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,8 +47,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -292,7 +294,10 @@ public final class Cli {
 
 			LOGGER.debug(String.format("Writing result file '%s'...", file));
 			final ObjectMapper objectMapper = JacksonUtil.createOutputMapper();
-			objectMapper.writeValue(file, object);
+			final String jsonString = objectMapper.writeValueAsString(object);
+			try (final FileOutputStream outputStream = new FileOutputStream(file)) {
+				outputStream.write(jsonString.getBytes(StandardCharsets.UTF_8));
+			}
 			LOGGER.debug("Result file '{}' written.", file);
 		} catch (final Exception e) {
 			LOGGER.error(String.format("Error writing result file '%s'!", file), e);

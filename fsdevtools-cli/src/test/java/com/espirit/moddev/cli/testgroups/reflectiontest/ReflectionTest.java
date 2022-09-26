@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,28 +33,28 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class ReflectionTest {
 
-    @Test
-    public void readsGroupDescriptionFromAnnotatedMethodTest() {
-        assertEquals("xyz", ReflectionUtils.getDescriptionFromClass(GroupWithDescriptionAnnotation.class));
-    }
+	@Test
+	public void readsGroupDescriptionFromAnnotatedMethodTest() {
+		assertEquals("xyz", ReflectionUtils.getDescriptionFromClass(GroupWithDescriptionAnnotation.class));
+	}
 
-    @Test
-    public void readsGroupDescriptionFromNonAnnotatedMethodWithNamingConventionTest() {
-        assertEquals("abc", ReflectionUtils.getDescriptionFromClass(GroupWithDescriptionMethod.class));
-    }
+	@Test
+	public void readsGroupDescriptionFromNonAnnotatedMethodWithNamingConventionTest() {
+		assertEquals("abc", ReflectionUtils.getDescriptionFromClass(GroupWithDescriptionMethod.class));
+	}
 
-    @Test
-    public void readsGroupDescriptionAsEmptyFromDescriptionMethodReturnsVoidTest() {
-        assertTrue(ReflectionUtils.getDescriptionFromClass(GroupWithVoidDescriptionMethod.class).isEmpty());
-    }
+	@Test
+	public void readsGroupDescriptionAsEmptyFromDescriptionMethodReturnsVoidTest() {
+		assertTrue(ReflectionUtils.getDescriptionFromClass(GroupWithVoidDescriptionMethod.class).isEmpty());
+	}
 
-    @Test
-    public void readsGroupDescriptionAsEmptyFromDescriptionMethodReturnsNonStringTest() {
-        assertTrue(ReflectionUtils.getDescriptionFromClass(GroupWithNonStringDescriptionMethod.class).isEmpty());
-    }
+	@Test
+	public void readsGroupDescriptionAsEmptyFromDescriptionMethodReturnsNonStringTest() {
+		assertTrue(ReflectionUtils.getDescriptionFromClass(GroupWithNonStringDescriptionMethod.class).isEmpty());
+	}
 
-    @Test
-    public void readsGroupWithoutDescriptionAnnotationAndVoidDescriptionMethodTest() {
-        assertTrue(ReflectionUtils.getDescriptionFromClass(GroupWithoutDescriptionAnnotationAndVoidDescriptionMethod.class).isEmpty());
-    }
+	@Test
+	public void readsGroupWithoutDescriptionAnnotationAndVoidDescriptionMethodTest() {
+		assertTrue(ReflectionUtils.getDescriptionFromClass(GroupWithoutDescriptionAnnotationAndVoidDescriptionMethod.class).isEmpty());
+	}
 }

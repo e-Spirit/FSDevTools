@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +35,7 @@ import com.espirit.moddev.cli.configuration.GlobalConfig;
  * @author e-Spirit GmbH
  */
 public abstract class SimpleCommand<RESULT_TYPE extends Result> extends GlobalConfig implements Command<RESULT_TYPE> {
-    @Override
-    public abstract RESULT_TYPE call();
-
+	@Override
+	public abstract RESULT_TYPE call();
 
 }

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,31 +32,32 @@ package com.espirit.moddev.cli.api.result;
  */
 public interface Result<CUSTOM_RESULT_TYPE> {
 
-    /**
-     * Indicates whether a result is successful or not. Can tell a
-     * surrounding environment that a Exception is available.
-     *
-     * @return true if an error occurred, otherwise false
-     */
-    boolean isError();
+	/**
+	 * Indicates whether a result is successful or not. Can tell a
+	 * surrounding environment that a Exception is available.
+	 *
+	 * @return true if an error occurred, otherwise false
+	 */
+	boolean isError();
 
-    /**
-     * Getter for an exception. Should return a exception if the result
-     * is not successful.
-     *
-     * @return the exception that makes this a failed result
-     */
-    Exception getError();
+	/**
+	 * Getter for an exception. Should return a exception if the result
+	 * is not successful.
+	 *
+	 * @return the exception that makes this a failed result
+	 */
+	Exception getError();
 
-    /**
-     * Optional method for custom result logging.
-     */
-    default void log() {}
+	/**
+	 * Optional method for custom result logging.
+	 */
+	default void log() {
+	}
 
-    /**
-     * Getter for the custom result.
-     *
-     * @return an instance of the custom result type or null
-     */
-    CUSTOM_RESULT_TYPE get();
+	/**
+	 * Getter for the custom result.
+	 *
+	 * @return an instance of the custom result type or null
+	 */
+	CUSTOM_RESULT_TYPE get();
 }

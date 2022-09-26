@@ -5,7 +5,7 @@ package com.espirit.moddev.cli.api.validation;
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"),
  * you may not use this file except in compliance with the License.
@@ -31,26 +31,26 @@ import static org.hamcrest.Matchers.not;
 
 public class ViolationTest {
 
-    private Violation _testling;
+	private Violation _testling;
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        _testling = new Violation("field", "is wrong!");
-    }
+	@BeforeEach
+	public void setUp() throws Exception {
+		_testling = new Violation("field", "is wrong!");
+	}
 
-    @Test
-    public void testEquals() throws Exception {
-        Violation copy = new Violation("field", "is wrong!");
-        Violation newOne = new Violation("field", "is blank!");
+	@Test
+	public void testEquals() throws Exception {
+		Violation copy = new Violation("field", "is wrong!");
+		Violation newOne = new Violation("field", "is blank!");
 
-        assertThat("Expect identity", _testling, is(_testling));
-        assertThat("Expect identity", _testling, is(copy));
-        assertThat("Expect non-identity", _testling, is(not(newOne)));
-    }
+		assertThat("Expect identity", _testling, is(_testling));
+		assertThat("Expect identity", _testling, is(copy));
+		assertThat("Expect non-identity", _testling, is(not(newOne)));
+	}
 
-    @Test
-    public void testToString() throws Exception {
-        assertThat(_testling.toString(), is("field is wrong!"));
-    }
+	@Test
+	public void testToString() throws Exception {
+		assertThat(_testling.toString(), is("field is wrong!"));
+	}
 
 }

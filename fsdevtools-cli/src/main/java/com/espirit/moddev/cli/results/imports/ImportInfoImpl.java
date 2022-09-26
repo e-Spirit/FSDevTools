@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import de.espirit.common.util.Pair;
 import de.espirit.firstspirit.store.access.nexport.ExportInfo;
 import de.espirit.firstspirit.store.access.nexport.ExportStatus;
 import de.espirit.firstspirit.store.access.nexport.io.ExportInfoFileHandle;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -36,41 +37,41 @@ import java.util.Set;
  */
 public abstract class ImportInfoImpl implements ExportInfo {
 
-    private final Type _type;
-    private final ExportStatus _status;
+	private final Type _type;
+	private final ExportStatus _status;
 
-    ImportInfoImpl(final Type type, final ExportStatus status) {
-        _type = type;
-        _status = status;
-    }
+	ImportInfoImpl(final Type type, final ExportStatus status) {
+		_type = type;
+		_status = status;
+	}
 
-    @Override
-    public final Type getType() {
-        return _type;
-    }
+	@Override
+	public final Type getType() {
+		return _type;
+	}
 
-    @Override
-    public final ExportStatus getStatus() {
-        return _status;
-    }
+	@Override
+	public final ExportStatus getStatus() {
+		return _status;
+	}
 
-    @Override
-    public final Set<ExportInfoFileHandle> getCreatedFileHandles() {
-        return Collections.emptySet();
-    }
+	@Override
+	public final Set<ExportInfoFileHandle> getCreatedFileHandles() {
+		return Collections.emptySet();
+	}
 
-    @Override
-    public final Set<ExportInfoFileHandle> getUpdatedFileHandles() {
-        return Collections.emptySet();
-    }
+	@Override
+	public final Set<ExportInfoFileHandle> getUpdatedFileHandles() {
+		return Collections.emptySet();
+	}
 
-    @Override
-    public final Set<ExportInfoFileHandle> getDeletedFileHandles() {
-        return Collections.emptySet();
-    }
+	@Override
+	public final Set<ExportInfoFileHandle> getDeletedFileHandles() {
+		return Collections.emptySet();
+	}
 
-    @Override
-    public final Collection<Pair<ExportInfoFileHandle, ExportInfoFileHandle>> getMovedFileHandles() {
-        return Collections.emptySet();
-    }
+	@Override
+	public final Collection<Pair<ExportInfoFileHandle, ExportInfoFileHandle>> getMovedFileHandles() {
+		return Collections.emptySet();
+	}
 }

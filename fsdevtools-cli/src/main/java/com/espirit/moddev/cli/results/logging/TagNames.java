@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,25 +24,25 @@ package com.espirit.moddev.cli.results.logging;
 
 //        TODO: CORE-9421: Remove string comparison and use TagNames-API
 public enum TagNames {
-    TEMPLATE("TEMPLATE"),
-    SECTION("SECTION"),
-    PAGE("PAGE"),
-    PAGEREF("PAGEREF"),
-    SCHEMA("SCHEMA"),
-    PAGETEMPLATES("PAGETEMPLATES"),
-    MEDIUM("MEDIUM"),
-    LINKTEMPLATE("LINKTEMPLATE"),
-    FORMATTEMPLATE("FORMATTEMPLATE"),
-    MEDIANODE("MEDIANODE"),
-    WORKFLOW("WORKFLOW");
+	TEMPLATE("TEMPLATE"),
+	SECTION("SECTION"),
+	PAGE("PAGE"),
+	PAGEREF("PAGEREF"),
+	SCHEMA("SCHEMA"),
+	PAGETEMPLATES("PAGETEMPLATES"),
+	MEDIUM("MEDIUM"),
+	LINKTEMPLATE("LINKTEMPLATE"),
+	FORMATTEMPLATE("FORMATTEMPLATE"),
+	MEDIANODE("MEDIANODE"),
+	WORKFLOW("WORKFLOW");
 
-    private String name;
+	private String name;
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    TagNames(String name) {
-        this.name = name;
-    }
+	TagNames(String name) {
+		this.name = name;
+	}
 }

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,36 +46,36 @@ import static org.mockito.Mockito.when;
  */
 public class CliExceptionTest {
 
-    private Config config;
-    private Exception cause;
+	private Config config;
+	private Exception cause;
 
-    private CliException testling;
+	private CliException testling;
 
-    @NotNull
-    private static Stream<Arguments> provideParameters() {
-        return Stream.of(Arguments.of((Object[]) CliError.values()));
-    }
+	@NotNull
+	private static Stream<Arguments> provideParameters() {
+		return Stream.of(Arguments.of((Object[]) CliError.values()));
+	}
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        config = mock(Config.class);
-        when(config.getUser()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
-        when(config.getHost()).thenReturn(FsUtil.VALUE_DEFAULT_HOST);
-        when(config.getPort()).thenReturn(FsConnectionType.HTTP.getDefaultPort());
-        cause = new Exception("JUnit");
-    }
+	@BeforeEach
+	public void setUp() throws Exception {
+		config = mock(Config.class);
+		when(config.getUser()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+		when(config.getHost()).thenReturn(FsUtil.VALUE_DEFAULT_HOST);
+		when(config.getPort()).thenReturn(FsConnectionType.HTTP.getDefaultPort());
+		cause = new Exception("JUnit");
+	}
 
-    @ParameterizedTest
-    @MethodSource("provideParameters")
-    public void testToString(final CliError error) throws Exception {
-        testling = new CliException(error, config, cause);
-        assertThat("Expected a specific value", testling.toString(), is(error.getMessage(config)));
-    }
+	@ParameterizedTest
+	@MethodSource("provideParameters")
+	public void testToString(final CliError error) throws Exception {
+		testling = new CliException(error, config, cause);
+		assertThat("Expected a specific value", testling.toString(), is(error.getMessage(config)));
+	}
 
-    @Test
-    public void testToStringWithException() throws Exception {
-        testling = new CliException(cause);
-        assertThat("Expected a specific value", testling.toString(), is("JUnit"));
-    }
+	@Test
+	public void testToStringWithException() throws Exception {
+		testling = new CliException(cause);
+		assertThat("Expected a specific value", testling.toString(), is("JUnit"));
+	}
 
 }

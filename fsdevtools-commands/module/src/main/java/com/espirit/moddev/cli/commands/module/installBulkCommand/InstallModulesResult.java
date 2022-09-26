@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,41 +37,41 @@ import java.util.stream.Collectors;
  */
 public class InstallModulesResult extends SimpleResult<List<InstallModuleResult>> {
 
-    public InstallModulesResult(final List<InstallModuleResult> result) {
-        this(result, null);
-    }
+	public InstallModulesResult(final List<InstallModuleResult> result) {
+		this(result, null);
+	}
 
-    public InstallModulesResult(final MultiException exception) {
-        this(null, exception);
-    }
+	public InstallModulesResult(final MultiException exception) {
+		this(null, exception);
+	}
 
-    public InstallModulesResult(final List<InstallModuleResult> result, final MultiException exception) {
-        super(result, exception);
-    }
+	public InstallModulesResult(final List<InstallModuleResult> result, final MultiException exception) {
+		super(result, exception);
+	}
 
-    @Override
-    public void log() {
-        if (isError()) {
-            LOGGER.error("There was an error installing the modules.");
-        } else {
-            final List<InstallModuleResult> installedModules = getModules();
-            if (!installedModules.isEmpty()) {
-                LOGGER.info("The following modules have been installed successfully:" + buildModulesList(installedModules));
-            }
-        }
-    }
+	@Override
+	public void log() {
+		if (isError()) {
+			LOGGER.error("There was an error installing the modules.");
+		} else {
+			final List<InstallModuleResult> installedModules = getModules();
+			if (!installedModules.isEmpty()) {
+				LOGGER.info("The following modules have been installed successfully:" + buildModulesList(installedModules));
+			}
+		}
+	}
 
-    private List<InstallModuleResult> getModules() {
-        return get().stream().filter(installModuleResult -> !installModuleResult.isError()).collect(Collectors.toList());
-    }
+	private List<InstallModuleResult> getModules() {
+		return get().stream().filter(installModuleResult -> !installModuleResult.isError()).collect(Collectors.toList());
+	}
 
-    private String buildModulesList(final List<InstallModuleResult> modules) {
-        final StringBuilder builder = new StringBuilder();
-        modules.iterator().forEachRemaining(result -> {
-            builder.append("\n - ");
-            builder.append(result.getModuleName());
-        });
-        return builder.toString();
-    }
+	private String buildModulesList(final List<InstallModuleResult> modules) {
+		final StringBuilder builder = new StringBuilder();
+		modules.iterator().forEachRemaining(result -> {
+			builder.append("\n - ");
+			builder.append(result.getModuleName());
+		});
+		return builder.toString();
+	}
 
 }

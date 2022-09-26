@@ -4,7 +4,7 @@
   ~ **********************************************************************
   ~ fsdevtools
   ~ %%
-  ~ Copyright (C) 2021 e-Spirit GmbH
+  ~ Copyright (C) 2022 Crownpeak Technology GmbH
   ~ %%
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -21,10 +21,11 @@
   ~
   -->
 
-<TEMPLATE comment="" filename="dummy_pagetemplate" id="6660471496510833343" templateid="6494855090119737181" type="page">
-	<EXTENSION file="html" link="html" replaceable="false" templateSet="184175"/>
-	<EXTENSION file="pdf" link="pdf" replaceable="false" templateSet="184176"/>
-	<EXTENSION file="xml" link="xml" replaceable="false" templateSet="184177"/>
-	<LANG displayname="dummy_pagetemplate" language="DE"/>
-	<LANG displayname="dummy_pagetemplate" language="EN"/>
+<TEMPLATE comment="" filename="dummy_pagetemplate" id="6660471496510833343" templateid="6494855090119737181"
+          type="page">
+    <EXTENSION file="html" link="html" replaceable="false" templateSet="184175"/>
+    <EXTENSION file="pdf" link="pdf" replaceable="false" templateSet="184176"/>
+    <EXTENSION file="xml" link="xml" replaceable="false" templateSet="184177"/>
+    <LANG displayname="dummy_pagetemplate" language="DE"/>
+    <LANG displayname="dummy_pagetemplate" language="EN"/>
 </TEMPLATE>

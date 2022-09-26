@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 import static com.espirit.moddev.util.FsUtil.DIR_BIN;
 import static com.espirit.moddev.util.FsUtil.DIR_CONF;
 import static com.espirit.moddev.util.FsUtil.DIR_FIRSTSPIRIT_5;

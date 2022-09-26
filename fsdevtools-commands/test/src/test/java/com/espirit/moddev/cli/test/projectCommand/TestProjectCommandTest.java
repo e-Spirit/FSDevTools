@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,50 +40,50 @@ import static org.mockito.Mockito.mock;
 
 public class TestProjectCommandTest {
 
-    private TestProjectCommand testling;
+	private TestProjectCommand testling;
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        testling = new TestProjectCommand(){
-            @Override
-            protected CliContextImpl create() {
-                return mock(CliContextImpl.class, RETURNS_DEEP_STUBS);
-            }
-        };
-    }
+	@BeforeEach
+	public void setUp() throws Exception {
+		testling = new TestProjectCommand() {
+			@Override
+			protected CliContextImpl create() {
+				return mock(CliContextImpl.class, RETURNS_DEEP_STUBS);
+			}
+		};
+	}
 
-    @Test
-    public void testCall() throws Exception {
-        final Result result = testling.call();
+	@Test
+	public void testCall() throws Exception {
+		final Result result = testling.call();
 
-        assertThat("Expect normal execution", result.isError(), is(FALSE));
-        assertThat("Expect null value", result.getError(), is(nullValue()));
-    }
+		assertThat("Expect normal execution", result.isError(), is(FALSE));
+		assertThat("Expect null value", result.getError(), is(nullValue()));
+	}
 
-    @Test
-    public void testCallError() throws Exception {
-        testling = new TestProjectCommand(){
-            @Override
-            protected CliContextImpl create() {
-                throw new RuntimeException("JUnit");
-            }
-        };
+	@Test
+	public void testCallError() throws Exception {
+		testling = new TestProjectCommand() {
+			@Override
+			protected CliContextImpl create() {
+				throw new RuntimeException("JUnit");
+			}
+		};
 
-        final Result result = testling.call();
+		final Result result = testling.call();
 
-        assertThat("Expect abnormal execution", result.isError(), is(TRUE));
-        assertThat("Expect non-null value", result.getError(), is(notNullValue()));
-    }
+		assertThat("Expect abnormal execution", result.isError(), is(TRUE));
+		assertThat("Expect non-null value", result.getError(), is(notNullValue()));
+	}
 
-    @Test
-    public void testNeedsContext() throws Exception {
-        assertThat("This command creates his own context to initialize connection therefore doesn't need a context from outside",
-                   testling.needsContext(), is(FALSE));
-    }
+	@Test
+	public void testNeedsContext() throws Exception {
+		assertThat("This command creates his own context to initialize connection therefore doesn't need a context from outside",
+				testling.needsContext(), is(FALSE));
+	}
 
-    @Test
-    public void testCreatingProjectIfMissing() throws Exception {
-        assertThat("Should not create missing projects", testling.isCreatingProjectIfMissing(), is(FALSE));
-    }
+	@Test
+	public void testCreatingProjectIfMissing() throws Exception {
+		assertThat("Should not create missing projects", testling.isCreatingProjectIfMissing(), is(FALSE));
+	}
 
 }

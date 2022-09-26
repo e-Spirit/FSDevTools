@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,62 +37,63 @@ import java.util.Collections;
  */
 public class EntityTypeImportInfoImpl extends ImportInfoImpl implements EntityTypeExportInfo {
 
-    private final BasicElementInfo _schema;
-    private final String _entityType;
-    private final Collection<BasicEntityInfo> _entities;
+	private final BasicElementInfo _schema;
+	private final String _entityType;
+	private final Collection<BasicEntityInfo> _entities;
 
-    /**
-     * Constructor
-     * @param status the status
-     * @param schema the schema
-     * @param entityType the entity type
-     * @param entities the collection of entities
-     */
-    public EntityTypeImportInfoImpl(final ExportStatus status, final BasicElementInfo schema, final String entityType, final Collection<BasicEntityInfo> entities) {
-        super(Type.ENTITY_TYPE, status);
-        _schema = schema;
-        _entityType = entityType;
-        _entities = Collections.unmodifiableCollection(entities);
-    }
+	/**
+	 * Constructor
+	 *
+	 * @param status     the status
+	 * @param schema     the schema
+	 * @param entityType the entity type
+	 * @param entities   the collection of entities
+	 */
+	public EntityTypeImportInfoImpl(final ExportStatus status, final BasicElementInfo schema, final String entityType, final Collection<BasicEntityInfo> entities) {
+		super(Type.ENTITY_TYPE, status);
+		_schema = schema;
+		_entityType = entityType;
+		_entities = Collections.unmodifiableCollection(entities);
+	}
 
-    @Override
-    public String getName() {
-        return _schema.getUid() + '#' + getEntityType();
-    }
+	@Override
+	public String getName() {
+		return _schema.getUid() + '#' + getEntityType();
+	}
 
-    @Override
-    public BasicElementInfo getSchema() {
-        return _schema;
-    }
+	@Override
+	public BasicElementInfo getSchema() {
+		return _schema;
+	}
 
-    @Override
-    public String getEntityType() {
-        return _entityType;
-    }
+	@Override
+	public String getEntityType() {
+		return _entityType;
+	}
 
-    @Override
-    @SuppressWarnings("squid:S2384")
-    public Collection<BasicEntityInfo> getEntities() {
-        return _entities;
-    }
+	@Override
+	@SuppressWarnings("squid:S2384")
+	public Collection<BasicEntityInfo> getEntities() {
+		return _entities;
+	}
 
-    @Override
-    public boolean allEntitiesExported() {
-        return false;
-    }
+	@Override
+	public boolean allEntitiesExported() {
+		return false;
+	}
 
-    @Override
-    public String toString() {
-        return "EntityTypeImportInfo { schema=" + getSchema().getUid() + " ; entityType=" + getEntityType() + " }";
-    }
+	@Override
+	public String toString() {
+		return "EntityTypeImportInfo { schema=" + getSchema().getUid() + " ; entityType=" + getEntityType() + " }";
+	}
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(getType()).append(_schema.getUid()).append(_schema).append(getEntityType()).append(_entities).append(allEntitiesExported()).toHashCode();
-    }
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(getType()).append(_schema.getUid()).append(_schema).append(getEntityType()).append(_entities).append(allEntitiesExported()).toHashCode();
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        return obj != null && this.getClass().equals(obj.getClass()) && obj.hashCode() == hashCode();
-    }
+	@Override
+	public boolean equals(final Object obj) {
+		return obj != null && this.getClass().equals(obj.getClass()) && obj.hashCode() == hashCode();
+	}
 }

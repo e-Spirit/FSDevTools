@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,53 +45,52 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class UidIdentifierParserTest {
 
-    private UidIdentifierParser testling;
+	private UidIdentifierParser testling;
 
-    @NotNull
-    private static Stream<List<String>> parameterSet() {
-        return Stream.of(List.of("page:myuid"),
-                List.of("PAGE:myuid"),
-                List.of("PAGE :myuid"),
-                List.of("PAGE : myuid"));
-    }
+	@NotNull
+	private static Stream<List<String>> parameterSet() {
+		return Stream.of(List.of("page:myuid"),
+				List.of("PAGE:myuid"),
+				List.of("PAGE :myuid"),
+				List.of("PAGE : myuid"));
+	}
 
-    @ParameterizedTest
-    @MethodSource("parameterSet")
-    public void testAppliesTo(@NotNull final List<String> uids) {
-        for (String current : uids) {
-            boolean appliesTo = testling.appliesTo(current);
-            assertTrue(appliesTo, "Parser should apply to string " + current);
-        }
-    }
+	@ParameterizedTest
+	@MethodSource("parameterSet")
+	public void testAppliesTo(@NotNull final List<String> uids) {
+		for (String current : uids) {
+			boolean appliesTo = testling.appliesTo(current);
+			assertTrue(appliesTo, "Parser should apply to string " + current);
+		}
+	}
 
-    @ParameterizedTest
-    @MethodSource("parameterSet")
-    public void testParse(@NotNull final List<String> uids) {
-        final List<UidIdentifier> list = testling.parse(uids);
-        assertThat("Expected PAGE but got: " + uids, list.get(0).getUidMapping(), Matchers.is(UidMapping.PAGE));
-        assertThat("Expected 'myuid' but got: " + uids, list.get(0).getUid(), is("myuid"));
-    }
+	@ParameterizedTest
+	@MethodSource("parameterSet")
+	public void testParse(@NotNull final List<String> uids) {
+		final List<UidIdentifier> list = testling.parse(uids);
+		assertThat("Expected PAGE but got: " + uids, list.get(0).getUidMapping(), Matchers.is(UidMapping.PAGE));
+		assertThat("Expected 'myuid' but got: " + uids, list.get(0).getUid(), is("myuid"));
+	}
 
-    @BeforeEach
-    public void setUp() {
-        testling = new UidIdentifierParser();
-    }
+	@BeforeEach
+	public void setUp() {
+		testling = new UidIdentifierParser();
+	}
 
-    @Test
-    public void testDontApplyTo() {
-        boolean appliesTo = testling.appliesTo("pagexyz :bla");
-        assertFalse(appliesTo, "Parser should apply to string pagexyz :bla");
-    }
+	@Test
+	public void testDontApplyTo() {
+		boolean appliesTo = testling.appliesTo("pagexyz :bla");
+		assertFalse(appliesTo, "Parser should apply to string pagexyz :bla");
+	}
 
+	@Test
+	public void testParseWithNonExistentPrefix() {
+		assertThrows(UnregisteredPrefixException.class, () -> testling.parse(Arrays.asList("xxxxx:myuid")));
+	}
 
-    @Test
-    public void testParseWithNonExistentPrefix() {
-        assertThrows(UnregisteredPrefixException.class, () -> testling.parse(Arrays.asList("xxxxx:myuid")));
-    }
-
-    @Test
-    public void testParseWithNoStore() {
-        assertThrows(IllegalArgumentException.class, () -> testling.parse(Arrays.asList("myuid")));
-    }
+	@Test
+	public void testParseWithNoStore() {
+		assertThrows(IllegalArgumentException.class, () -> testling.parse(Arrays.asList("myuid")));
+	}
 
 }

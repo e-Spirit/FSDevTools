@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,94 +45,93 @@ import static org.hamcrest.Matchers.*;
  */
 public class CliErrorTest {
 
-    private ResourceBundle bundle = ResourceBundle.getBundle(CliError.class.getSimpleName());
+	private ResourceBundle bundle = ResourceBundle.getBundle(CliError.class.getSimpleName());
 
+	@Test
+	public void testToString() throws Exception {
+		assertThat("Expecting a specific value", CliError.AUTHENTICATION.toString(), containsString("code " + CliError.AUTHENTICATION.getErrorCode()));
+	}
 
-    @Test
-    public void testToString() throws Exception {
-        assertThat("Expecting a specific value", CliError.AUTHENTICATION.toString(), containsString("code " + CliError.AUTHENTICATION.getErrorCode()));
-    }
+	@ParameterizedTest
+	@EnumSource(CliError.class)
+	public void testGetMessageNullConfig(CliError testCase) {
+		assertThat("Expect non-null value", testCase.getMessage(null), is(notNullValue()));
+	}
 
-    @ParameterizedTest
-    @EnumSource(CliError.class)
-    public void testGetMessageNullConfig(CliError testCase) {
-        assertThat("Expect non-null value", testCase.getMessage(null), is(notNullValue()));
-    }
+	@ParameterizedTest
+	@EnumSource(CliError.class)
+	public void testGetMessageConfig(CliError testCase) {
+		final Config config = new Config() {
+			@Override
+			public String getHost() {
+				return FsUtil.VALUE_DEFAULT_HOST;
+			}
 
-    @ParameterizedTest
-    @EnumSource(CliError.class)
-    public void testGetMessageConfig(CliError testCase) {
-        final Config config = new Config() {
-            @Override
-            public String getHost() {
-                return FsUtil.VALUE_DEFAULT_HOST;
-            }
+			@Override
+			public Integer getPort() {
+				return FsConnectionType.HTTP.getDefaultPort();
+			}
 
-            @Override
-            public Integer getPort() {
-                return FsConnectionType.HTTP.getDefaultPort();
-            }
+			@Override
+			public String getHttpProxyHost() {
+				return "";
+			}
 
-            @Override
-            public String getHttpProxyHost() {
-                return "";
-            }
+			@Override
+			public Integer getHttpProxyPort() {
+				return 8080;
+			}
 
-            @Override
-            public Integer getHttpProxyPort() {
-                return 8080;
-            }
+			@Override
+			public String getServletZone() {
+				return CliConstants.DEFAULT_SERVLET_ZONE.value();
+			}
 
-            @Override
-            public String getServletZone() {
-                return CliConstants.DEFAULT_SERVLET_ZONE.value();
-            }
+			@Override
+			public FsConnectionType getConnectionMode() {
+				return null;
+			}
 
-            @Override
-            public FsConnectionType getConnectionMode() {
-                return null;
-            }
+			@NotNull
+			@Override
+			public String getResultFile() {
+				return FsUtil.VALUE_DEFAULT_RESULT_FILE;
+			}
 
-            @NotNull
-            @Override
-            public String getResultFile() {
-                return FsUtil.VALUE_DEFAULT_RESULT_FILE;
-            }
+			@Override
+			public String getUser() {
+				return FsUtil.VALUE_DEFAULT_USER;
+			}
 
-            @Override
-            public String getUser() {
-                return FsUtil.VALUE_DEFAULT_USER;
-            }
+			@Override
+			public String getPassword() {
+				return FsUtil.VALUE_DEFAULT_USER;
+			}
 
-            @Override
-            public String getPassword() {
-                return FsUtil.VALUE_DEFAULT_USER;
-            }
+			@Override
+			public String getProject() {
+				return null;
+			}
 
-            @Override
-            public String getProject() {
-                return null;
-            }
+			@Override
+			public String getSynchronizationDirectoryString() {
+				return "test";
+			}
 
-            @Override
-            public String getSynchronizationDirectoryString() {
-                return "test";
-            }
+			@Override
+			public <F extends FileHandle> FileSystem<F> getSynchronizationDirectory() {
+				return null;
+			}
 
-            @Override
-            public <F extends FileHandle> FileSystem<F> getSynchronizationDirectory() {
-                return null;
-            }
+			@Override
+			public boolean isActivateProjectIfDeactivated() {
+				return false;
+			}
 
-            @Override
-            public boolean isActivateProjectIfDeactivated() {
-                return false;
-            }
-
-        };
-        final Object[] args = {config.getHost(), config.getPort(), config.getConnectionMode(), config.getUser(), config.getPassword()};
-        assertThat("Expect non-null value", testCase.getMessage(config),
-                is(testCase.toString() + ": " + MessageFormat.format(bundle.getString(testCase.name()), args)));
-    }
+		};
+		final Object[] args = {config.getHost(), config.getPort(), config.getConnectionMode(), config.getUser(), config.getPassword()};
+		assertThat("Expect non-null value", testCase.getMessage(config),
+				is(testCase.toString() + ": " + MessageFormat.format(bundle.getString(testCase.name()), args)));
+	}
 
 }

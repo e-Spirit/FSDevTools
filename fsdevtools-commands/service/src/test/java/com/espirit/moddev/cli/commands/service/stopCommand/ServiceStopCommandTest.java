@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,52 +38,52 @@ import static org.mockito.Mockito.*;
 
 public class ServiceStopCommandTest extends ServiceProcessCommandBaseTest<ServiceStopCommand> {
 
-    private ServiceProcessResult result;
+	private ServiceProcessResult result;
 
-    @BeforeEach
-    public void setUp() {
-        super.setUp(new ServiceStopCommand());
-        result = testling.call();
-    }
+	@BeforeEach
+	public void setUp() {
+		super.setUp(new ServiceStopCommand());
+		result = testling.call();
+	}
 
-    @Test
-    public void noParams_allStoppedServices_neverCallStart() {
-        verify(mockModuleAdminAgent, never()).stopService("StoppedTestService");
-        verify(mockModuleAdminAgent, never()).stopService("StoppedTestService2");
-    }
+	@Test
+	public void noParams_allStoppedServices_neverCallStart() {
+		verify(mockModuleAdminAgent, never()).stopService("StoppedTestService");
+		verify(mockModuleAdminAgent, never()).stopService("StoppedTestService2");
+	}
 
-    @Test
-    public void allStoppedServicesAreReturned() {
-        assertThat(result.get(), hasItem(new ServiceInfo("StoppedTestService", STOPPED, STOPPED)));
-        assertThat(result.get(), hasItem(new ServiceInfo("StoppedTestService2", STOPPED, STOPPED)));
-    }
+	@Test
+	public void allStoppedServicesAreReturned() {
+		assertThat(result.get(), hasItem(new ServiceInfo("StoppedTestService", STOPPED, STOPPED)));
+		assertThat(result.get(), hasItem(new ServiceInfo("StoppedTestService2", STOPPED, STOPPED)));
+	}
 
-    @Test
-    public void noParams_allRunningServices_callStopOnce() {
-        verify(mockModuleAdminAgent, times(1)).stopService("RunningTestService");
-    }
+	@Test
+	public void noParams_allRunningServices_callStopOnce() {
+		verify(mockModuleAdminAgent, times(1)).stopService("RunningTestService");
+	}
 
-    @Test
-    public void allRunningServicesAreReturned() {
-        assertThat(result.get(), hasItem(new ServiceInfo("RunningTestService", RUNNING, STOPPED)));
-    }
+	@Test
+	public void allRunningServicesAreReturned() {
+		assertThat(result.get(), hasItem(new ServiceInfo("RunningTestService", RUNNING, STOPPED)));
+	}
 
-    @Test
-    public void noParams_totalNumberOfResults_equalsNumberOfServices() {
-        assertEquals(3, result.get().size(), "Exactly three service results should be found!");
-    }
+	@Test
+	public void noParams_totalNumberOfResults_equalsNumberOfServices() {
+		assertEquals(3, result.get().size(), "Exactly three service results should be found!");
+	}
 
-    @Test
-    public void multipleParams_nonExistingServices_resultIsException() {
-        when(mockModuleAdminAgent.isRunning("NonExistentService")).thenReturn(true);
-        doThrow(new ServiceNotFoundException("unidentified service")).when(mockModuleAdminAgent).stopService("NonExistentService");
+	@Test
+	public void multipleParams_nonExistingServices_resultIsException() {
+		when(mockModuleAdminAgent.isRunning("NonExistentService")).thenReturn(true);
+		doThrow(new ServiceNotFoundException("unidentified service")).when(mockModuleAdminAgent).stopService("NonExistentService");
 
-        testling.setServiceNames("NonExistentService");
-        result = testling.call();
+		testling.setServiceNames("NonExistentService");
+		result = testling.call();
 
-        //if there is a better way to test this, be sure to tell me izgoel@e-spirit.com
-        assert (result.isError());
-        assertEquals(result.getError().getClass(), ServiceNotFoundException.class);
-    }
+		//if there is a better way to test this, be sure to tell me izgoel@e-spirit.com
+		assert (result.isError());
+		assertEquals(result.getError().getClass(), ServiceNotFoundException.class);
+	}
 }
 

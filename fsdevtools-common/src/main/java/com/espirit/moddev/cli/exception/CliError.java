@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,71 +34,71 @@ import java.util.ResourceBundle;
  */
 public enum CliError {
 
-    /**
-     * Indicates that the maximum number of sessions has been exceeded.
-     * This error has a {@link com.espirit.moddev.cli.exception.CliErrorSevereness#MINOR} severity.
-     */
-    SESSIONS(CliErrorSevereness.MINOR),
+	/**
+	 * Indicates that the maximum number of sessions has been exceeded.
+	 * This error has a {@link com.espirit.moddev.cli.exception.CliErrorSevereness#MINOR} severity.
+	 */
+	SESSIONS(CliErrorSevereness.MINOR),
 
-    /**
-     * Indicates that the authentication failed.
-     * This error has a {@link com.espirit.moddev.cli.exception.CliErrorSevereness#MAJOR} severity.
-     */
-    AUTHENTICATION(CliErrorSevereness.MAJOR),
+	/**
+	 * Indicates that the authentication failed.
+	 * This error has a {@link com.espirit.moddev.cli.exception.CliErrorSevereness#MAJOR} severity.
+	 */
+	AUTHENTICATION(CliErrorSevereness.MAJOR),
 
-    /**
-     * Indicates a general I/O error.
-     * This error has a {@link com.espirit.moddev.cli.exception.CliErrorSevereness#MINOR} severity.
-     */
-    GENERAL_IO(CliErrorSevereness.MINOR),
+	/**
+	 * Indicates a general I/O error.
+	 * This error has a {@link com.espirit.moddev.cli.exception.CliErrorSevereness#MINOR} severity.
+	 */
+	GENERAL_IO(CliErrorSevereness.MINOR),
 
-    /**
-     * Indicates a configuration error.
-     * This error has a {@link com.espirit.moddev.cli.exception.CliErrorSevereness#MINOR} severity.
-     */
-    CONFIGURATION(CliErrorSevereness.MINOR),
+	/**
+	 * Indicates a configuration error.
+	 * This error has a {@link com.espirit.moddev.cli.exception.CliErrorSevereness#MINOR} severity.
+	 */
+	CONFIGURATION(CliErrorSevereness.MINOR),
 
-    /**
-     * Indicates an unexpected error.
-     *This error has a {@link com.espirit.moddev.cli.exception.CliErrorSevereness#FATAL} severity.
-     */
-    UNEXPECTED(CliErrorSevereness.FATAL);
+	/**
+	 * Indicates an unexpected error.
+	 * This error has a {@link com.espirit.moddev.cli.exception.CliErrorSevereness#FATAL} severity.
+	 */
+	UNEXPECTED(CliErrorSevereness.FATAL);
 
-    private static final ResourceBundle RESOURCES = ResourceBundle.getBundle(CliError.class.getSimpleName());
+	private static final ResourceBundle RESOURCES = ResourceBundle.getBundle(CliError.class.getSimpleName());
 
-    private final CliErrorSevereness severeness;
+	private final CliErrorSevereness severeness;
 
-    CliError(CliErrorSevereness severeness) {
-        this.severeness = severeness;
-    }
+	CliError(CliErrorSevereness severeness) {
+		this.severeness = severeness;
+	}
 
-    /**
-     * Get the error message.
-     *
-     * @param config the configuration values to be contained in the error message
-     * @return the error message
-     */
-    public String getMessage(Config config) {
-        final String bundleString = RESOURCES.getString(name());
-        if (config == null) {
-            return this + ": " + bundleString;
-        }
-        final Object[] args = {config.getHost(), config.getPort(), config.getConnectionMode(), config.getUser()};
-        final String formattedMessage = MessageFormat.format(bundleString, args);
-        return this + ": " + formattedMessage;
-    }
+	/**
+	 * Get the error message.
+	 *
+	 * @param config the configuration values to be contained in the error message
+	 * @return the error message
+	 */
+	public String getMessage(Config config) {
+		final String bundleString = RESOURCES.getString(name());
+		if (config == null) {
+			return this + ": " + bundleString;
+		}
+		final Object[] args = {config.getHost(), config.getPort(), config.getConnectionMode(), config.getUser()};
+		final String formattedMessage = MessageFormat.format(bundleString, args);
+		return this + ": " + formattedMessage;
+	}
 
-    /**
-     * Get the error code.
-     *
-     * @return the error code
-     */
-    public int getErrorCode() {
-        return severeness.getErrorCode() + (ordinal() + 1);
-    }
+	/**
+	 * Get the error code.
+	 *
+	 * @return the error code
+	 */
+	public int getErrorCode() {
+		return severeness.getErrorCode() + (ordinal() + 1);
+	}
 
-    @Override
-    public String toString() {
-        return severeness.toString() + " error (code " + getErrorCode() + ")";
-    }
+	@Override
+	public String toString() {
+		return severeness.toString() + " error (code " + getErrorCode() + ")";
+	}
 }

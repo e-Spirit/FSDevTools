@@ -5,7 +5,7 @@ package com.espirit.moddev.cli.api.validation;
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"),
  * you may not use this file except in compliance with the License.
@@ -29,58 +29,58 @@ import java.util.Objects;
  */
 public class Violation {
 
-    private String field;
-    private String message;
+	private String field;
+	private String message;
 
-    /**
-     * Instantiates a new Violation.
-     *
-     * @param field   the field
-     * @param message the message
-     */
-    public Violation(String field, String message) {
-        this.field = field;
-        this.message = message;
-    }
+	/**
+	 * Instantiates a new Violation.
+	 *
+	 * @param field   the field
+	 * @param message the message
+	 */
+	public Violation(String field, String message) {
+		this.field = field;
+		this.message = message;
+	}
 
-    /**
-     * Get the field.
-     *
-     * @return the field
-     */
-    public String getField() {
-        return field;
-    }
+	/**
+	 * Get the field.
+	 *
+	 * @return the field
+	 */
+	public String getField() {
+		return field;
+	}
 
-    /**
-     * Get the message.
-     *
-     * @return the message
-     */
-    public String getMessage() {
-        return message;
-    }
+	/**
+	 * Get the message.
+	 *
+	 * @return the message
+	 */
+	public String getMessage() {
+		return message;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final Violation violation = (Violation) o;
-        return Objects.equals(field, violation.field) &&
-               Objects.equals(message, violation.message);
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		final Violation violation = (Violation) o;
+		return Objects.equals(field, violation.field) &&
+				Objects.equals(message, violation.message);
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(field, message);
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(field, message);
+	}
 
-    @Override
-    public String toString() {
-        return field + ' ' + message;
-    }
+	@Override
+	public String toString() {
+		return field + ' ' + message;
+	}
 }

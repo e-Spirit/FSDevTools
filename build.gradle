@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -232,6 +232,7 @@ subprojects {
         testImplementation("org.junit.jupiter:junit-jupiter-params:${junitVersion}")
         testImplementation "org.hamcrest:hamcrest-core:${hamcrestCoreVersion}"
         testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+        testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
         testImplementation "org.assertj:assertj-core:${assertJVersion}"
         testImplementation group: 'de.espirit.firstspirit', name: 'fs-isolated-runtime', version: "$firstSpiritVersion", ext: 'jar'
     }

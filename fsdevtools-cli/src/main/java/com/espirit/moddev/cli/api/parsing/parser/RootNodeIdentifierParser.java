@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,102 +42,105 @@ import static com.espirit.moddev.cli.api.parsing.identifier.RootNodeIdentifier.R
  */
 public class RootNodeIdentifierParser implements Parser<RootNodeIdentifier> {
 
-    private static final Pattern DELIMITER = Pattern.compile("\\s*:\\s*");
+	private static final Pattern DELIMITER = Pattern.compile("\\s*:\\s*");
 
-    private static final BiMap<String, IDProvider.UidType> STORE_POSTFIXES;
-    static {
-        STORE_POSTFIXES = HashBiMap.create();
-        STORE_POSTFIXES.put("templatestore", IDProvider.UidType.TEMPLATESTORE);
-        STORE_POSTFIXES.put("pagestore", IDProvider.UidType.PAGESTORE);
-        STORE_POSTFIXES.put("contentstore", IDProvider.UidType.CONTENTSTORE);
-        STORE_POSTFIXES.put("sitestore", IDProvider.UidType.SITESTORE_FOLDER);
-        STORE_POSTFIXES.put("mediastore", IDProvider.UidType.MEDIASTORE_FOLDER);
-        STORE_POSTFIXES.put("globalstore", IDProvider.UidType.GLOBALSTORE);
-    }
+	private static final BiMap<String, IDProvider.UidType> STORE_POSTFIXES;
 
-    /**
-     * Retrieves all FirstSpirit store postfix identifiers that are used as export uids.
-     * @return a collection of postfixes and UidTypes
-     */
-    public static BiMap<String, IDProvider.UidType> getAllStorePostfixes() {
-        return Maps.unmodifiableBiMap(STORE_POSTFIXES);
-    }
+	static {
+		STORE_POSTFIXES = HashBiMap.create();
+		STORE_POSTFIXES.put("templatestore", IDProvider.UidType.TEMPLATESTORE);
+		STORE_POSTFIXES.put("pagestore", IDProvider.UidType.PAGESTORE);
+		STORE_POSTFIXES.put("contentstore", IDProvider.UidType.CONTENTSTORE);
+		STORE_POSTFIXES.put("sitestore", IDProvider.UidType.SITESTORE_FOLDER);
+		STORE_POSTFIXES.put("mediastore", IDProvider.UidType.MEDIASTORE_FOLDER);
+		STORE_POSTFIXES.put("globalstore", IDProvider.UidType.GLOBALSTORE);
+	}
 
-    public RootNodeIdentifierParser() {
-    }
+	/**
+	 * Retrieves all FirstSpirit store postfix identifiers that are used as export uids.
+	 *
+	 * @return a collection of postfixes and UidTypes
+	 */
+	public static BiMap<String, IDProvider.UidType> getAllStorePostfixes() {
+		return Maps.unmodifiableBiMap(STORE_POSTFIXES);
+	}
 
-    /**
-     * Parses a given list of strings and returns a list of RootNodeIdentifier instances that
-     * represent FirstSpirit StoreRoot nodes.
-     * @throws UnknownRootNodeException when an unknown postfix is supplied
-     * @param input a list of strings to parse
-     * @return a list of RootNodeIdentifiers
-     */
-    @Override
-    public List<RootNodeIdentifier> parse(List<String> input) {
-        if (input == null) {
-            throw new IllegalArgumentException("input is null!");
-        }
-        if (input.isEmpty()) {
-            return Collections.emptyList();
-        }
+	public RootNodeIdentifierParser() {
+	}
 
-        final List<RootNodeIdentifier> list = new ArrayList<>(input.size());
-        for (final String identifier : input) {
-            try(Scanner uidScanner = new Scanner(identifier)) {
-                uidScanner.useDelimiter(DELIMITER);
-                if (uidScanner.hasNext()) {
-                    final String firstPart = uidScanner.next();
-                    IDProvider.UidType uidType;
-                    if (uidScanner.hasNext()) {
-                        final String secondPart = uidScanner.next();
-                        if(!STORE_POSTFIXES.containsKey(secondPart)) {
-                            throw new UnknownRootNodeException("No root node found for '" + secondPart + "'");
-                        }
-                        uidType = getAllStorePostfixes().get(secondPart);
-                    } else {
-                        if(STORE_POSTFIXES.keySet().contains(firstPart)) {
-                            uidType = STORE_POSTFIXES.get(firstPart);
-                        } else {
-                            throw new UnknownRootNodeException("No root node found for '" + firstPart + "'");
-                        }
-                    }
-                    final RootNodeIdentifier rootNodeIdentifier = new RootNodeIdentifier(uidType);
-                    list.add(rootNodeIdentifier);
-                }
-            }
-        }
-        return list;
-    }
+	/**
+	 * Parses a given list of strings and returns a list of RootNodeIdentifier instances that
+	 * represent FirstSpirit StoreRoot nodes.
+	 *
+	 * @param input a list of strings to parse
+	 * @return a list of RootNodeIdentifiers
+	 * @throws UnknownRootNodeException when an unknown postfix is supplied
+	 */
+	@Override
+	public List<RootNodeIdentifier> parse(List<String> input) {
+		if (input == null) {
+			throw new IllegalArgumentException("input is null!");
+		}
+		if (input.isEmpty()) {
+			return Collections.emptyList();
+		}
 
-    @Override
-    public boolean appliesTo(String input) {
-        String[] splitted = input.split(DELIMITER.pattern());
+		final List<RootNodeIdentifier> list = new ArrayList<>(input.size());
+		for (final String identifier : input) {
+			try (Scanner uidScanner = new Scanner(identifier)) {
+				uidScanner.useDelimiter(DELIMITER);
+				if (uidScanner.hasNext()) {
+					final String firstPart = uidScanner.next();
+					IDProvider.UidType uidType;
+					if (uidScanner.hasNext()) {
+						final String secondPart = uidScanner.next();
+						if (!STORE_POSTFIXES.containsKey(secondPart)) {
+							throw new UnknownRootNodeException("No root node found for '" + secondPart + "'");
+						}
+						uidType = getAllStorePostfixes().get(secondPart);
+					} else {
+						if (STORE_POSTFIXES.keySet().contains(firstPart)) {
+							uidType = STORE_POSTFIXES.get(firstPart);
+						} else {
+							throw new UnknownRootNodeException("No root node found for '" + firstPart + "'");
+						}
+					}
+					final RootNodeIdentifier rootNodeIdentifier = new RootNodeIdentifier(uidType);
+					list.add(rootNodeIdentifier);
+				}
+			}
+		}
+		return list;
+	}
 
-        if(couldBeNakedStoreIdentifier(splitted)) {
-            return isKnownNakedStoreIdentifier(input);
-        } else if(hasTwoTokens(splitted)) {
-            return splitted[0].toLowerCase(Locale.UK).trim().equals(ROOT_NODE_IDENTIFIER);
-        }
+	@Override
+	public boolean appliesTo(String input) {
+		String[] splitted = input.split(DELIMITER.pattern());
 
-        return false;
-    }
+		if (couldBeNakedStoreIdentifier(splitted)) {
+			return isKnownNakedStoreIdentifier(input);
+		} else if (hasTwoTokens(splitted)) {
+			return splitted[0].toLowerCase(Locale.UK).trim().equals(ROOT_NODE_IDENTIFIER);
+		}
 
-    private boolean hasTwoTokens(String[] splitted) {
-        return splitted.length == 2;
-    }
+		return false;
+	}
 
-    private boolean couldBeNakedStoreIdentifier(String[] splitted) {
-        return splitted.length == 1;
-    }
+	private boolean hasTwoTokens(String[] splitted) {
+		return splitted.length == 2;
+	}
 
-    private boolean isKnownNakedStoreIdentifier(String input) {
-        for(String storeIdentifier : STORE_POSTFIXES.keySet()) {
-            boolean isKnownStoreIdentifier = storeIdentifier.equals(input);
-            if(isKnownStoreIdentifier) {
-                return true;
-            }
-        }
-        return false;
-    }
+	private boolean couldBeNakedStoreIdentifier(String[] splitted) {
+		return splitted.length == 1;
+	}
+
+	private boolean isKnownNakedStoreIdentifier(String input) {
+		for (String storeIdentifier : STORE_POSTFIXES.keySet()) {
+			boolean isKnownStoreIdentifier = storeIdentifier.equals(input);
+			if (isKnownStoreIdentifier) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

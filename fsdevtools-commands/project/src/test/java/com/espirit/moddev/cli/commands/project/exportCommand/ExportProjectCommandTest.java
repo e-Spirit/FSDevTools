@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,133 +36,133 @@ import static org.mockito.Mockito.*;
  * Unit tests for ExportProjectCommandTest.
  */
 public class ExportProjectCommandTest {
-    private ExportProjectCommand testling;
+	private ExportProjectCommand testling;
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        testling = new ExportProjectCommand();
-    }
+	@BeforeEach
+	public void setUp() throws Exception {
+		testling = new ExportProjectCommand();
+	}
 
-    /**
-     * Test that the default constructor has no dependencies or exceptions.
-     */
-    @Test
-    public void testDefaultConstructor() {
-        assertThat("Expect not null", testling, is(notNullValue()));
-    }
+	/**
+	 * Test that the default constructor has no dependencies or exceptions.
+	 */
+	@Test
+	public void testDefaultConstructor() {
+		assertThat("Expect not null", testling, is(notNullValue()));
+	}
 
-    /**
-     * Test if call() throws exception when createConnection() fails.
-     */
-    @Test
-    public void testCallHandlesExceptionAndReturnsSimpleResultWithError() {
-        // setup
-        final ExportProjectCommand spyTestling = spy(testling);
-        doThrow(IllegalArgumentException.class).when(spyTestling).createConnection();
+	/**
+	 * Test if call() throws exception when createConnection() fails.
+	 */
+	@Test
+	public void testCallHandlesExceptionAndReturnsSimpleResultWithError() {
+		// setup
+		final ExportProjectCommand spyTestling = spy(testling);
+		doThrow(IllegalArgumentException.class).when(spyTestling).createConnection();
 
-        // test
-        final SimpleResult<Boolean> simpleResult = spyTestling.call();
+		// test
+		final SimpleResult<Boolean> simpleResult = spyTestling.call();
 
-        // verify
-        assertThat("Expected instance of Exception", simpleResult.getError(), instanceOf(IllegalArgumentException.class));
-    }
+		// verify
+		assertThat("Expected instance of Exception", simpleResult.getError(), instanceOf(IllegalArgumentException.class));
+	}
 
-    /**
-     * Test if successful project export returns a SimpleResult containing true.
-     */
-    @Test
-    public void testCallExportProjectReturnsTrue() {
-        // setup
-        final Connection mockConnection = mock(Connection.class);
-        when(mockConnection.isConnected()).thenReturn(true);
+	/**
+	 * Test if successful project export returns a SimpleResult containing true.
+	 */
+	@Test
+	public void testCallExportProjectReturnsTrue() {
+		// setup
+		final Connection mockConnection = mock(Connection.class);
+		when(mockConnection.isConnected()).thenReturn(true);
 
-        final ProjectExportParameters mockProjectExportParameters = mock(ProjectExportParameters.class);
+		final ProjectExportParameters mockProjectExportParameters = mock(ProjectExportParameters.class);
 
-        final ExportProjectCommand spyTestling = spy(testling);
-        doReturn(mockConnection).when(spyTestling).createConnection();
-        doReturn(mockProjectExportParameters).when(spyTestling).getProjectExportParameters(any(ProjectExportParametersBuilder.class));
-        doReturn(true).when(spyTestling).callExportProject(any(ProjectExporter.class), any(Connection.class), any(ProjectExportParameters.class));
+		final ExportProjectCommand spyTestling = spy(testling);
+		doReturn(mockConnection).when(spyTestling).createConnection();
+		doReturn(mockProjectExportParameters).when(spyTestling).getProjectExportParameters(any(ProjectExportParametersBuilder.class));
+		doReturn(true).when(spyTestling).callExportProject(any(ProjectExporter.class), any(Connection.class), any(ProjectExportParameters.class));
 
-        // test
-        final SimpleResult<Boolean> simpleResult = spyTestling.call();
+		// test
+		final SimpleResult<Boolean> simpleResult = spyTestling.call();
 
-        // verify
-        assertThat("Expected equal.", simpleResult.get(), equalTo(Boolean.TRUE));
-    }
+		// verify
+		assertThat("Expected equal.", simpleResult.get(), equalTo(Boolean.TRUE));
+	}
 
-    /**
-     * Test if failed export returns a SimpleResult containing an IllegalStateException.
-     */
-    @Test
-    public void testCallExportProjectReturnsSimpleResultWithError() {
-        // setup
-        final Connection mockConnection = mock(Connection.class);
-        when(mockConnection.isConnected()).thenReturn(true);
+	/**
+	 * Test if failed export returns a SimpleResult containing an IllegalStateException.
+	 */
+	@Test
+	public void testCallExportProjectReturnsSimpleResultWithError() {
+		// setup
+		final Connection mockConnection = mock(Connection.class);
+		when(mockConnection.isConnected()).thenReturn(true);
 
-        final ProjectExportParameters mockProjectExportParameters = mock(ProjectExportParameters.class);
+		final ProjectExportParameters mockProjectExportParameters = mock(ProjectExportParameters.class);
 
-        final ExportProjectCommand spyTestling = spy(testling);
-        doReturn(mockConnection).when(spyTestling).createConnection();
-        doReturn(mockProjectExportParameters).when(spyTestling).getProjectExportParameters(any(ProjectExportParametersBuilder.class));
-        doReturn(false).when(spyTestling).callExportProject(any(ProjectExporter.class), any(Connection.class), any(ProjectExportParameters.class));
+		final ExportProjectCommand spyTestling = spy(testling);
+		doReturn(mockConnection).when(spyTestling).createConnection();
+		doReturn(mockProjectExportParameters).when(spyTestling).getProjectExportParameters(any(ProjectExportParametersBuilder.class));
+		doReturn(false).when(spyTestling).callExportProject(any(ProjectExporter.class), any(Connection.class), any(ProjectExportParameters.class));
 
-        // test
-        final SimpleResult simpleResult = spyTestling.call();
+		// test
+		final SimpleResult simpleResult = spyTestling.call();
 
-        // verify
-        assertThat("Expected instance of IllegalStateException.", simpleResult.get(), instanceOf(IllegalStateException.class));
-        assertThat("Expected equal.", ((Exception) simpleResult.get()).getMessage(), equalTo("Export was not successful"));
-    }
+		// verify
+		assertThat("Expected instance of IllegalStateException.", simpleResult.get(), instanceOf(IllegalStateException.class));
+		assertThat("Expected equal.", ((Exception) simpleResult.get()).getMessage(), equalTo("Export was not successful"));
+	}
 
-    /**
-     * Test if createConnection returns an instance of Connection.class
-     */
-    @Test
-    public void testCreateConnectionReturnsInstanceOfConnection() {
-        // setup
-        final Connection connection = testling.createConnection();
+	/**
+	 * Test if createConnection returns an instance of Connection.class
+	 */
+	@Test
+	public void testCreateConnectionReturnsInstanceOfConnection() {
+		// setup
+		final Connection connection = testling.createConnection();
 
-        // test & verify
-        assertThat("Expect instance of Connection.class", connection, instanceOf(Connection.class));
-    }
+		// test & verify
+		assertThat("Expect instance of Connection.class", connection, instanceOf(Connection.class));
+	}
 
-    /**
-     * Test if getProjectExportParameters builds ProjectExportParameters with given builder
-     */
-    @Test
-    public void testGetProjectExportParametersBuildsProjectExportParameters() {
-        // setup
-        final ProjectExportParametersBuilder mockProjectExportParametersBuilder = mock(ProjectExportParametersBuilder.class);
-        final ProjectExportParameters mockProjectExportParameters = mock(ProjectExportParameters.class);
-        when(mockProjectExportParametersBuilder.build()).thenReturn(mockProjectExportParameters);
+	/**
+	 * Test if getProjectExportParameters builds ProjectExportParameters with given builder
+	 */
+	@Test
+	public void testGetProjectExportParametersBuildsProjectExportParameters() {
+		// setup
+		final ProjectExportParametersBuilder mockProjectExportParametersBuilder = mock(ProjectExportParametersBuilder.class);
+		final ProjectExportParameters mockProjectExportParameters = mock(ProjectExportParameters.class);
+		when(mockProjectExportParametersBuilder.build()).thenReturn(mockProjectExportParameters);
 
-        // test
-        final ProjectExportParameters projectExportParameters = testling.getProjectExportParameters(mockProjectExportParametersBuilder);
+		// test
+		final ProjectExportParameters projectExportParameters = testling.getProjectExportParameters(mockProjectExportParametersBuilder);
 
-        // verify
-        verify(mockProjectExportParametersBuilder).build();
-        assertThat("Expect equal", projectExportParameters, is(mockProjectExportParameters));
-    }
+		// verify
+		verify(mockProjectExportParametersBuilder).build();
+		assertThat("Expect equal", projectExportParameters, is(mockProjectExportParameters));
+	}
 
-    /**
-     * Tests if callExportProject
-     */
-    @Test
-    public void testCallExportProject() {
-        // setup
-        final ProjectExporter mockProjectExporter = mock(ProjectExporter.class);
-        final Connection mockConnection = mock(Connection.class);
-        final ProjectExportParameters mockProjectExportParameters = mock(ProjectExportParameters.class);
+	/**
+	 * Tests if callExportProject
+	 */
+	@Test
+	public void testCallExportProject() {
+		// setup
+		final ProjectExporter mockProjectExporter = mock(ProjectExporter.class);
+		final Connection mockConnection = mock(Connection.class);
+		final ProjectExportParameters mockProjectExportParameters = mock(ProjectExportParameters.class);
 
-        // test & verify
-        testling.callExportProject(mockProjectExporter, mockConnection, mockProjectExportParameters);
-    }
+		// test & verify
+		testling.callExportProject(mockProjectExporter, mockConnection, mockProjectExportParameters);
+	}
 
-    /**
-     * Test if needsContext() is false.
-     */
-    @Test
-    public void testNeedsContextReturnsFalse() {
-        assertThat("Expected equal", testling.needsContext(), equalTo(false));
-    }
+	/**
+	 * Test if needsContext() is false.
+	 */
+	@Test
+	public void testNeedsContextReturnsFalse() {
+		assertThat("Expected equal", testling.needsContext(), equalTo(false));
+	}
 }

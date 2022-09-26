@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,46 +45,46 @@ import java.util.concurrent.Callable;
  * @author e-Spirit GmbH
  */
 @Command(
-        name = HelpCommand.COMMAND_NAME,
-        description = "Display help information"
+		name = HelpCommand.COMMAND_NAME,
+		description = "Display help information"
 )
 public class HelpCommand implements com.espirit.moddev.cli.api.command.Command<HelpResult> {
 
-    public static final String COMMAND_NAME = "help";
-    private static final Logger LOGGER = LoggerFactory.getLogger(HelpCommand.class);
+	public static final String COMMAND_NAME = "help";
+	private static final Logger LOGGER = LoggerFactory.getLogger(HelpCommand.class);
 
-    protected final CliBuilder<Callable> builder = com.github.rvesse.airline.Cli.<Callable>builder("fs-cli");
+	protected final CliBuilder<Callable> builder = com.github.rvesse.airline.Cli.<Callable>builder("fs-cli");
 
-    @Arguments
-    protected List<String> args = new ArrayList<>();
+	@Arguments
+	protected List<String> args = new ArrayList<>();
 
-    @Override
-    public HelpResult call() {
-        Help help;
-        builder.withDefaultCommand(Help.class);
-        CliBuilderHelper.buildCallableCommandGroups(builder);
-        com.github.rvesse.airline.Cli<Callable> cli = builder.build();
+	@Override
+	public HelpResult call() {
+		Help help;
+		builder.withDefaultCommand(Help.class);
+		CliBuilderHelper.buildCallableCommandGroups(builder);
+		com.github.rvesse.airline.Cli<Callable> cli = builder.build();
 
-        ArrayList<String> argsCopy = new ArrayList<>();
-        argsCopy.add(COMMAND_NAME);
-        argsCopy.addAll(args);
-        String[] argumentArray = argsCopy.toArray(new String[0]);
-        help = (Help) cli.parse(argumentArray);
-        try {
-            Help.help(help.global, args);
-            return new HelpResult(help.global);
-        } catch (IOException e) {
-            LOGGER.debug("Help command execution caused an exception", e);
-            return new HelpResult(e);
-        }
-    }
+		ArrayList<String> argsCopy = new ArrayList<>();
+		argsCopy.add(COMMAND_NAME);
+		argsCopy.addAll(args);
+		String[] argumentArray = argsCopy.toArray(new String[0]);
+		help = (Help) cli.parse(argumentArray);
+		try {
+			Help.help(help.global, args);
+			return new HelpResult(help.global);
+		} catch (IOException e) {
+			LOGGER.debug("Help command execution caused an exception", e);
+			return new HelpResult(e);
+		}
+	}
 
-    /**
-     * Pass arguments for this help command.
-     *
-     * @param args the arguments (e.g. 'export')
-     */
-    public void addArguments(String... args) {
-        this.args.addAll(Arrays.asList(args));
-    }
+	/**
+	 * Pass arguments for this help command.
+	 *
+	 * @param args the arguments (e.g. 'export')
+	 */
+	public void addArguments(String... args) {
+		this.args.addAll(Arrays.asList(args));
+	}
 }

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,17 +29,20 @@ package com.espirit.moddev.cli.api.event;
  */
 public interface CliEventHandler {
 
-    /**
-     * Place to implement logic that should be executed after every execution
-     * a Cli instance performs. Is called whether or not an exception occurred
-     * before.
-     */
-    default void afterTermination() {}
+	/**
+	 * Place to implement logic that should be executed after every execution
+	 * a Cli instance performs. Is called whether or not an exception occurred
+	 * before.
+	 */
+	default void afterTermination() {
+	}
 
-    /**
-     * Place to implement logic that should be executed when an exception
-     * occurs during command execution.
-     * @param t the throwable instance to handle
-     */
-    default void afterExceptionalTermination(Throwable t) {}
+	/**
+	 * Place to implement logic that should be executed when an exception
+	 * occurs during command execution.
+	 *
+	 * @param t the throwable instance to handle
+	 */
+	default void afterExceptionalTermination(Throwable t) {
+	}
 }

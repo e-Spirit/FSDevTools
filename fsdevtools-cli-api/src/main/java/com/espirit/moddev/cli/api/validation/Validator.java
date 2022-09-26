@@ -5,7 +5,7 @@ package com.espirit.moddev.cli.api.validation;
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"),
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ package com.espirit.moddev.cli.api.validation;
 
 import java.util.Set;
 
-
 /**
  * The interface Validator.
  *
@@ -32,12 +31,12 @@ import java.util.Set;
  */
 public interface Validator<T> {
 
-    /**
-     * Validate the given bean and return possible violations.
-     *
-     * @param bean the bean to check
-     * @return the possible violations
-     */
-    Set<Violation> validate(T bean);
+	/**
+	 * Validate the given bean and return possible violations.
+	 *
+	 * @param bean the bean to check
+	 * @return the possible violations
+	 */
+	Set<Violation> validate(T bean);
 
 }

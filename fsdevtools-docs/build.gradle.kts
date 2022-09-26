@@ -1,5 +1,5 @@
-import com.moowork.gradle.node.npm.NpmTask
 import com.espirit.moddev.build.BuildUtils
+import com.moowork.gradle.node.npm.NpmTask
 
 
 plugins {
@@ -46,7 +46,7 @@ project.afterEvaluate {
 }
 
 dependencies {
-    compileOnly (project(":fsdevtools-cli"))
+    compileOnly(project(":fsdevtools-cli"))
 }
 
 tasks {

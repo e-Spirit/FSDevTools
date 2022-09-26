@@ -1,8 +1,8 @@
 [
   {
-    "fsm" : "path/to/file.fsm",
-    "webAppScopes" : [],
-    "moduleProjectName" : "myProjectName",
+    "fsm": "path/to/file.fsm",
+    "webAppScopes": [],
+    "moduleProjectName": "myProjectName",
     "additional_parameter": "myValue"
   }
 ]

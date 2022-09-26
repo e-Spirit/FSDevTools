@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -559,7 +559,7 @@ public class CommandDocumentationGeneratorTest {
 	@Test
 	public void getDocumentationInfos() {
 		final Collection<CommandDocumentationInfo> documentationInfos = _generator.getDocumentationInfos();
-		assertThat(documentationInfos).hasSize(21); // currently: 21 commands
+		assertThat(documentationInfos).hasSize(25); // currently: 25 commands
 	}
 
 	@NotNull

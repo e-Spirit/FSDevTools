@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,49 +35,46 @@ import java.util.regex.Pattern;
  */
 public class PathIdentifierParser implements Parser<PathIdentifier> {
 
-    private static final Pattern DELIMITER = Pattern.compile("\\s*:\\s*");
-    public static final String PATH_PREFIX = "path";
+	private static final Pattern DELIMITER = Pattern.compile("\\s*:\\s*");
+	public static final String PATH_PREFIX = "path";
 
+	@Override
+	public List<PathIdentifier> parse(List<String> input) {
 
-    @Override
-    public List<PathIdentifier> parse(List<String> input) {
+		final List<PathIdentifier> list = new ArrayList<>(input.size());
 
-        final List<PathIdentifier> list = new ArrayList<>(input.size());
+		for (final String identifier : input) {
+			try (Scanner uidScanner = new Scanner(identifier)) {
+				uidScanner.useDelimiter(DELIMITER);
+				if (uidScanner.hasNext()) {
+					checkAndAddPath(list, identifier, uidScanner);
+				}
+			}
+		}
 
-        for (final String identifier : input) {
-            try(Scanner uidScanner = new Scanner(identifier)) {
-                uidScanner.useDelimiter(DELIMITER);
-                if (uidScanner.hasNext()) {
-                    checkAndAddPath(list, identifier, uidScanner);
-                }
-            }
-        }
+		return list;
+	}
 
-        return list;
-    }
+	private static void checkAndAddPath(List<PathIdentifier> list, String identifier, Scanner uidScanner) {
+		final String prefix = uidScanner.next();
+		if (!PATH_PREFIX.equalsIgnoreCase(prefix)) {
+			// normally checked by #appliesTo
+			throw new IllegalArgumentException("invalid prefix - should be 'path'");
+		}
+		if (uidScanner.hasNext()) {
+			final String path = uidScanner.next();
+			if (!path.startsWith("/")) {
+				throw new IllegalArgumentException("path should start with '/'");
+			}
+			list.add(new PathIdentifier(path));
+		} else {
+			throw new IllegalArgumentException("Wrong input format for input string " + identifier);
+		}
+	}
 
-
-    private static void checkAndAddPath(List<PathIdentifier> list, String identifier, Scanner uidScanner) {
-        final String prefix = uidScanner.next();
-        if (! PATH_PREFIX.equalsIgnoreCase(prefix)) {
-            // normally checked by #appliesTo
-            throw new IllegalArgumentException("invalid prefix - should be 'path'");
-        }
-        if (uidScanner.hasNext()) {
-            final String path = uidScanner.next();
-            if (! path.startsWith("/")) {
-                throw new IllegalArgumentException("path should start with '/'");
-            }
-            list.add(new PathIdentifier(path));
-        } else {
-            throw new IllegalArgumentException("Wrong input format for input string " + identifier);
-        }
-    }
-
-
-    @Override
-    public boolean appliesTo(String input) {
-        final String[] splitted = input.split(DELIMITER.pattern());
-        return splitted.length == 2 && splitted[0].toLowerCase(Locale.UK).trim().equals(PATH_PREFIX);
-    }
+	@Override
+	public boolean appliesTo(String input) {
+		final String[] splitted = input.split(DELIMITER.pattern());
+		return splitted.length == 2 && splitted[0].toLowerCase(Locale.UK).trim().equals(PATH_PREFIX);
+	}
 }

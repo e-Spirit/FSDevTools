@@ -1,13 +1,24 @@
 # Release notes
 
+## Version 4.1.0
+
+* new commands for Content Transport:
+    * "*feature list*": lists all features for the specified project
+    * "*feature download*": downloads the specified feature
+    * "*feature analyze*": analyzes the specified feature in the project and logs the result
+    * "*feature install*": analyzes & installs the specified feature in the project
+
+For more information about the new commands, please use "*fs-cli help feature*" or open the included documentation under *docs/index.html*.
+
 ## Version 4.0.2
 
-* fixed logging for MultiExceptions in "module installBulk" command
+* fixed logging for MultiExceptions in "*module installBulk*" command
 
 ## Version 4.0.1
 
 * added missing add-opens for JDK 17
 * updated Gradle to 7.5.1 (was 7.1.1)
+* updated minimal required FirstSpirit version to 5.2.220907 (was 5.2.210710)
 
 ## Version 4.0.0
 
@@ -24,14 +35,14 @@
 
 ## Version 3.0.1
 
-* command "import": clarified error messages if project exists and is deactivated or maximum projects on server are exceeded
+* command "*import*": clarified error messages if project exists and is deactivated or maximum projects on server are exceeded
 
 ## Version 3.0.0
 
 * switched to [semantic versioning 2.0.0](https://semver.org/#semantic-versioning-200)
-* updated minimal required FirstSpirit version to 5.2.2107 (was 5.2.2008)
-* command "export": added support for permission transport (new parameter: --permissionMode)
-* command "import": added support for permission transport (new parameters: --permissionMode, --updateExistingPermissions)
+* updated minimal required FirstSpirit version to 5.2.210710 (was 5.2.200807)
+* command "*export*": added support for permission transport (new parameter: *--permissionMode*)
+* command "*import*": added support for permission transport (new parameters: *--permissionMode*, *--updateExistingPermissions*)
 * added RELEASENOTES.md
 
 ## Version 2.6.10
@@ -54,7 +65,7 @@
 
 ## Version 2.6.6
 
-* inactive web apps or web apps without an active webserver will no longer get re-deployed 
+* inactive web apps or web apps without an active webserver will no longer get re-deployed
 * fixed and enhanced logging for web app deployment process
 
 ## Version 2.6.5
@@ -63,7 +74,7 @@
 
 ## Version 2.6.4
 
-* NEW command: "module configure"
+* NEW command: "*module configure*"
 * refactoring of internal project structure
 
 ## 2.6.3 and older

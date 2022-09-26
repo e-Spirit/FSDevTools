@@ -1,0 +1,12 @@
+<Configuration status="warn" name="FirstSpirit CLI (test)">
+    <Appenders>
+        <Console name="StdOut" target="SYSTEM_OUT">
+            <PatternLayout pattern="%5p %m%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="all">
+            <AppenderRef ref="StdOut"/>
+        </Root>
+    </Loggers>
+</Configuration>

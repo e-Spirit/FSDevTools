@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -98,9 +99,9 @@ public class ProjectImporterTest {
 		Connection connectionMock = mock(Connection.class);
 		when(connectionMock.isConnected()).thenReturn(false);
 		ProjectImportParameters importParameters = new ProjectImportParametersBuilder().setProjectName("asd").setProjectFile(_fileMock).create();
-        Assertions.assertThrows(IllegalStateException.class, () -> {
-            _testling.importProject(connectionMock, importParameters);
-        });
+		Assertions.assertThrows(IllegalStateException.class, () -> {
+			_testling.importProject(connectionMock, importParameters);
+		});
 	}
 
 	@Test

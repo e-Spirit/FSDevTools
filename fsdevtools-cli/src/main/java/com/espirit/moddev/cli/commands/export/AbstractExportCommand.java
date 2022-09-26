@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
 
 	@Option(name = "--useReleaseState",
 			description = "Export only the release state of store elements (default = false , export of current state).",
-		 	title = "useReleaseState")
+			title = "useReleaseState")
 	private boolean _exportReleaseState;
 
 	@Option(name = "--includeProjectProperties",
@@ -95,7 +95,6 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
 			title = "permissionMode")
 	@AllowedRawValues(ignoreCase = true, allowedValues = {"NONE", "ALL", "STORE_ELEMENT", "WORKFLOW"})
 	private PermissionsMode _permissionMode = PermissionsMode.NONE;
-
 
 	@Arguments(title = "identifiers",
 			description = "A list of various parsable identifiers. Please have a look at the command description for further information.")

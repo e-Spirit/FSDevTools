@@ -1,20 +1,38 @@
 [
   {
-    "fsm" : "path/to/file_1.fsm",
-    "deploy" : "false",
-    "webAppScopes" : [ "global(fs5preview)", "global(fs5staging)" ],
-    "webAppConfigurationFiles" : [ "path/to/webapp/1.cfg", "path/to/webapp/2.cfg" ],
-    "projectAppConfigurationFile" : "path/to/projectApp/1.cfg",
-    "serviceConfigurationFiles" : [ "path/to/service/1.cfg", "path/to/service/2.cfg" ],
-    "moduleProjectName" : "myProjectName"
+    "fsm": "path/to/file_1.fsm",
+    "deploy": "false",
+    "webAppScopes": [
+      "global(fs5preview)",
+      "global(fs5staging)"
+    ],
+    "webAppConfigurationFiles": [
+      "path/to/webapp/1.cfg",
+      "path/to/webapp/2.cfg"
+    ],
+    "projectAppConfigurationFile": "path/to/projectApp/1.cfg",
+    "serviceConfigurationFiles": [
+      "path/to/service/1.cfg",
+      "path/to/service/2.cfg"
+    ],
+    "moduleProjectName": "myProjectName"
   },
   {
-    "deploy" : "true",
-    "fsm" : "path/to/file_2.fsm",
-    "webAppScopes" : [ "myWebAppScope", "global(fs5webmon)" ],
-    "webAppConfigurationFiles" : [ "path/to/webapp/3.cfg", "path/to/webapp/4.cfg" ],
-    "moduleProjectName" : "myProjectName2",
-    "projectAppConfigurationFile" : "path/to/projectApp/2.cfg",
-    "serviceConfigurationFiles" : [ "path/to/service/3.cfg", "path/to/service/4.cfg" ]
+    "deploy": "true",
+    "fsm": "path/to/file_2.fsm",
+    "webAppScopes": [
+      "myWebAppScope",
+      "global(fs5webmon)"
+    ],
+    "webAppConfigurationFiles": [
+      "path/to/webapp/3.cfg",
+      "path/to/webapp/4.cfg"
+    ],
+    "moduleProjectName": "myProjectName2",
+    "projectAppConfigurationFile": "path/to/projectApp/2.cfg",
+    "serviceConfigurationFiles": [
+      "path/to/service/3.cfg",
+      "path/to/service/4.cfg"
+    ]
   }
 ]

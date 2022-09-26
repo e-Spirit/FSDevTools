@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,86 +41,83 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class ProjectPropertiesParserTest {
 
-    @NotNull
-    private static Stream<List<String>> parameterSet() {
-        return Stream.of(List.of("Projectproperty:LANGUAGES"),
-                List.of("projectproperty:languages"),
-                List.of("projectproperty :LANGUAGES"),
-                List.of("projectproperty : LANGUAGES"));
-    }
+	@NotNull
+	private static Stream<List<String>> parameterSet() {
+		return Stream.of(List.of("Projectproperty:LANGUAGES"),
+				List.of("projectproperty:languages"),
+				List.of("projectproperty :LANGUAGES"),
+				List.of("projectproperty : LANGUAGES"));
+	}
 
-    private ProjectPropertiesParser testling;
+	private ProjectPropertiesParser testling;
 
-    @BeforeEach
-    public void setUp() {
-        testling = new ProjectPropertiesParser();
-    }
+	@BeforeEach
+	public void setUp() {
+		testling = new ProjectPropertiesParser();
+	}
 
-    @ParameterizedTest
-    @MethodSource("parameterSet")
-    public void testAppliesTo(@NotNull final List<String> uids) {
-        for (String current : uids) {
-            boolean appliesTo = testling.appliesTo(current);
-            assertTrue(appliesTo, "Parser should apply to string " + current);
-        }
-    }
+	@ParameterizedTest
+	@MethodSource("parameterSet")
+	public void testAppliesTo(@NotNull final List<String> uids) {
+		for (String current : uids) {
+			boolean appliesTo = testling.appliesTo(current);
+			assertTrue(appliesTo, "Parser should apply to string " + current);
+		}
+	}
 
-    @Test
-    public void parse() {
-        List<ProjectPropertiesIdentifier> result = testling.parse(List.of("projectproperty:LANGUAGES"));
-        assertEquals(1, result.size());
-        EnumSet<PropertiesTransportOptions.ProjectPropertyType> enumSet = EnumSet.noneOf(PropertiesTransportOptions.ProjectPropertyType.class);
-        enumSet.add(PropertiesTransportOptions.ProjectPropertyType.LANGUAGES);
-        assertEquals(new ProjectPropertiesIdentifier(enumSet), result.get(0));
-    }
+	@Test
+	public void parse() {
+		List<ProjectPropertiesIdentifier> result = testling.parse(List.of("projectproperty:LANGUAGES"));
+		assertEquals(1, result.size());
+		EnumSet<PropertiesTransportOptions.ProjectPropertyType> enumSet = EnumSet.noneOf(PropertiesTransportOptions.ProjectPropertyType.class);
+		enumSet.add(PropertiesTransportOptions.ProjectPropertyType.LANGUAGES);
+		assertEquals(new ProjectPropertiesIdentifier(enumSet), result.get(0));
+	}
 
-    @Test
-    public void parseAll() {
-        List<ProjectPropertiesIdentifier> result = testling.parse(List.of("projectproperty:ALL"));
-        assertEquals(1, result.size());
-        EnumSet<PropertiesTransportOptions.ProjectPropertyType> enumSet = EnumSet.allOf(PropertiesTransportOptions.ProjectPropertyType.class);
-        assertEquals(new ProjectPropertiesIdentifier(enumSet), result.get(0));
-    }
+	@Test
+	public void parseAll() {
+		List<ProjectPropertiesIdentifier> result = testling.parse(List.of("projectproperty:ALL"));
+		assertEquals(1, result.size());
+		EnumSet<PropertiesTransportOptions.ProjectPropertyType> enumSet = EnumSet.allOf(PropertiesTransportOptions.ProjectPropertyType.class);
+		assertEquals(new ProjectPropertiesIdentifier(enumSet), result.get(0));
+	}
 
+	@Test
+	public void parseAllWhitespace() {
+		List<ProjectPropertiesIdentifier> result = testling.parse(List.of("projectproperty: ALL"));
+		assertEquals(1, result.size());
+		EnumSet<PropertiesTransportOptions.ProjectPropertyType> enumSet = EnumSet.allOf(PropertiesTransportOptions.ProjectPropertyType.class);
+		assertEquals(new ProjectPropertiesIdentifier(enumSet), result.get(0));
+	}
 
-    @Test
-    public void parseAllWhitespace() {
-        List<ProjectPropertiesIdentifier> result = testling.parse(List.of("projectproperty: ALL"));
-        assertEquals(1, result.size());
-        EnumSet<PropertiesTransportOptions.ProjectPropertyType> enumSet = EnumSet.allOf(PropertiesTransportOptions.ProjectPropertyType.class);
-        assertEquals(new ProjectPropertiesIdentifier(enumSet), result.get(0));
-    }
+	@Test
+	public void parseAllWithAdditionalProperty() {
+		List<ProjectPropertiesIdentifier> result = testling.parse(List.of("projectproperty:LANGUAGES", "projectproperty:ALL"));
+		assertEquals(1, result.size());
+		EnumSet<PropertiesTransportOptions.ProjectPropertyType> enumSet = EnumSet.allOf(PropertiesTransportOptions.ProjectPropertyType.class);
+		assertEquals(new ProjectPropertiesIdentifier(enumSet), result.get(0));
+	}
 
+	@Test
+	public void parseAllWithAdditionalProperties() {
+		List<ProjectPropertiesIdentifier> result = testling.parse(List.of("projectproperty:LANGUAGES", "projectproperty:ALL", "projectproperty:RESOLUTIONS"));
+		assertEquals(1, result.size());
+		EnumSet<PropertiesTransportOptions.ProjectPropertyType> enumSet = EnumSet.allOf(PropertiesTransportOptions.ProjectPropertyType.class);
+		assertEquals(new ProjectPropertiesIdentifier(enumSet), result.get(0));
+	}
 
-    @Test
-    public void parseAllWithAdditionalProperty() {
-        List<ProjectPropertiesIdentifier> result = testling.parse(List.of("projectproperty:LANGUAGES", "projectproperty:ALL"));
-        assertEquals(1, result.size());
-        EnumSet<PropertiesTransportOptions.ProjectPropertyType> enumSet = EnumSet.allOf(PropertiesTransportOptions.ProjectPropertyType.class);
-        assertEquals(new ProjectPropertiesIdentifier(enumSet), result.get(0));
-    }
+	@Test
+	public void testAppliesTo() {
+		assertTrue(testling.appliesTo("projectproperty:languages"));
+	}
 
+	@Test
+	public void testDontApplyTo() {
+		assertFalse(testling.appliesTo("asdasd"));
+	}
 
-    @Test
-    public void parseAllWithAdditionalProperties() {
-        List<ProjectPropertiesIdentifier> result = testling.parse(List.of("projectproperty:LANGUAGES", "projectproperty:ALL", "projectproperty:RESOLUTIONS"));
-        assertEquals(1, result.size());
-        EnumSet<PropertiesTransportOptions.ProjectPropertyType> enumSet = EnumSet.allOf(PropertiesTransportOptions.ProjectPropertyType.class);
-        assertEquals(new ProjectPropertiesIdentifier(enumSet), result.get(0));
-    }
-
-    @Test
-    public void testAppliesTo() {
-        assertTrue(testling.appliesTo("projectproperty:languages"));
-    }
-
-    @Test
-    public void testDontApplyTo() {
-        assertFalse(testling.appliesTo("asdasd"));
-    }
-
-    @Test
-    public void testDontApplyToStartsWithEntitiesIdentifier() {
-        assertFalse(testling.appliesTo("entitiesaasd:asd"));
-    }
+	@Test
+	public void testDontApplyToStartsWithEntitiesIdentifier() {
+		assertFalse(testling.appliesTo("entitiesaasd:asd"));
+	}
 }

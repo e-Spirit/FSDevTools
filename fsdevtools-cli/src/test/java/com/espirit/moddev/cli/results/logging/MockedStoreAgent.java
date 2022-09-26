@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,24 +30,24 @@ import java.util.Map;
 
 public class MockedStoreAgent implements StoreAgent {
 
-    private final Map<Store.Type, Store> _stores = new HashMap<>();
+	private final Map<Store.Type, Store> _stores = new HashMap<>();
 
-    void addStore(final Store.Type type, final Store store) {
-        _stores.put(type, store);
-    }
+	void addStore(final Store.Type type, final Store store) {
+		_stores.put(type, store);
+	}
 
-    @Override
-    public Store getStore(final Store.Type type) {
-        Store store = _stores.get(type);
-        if (store == null) {
-            store = new MockedStore(type);
-            addStore(type, store);
-        }
-        return store;
-    }
+	@Override
+	public Store getStore(final Store.Type type) {
+		Store store = _stores.get(type);
+		if (store == null) {
+			store = new MockedStore(type);
+			addStore(type, store);
+		}
+		return store;
+	}
 
-    @Override
-    public Store getStore(final Store.Type type, final boolean b) {
-        return getStore(type);
-    }
+	@Override
+	public Store getStore(final Store.Type type, final boolean b) {
+		return getStore(type);
+	}
 }

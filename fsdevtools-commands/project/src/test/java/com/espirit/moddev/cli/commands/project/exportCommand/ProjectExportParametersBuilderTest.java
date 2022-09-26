@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,44 +35,44 @@ import static org.hamcrest.Matchers.notNullValue;
  */
 public class ProjectExportParametersBuilderTest {
 
-    private ProjectExportParametersBuilder testling;
+	private ProjectExportParametersBuilder testling;
 
-    @BeforeEach
-    public void setUp() {
-        testling = new ProjectExportParametersBuilder();
-    }
+	@BeforeEach
+	public void setUp() {
+		testling = new ProjectExportParametersBuilder();
+	}
 
-    /**
-     * Test that the default constructor has no dependencies or exceptions.
-     */
-    @Test
-    public void testDefaultConstructor() {
-        assertThat("Expect not null.", testling, is(notNullValue()));
-    }
+	/**
+	 * Test that the default constructor has no dependencies or exceptions.
+	 */
+	@Test
+	public void testDefaultConstructor() {
+		assertThat("Expect not null.", testling, is(notNullValue()));
+	}
 
-    /**
-     * Test that missing builder parameters throw an IllegalArgumentException.
-     */
-    @Test
-    public void testBuildWithMissingParametersThrowsException() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            testling.build();
-        });
-    }
+	/**
+	 * Test that missing builder parameters throw an IllegalArgumentException.
+	 */
+	@Test
+	public void testBuildWithMissingParametersThrowsException() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> {
+			testling.build();
+		});
+	}
 
-    /**
-     * Test that enough valid parameters return an instance of ProjectExportParameters
-     */
-    @Test
-    public void testBuildWithValidParametersReturnsProjectExportParametersInstance() {
-        // Arrange
-        testling.setProjectName("validProjectName")
-                .setProjectExportPath("validProjectExportPath");
+	/**
+	 * Test that enough valid parameters return an instance of ProjectExportParameters
+	 */
+	@Test
+	public void testBuildWithValidParametersReturnsProjectExportParametersInstance() {
+		// Arrange
+		testling.setProjectName("validProjectName")
+				.setProjectExportPath("validProjectExportPath");
 
-        // Assert
-        ProjectExportParameters parameters = testling.build();
+		// Assert
+		ProjectExportParameters parameters = testling.build();
 
-        // Act
-        assertThat("Expect not null.", parameters, is(notNullValue()));
-    }
+		// Act
+		assertThat("Expect not null.", parameters, is(notNullValue()));
+	}
 }

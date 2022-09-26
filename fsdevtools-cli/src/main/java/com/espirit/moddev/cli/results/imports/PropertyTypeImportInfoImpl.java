@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,44 +33,45 @@ import de.espirit.firstspirit.transport.PropertiesTransportOptions.ProjectProper
  */
 public class PropertyTypeImportInfoImpl extends ImportInfoImpl implements PropertyTypeExportInfo {
 
-    private final ProjectPropertyType _propertyType;
+	private final ProjectPropertyType _propertyType;
 
-    /**
-     * Constructor
-     * @param status the status
-     * @param propertyType the property type
-     */
-    public PropertyTypeImportInfoImpl(final ExportStatus status, final ProjectPropertyType propertyType) {
-        super(Type.PROJECT_PROPERTY, status);
-        _propertyType = propertyType;
-    }
+	/**
+	 * Constructor
+	 *
+	 * @param status       the status
+	 * @param propertyType the property type
+	 */
+	public PropertyTypeImportInfoImpl(final ExportStatus status, final ProjectPropertyType propertyType) {
+		super(Type.PROJECT_PROPERTY, status);
+		_propertyType = propertyType;
+	}
 
-    @Override
-    public ProjectPropertyType getPropertyType() {
-        return _propertyType;
-    }
+	@Override
+	public ProjectPropertyType getPropertyType() {
+		return _propertyType;
+	}
 
-    @Override
-    public String toString() {
-        return "PropertyTypeImportInfo { " + getName() + " }";
-    }
+	@Override
+	public String toString() {
+		return "PropertyTypeImportInfo { " + getName() + " }";
+	}
 
-    @Override
-    public String getName() {
-        if (_propertyType == null) {
-            // meta file in global directory
-            return PROPERTY_FS_METADATA;
-        }
-        return _propertyType.name();
-    }
+	@Override
+	public String getName() {
+		if (_propertyType == null) {
+			// meta file in global directory
+			return PROPERTY_FS_METADATA;
+		}
+		return _propertyType.name();
+	}
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(getType()).append(getName()).toHashCode();
-    }
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(getType()).append(getName()).toHashCode();
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        return obj != null && this.getClass().equals(obj.getClass()) && obj.hashCode() == hashCode();
-    }
+	@Override
+	public boolean equals(final Object obj) {
+		return obj != null && this.getClass().equals(obj.getClass()) && obj.hashCode() == hashCode();
+	}
 }

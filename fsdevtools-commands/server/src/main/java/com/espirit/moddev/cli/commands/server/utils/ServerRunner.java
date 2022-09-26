@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
-
 public class ServerRunner {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ServerRunner.class);
@@ -76,34 +75,28 @@ public class ServerRunner {
 	private String _password;
 	private final AtomicBoolean _wrapperExecutionFailedToExecute = new AtomicBoolean();
 
-
 	public ServerRunner() {
 		_serverDir = null;
 		_executorService = Executors.newCachedThreadPool();
 	}
-
 
 	public ServerRunner(@NotNull final Path serverDir) {
 		_serverDir = serverDir.toAbsolutePath();
 		_executorService = Executors.newCachedThreadPool();
 	}
 
-
 	public void setTimeout(@NotNull final Duration timeout) {
 		_timeout = timeout;
 	}
-
 
 	public void setUserCredentials(@NotNull final String user, @NotNull final String password) {
 		_user = user;
 		_password = password;
 	}
 
-
 	public void setConnectionType(@NotNull final FsConnectionType connectionType) {
 		_connectionType = connectionType;
 	}
-
 
 	/**
 	 * Waits for a given condition, retrying if necessary, blocking the thread in between.
@@ -130,7 +123,6 @@ public class ServerRunner {
 		}
 	}
 
-
 	@NotNull
 	private Path getServerDir() {
 		if (_serverDir == null) {
@@ -138,7 +130,6 @@ public class ServerRunner {
 		}
 		return _serverDir;
 	}
-
 
 	public void start() throws IOException {
 		// start FirstSpirit server ...
@@ -181,11 +172,9 @@ public class ServerRunner {
 		}
 	}
 
-
 	private boolean wrapperFailedToExecute() {
 		return _wrapperExecutionFailedToExecute.get();
 	}
-
 
 	public void stop(@NotNull final FsConnectionConfig config) throws IOException {
 		final FsConnection connection = new FsConnection(config, true);
@@ -228,7 +217,6 @@ public class ServerRunner {
 		}
 	}
 
-
 	/**
 	 * Prepare system and generate startup parameter list. Performs side-effects on the pidFile system.
 	 *
@@ -241,7 +229,7 @@ public class ServerRunner {
 		if (Files.notExists(executable)) {
 			// switch to fs-server if legacy script is not present
 			executable = getServerDir().resolve(FsUtil.DIR_BIN).resolve(FsUtil.FILE_FS_SERVER_EXECUTABLE).toAbsolutePath();
-			if(Files.notExists(executable)) {
+			if (Files.notExists(executable)) {
 				throw new IllegalStateException("Neither fs5 nor fs-server file exists");
 			}
 		}
@@ -250,7 +238,6 @@ public class ServerRunner {
 		commands = com.espirit.moddev.util.OsUtil.convertForCurrentOs(commands);
 		return commands;
 	}
-
 
 	private synchronized void startFirstSpiritServer() {
 		// check if the ".fs.lock"-file exists
@@ -266,7 +253,6 @@ public class ServerRunner {
 		// start server only once
 		_serverTask.compareAndSet(null, startFirstSpiritServer(_executorService));
 	}
-
 
 	@NotNull
 	private Future<Optional<Process>> startFirstSpiritServer(@NotNull final ExecutorService executor) {

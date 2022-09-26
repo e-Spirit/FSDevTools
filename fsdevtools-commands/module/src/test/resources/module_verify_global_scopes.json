@@ -1,6 +1,9 @@
 [
   {
-    "fsm" : "path/to/file.fsm",
-    "webAppScopes" : [ "global(unknownWebApp)", "global(fs5webmon)" ]
+    "fsm": "path/to/file.fsm",
+    "webAppScopes": [
+      "global(unknownWebApp)",
+      "global(fs5webmon)"
+    ]
   }
 ]

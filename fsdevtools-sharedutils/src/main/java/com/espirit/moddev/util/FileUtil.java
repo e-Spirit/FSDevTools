@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -151,4 +153,19 @@ public enum FileUtil {
 		}
 	}
 
+	/**
+	 * Writes data from an input stream into a file.
+	 *
+	 * @param inputStream input stream
+	 * @param outputFile  output file
+	 * @throws IOException if data cannot be written into the file e.g. if the file does not exist or not writable
+	 */
+	public static void writeIntoFile(
+			@NotNull final InputStream inputStream,
+			@NotNull final File outputFile
+	) throws IOException {
+		try (final FileOutputStream fos = new FileOutputStream(outputFile)) {
+			inputStream.transferTo(fos);
+		}
+	}
 }

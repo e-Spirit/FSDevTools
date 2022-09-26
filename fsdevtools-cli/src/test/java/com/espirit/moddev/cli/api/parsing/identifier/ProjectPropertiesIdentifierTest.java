@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,28 +37,28 @@ import static org.hamcrest.Matchers.not;
  */
 public class ProjectPropertiesIdentifierTest {
 
-    @Test
-    public void testNullStore() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new ProjectPropertiesIdentifier(null));
-    }
+	@Test
+	public void testNullStore() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> new ProjectPropertiesIdentifier(null));
+	}
 
-    @Test
-    public void testEquality() {
-        EnumSet<PropertiesTransportOptions.ProjectPropertyType> enumSet = EnumSet.noneOf(PropertiesTransportOptions.ProjectPropertyType.class);
-        enumSet.add(PropertiesTransportOptions.ProjectPropertyType.GROUPS);
-        enumSet.add(PropertiesTransportOptions.ProjectPropertyType.LANGUAGES);
-        ProjectPropertiesIdentifier identifier = new ProjectPropertiesIdentifier(enumSet);
+	@Test
+	public void testEquality() {
+		EnumSet<PropertiesTransportOptions.ProjectPropertyType> enumSet = EnumSet.noneOf(PropertiesTransportOptions.ProjectPropertyType.class);
+		enumSet.add(PropertiesTransportOptions.ProjectPropertyType.GROUPS);
+		enumSet.add(PropertiesTransportOptions.ProjectPropertyType.LANGUAGES);
+		ProjectPropertiesIdentifier identifier = new ProjectPropertiesIdentifier(enumSet);
 
-        enumSet = EnumSet.noneOf(PropertiesTransportOptions.ProjectPropertyType.class);
-        enumSet.add(PropertiesTransportOptions.ProjectPropertyType.GROUPS);
-        enumSet.add(PropertiesTransportOptions.ProjectPropertyType.LANGUAGES);
-        ProjectPropertiesIdentifier equalIdentifier = new ProjectPropertiesIdentifier(enumSet);
+		enumSet = EnumSet.noneOf(PropertiesTransportOptions.ProjectPropertyType.class);
+		enumSet.add(PropertiesTransportOptions.ProjectPropertyType.GROUPS);
+		enumSet.add(PropertiesTransportOptions.ProjectPropertyType.LANGUAGES);
+		ProjectPropertiesIdentifier equalIdentifier = new ProjectPropertiesIdentifier(enumSet);
 
-        enumSet = EnumSet.noneOf(PropertiesTransportOptions.ProjectPropertyType.class);
-        enumSet.add(PropertiesTransportOptions.ProjectPropertyType.LANGUAGES);
-        ProjectPropertiesIdentifier notEqualIdentifier = new ProjectPropertiesIdentifier(enumSet);
+		enumSet = EnumSet.noneOf(PropertiesTransportOptions.ProjectPropertyType.class);
+		enumSet.add(PropertiesTransportOptions.ProjectPropertyType.LANGUAGES);
+		ProjectPropertiesIdentifier notEqualIdentifier = new ProjectPropertiesIdentifier(enumSet);
 
-        assertThat("Expected two equal project properties identifier", identifier, equalTo(equalIdentifier));
-        assertThat("Expected two different project properties identifier", identifier, not(equalTo(notEqualIdentifier)));
-    }
+		assertThat("Expected two equal project properties identifier", identifier, equalTo(equalIdentifier));
+		assertThat("Expected two different project properties identifier", identifier, not(equalTo(notEqualIdentifier)));
+	}
 }

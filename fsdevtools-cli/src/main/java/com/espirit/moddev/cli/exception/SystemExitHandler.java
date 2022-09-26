@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,20 +31,20 @@ import org.slf4j.LoggerFactory;
  * @author e-Spirit GmbH
  */
 public final class SystemExitHandler implements CliEventHandler {
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(SystemExitHandler.class);
+	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(SystemExitHandler.class);
 
-    @Override
-    @SuppressWarnings("squid:S1147")
-    public final void afterExceptionalTermination(Throwable e) {
-        LOGGER.error("An unexpected error occurred during command execution", e);
-        System.exit(1);
-    }
+	@Override
+	@SuppressWarnings("squid:S1147")
+	public final void afterExceptionalTermination(Throwable e) {
+		LOGGER.error("An unexpected error occurred during command execution", e);
+		System.exit(1);
+	}
 
-    @Override
-    @SuppressWarnings("squid:S1147")
-    public final void afterTermination() {
-        LOGGER.trace("Execution terminated without exception. Calling System.exit(0).");
-        System.exit(0);
-    }
+	@Override
+	@SuppressWarnings("squid:S1147")
+	public final void afterTermination() {
+		LOGGER.trace("Execution terminated without exception. Calling System.exit(0).");
+		System.exit(0);
+	}
 
 }

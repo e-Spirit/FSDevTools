@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,24 +31,24 @@ import com.espirit.moddev.cli.results.SimpleResult;
  */
 public class InstallModuleResult extends SimpleResult<String> {
 
-    public InstallModuleResult(String result) {
-        super(result);
-    }
+	public InstallModuleResult(String result) {
+		super(result);
+	}
 
-    public InstallModuleResult(final String pathToFsm, Exception exception) {
-        super(pathToFsm, exception);
-    }
+	public InstallModuleResult(final String pathToFsm, Exception exception) {
+		super(pathToFsm, exception);
+	}
 
-    public String getModuleName() {
-        return result;
-    }
+	public String getModuleName() {
+		return result;
+	}
 
-    @Override
-    public void log() {
-        if (isError()) {
-            SimpleResult.LOGGER.error("There was an error installing the module '" + getModuleName() + "'");
-        } else {
-            SimpleResult.LOGGER.info("Module installed successfully. ModuleName: '" + getModuleName() + "'");
-        }
-    }
+	@Override
+	public void log() {
+		if (isError()) {
+			SimpleResult.LOGGER.error("There was an error installing the module '" + getModuleName() + "'");
+		} else {
+			SimpleResult.LOGGER.info("Module installed successfully. ModuleName: '" + getModuleName() + "'");
+		}
+	}
 }

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,34 +31,34 @@ import java.util.Locale;
  */
 public enum CliErrorSevereness {
 
-    /**
-     * Minor severity.
-     */
-    MINOR,
+	/**
+	 * Minor severity.
+	 */
+	MINOR,
 
-    /**
-     * Major severity.
-     */
-    MAJOR,
+	/**
+	 * Major severity.
+	 */
+	MAJOR,
 
-    /**
-     * Fatal severity.
-     */
-    FATAL;
+	/**
+	 * Fatal severity.
+	 */
+	FATAL;
 
-    private static final int BASE_LINE = 100;
+	private static final int BASE_LINE = 100;
 
-    /**
-     * Get the error code.
-     *
-     * @return the error code
-     */
-    public int getErrorCode() {
-        return (ordinal() + 1) * BASE_LINE;
-    }
+	/**
+	 * Get the error code.
+	 *
+	 * @return the error code
+	 */
+	public int getErrorCode() {
+		return (ordinal() + 1) * BASE_LINE;
+	}
 
-    @Override
-    public String toString() {
-        return name().charAt(0) + name().substring(1).toLowerCase(Locale.UK);
-    }
+	@Override
+	public String toString() {
+		return name().charAt(0) + name().substring(1).toLowerCase(Locale.UK);
+	}
 }

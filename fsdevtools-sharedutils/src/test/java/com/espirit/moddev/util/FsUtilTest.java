@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
+
 import static com.espirit.moddev.util.FsUtil.DIR_CONF;
 import static com.espirit.moddev.util.FsUtil.FILE_FS_SERVER_CONF;
 import static org.junit.jupiter.api.Assertions.assertEquals;

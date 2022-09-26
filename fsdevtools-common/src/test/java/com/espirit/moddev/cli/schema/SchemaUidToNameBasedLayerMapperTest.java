@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,64 +44,64 @@ import static org.mockito.Mockito.mock;
 
 public class SchemaUidToNameBasedLayerMapperTest {
 
-    private MappingContext context;
-    private Schema schema;
-    private Map<String, String> map;
+	private MappingContext context;
+	private Schema schema;
+	private Map<String, String> map;
 
-    @BeforeEach
-    public void setUp() {
-        context = mock(MappingContext.class);
-        schema = mock(Schema.class);
-        map = new HashMap<>();
-        Mockito.when(context.getSchema()).thenReturn(schema);
-    }
+	@BeforeEach
+	public void setUp() {
+		context = mock(MappingContext.class);
+		schema = mock(Schema.class);
+		map = new HashMap<>();
+		Mockito.when(context.getSchema()).thenReturn(schema);
+	}
 
-    private static Stream<Arguments> provideParameters() {
-        return Stream.of(
-                Arguments.of("*", SchemaUidToNameBasedLayerMapper.CREATE_NEW),
-                Arguments.of("*", "target_layer_0"),
-                Arguments.of("my_schema_uid", SchemaUidToNameBasedLayerMapper.CREATE_NEW),
-                Arguments.of("my_schema_uid", "target_layer_0")
-        );
-    }
+	private static Stream<Arguments> provideParameters() {
+		return Stream.of(
+				Arguments.of("*", SchemaUidToNameBasedLayerMapper.CREATE_NEW),
+				Arguments.of("*", "target_layer_0"),
+				Arguments.of("my_schema_uid", SchemaUidToNameBasedLayerMapper.CREATE_NEW),
+				Arguments.of("my_schema_uid", "target_layer_0")
+		);
+	}
 
-    @ParameterizedTest
-    @MethodSource("provideParameters")
-    public void testFrom(String sourceSchemaUID, final String targetLayer) {
+	@ParameterizedTest
+	@MethodSource("provideParameters")
+	public void testFrom(String sourceSchemaUID, final String targetLayer) {
 
-        map.put(sourceSchemaUID, targetLayer);
+		map.put(sourceSchemaUID, targetLayer);
 
-        if (!"*".equals(sourceSchemaUID)) {
-            // if layer is without wild card then add wild card to see that it is not used
-            map.put("*", SchemaUidToNameBasedLayerMapper.CREATE_NEW);
-        } else {
-            // if wild card is added then trigger usage of wild card -> rename source schema
-            sourceSchemaUID = "laleleu_schema";
-        }
+		if (!"*".equals(sourceSchemaUID)) {
+			// if layer is without wild card then add wild card to see that it is not used
+			map.put("*", SchemaUidToNameBasedLayerMapper.CREATE_NEW);
+		} else {
+			// if wild card is added then trigger usage of wild card -> rename source schema
+			sourceSchemaUID = "laleleu_schema";
+		}
 
-        Mockito.when(schema.getUid()).thenReturn(sourceSchemaUID);
+		Mockito.when(schema.getUid()).thenReturn(sourceSchemaUID);
 
-        final LayerMapper testling = SchemaUidToNameBasedLayerMapper.from(map);
+		final LayerMapper testling = SchemaUidToNameBasedLayerMapper.from(map);
 
-        assertThat(testling, Matchers.is(Matchers.notNullValue()));
-        if (SchemaUidToNameBasedLayerMapper.CREATE_NEW.equals(targetLayer)) {
-            assertThat(testling.getLayer(context), Matchers.is(LayerMapper.CREATE_NEW_DEFAULT_LAYER));
-        } else {
-            assertThat(testling.getLayer(context), Matchers.is(targetLayer));
-        }
-    }
+		assertThat(testling, Matchers.is(Matchers.notNullValue()));
+		if (SchemaUidToNameBasedLayerMapper.CREATE_NEW.equals(targetLayer)) {
+			assertThat(testling.getLayer(context), Matchers.is(LayerMapper.CREATE_NEW_DEFAULT_LAYER));
+		} else {
+			assertThat(testling.getLayer(context), Matchers.is(targetLayer));
+		}
+	}
 
-    @Test
-    public void testEmpty() {
-        Assertions.assertThrows(LayerMappingException.class, () -> {
-            Mockito.when(schema.getUid()).thenReturn("my_chema");
+	@Test
+	public void testEmpty() {
+		Assertions.assertThrows(LayerMappingException.class, () -> {
+			Mockito.when(schema.getUid()).thenReturn("my_chema");
 
-            final LayerMapper testling = SchemaUidToNameBasedLayerMapper.empty();
-            assertThat(testling, Matchers.is(Matchers.notNullValue()));
+			final LayerMapper testling = SchemaUidToNameBasedLayerMapper.empty();
+			assertThat(testling, Matchers.is(Matchers.notNullValue()));
 
-            // if no mapping is provided it will raise an exception to signal mis-configuration
-            testling.getLayer(context);
-        });
-    }
+			// if no mapping is provided it will raise an exception to signal mis-configuration
+			testling.getLayer(context);
+		});
+	}
 
 }

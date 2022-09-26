@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,24 +32,24 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class RootNodeIdentifierTest {
 
-    @Test
-    public void testNullUidType() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new RootNodeIdentifier(null));
-    }
+	@Test
+	public void testNullUidType() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> new RootNodeIdentifier(null));
+	}
 
-    @Test
-    public void testEquality() {
-        RootNodeIdentifier identifier = new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE);
-        RootNodeIdentifier equalIdentifier = new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE);
+	@Test
+	public void testEquality() {
+		RootNodeIdentifier identifier = new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE);
+		RootNodeIdentifier equalIdentifier = new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE);
 
-        RootNodeIdentifier anUnequalIdentifier = new RootNodeIdentifier(IDProvider.UidType.CONTENTSTORE);
+		RootNodeIdentifier anUnequalIdentifier = new RootNodeIdentifier(IDProvider.UidType.CONTENTSTORE);
 
-        assertThat("Expected two equal root node identifiers for equal uidType", identifier, equalTo(equalIdentifier));
-        assertThat("Expected two different root node identifiers to not be equal", identifier, not(equalTo(anUnequalIdentifier)));
-    }
+		assertThat("Expected two equal root node identifiers for equal uidType", identifier, equalTo(equalIdentifier));
+		assertThat("Expected two different root node identifiers to not be equal", identifier, not(equalTo(anUnequalIdentifier)));
+	}
 
-    @Test
-    public void testExceptionOnWrongUidTypeForStoreRoot() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE_FORMATTEMPLATE));
-    }
+	@Test
+	public void testExceptionOnWrongUidTypeForStoreRoot() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE_FORMATTEMPLATE));
+	}
 }

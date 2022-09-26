@@ -5,7 +5,7 @@ package com.espirit.moddev.cli;
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"),
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,8 @@ import de.espirit.firstspirit.agency.ServerInformationAgent;
 import de.espirit.firstspirit.agency.SpecialistsBroker;
 import de.espirit.firstspirit.common.MaximumNumberOfSessionsExceededException;
 import de.espirit.firstspirit.server.authentication.AuthenticationException;
+
+import com.espirit.moddev.shared.annotation.VisibleForTesting;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,10 +59,22 @@ public class ConnectionBuilder {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionBuilder.class);
 
+	@NotNull
 	private final Config _config;
 
 	private ConnectionBuilder(@NotNull final Config config) {
 		_config = Objects.requireNonNull(config, "Config is null!");
+	}
+
+	/**
+	 * Getter for {@link Config}
+	 *
+	 * @return {@link Config}.
+	 */
+	@VisibleForTesting
+	@NotNull
+	public Config getConfig() {
+		return _config;
 	}
 
 	/**

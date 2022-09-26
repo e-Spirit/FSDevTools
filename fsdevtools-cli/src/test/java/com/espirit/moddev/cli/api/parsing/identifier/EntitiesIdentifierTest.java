@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@
 
 package com.espirit.moddev.cli.api.parsing.identifier;
 
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -32,20 +31,20 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class EntitiesIdentifierTest {
 
-    @Test
-    public void testNullUid() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new EntitiesIdentifier(null));
-    }
+	@Test
+	public void testNullUid() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> new EntitiesIdentifier(null));
+	}
 
-    @Test
-    public void testEquality() {
-        EntitiesIdentifier identifier = new EntitiesIdentifier("products");
-        EntitiesIdentifier equalIdentifier = new EntitiesIdentifier("products");
+	@Test
+	public void testEquality() {
+		EntitiesIdentifier identifier = new EntitiesIdentifier("products");
+		EntitiesIdentifier equalIdentifier = new EntitiesIdentifier("products");
 
-        EntitiesIdentifier anUnequalIdentifier = new EntitiesIdentifier("news");
+		EntitiesIdentifier anUnequalIdentifier = new EntitiesIdentifier("news");
 
-        assertThat("Expected an entities identifier to be equal to itself", identifier, equalTo(identifier));
-        assertThat("Expected two equal entities identifiers for equal uidType", identifier, equalTo(equalIdentifier));
-        assertThat("Expected two different entities identifiers to not be equal", identifier, not(equalTo(anUnequalIdentifier)));
-    }
+		assertThat("Expected an entities identifier to be equal to itself", identifier, equalTo(identifier));
+		assertThat("Expected two equal entities identifiers for equal uidType", identifier, equalTo(equalIdentifier));
+		assertThat("Expected two different entities identifiers to not be equal", identifier, not(equalTo(anUnequalIdentifier)));
+	}
 }

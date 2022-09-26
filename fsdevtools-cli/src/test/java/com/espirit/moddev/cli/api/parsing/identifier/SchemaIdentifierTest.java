@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,87 +40,85 @@ import static org.mockito.Mockito.*;
 
 public class SchemaIdentifierTest {
 
-    @Test
-    public void testNullUid() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new SchemaIdentifier(null, Collections.emptyMap()));
-    }
+	@Test
+	public void testNullUid() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> new SchemaIdentifier(null, Collections.emptyMap()));
+	}
 
-    @Test
-    public void testEquality() {
+	@Test
+	public void testEquality() {
 
-        final Map<String, String> optionsMap = new HashMap<>();
-        optionsMap.put("exportGidMapping", "true");
+		final Map<String, String> optionsMap = new HashMap<>();
+		optionsMap.put("exportGidMapping", "true");
 
-        final Map<String, String> optionsMap2 = new HashMap<>();
-        optionsMap2.put("exportGidMapping", "false");
+		final Map<String, String> optionsMap2 = new HashMap<>();
+		optionsMap2.put("exportGidMapping", "false");
 
-        final SchemaIdentifier identifier = new SchemaIdentifier("products", optionsMap);
-        final SchemaIdentifier equalIdentifier = new SchemaIdentifier("products", optionsMap);
+		final SchemaIdentifier identifier = new SchemaIdentifier("products", optionsMap);
+		final SchemaIdentifier equalIdentifier = new SchemaIdentifier("products", optionsMap);
 
-        final SchemaIdentifier anUnequalIdentifier = new SchemaIdentifier("news", optionsMap);
-        final SchemaIdentifier anotherUnequalIdentifier = new SchemaIdentifier("products", optionsMap2);
+		final SchemaIdentifier anUnequalIdentifier = new SchemaIdentifier("news", optionsMap);
+		final SchemaIdentifier anotherUnequalIdentifier = new SchemaIdentifier("products", optionsMap2);
 
-        assertThat("Expected a schema identifier to be equal to itself", identifier, equalTo(identifier));
-        assertThat("Expected two equal schema identifiers for equal uidType", identifier, equalTo(equalIdentifier));
-        assertThat("Expected two different schema identifiers to not be equal", identifier, not(equalTo(anUnequalIdentifier)));
-        assertThat("Expected schema identifiers with different options to not be equal", identifier, not(equalTo(anotherUnequalIdentifier)));
-    }
+		assertThat("Expected a schema identifier to be equal to itself", identifier, equalTo(identifier));
+		assertThat("Expected two equal schema identifiers for equal uidType", identifier, equalTo(equalIdentifier));
+		assertThat("Expected two different schema identifiers to not be equal", identifier, not(equalTo(anUnequalIdentifier)));
+		assertThat("Expected schema identifiers with different options to not be equal", identifier, not(equalTo(anotherUnequalIdentifier)));
+	}
 
+	@Test
+	public void addToExportOperation_with_OptionsMap() {
+		final HashMap<String, String> schemaOptionsMap = new HashMap<>();
+		schemaOptionsMap.put(SchemaIdentifier.OPTION_EXPORT_GID_MAPPING, "true");
 
-    @Test
-    public void addToExportOperation_with_OptionsMap() {
-        final HashMap<String, String> schemaOptionsMap = new HashMap<>();
-        schemaOptionsMap.put(SchemaIdentifier.OPTION_EXPORT_GID_MAPPING, "true");
+		final ExportOperation.SchemaOptions schemaOptions = getSchemaOptions(schemaOptionsMap);
 
-        final ExportOperation.SchemaOptions schemaOptions = getSchemaOptions(schemaOptionsMap);
+		// initially setExportAllEntities is not supported anyway - but it may well be in the future
+		verify(schemaOptions, times(0)).setExportAllEntities(false);
 
-        // initially setExportAllEntities is not supported anyway - but it may well be in the future
-        verify(schemaOptions, times(0)).setExportAllEntities(false);
+		// verify the SchemaOptions' setExportMapping has been set to 'true':
+		verify(schemaOptions).setExportGidMapping(true);
+	}
 
-        // verify the SchemaOptions' setExportMapping has been set to 'true':
-        verify(schemaOptions).setExportGidMapping(true);
-    }
+	@Test
+	public void addToExportOperation_without_OptionsMap() {
+		final ExportOperation.SchemaOptions schemaOptions = getSchemaOptions(Collections.emptyMap());
 
+		// verify the SchemaOptions' setExportMapping has been set to 'true':
+		verify(schemaOptions, times(0)).setExportGidMapping(true);
+	}
 
-    @Test
-    public void addToExportOperation_without_OptionsMap() {
-        final ExportOperation.SchemaOptions schemaOptions = getSchemaOptions(Collections.emptyMap());
+	@Test
+	public void isSchemaOptionValid_exportGidMapping() {
+		assertTrue(SchemaIdentifier.isSchemaOptionValid("exportgidmapping"));
+		assertTrue(SchemaIdentifier.isSchemaOptionValid("exportGidMapping"));
+		assertTrue(SchemaIdentifier.isSchemaOptionValid("EXPORTGIDMAPPING"));
+	}
 
-        // verify the SchemaOptions' setExportMapping has been set to 'true':
-        verify(schemaOptions, times(0)).setExportGidMapping(true);
-    }
+	@Test
+	public void isSchemaOptionValid_unknownOption() {
+		assertFalse(SchemaIdentifier.isSchemaOptionValid("unknownoption"));
+		assertFalse(SchemaIdentifier.isSchemaOptionValid("unknownOption"));
+		assertFalse(SchemaIdentifier.isSchemaOptionValid("UNKNOWNOPTION"));
+	}
 
-    @Test
-    public void isSchemaOptionValid_exportGidMapping() {
-        assertTrue(SchemaIdentifier.isSchemaOptionValid("exportgidmapping"));
-        assertTrue(SchemaIdentifier.isSchemaOptionValid("exportGidMapping"));
-        assertTrue(SchemaIdentifier.isSchemaOptionValid("EXPORTGIDMAPPING"));
-    }
+	ExportOperation.SchemaOptions getSchemaOptions(final Map<String, String> schemaOptionsMap) {
+		final String uid = "products";
 
-    @Test
-    public void isSchemaOptionValid_unknownOption() {
-        assertFalse(SchemaIdentifier.isSchemaOptionValid("unknownoption"));
-        assertFalse(SchemaIdentifier.isSchemaOptionValid("unknownOption"));
-        assertFalse(SchemaIdentifier.isSchemaOptionValid("UNKNOWNOPTION"));
-    }
+		final Schema schema = mock(Schema.class);
 
-    ExportOperation.SchemaOptions getSchemaOptions(final Map<String, String> schemaOptionsMap) {
-        final String uid = "products";
+		final ExportOperation.SchemaOptions schemaOptions = mock(ExportOperation.SchemaOptions.class);
 
-        final Schema schema = mock(Schema.class);
+		final ExportOperation exportOperation = mock(ExportOperation.class);
+		when(exportOperation.addSchema(schema)).thenReturn(schemaOptions);
 
-        final ExportOperation.SchemaOptions schemaOptions = mock(ExportOperation.SchemaOptions.class);
+		final SchemaIdentifier identifier = new SchemaIdentifier(uid, schemaOptionsMap);
 
-        final ExportOperation exportOperation = mock(ExportOperation.class);
-        when(exportOperation.addSchema(schema)).thenReturn(schemaOptions);
+		final ExportOperation.SchemaOptions exportSchemaOptions = exportOperation.addSchema(schema);
 
-        final SchemaIdentifier identifier = new SchemaIdentifier(uid, schemaOptionsMap);
+		identifier.setSchemaOptions(exportSchemaOptions);
 
-        final ExportOperation.SchemaOptions exportSchemaOptions = exportOperation.addSchema(schema);
-
-        identifier.setSchemaOptions(exportSchemaOptions);
-
-        return schemaOptions;
-    }
+		return schemaOptions;
+	}
 
 }

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,13 @@ import com.espirit.moddev.cli.api.annotations.Description;
  */
 @com.github.rvesse.airline.annotations.Command(name = "command_with_non_string_description_method")
 public final class CommandWithNonStringDescriptionMethod implements Command {
-    @Description
-    public static StringBuilder getDescription() { return new StringBuilder("1234"); }
+	@Description
+	public static StringBuilder getDescription() {
+		return new StringBuilder("1234");
+	}
 
-    @Override
-    public Object call() throws Exception {
-        return null;
-    }
+	@Override
+	public Object call() throws Exception {
+		return null;
+	}
 }

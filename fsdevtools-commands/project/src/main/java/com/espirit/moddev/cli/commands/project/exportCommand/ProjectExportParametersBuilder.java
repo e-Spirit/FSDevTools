@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,77 +28,79 @@ import static com.espirit.moddev.cli.commands.project.exportCommand.ProjectExpor
  * Class that build ProjectExportParameters
  */
 public class ProjectExportParametersBuilder {
-    private String projectName;
-    private String projectExportPath;
-    private boolean fsForceProjectActivation;
-    private boolean deleteExportFiles;
-    private long maxRevisionCount = UNLIMITED_REVISIONS;
-    private boolean exportDeletedElements;
+	private String projectName;
+	private String projectExportPath;
+	private boolean fsForceProjectActivation;
+	private boolean deleteExportFiles;
+	private long maxRevisionCount = UNLIMITED_REVISIONS;
+	private boolean exportDeletedElements;
 
-    /**
-     * @param projectName The name of the project. Note: Not a reference name.
-     * @return The builder
-     */
-    public ProjectExportParametersBuilder setProjectName(String projectName) {
-        this.projectName = projectName;
-        return this;
-    }
+	/**
+	 * @param projectName The name of the project. Note: Not a reference name.
+	 * @return The builder
+	 */
+	public ProjectExportParametersBuilder setProjectName(String projectName) {
+		this.projectName = projectName;
+		return this;
+	}
 
-    /**
-     * @param projectExportPath Download directory for the exported files.
-     * @return The builder
-     */
-    public ProjectExportParametersBuilder setProjectExportPath(String projectExportPath) {
-        this.projectExportPath = projectExportPath;
-        return this;
-    }
+	/**
+	 * @param projectExportPath Download directory for the exported files.
+	 * @return The builder
+	 */
+	public ProjectExportParametersBuilder setProjectExportPath(String projectExportPath) {
+		this.projectExportPath = projectExportPath;
+		return this;
+	}
 
-    /**
-     * @param fsForceProjectActivation Whether a deactivated project will be activated by force on export or not.
-     * @return The builder
-     */
-    public ProjectExportParametersBuilder setFsForceProjectActivation(boolean fsForceProjectActivation) {
-        this.fsForceProjectActivation = fsForceProjectActivation;
-        return this;
-    }
+	/**
+	 * @param fsForceProjectActivation Whether a deactivated project will be activated by force on export or not.
+	 * @return The builder
+	 */
+	public ProjectExportParametersBuilder setFsForceProjectActivation(boolean fsForceProjectActivation) {
+		this.fsForceProjectActivation = fsForceProjectActivation;
+		return this;
+	}
 
-    /**
-     * @param maxRevisionCount Number of revisions to export. Use "1" to export only the current state.
-     * @return The builder
-     */
-    public ProjectExportParametersBuilder setMaxRevisionCount(long maxRevisionCount) {
-        this.maxRevisionCount = maxRevisionCount;
-        return this;
-    }
+	/**
+	 * @param maxRevisionCount Number of revisions to export. Use "1" to export only the current state.
+	 * @return The builder
+	 */
+	public ProjectExportParametersBuilder setMaxRevisionCount(long maxRevisionCount) {
+		this.maxRevisionCount = maxRevisionCount;
+		return this;
+	}
 
-    /**
-     * Add deleted elements to the export.
-     * @return The builder
-     */
-    public ProjectExportParametersBuilder exportDeletedElements() {
-        this.exportDeletedElements = true;
-        return this;
-    }
+	/**
+	 * Add deleted elements to the export.
+	 *
+	 * @return The builder
+	 */
+	public ProjectExportParametersBuilder exportDeletedElements() {
+		this.exportDeletedElements = true;
+		return this;
+	}
 
-    /**
-     * Do not add deleted elements to the export.
-     * @return The builder
-     */
-    public ProjectExportParametersBuilder skipDeletedElements() {
-        this.exportDeletedElements = false;
-        return this;
-    }
+	/**
+	 * Do not add deleted elements to the export.
+	 *
+	 * @return The builder
+	 */
+	public ProjectExportParametersBuilder skipDeletedElements() {
+		this.exportDeletedElements = false;
+		return this;
+	}
 
-    /**
-     * @return A ProjectExportParameters instance
-     */
-    public ProjectExportParameters build() {
-        return new ProjectExportParameters(projectName, projectExportPath, fsForceProjectActivation, deleteExportFiles,
-                                           maxRevisionCount, exportDeletedElements);
-    }
+	/**
+	 * @return A ProjectExportParameters instance
+	 */
+	public ProjectExportParameters build() {
+		return new ProjectExportParameters(projectName, projectExportPath, fsForceProjectActivation, deleteExportFiles,
+				maxRevisionCount, exportDeletedElements);
+	}
 
-    public ProjectExportParametersBuilder setDeleteExportFiles(boolean deleteExportFiles) {
-        this.deleteExportFiles = deleteExportFiles;
-        return this;
-    }
+	public ProjectExportParametersBuilder setDeleteExportFiles(boolean deleteExportFiles) {
+		this.deleteExportFiles = deleteExportFiles;
+		return this;
+	}
 }

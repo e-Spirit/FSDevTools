@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import com.espirit.moddev.shared.annotation.VisibleForTesting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
 /**
  * Represents a {@link com.espirit.moddev.cli.api.result.Result} for a {@link ScheduleStartInformation schedule start information}
  */
@@ -36,10 +35,8 @@ public class ScheduleStartResult extends SimpleResult<Boolean> {
 	public static final String MESSAGE_TOPIC_PROJECT_BOUND = "Schedule task '%s' of project successfully completed in %s ms\n";
 	public static final String MESSAGE_TOPIC_SERVER_SIDE = "Schedule side schedule task '%s' successfully completed in %s ms\n";
 
-
 	private final String _projectName;
 	private final ScheduleStartInformation _scheduleStartInformation;
-
 
 	/**
 	 * Constructor to use for server sided {@link ScheduleStartInformation schedule start information}
@@ -50,7 +47,6 @@ public class ScheduleStartResult extends SimpleResult<Boolean> {
 	public ScheduleStartResult(@NotNull final ScheduleStartInformation scheduleStartInformation) {
 		this(null, scheduleStartInformation);
 	}
-
 
 	/**
 	 * Constructor to use for project bound {@link ScheduleStartInformation schedule start information}
@@ -63,7 +59,6 @@ public class ScheduleStartResult extends SimpleResult<Boolean> {
 		_scheduleStartInformation = scheduleStartInformation;
 	}
 
-
 	/**
 	 * Constructor to use if an exception occurs
 	 *
@@ -75,20 +70,17 @@ public class ScheduleStartResult extends SimpleResult<Boolean> {
 		_scheduleStartInformation = null;
 	}
 
-
 	@VisibleForTesting
 	@Nullable
 	public String getProjectName() {
 		return _projectName;
 	}
 
-
 	@VisibleForTesting
 	@Nullable
 	public ScheduleStartInformation getScheduleStartInformation() {
 		return _scheduleStartInformation;
 	}
-
 
 	@Override
 	public void log() {
@@ -97,7 +89,6 @@ public class ScheduleStartResult extends SimpleResult<Boolean> {
 		}
 		LOGGER.info(buildLog());
 	}
-
 
 	@VisibleForTesting
 	@NotNull

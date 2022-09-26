@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,15 +78,15 @@ import static de.espirit.firstspirit.access.ConnectionManager.SOCKET_MODE;
 				"module installBulk -mcf \"folder/configFile.json\"",
 				"module installBulk -mcf \"myConfigFile.json\" --deployWebApps false",
 				"[\n" +
-				"\t{\n" +
-				"\t\t\"fsm\": \"H:\\\\path\\\\fs-saml-login-1.1.fsm\"\n" +
-				"\t},\n" +
-				"\t{\n" +
-				"\t\t\"fsm\": \"C:\\\\path\\\\fs-tpp-api-1.2.11-SNAPSHOT.fsm\",\n" +
-				"\t\t\"moduleProjectName\": \"Mithras\",\n" +
-				"\t\t\"webAppScopes\" : [ \"webedit\", \"global(fs5root)\" ]\n" +
-				"\t}\n" +
-				"]"
+						"\t{\n" +
+						"\t\t\"fsm\": \"H:\\\\path\\\\fs-saml-login-1.1.fsm\"\n" +
+						"\t},\n" +
+						"\t{\n" +
+						"\t\t\"fsm\": \"C:\\\\path\\\\fs-tpp-api-1.2.11-SNAPSHOT.fsm\",\n" +
+						"\t\t\"moduleProjectName\": \"Mithras\",\n" +
+						"\t\t\"webAppScopes\" : [ \"webedit\", \"global(fs5root)\" ]\n" +
+						"\t}\n" +
+						"]"
 		},
 		descriptions = {
 				"Installs the modules of the given configuration file and deploys all related webapps.",
@@ -258,7 +258,7 @@ public class InstallModulesCommand extends SimpleCommand<InstallModulesResult> {
 				final String failedWebAppNames = result.stream()
 						.filter(executionResult -> executionResult instanceof WebAppUtil.AbstractWebAppDeployFailedResult)
 						.map(executionResult -> WebAppIdentifier.getName(((WebAppUtil.AbstractWebAppDeployFailedResult) executionResult).getWebAppId()))
-						.collect(Collectors.joining(", ","[ ", " ]"));
+						.collect(Collectors.joining(", ", "[ ", " ]"));
 				throw new IllegalStateException("Error deploying the following web apps: " + failedWebAppNames + " . Please see the server.log for more details.");
 			}
 		}

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,106 +38,107 @@ import org.slf4j.LoggerFactory;
  * @author e-Spirit GmbH
  */
 public class UidIdentifier implements Identifier {
-    protected static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(UidIdentifier.class);
+	protected static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(UidIdentifier.class);
 
-    private final UidMapping uidMapping;
-    private final String uid;
-    private final String stringRepresentation;
+	private final UidMapping uidMapping;
+	private final String uid;
+	private final String stringRepresentation;
 
-    /**
-     * Instantiates a new full qualified uid.
-     *
-     * @param uidMapping {@link UidMapping} of the uid
-     * @param uid the uid
-     * @throws IllegalArgumentException if uidMapping or uid is null or blank
-     */
-    public UidIdentifier(final UidMapping uidMapping, final String uid) {
-        if (uidMapping == null) {
-            throw new IllegalArgumentException("uidMapping is null.");
-        }
-        if (StringUtils.isNullOrEmpty(uid)) {
-            throw new IllegalArgumentException("Uid is null or empty.");
-        }
-        this.uidMapping = uidMapping;
-        this.uid = uid;
-        stringRepresentation = uidMapping.getPrefix() + ":" + uid;
-    }
+	/**
+	 * Instantiates a new full qualified uid.
+	 *
+	 * @param uidMapping {@link UidMapping} of the uid
+	 * @param uid        the uid
+	 * @throws IllegalArgumentException if uidMapping or uid is null or blank
+	 */
+	public UidIdentifier(final UidMapping uidMapping, final String uid) {
+		if (uidMapping == null) {
+			throw new IllegalArgumentException("uidMapping is null.");
+		}
+		if (StringUtils.isNullOrEmpty(uid)) {
+			throw new IllegalArgumentException("Uid is null or empty.");
+		}
+		this.uidMapping = uidMapping;
+		this.uid = uid;
+		stringRepresentation = uidMapping.getPrefix() + ":" + uid;
+	}
 
-    /**
-     * Get the {@link de.espirit.firstspirit.access.store.IDProvider.UidType} of this uid.
-     *
-     * @return the {@link de.espirit.firstspirit.access.store.IDProvider.UidType} of this uid.
-     */
-    public UidMapping getUidMapping() {
-        return uidMapping;
-    }
+	/**
+	 * Get the {@link de.espirit.firstspirit.access.store.IDProvider.UidType} of this uid.
+	 *
+	 * @return the {@link de.espirit.firstspirit.access.store.IDProvider.UidType} of this uid.
+	 */
+	public UidMapping getUidMapping() {
+		return uidMapping;
+	}
 
-    /**
-     * Get the uid.
-     *
-     * @return the uid
-     */
-    public String getUid() {
-        return uid;
-    }
+	/**
+	 * Get the uid.
+	 *
+	 * @return the uid
+	 */
+	public String getUid() {
+		return uid;
+	}
 
-    @Override
-    public boolean equals(final Object o) {
-        if(o == null || o.getClass() != this.getClass()) {
-            return false;
-        } else if (this == o) {
-            return true;
-        } else {
-            final UidIdentifier that = (UidIdentifier) o;
-            return uidMapping.equals(that.uidMapping) && uid.equals(that.uid);
-        }
-    }
+	@Override
+	public boolean equals(final Object o) {
+		if (o == null || o.getClass() != this.getClass()) {
+			return false;
+		} else if (this == o) {
+			return true;
+		} else {
+			final UidIdentifier that = (UidIdentifier) o;
+			return uidMapping.equals(that.uidMapping) && uid.equals(that.uid);
+		}
+	}
 
-    @Override
-    public int hashCode() {
-        int result = uidMapping.hashCode();
-        result = 31 * result + uid.hashCode(); //NOSONAR
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		int result = uidMapping.hashCode();
+		result = 31 * result + uid.hashCode(); //NOSONAR
+		return result;
+	}
 
-    @Override
-    public String toString() {
-        return stringRepresentation;
-    }
+	@Override
+	public String toString() {
+		return stringRepresentation;
+	}
 
-    /**
-     * Selects a StoreElement from the store corresponding to this element's uidMapping. If any
-     * object matching the uid could be retrieved, a check is performed, if its class
-     * matches the class specified by this identifiers class (@code {@link UidMapping#getCorrespondingType()}).
-     *
-     * That is, because multiple implementing classes (for example FILE and MEDIA) can share the same UidType.
-     * If you query the store with uid and UidType only, you could retrieve a MEDIA item, even if you only wanted
-     * a FILE item. Since uids are unique across stores, there shouldn't be further problems.
-     * @param storeAgent the StoreAgent to retrieve store instances from
-     * @param useReleaseState indicates whether to request elements from {@link Store#isRelease() release} or current store via given {@link StoreAgent}
-     * @param exportOperation the ExportOperation matching elements should be added to
-     */
-    @Override
-    public void addToExportOperation(StoreAgent storeAgent, boolean useReleaseState, ExportOperation exportOperation) {
-        final IDProvider.UidType uidType = getUidMapping().getUidType();
-        final Store.Type storeType = getUidMapping().getStoreType();
-        final IDProvider storeElement = storeAgent.getStore(storeType, useReleaseState).getStoreElement(getUid(), uidType);
-        if(storeElement != null) {
-            if(isAssignableFrom(storeElement)) {
-                LOGGER.debug("Adding store element: {}", storeElement);
-                exportOperation.addElement(storeElement);
-            } else {
-                final String errorMessage = "IDProvider of class " + storeElement.getClass().getSimpleName() +
-                        " found, but expected to find one of class " + getUidMapping().getCorrespondingType().getSimpleName() +
-                        " for uid=" + getUid() + ", uidType=" + uidType + ", store=" + storeType + ", release=" + useReleaseState;
-                throw new IDProviderNotFoundException(errorMessage);
-            }
-        } else {
-            throw new IDProviderNotFoundException("IDProvider cannot be retrieved for uid=" + getUid() + ", uidType=" + uidType + ", store=" + storeType + ", release=" + useReleaseState);
-        }
-    }
+	/**
+	 * Selects a StoreElement from the store corresponding to this element's uidMapping. If any
+	 * object matching the uid could be retrieved, a check is performed, if its class
+	 * matches the class specified by this identifiers class (@code {@link UidMapping#getCorrespondingType()}).
+	 * <p>
+	 * That is, because multiple implementing classes (for example FILE and MEDIA) can share the same UidType.
+	 * If you query the store with uid and UidType only, you could retrieve a MEDIA item, even if you only wanted
+	 * a FILE item. Since uids are unique across stores, there shouldn't be further problems.
+	 *
+	 * @param storeAgent      the StoreAgent to retrieve store instances from
+	 * @param useReleaseState indicates whether to request elements from {@link Store#isRelease() release} or current store via given {@link StoreAgent}
+	 * @param exportOperation the ExportOperation matching elements should be added to
+	 */
+	@Override
+	public void addToExportOperation(StoreAgent storeAgent, boolean useReleaseState, ExportOperation exportOperation) {
+		final IDProvider.UidType uidType = getUidMapping().getUidType();
+		final Store.Type storeType = getUidMapping().getStoreType();
+		final IDProvider storeElement = storeAgent.getStore(storeType, useReleaseState).getStoreElement(getUid(), uidType);
+		if (storeElement != null) {
+			if (isAssignableFrom(storeElement)) {
+				LOGGER.debug("Adding store element: {}", storeElement);
+				exportOperation.addElement(storeElement);
+			} else {
+				final String errorMessage = "IDProvider of class " + storeElement.getClass().getSimpleName() +
+						" found, but expected to find one of class " + getUidMapping().getCorrespondingType().getSimpleName() +
+						" for uid=" + getUid() + ", uidType=" + uidType + ", store=" + storeType + ", release=" + useReleaseState;
+				throw new IDProviderNotFoundException(errorMessage);
+			}
+		} else {
+			throw new IDProviderNotFoundException("IDProvider cannot be retrieved for uid=" + getUid() + ", uidType=" + uidType + ", store=" + storeType + ", release=" + useReleaseState);
+		}
+	}
 
-    private boolean isAssignableFrom(IDProvider storeElement) {
-        return getUidMapping().getCorrespondingType().isAssignableFrom(storeElement.getClass());
-    }
+	private boolean isAssignableFrom(IDProvider storeElement) {
+		return getUidMapping().getCorrespondingType().isAssignableFrom(storeElement.getClass());
+	}
 }

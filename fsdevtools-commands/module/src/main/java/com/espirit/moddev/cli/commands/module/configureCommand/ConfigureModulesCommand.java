@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,62 +66,62 @@ import java.util.stream.Collectors;
 		examples = {
 				"module configure -mcf \"folder/configFile.json\"",
 				"[\n" +
-				"\t{\n" +
-				"\t\t\"moduleName\": \"myModuleName\",\n" +
-				"\t\t\"components\": {\n" +
-				"\t\t\t\"webComponents\": [\n" +
-				"\t\t\t\t{\n" +
-				"\t\t\t\t\t\"componentName\": \"myProjectWebComponentName\",\n" +
-				"\t\t\t\t\t\"webApps\": [\n" +
-				"\t\t\t\t\t\t{\n" +
-				"\t\t\t\t\t\t\t\"webAppName\": \"WEBEDIT\",\n" +
-				"\t\t\t\t\t\t}\n" +
-				"\t\t\t\t\t]\n" +
-				"\t\t\t\t}\n" +
-				"\t\t\t]\n" +
-				"\t\t}\n" +
-				"\t}\n" +
-				"]",
+						"\t{\n" +
+						"\t\t\"moduleName\": \"myModuleName\",\n" +
+						"\t\t\"components\": {\n" +
+						"\t\t\t\"webComponents\": [\n" +
+						"\t\t\t\t{\n" +
+						"\t\t\t\t\t\"componentName\": \"myProjectWebComponentName\",\n" +
+						"\t\t\t\t\t\"webApps\": [\n" +
+						"\t\t\t\t\t\t{\n" +
+						"\t\t\t\t\t\t\t\"webAppName\": \"WEBEDIT\",\n" +
+						"\t\t\t\t\t\t}\n" +
+						"\t\t\t\t\t]\n" +
+						"\t\t\t\t}\n" +
+						"\t\t\t]\n" +
+						"\t\t}\n" +
+						"\t}\n" +
+						"]",
 				"[\n" +
-				"\t{\n" +
-				"\t\t\"moduleName\": \"myFirstModule\",\n" +
-				"\t\t\"components\": {\n" +
-				"\t\t\t\"webComponents\": [\n" +
-				"\t\t\t\t{\n" +
-				"\t\t\t\t\t\"componentName\": \"myGlobalWebComponentName\",\n" +
-				"\t\t\t\t\t\"webApps\": [\n" +
-				"\t\t\t\t\t\t{\n" +
-				"\t\t\t\t\t\t\t\"webAppName\": \"global(my_global_web_app_name)\",\n" +
-				"\t\t\t\t\t\t\t\"deploy\": false\n" +
-				"\t\t\t\t\t\t}\n" +
-				"\t\t\t\t\t]\n" +
-				"\t\t\t\t}\n" +
-				"\t\t\t],\n" +
-				"\t\t\t\"services\": [\n" +
-				"\t\t\t\t{\n" +
-				"\t\t\t\t\t\"serviceName\": \"myServiceName\",\n" +
-				"\t\t\t\t\t\"autoStart\": true\n" +
-				"\t\t\t\t}\n" +
-				"\t\t\t]\n" +
-				"\t\t}\n" +
-				"\t},\n" +
-				"\t{\n" +
-				"\t\t\"moduleName\": \"mySecondModuleName\",\n" +
-				"\t\t\"components\": {\n" +
-				"\t\t\t\"projectComponents\": [\n" +
-				"\t\t\t\t{\n" +
-				"\t\t\t\t\t\"componentName\": \"myProjectComponentName\",\n" +
-				"\t\t\t\t\t\"projectApps\": [\n" +
-				"\t\t\t\t\t\t{\n" +
-				"\t\t\t\t\t\t\t\"projectName\": \"myProjectName\",\n" +
-				"\t\t\t\t\t\t\t\"files\": [\"path/to/file01.json\", \"path/to/directory\"]\n" +
-				"\t\t\t\t\t\t}\n" +
-				"\t\t\t\t\t]\n" +
-				"\t\t\t\t}\n" +
-				"\t\t\t]\n" +
-				"\t\t}\n" +
-				"\t}\n" +
-				"]"
+						"\t{\n" +
+						"\t\t\"moduleName\": \"myFirstModule\",\n" +
+						"\t\t\"components\": {\n" +
+						"\t\t\t\"webComponents\": [\n" +
+						"\t\t\t\t{\n" +
+						"\t\t\t\t\t\"componentName\": \"myGlobalWebComponentName\",\n" +
+						"\t\t\t\t\t\"webApps\": [\n" +
+						"\t\t\t\t\t\t{\n" +
+						"\t\t\t\t\t\t\t\"webAppName\": \"global(my_global_web_app_name)\",\n" +
+						"\t\t\t\t\t\t\t\"deploy\": false\n" +
+						"\t\t\t\t\t\t}\n" +
+						"\t\t\t\t\t]\n" +
+						"\t\t\t\t}\n" +
+						"\t\t\t],\n" +
+						"\t\t\t\"services\": [\n" +
+						"\t\t\t\t{\n" +
+						"\t\t\t\t\t\"serviceName\": \"myServiceName\",\n" +
+						"\t\t\t\t\t\"autoStart\": true\n" +
+						"\t\t\t\t}\n" +
+						"\t\t\t]\n" +
+						"\t\t}\n" +
+						"\t},\n" +
+						"\t{\n" +
+						"\t\t\"moduleName\": \"mySecondModuleName\",\n" +
+						"\t\t\"components\": {\n" +
+						"\t\t\t\"projectComponents\": [\n" +
+						"\t\t\t\t{\n" +
+						"\t\t\t\t\t\"componentName\": \"myProjectComponentName\",\n" +
+						"\t\t\t\t\t\"projectApps\": [\n" +
+						"\t\t\t\t\t\t{\n" +
+						"\t\t\t\t\t\t\t\"projectName\": \"myProjectName\",\n" +
+						"\t\t\t\t\t\t\t\"files\": [\"path/to/file01.json\", \"path/to/directory\"]\n" +
+						"\t\t\t\t\t\t}\n" +
+						"\t\t\t\t\t]\n" +
+						"\t\t\t\t}\n" +
+						"\t\t\t]\n" +
+						"\t\t}\n" +
+						"\t}\n" +
+						"]"
 		},
 		descriptions = {
 				"Configures the modules with the given configuration file.",

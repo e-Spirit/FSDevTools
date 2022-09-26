@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,11 +29,11 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 public class ServerStartCommandTest extends AbstractServerCommandTest<ServerStartCommand> {
 
@@ -46,7 +46,7 @@ public class ServerStartCommandTest extends AbstractServerCommandTest<ServerStar
 	@Test
 	public void getWaitTime_default() {
 		final ServerStartCommand instance = createTestling();
-		assertEquals(ServerStartCommand.DEFAULT_WAIT_TIME,instance.getWaitTimeInSeconds());
+		assertEquals(ServerStartCommand.DEFAULT_WAIT_TIME, instance.getWaitTimeInSeconds());
 	}
 
 	@Test
@@ -54,7 +54,7 @@ public class ServerStartCommandTest extends AbstractServerCommandTest<ServerStar
 		final ServerStartCommand instance = createTestling();
 		final int expected = 10;
 		instance.setWaitTimeInSeconds(expected);
-		assertEquals(expected,instance.getWaitTimeInSeconds());
+		assertEquals(expected, instance.getWaitTimeInSeconds());
 	}
 
 	@Test
@@ -68,7 +68,7 @@ public class ServerStartCommandTest extends AbstractServerCommandTest<ServerStar
 		final ServerStartCommand instance = createTestling();
 		final String expected = "myServerDir";
 		instance.setServerDir(expected);
-		assertEquals(expected,instance.getServerDir());
+		assertEquals(expected, instance.getServerDir());
 	}
 
 	@Test
@@ -87,7 +87,7 @@ public class ServerStartCommandTest extends AbstractServerCommandTest<ServerStar
 		};
 		final SimpleResult<String> result = instance.call();
 		assertFalse(result.isError());
-		assertEquals(ServerStartCommand.MSG_SUCCESS,result.get());
+		assertEquals(ServerStartCommand.MSG_SUCCESS, result.get());
 	}
 
 	@Test
@@ -106,7 +106,7 @@ public class ServerStartCommandTest extends AbstractServerCommandTest<ServerStar
 		};
 		final SimpleResult<String> result = instance.call();
 		assertTrue(result.isError());
-		assertEquals(ServerStartCommand.MSG_ERROR,result.getError().getMessage());
+		assertEquals(ServerStartCommand.MSG_ERROR, result.getError().getMessage());
 	}
 
 }

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,28 +31,28 @@ import com.espirit.moddev.cli.api.configuration.Config;
  */
 public class CliException extends RuntimeException {
 
-    /**
-     * Instantiates a new instance.
-     *
-     * @param error the error that occurred
-     * @param config the configuration values of the cli application
-     * @param cause the cause of the error
-     */
-    public CliException(CliError error, Config config, Throwable cause) {
-        super(error.getMessage(config), cause);
-    }
+	/**
+	 * Instantiates a new instance.
+	 *
+	 * @param error  the error that occurred
+	 * @param config the configuration values of the cli application
+	 * @param cause  the cause of the error
+	 */
+	public CliException(CliError error, Config config, Throwable cause) {
+		super(error.getMessage(config), cause);
+	}
 
-    /**
-     * Instantiates a new instance.
-     *
-     * @param cause the cause of the error
-     */
-    public CliException(Throwable cause) {
-        super(cause.getMessage(), cause);
-    }
+	/**
+	 * Instantiates a new instance.
+	 *
+	 * @param cause the cause of the error
+	 */
+	public CliException(Throwable cause) {
+		super(cause.getMessage(), cause);
+	}
 
-    @Override
-    public String toString() {
-        return getMessage();
-    }
+	@Override
+	public String toString() {
+		return getMessage();
+	}
 }

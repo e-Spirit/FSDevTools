@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,41 +27,41 @@ package com.espirit.moddev.cli.exception;
  */
 public class LayerMappingException extends RuntimeException {
 
-    private static final long serialVersionUID = 8164220948231148970L;
+	private static final long serialVersionUID = 8164220948231148970L;
 
-    /**
-     * Instantiates a new layer mapping exception.
-     */
-    public LayerMappingException() {
-        super();
-    }
+	/**
+	 * Instantiates a new layer mapping exception.
+	 */
+	public LayerMappingException() {
+		super();
+	}
 
-    /**
-     * Instantiates a new layer mapping exception.
-     *
-     * @param message the message
-     * @param cause the cause
-     */
-    public LayerMappingException(String message, Throwable cause) {
-        super(message, cause);
-    }
+	/**
+	 * Instantiates a new layer mapping exception.
+	 *
+	 * @param message the message
+	 * @param cause   the cause
+	 */
+	public LayerMappingException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
-    /**
-     * Instantiates a new layer mapping exception.
-     *
-     * @param message the message
-     */
-    public LayerMappingException(String message) {
-        super(message);
-    }
+	/**
+	 * Instantiates a new layer mapping exception.
+	 *
+	 * @param message the message
+	 */
+	public LayerMappingException(String message) {
+		super(message);
+	}
 
-    /**
-     * Instantiates a new layer mapping exception.
-     *
-     * @param cause the cause
-     */
-    public LayerMappingException(Throwable cause) {
-        super(cause);
-    }
+	/**
+	 * Instantiates a new layer mapping exception.
+	 *
+	 * @param cause the cause
+	 */
+	public LayerMappingException(Throwable cause) {
+		super(cause);
+	}
 
 }

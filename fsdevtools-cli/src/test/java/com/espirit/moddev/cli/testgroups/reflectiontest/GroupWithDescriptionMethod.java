@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import com.github.rvesse.airline.annotations.Group;
  */
 @Group(name = "command_with_description_after_convention", defaultCommand = DefaultCommand.class)
 public final class GroupWithDescriptionMethod {
-    public static String getDescription() {
-        return "abc";
-    }
+	public static String getDescription() {
+		return "abc";
+	}
 }

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ package com.espirit.moddev.cli.configuration;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * The type Environment encapsulates the system environment variables to make them testable.
  *
@@ -33,51 +32,51 @@ import java.util.Map;
  */
 public class Environment {
 
-    private final Map<String, String> environmentVariables;
+	private final Map<String, String> environmentVariables;
 
-    /**
-     * Instantiates a new Environment.
-     */
-    public Environment() {
-        this.environmentVariables = new HashMap<>();
-        environmentVariables.putAll(System.getenv());
-    }
+	/**
+	 * Instantiates a new Environment.
+	 */
+	public Environment() {
+		this.environmentVariables = new HashMap<>();
+		environmentVariables.putAll(System.getenv());
+	}
 
-    /**
-     * Checks if a value exists for a key.
-     *
-     * @param key the key
-     * @return the boolean
-     */
-    public boolean containsKey(final Object key) {
-        return environmentVariables.containsKey(key);
-    }
+	/**
+	 * Checks if a value exists for a key.
+	 *
+	 * @param key the key
+	 * @return the boolean
+	 */
+	public boolean containsKey(final Object key) {
+		return environmentVariables.containsKey(key);
+	}
 
-    /**
-     * Get value for key.
-     *
-     * @param key the key
-     * @return the string
-     */
-    public String get(final Object key) {
-        return environmentVariables.get(key);
-    }
+	/**
+	 * Get value for key.
+	 *
+	 * @param key the key
+	 * @return the string
+	 */
+	public String get(final Object key) {
+		return environmentVariables.get(key);
+	}
 
-    /**
-     * Add key value pair.
-     *
-     * @param key   the key
-     * @param value the value
-     * @return the string
-     */
-    public String put(final String key, final String value) {
-        return environmentVariables.put(key, value);
-    }
+	/**
+	 * Add key value pair.
+	 *
+	 * @param key   the key
+	 * @param value the value
+	 * @return the string
+	 */
+	public String put(final String key, final String value) {
+		return environmentVariables.put(key, value);
+	}
 
-    /**
-     * Clears all environment variables of this instance.
-     */
-    public void clear() {
-        environmentVariables.clear();
-    }
+	/**
+	 * Clears all environment variables of this instance.
+	 */
+	public void clear() {
+		environmentVariables.clear();
+	}
 }

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,40 +30,40 @@ import de.espirit.firstspirit.transport.PropertiesTransportOptions;
 
 public class ProjectPropertiesIdentifier implements Identifier {
 
-    private final EnumSet<PropertiesTransportOptions.ProjectPropertyType> projectPropertyTypes;
+	private final EnumSet<PropertiesTransportOptions.ProjectPropertyType> projectPropertyTypes;
 
-    public ProjectPropertiesIdentifier(EnumSet<PropertiesTransportOptions.ProjectPropertyType> projectPropertyTypes) {
-        if (projectPropertyTypes == null) {
-            throw new IllegalArgumentException("projectPropertyType is null.");
-        }
-        this.projectPropertyTypes = EnumSet.copyOf(projectPropertyTypes);
-    }
+	public ProjectPropertiesIdentifier(EnumSet<PropertiesTransportOptions.ProjectPropertyType> projectPropertyTypes) {
+		if (projectPropertyTypes == null) {
+			throw new IllegalArgumentException("projectPropertyType is null.");
+		}
+		this.projectPropertyTypes = EnumSet.copyOf(projectPropertyTypes);
+	}
 
-    @Override
-    public void addToExportOperation(StoreAgent storeAgent, boolean useReleaseState, ExportOperation exportOperation) {
-        final PropertiesTransportOptions options = exportOperation.configurePropertiesExport();
-        options.setProjectPropertiesTransport(projectPropertyTypes);
-    }
+	@Override
+	public void addToExportOperation(StoreAgent storeAgent, boolean useReleaseState, ExportOperation exportOperation) {
+		final PropertiesTransportOptions options = exportOperation.configurePropertiesExport();
+		options.setProjectPropertiesTransport(projectPropertyTypes);
+	}
 
-    @Override
-    public boolean equals(final Object o) {
-        if(o == null || o.getClass() != this.getClass()) {
-            return false;
-        } else if (this == o) {
-            return true;
-        } else {
-            final ProjectPropertiesIdentifier that = (ProjectPropertiesIdentifier) o;
-            return projectPropertyTypes.equals(that.projectPropertyTypes);
-        }
-    }
+	@Override
+	public boolean equals(final Object o) {
+		if (o == null || o.getClass() != this.getClass()) {
+			return false;
+		} else if (this == o) {
+			return true;
+		} else {
+			final ProjectPropertiesIdentifier that = (ProjectPropertiesIdentifier) o;
+			return projectPropertyTypes.equals(that.projectPropertyTypes);
+		}
+	}
 
-    @Override
-    public int hashCode() {
-        return projectPropertyTypes.hashCode();
-    }
+	@Override
+	public int hashCode() {
+		return projectPropertyTypes.hashCode();
+	}
 
-    @Override
-    public String toString() {
-        return projectPropertyTypes.toString();
-    }
+	@Override
+	public String toString() {
+		return projectPropertyTypes.toString();
+	}
 }

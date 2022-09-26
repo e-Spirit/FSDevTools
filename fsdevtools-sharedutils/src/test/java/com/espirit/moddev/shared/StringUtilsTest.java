@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,49 +29,49 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class StringUtilsTest {
 
-    @Test
-    public void toPluralRespectingString_zero() {
-        assertThat(StringUtils.toPluralRespectingString(0, "app")).isEqualTo("apps");
-    }
+	@Test
+	public void toPluralRespectingString_zero() {
+		assertThat(StringUtils.toPluralRespectingString(0, "app")).isEqualTo("apps");
+	}
 
-    @Test
-    public void toPluralRespectingString_one() {
-        assertThat(StringUtils.toPluralRespectingString(1, "app")).isEqualTo("app");
-    }
+	@Test
+	public void toPluralRespectingString_one() {
+		assertThat(StringUtils.toPluralRespectingString(1, "app")).isEqualTo("app");
+	}
 
-    @Test
-    public void toPluralRespectingString_greater_one() {
-        assertThat(StringUtils.toPluralRespectingString(2, "app")).isEqualTo("apps");
-    }
+	@Test
+	public void toPluralRespectingString_greater_one() {
+		assertThat(StringUtils.toPluralRespectingString(2, "app")).isEqualTo("apps");
+	}
 
-    @Test
-    public void toPluralRespectingString_minus_one() {
-        assertThat(StringUtils.toPluralRespectingString(-1, "app")).isEqualTo("app");
-    }
+	@Test
+	public void toPluralRespectingString_minus_one() {
+		assertThat(StringUtils.toPluralRespectingString(-1, "app")).isEqualTo("app");
+	}
 
-    @Test
-    public void toPluralRespectingString_less_minus_one() {
-        assertThat(StringUtils.toPluralRespectingString(-2, "app")).isEqualTo("apps");
-    }
+	@Test
+	public void toPluralRespectingString_less_minus_one() {
+		assertThat(StringUtils.toPluralRespectingString(-2, "app")).isEqualTo("apps");
+	}
 
-    @Test
-    public void isNullOrEmpty() {
-        assertThat(StringUtils.isNullOrEmpty(null)).isTrue();
-        assertThat(StringUtils.isNullOrEmpty("")).isTrue();
-        assertThat(StringUtils.isNullOrEmpty(" ")).isTrue();
-        assertThat(StringUtils.isNullOrEmpty("Test")).isFalse();
-    }
+	@Test
+	public void isNullOrEmpty() {
+		assertThat(StringUtils.isNullOrEmpty(null)).isTrue();
+		assertThat(StringUtils.isNullOrEmpty("")).isTrue();
+		assertThat(StringUtils.isNullOrEmpty(" ")).isTrue();
+		assertThat(StringUtils.isNullOrEmpty("Test")).isFalse();
+	}
 
-    @Test
-    public void isEmpty() {
-        assertThat(StringUtils.isNullOrEmpty("")).isTrue();
-        assertThat(StringUtils.isNullOrEmpty(" ")).isTrue();
-        assertThat(StringUtils.isNullOrEmpty("Test")).isFalse();
-    }
+	@Test
+	public void isEmpty() {
+		assertThat(StringUtils.isNullOrEmpty("")).isTrue();
+		assertThat(StringUtils.isNullOrEmpty(" ")).isTrue();
+		assertThat(StringUtils.isNullOrEmpty("Test")).isFalse();
+	}
 
-    @Test
-    public void whenExceptionThrown_thenExpectationSatisfied() {
-        Assertions.assertThrows(NullPointerException.class, () -> StringUtils.isEmpty(null));
-    }
+	@Test
+	public void whenExceptionThrown_thenExpectationSatisfied() {
+		Assertions.assertThrows(NullPointerException.class, () -> StringUtils.isEmpty(null));
+	}
 
 }

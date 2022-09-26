@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test;
 
 import de.espirit.firstspirit.access.Connection;
 
-
 import java.io.IOException;
 
 import static java.lang.Boolean.FALSE;
@@ -46,56 +45,56 @@ import static org.mockito.Mockito.verify;
 
 public class TestConnectionCommandTest {
 
-    private TestConnectionCommand testling;
-    private Connection connection;
+	private TestConnectionCommand testling;
+	private Connection connection;
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        connection = mock(Connection.class);
-        testling = new TestConnectionCommand(){
-            @Override
-            protected Connection create() {
-                return connection;
-            }
-        };
-    }
+	@BeforeEach
+	public void setUp() throws Exception {
+		connection = mock(Connection.class);
+		testling = new TestConnectionCommand() {
+			@Override
+			protected Connection create() {
+				return connection;
+			}
+		};
+	}
 
-    @Test
-    public void testCall() throws Exception {
-        final Result result = testling.call();
+	@Test
+	public void testCall() throws Exception {
+		final Result result = testling.call();
 
-        assertThat("Expect normal execution", result.isError(), is(FALSE));
-        assertThat("Expect null value", result.getError(), is(nullValue()));
+		assertThat("Expect normal execution", result.isError(), is(FALSE));
+		assertThat("Expect null value", result.getError(), is(nullValue()));
 
-        verify(connection, times(1)).connect();
-    }
+		verify(connection, times(1)).connect();
+	}
 
-    @Test
-    public void testCallError() throws Exception {
-        doThrow(new IOException("Junit")).when(connection).connect();
+	@Test
+	public void testCallError() throws Exception {
+		doThrow(new IOException("Junit")).when(connection).connect();
 
-        final Result result = testling.call();
+		final Result result = testling.call();
 
-        assertThat("Expect normal execution", result.isError(), is(TRUE));
-        assertThat("Expect non-null value", result.getError(), is(notNullValue()));
+		assertThat("Expect normal execution", result.isError(), is(TRUE));
+		assertThat("Expect non-null value", result.getError(), is(notNullValue()));
 
-        verify(connection, times(1)).connect();
-    }
+		verify(connection, times(1)).connect();
+	}
 
-    @Test
-    public void testCallNullConnection() throws Exception {
-        connection = null;
+	@Test
+	public void testCallNullConnection() throws Exception {
+		connection = null;
 
-        final Result result = testling.call();
+		final Result result = testling.call();
 
-        assertThat("Expect normal execution", result.isError(), is(TRUE));
-        assertThat("Expect non-null value", result.getError(), is(notNullValue()));
-    }
+		assertThat("Expect normal execution", result.isError(), is(TRUE));
+		assertThat("Expect non-null value", result.getError(), is(notNullValue()));
+	}
 
-    @Test
-    public void testNeedsContext() throws Exception {
-        assertThat("This command creates his own FS connection therefore doesn't need one from outside",
-                   testling.needsContext(), is(FALSE));
-    }
+	@Test
+	public void testNeedsContext() throws Exception {
+		assertThat("This command creates his own FS connection therefore doesn't need one from outside",
+				testling.needsContext(), is(FALSE));
+	}
 
 }

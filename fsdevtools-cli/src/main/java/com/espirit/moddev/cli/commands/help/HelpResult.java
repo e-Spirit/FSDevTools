@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,23 +30,23 @@ import com.github.rvesse.airline.model.GlobalMetadata;
  */
 public class HelpResult extends SimpleResult<GlobalMetadata<Object>> {
 
-    /**
-     * Creates a new instance using the given command result.
-     *
-     * @param metadata Result produced by the command
-     * @see com.espirit.moddev.cli.results.SimpleResult#SimpleResult(Object)
-     */
-    public HelpResult(GlobalMetadata metadata) {
-        super(metadata);
-    }
+	/**
+	 * Creates a new instance using the given command result.
+	 *
+	 * @param metadata Result produced by the command
+	 * @see com.espirit.moddev.cli.results.SimpleResult#SimpleResult(Object)
+	 */
+	public HelpResult(GlobalMetadata metadata) {
+		super(metadata);
+	}
 
-    /**
-     * Creates a new error result using the given exception.
-     *
-     * @param exception Exception produced by the command
-     * @see com.espirit.moddev.cli.results.SimpleResult#SimpleResult(Exception)
-     */
-    public HelpResult(Exception exception) {
-        super(exception);
-    }
+	/**
+	 * Creates a new error result using the given exception.
+	 *
+	 * @param exception Exception produced by the command
+	 * @see com.espirit.moddev.cli.results.SimpleResult#SimpleResult(Exception)
+	 */
+	public HelpResult(Exception exception) {
+		super(exception);
+	}
 }

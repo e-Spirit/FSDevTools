@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,58 +36,58 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CommandUtilsTest {
 
-    private static final String DEFAULT_COMMAND_TEST_PACKAGE_NAME = "com.espirit.moddev.cli.testcommands.reflectiontest";
+	private static final String DEFAULT_COMMAND_TEST_PACKAGE_NAME = "com.espirit.moddev.cli.testcommands.reflectiontest";
 
-    private static final int EXPECTED_COMMANDCLASSES_IN_TESTCOMMANDSPACKAGE = 4;
+	private static final int EXPECTED_COMMANDCLASSES_IN_TESTCOMMANDSPACKAGE = 4;
 
-    /**
-     * If there are command class implementations added or removed from the test package, this test may fail. In
-     * order to make it green, you should expect the correct count of command classes in the test package. Since
-     * we test runtime behaviour (reflection) influenced by compile time changes (class removed/added) here,
-     * this test fails at test runtime, even though the project compiles fine.
-     */
-    @Test
-    public void packageScanRetrievesCorrectCommandClassCount() {
-        Set<Class<? extends Command>> commandClassesInPackage = CommandUtils.scanForCommandClasses(DEFAULT_COMMAND_TEST_PACKAGE_NAME);
-        assertEquals(EXPECTED_COMMANDCLASSES_IN_TESTCOMMANDSPACKAGE, commandClassesInPackage.size());
-    }
+	/**
+	 * If there are command class implementations added or removed from the test package, this test may fail. In
+	 * order to make it green, you should expect the correct count of command classes in the test package. Since
+	 * we test runtime behaviour (reflection) influenced by compile time changes (class removed/added) here,
+	 * this test fails at test runtime, even though the project compiles fine.
+	 */
+	@Test
+	public void packageScanRetrievesCorrectCommandClassCount() {
+		Set<Class<? extends Command>> commandClassesInPackage = CommandUtils.scanForCommandClasses(DEFAULT_COMMAND_TEST_PACKAGE_NAME);
+		assertEquals(EXPECTED_COMMANDCLASSES_IN_TESTCOMMANDSPACKAGE, commandClassesInPackage.size());
+	}
 
-    /**
-     * This test ensures that the whole classpath is scanned for commands without specifying a package name.
-     * Asserting the presence of an explicit class from an external dependency is probably the best Test for this.
-     */
-    @Test
-    public void classpathScanRetrievesAllCommandClasses() {
-        Set<Class<? extends Command>> commandClassesInClasspath = CommandUtils.scanForCommandClasses();
-        assertTrue(commandClassesInClasspath.contains(ExampleCustomCommand.class));
-    }
+	/**
+	 * This test ensures that the whole classpath is scanned for commands without specifying a package name.
+	 * Asserting the presence of an explicit class from an external dependency is probably the best Test for this.
+	 */
+	@Test
+	public void classpathScanRetrievesAllCommandClasses() {
+		Set<Class<? extends Command>> commandClassesInClasspath = CommandUtils.scanForCommandClasses();
+		assertTrue(commandClassesInClasspath.contains(ExampleCustomCommand.class));
+	}
 
-    public static class ReflectionTest {
-        @Test
-        public void readsCommandDescriptionFromAnnotatedMethodTest() {
-            assertEquals("xyz", ReflectionUtils.getDescriptionFromClass(CommandWithDescriptionAnnotation.class));
-        }
+	public static class ReflectionTest {
+		@Test
+		public void readsCommandDescriptionFromAnnotatedMethodTest() {
+			assertEquals("xyz", ReflectionUtils.getDescriptionFromClass(CommandWithDescriptionAnnotation.class));
+		}
 
-        @Test
-        public void readsCommandDescriptionFromNonAnnotatedMethodWithNamingConventionTest() {
-            assertEquals("abc", ReflectionUtils.getDescriptionFromClass(CommandWithDescriptionMethod.class));
-        }
+		@Test
+		public void readsCommandDescriptionFromNonAnnotatedMethodWithNamingConventionTest() {
+			assertEquals("abc", ReflectionUtils.getDescriptionFromClass(CommandWithDescriptionMethod.class));
+		}
 
-        @Test
-        public void readsCommandDescriptionAsEmptyFromDescriptionMethodReturnsVoidTest() {
-            assertTrue(ReflectionUtils.getDescriptionFromClass(CommandWithVoidDescriptionMethod.class).isEmpty());
-        }
+		@Test
+		public void readsCommandDescriptionAsEmptyFromDescriptionMethodReturnsVoidTest() {
+			assertTrue(ReflectionUtils.getDescriptionFromClass(CommandWithVoidDescriptionMethod.class).isEmpty());
+		}
 
-        @Test
-        public void readsCommandDescriptionAsEmptyFromDescriptionMethodReturnsNonStringTest() {
-            assertTrue(ReflectionUtils.getDescriptionFromClass(CommandWithNonStringDescriptionMethod.class).isEmpty());
-        }
+		@Test
+		public void readsCommandDescriptionAsEmptyFromDescriptionMethodReturnsNonStringTest() {
+			assertTrue(ReflectionUtils.getDescriptionFromClass(CommandWithNonStringDescriptionMethod.class).isEmpty());
+		}
 
-        @Test
-        public void readsCommandDescriptionExportCommand() {
-            final String expectedMsgPart = "ALL, COMMON, CUSTOM_PROPERTIES, RESOLUTIONS, GROUPS, SCHEDULE_ENTRIES, TEMPLATE_SETS, FONTS, MODULE_CONFIGURATIONS, LANGUAGES, USERS";
-            final String msg = ReflectionUtils.getDescriptionFromClass(ExportCommand.class);
-            assertTrue(msg.contains(expectedMsgPart));
-        }
-    }
+		@Test
+		public void readsCommandDescriptionExportCommand() {
+			final String expectedMsgPart = "ALL, COMMON, CUSTOM_PROPERTIES, RESOLUTIONS, GROUPS, SCHEDULE_ENTRIES, TEMPLATE_SETS, FONTS, MODULE_CONFIGURATIONS, LANGUAGES, USERS";
+			final String msg = ReflectionUtils.getDescriptionFromClass(ExportCommand.class);
+			assertTrue(msg.contains(expectedMsgPart));
+		}
+	}
 }

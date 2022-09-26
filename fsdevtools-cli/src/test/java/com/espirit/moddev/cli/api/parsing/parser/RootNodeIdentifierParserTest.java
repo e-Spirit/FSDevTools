@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,43 +43,41 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RootNodeIdentifierParserTest {
 
+	private RootNodeIdentifierParser testling;
 
-    private RootNodeIdentifierParser testling;
+	@BeforeEach
+	public void setUp() {
+		testling = new RootNodeIdentifierParser();
+	}
 
+	@ParameterizedTest
+	@ValueSource(strings = {"root:myuid", "ROOT:myuid", "ROOT :myuid", "ROOT : myuid", "contentstore", "globalstore", "templatestore", "pagestore", "sitestore"})
+	public void testAppliesTo(@NotNull final String uid) {
+		boolean appliesTo = testling.appliesTo(uid);
+		assertTrue(appliesTo, "Parser should apply to string " + uid);
+	}
 
-    @BeforeEach
-    public void setUp() {
-        testling = new RootNodeIdentifierParser();
-    }
+	@Test
+	public void testParseWithNonExistingStore() {
+		assertThrows(UnknownRootNodeException.class, () -> testling.parse(List.of("root:xyz")));
+	}
 
-    @ParameterizedTest
-    @ValueSource(strings = {"root:myuid", "ROOT:myuid", "ROOT :myuid", "ROOT : myuid", "contentstore", "globalstore", "templatestore", "pagestore", "sitestore"})
-    public void testAppliesTo(@NotNull final String uid) {
-        boolean appliesTo = testling.appliesTo(uid);
-        assertTrue(appliesTo, "Parser should apply to string " + uid);
-    }
+	@Test
+	public void testParseWithTemplateStoreRoot() {
+		testling.parse(Arrays.asList("root:templatestore"));
+	}
 
-    @Test
-    public void testParseWithNonExistingStore() {
-        assertThrows(UnknownRootNodeException.class, () -> testling.parse(List.of("root:xyz")));
-    }
+	@Test
+	public void testParseStoreRootRequestWithExistingStore() {
+		final List<RootNodeIdentifier> list = testling.parse(Arrays.asList("root:templatestore"));
+		assertThat(list.contains(new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE)), equalTo(true));
+	}
 
-    @Test
-    public void testParseWithTemplateStoreRoot() {
-        testling.parse(Arrays.asList("root:templatestore"));
-    }
-
-    @Test
-    public void testParseStoreRootRequestWithExistingStore() {
-        final List<RootNodeIdentifier> list = testling.parse(Arrays.asList("root:templatestore"));
-        assertThat(list.contains(new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE)), equalTo(true));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"ROOT : contentstore", "contentstore", "globalstore", "templatestore", "pagestore", "sitestore"})
-    public void testParseNakedStoreRoot(@NotNull final String uid) {
-        final List<RootNodeIdentifier> list = testling.parse(Collections.singletonList(uid));
-        assertThat(list.size(), equalTo(1));
-        assertThat(list.get(0), isA(RootNodeIdentifier.class));
-    }
+	@ParameterizedTest
+	@ValueSource(strings = {"ROOT : contentstore", "contentstore", "globalstore", "templatestore", "pagestore", "sitestore"})
+	public void testParseNakedStoreRoot(@NotNull final String uid) {
+		final List<RootNodeIdentifier> list = testling.parse(Collections.singletonList(uid));
+		assertThat(list.size(), equalTo(1));
+		assertThat(list.get(0), isA(RootNodeIdentifier.class));
+	}
 }

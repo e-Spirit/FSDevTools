@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,59 +34,59 @@ import static com.espirit.moddev.cli.api.parsing.parser.RootNodeIdentifierParser
  * Identifier for FirstSpirit store root nodes.
  */
 public class RootNodeIdentifier implements Identifier {
-    protected static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(RootNodeIdentifier.class);
-    public static final String ROOT_NODE_IDENTIFIER = "root";
+	protected static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(RootNodeIdentifier.class);
+	public static final String ROOT_NODE_IDENTIFIER = "root";
 
-    private final IDProvider.UidType uidType;
+	private final IDProvider.UidType uidType;
 
-    /**
-     * Instantiates a root node identifier.
-     *
-     * @param uidType {@link IDProvider.UidType} of the uid
-     * @throws IllegalArgumentException if uidType or uid is null or blank
-     */
-    public RootNodeIdentifier(IDProvider.UidType uidType) {
-        if (uidType == null) {
-            throw new IllegalArgumentException("uidType is null.");
-        }
-        if(getAllStorePostfixes().inverse().get(uidType) == null) {
-            throw new IllegalArgumentException("UidType unknown for " + uidType);
-        }
-        this.uidType = uidType;
-    }
+	/**
+	 * Instantiates a root node identifier.
+	 *
+	 * @param uidType {@link IDProvider.UidType} of the uid
+	 * @throws IllegalArgumentException if uidType or uid is null or blank
+	 */
+	public RootNodeIdentifier(IDProvider.UidType uidType) {
+		if (uidType == null) {
+			throw new IllegalArgumentException("uidType is null.");
+		}
+		if (getAllStorePostfixes().inverse().get(uidType) == null) {
+			throw new IllegalArgumentException("UidType unknown for " + uidType);
+		}
+		this.uidType = uidType;
+	}
 
-    @Override
-    public void addToExportOperation(StoreAgent storeAgent, boolean useReleaseState, ExportOperation exportOperation) {
-        final IDProvider storeRoot = storeAgent.getStore(uidType.getStoreType(), useReleaseState);
-        if(storeRoot != null) {
-            LOGGER.debug("Adding store element: {}", storeRoot);
-            exportOperation.addElement(storeRoot);
-        } else {
-            throw new UnknownRootNodeException("Store root cannot be retrieved for uidType " + uidType.getStoreType());
-        }
-    }
+	@Override
+	public void addToExportOperation(StoreAgent storeAgent, boolean useReleaseState, ExportOperation exportOperation) {
+		final IDProvider storeRoot = storeAgent.getStore(uidType.getStoreType(), useReleaseState);
+		if (storeRoot != null) {
+			LOGGER.debug("Adding store element: {}", storeRoot);
+			exportOperation.addElement(storeRoot);
+		} else {
+			throw new UnknownRootNodeException("Store root cannot be retrieved for uidType " + uidType.getStoreType());
+		}
+	}
 
-    @Override
-    public String toString() {
-        return ROOT_NODE_IDENTIFIER + ":" + getAllStorePostfixes().inverse().get(uidType);
-    }
+	@Override
+	public String toString() {
+		return ROOT_NODE_IDENTIFIER + ":" + getAllStorePostfixes().inverse().get(uidType);
+	}
 
-    @Override
-    public boolean equals(final Object o) {
-        if(o == null || o.getClass() != this.getClass()) {
-            return false;
-        } else if (this == o) {
-            return true;
-        } else {
-            final RootNodeIdentifier that = (RootNodeIdentifier) o;
-            return uidType.equals(that.uidType);
-        }
-    }
+	@Override
+	public boolean equals(final Object o) {
+		if (o == null || o.getClass() != this.getClass()) {
+			return false;
+		} else if (this == o) {
+			return true;
+		} else {
+			final RootNodeIdentifier that = (RootNodeIdentifier) o;
+			return uidType.equals(that.uidType);
+		}
+	}
 
-    @Override
-    public int hashCode() {
-        int result = uidType.hashCode();
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		int result = uidType.hashCode();
+		return result;
+	}
 
 }

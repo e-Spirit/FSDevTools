@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,13 +30,13 @@ package com.espirit.moddev.cli.api.parsing.exceptions;
  */
 public class UnregisteredPrefixException extends RuntimeException {
 
-    /**
-     * Create a new instance of this exception with the given message.
-     *
-     * @param message the message of this exception
-     * @see java.lang.Exception#Exception(String)
-     */
-    public UnregisteredPrefixException(String message) {
-        super(message);
-    }
+	/**
+	 * Create a new instance of this exception with the given message.
+	 *
+	 * @param message the message of this exception
+	 * @see java.lang.Exception#Exception(String)
+	 */
+	public UnregisteredPrefixException(String message) {
+		super(message);
+	}
 }

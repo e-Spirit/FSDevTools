@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,18 +36,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class GroupUtilsTest {
 
-    public static final String DEFAULT_GROUP_TEST_PACKAGE_NAME = "com.espirit.moddev.cli.testgroups.reflectiontest";
+	public static final String DEFAULT_GROUP_TEST_PACKAGE_NAME = "com.espirit.moddev.cli.testgroups.reflectiontest";
 
-    @Test
-    public void packageScanRetrievesCorrectCommandClassCount() {
-        final Set<Class<?>> groupClassesInPackage = GroupUtils.scanForGroupClasses(DEFAULT_GROUP_TEST_PACKAGE_NAME);
-        assertEquals(5, groupClassesInPackage.size());
-    }
+	@Test
+	public void packageScanRetrievesCorrectCommandClassCount() {
+		final Set<Class<?>> groupClassesInPackage = GroupUtils.scanForGroupClasses(DEFAULT_GROUP_TEST_PACKAGE_NAME);
+		assertEquals(5, groupClassesInPackage.size());
+	}
 
-    @Test
-    public void classpathScanRetrievesExampleGroup() {
-        final Set<Class<?>> groupClassesInPackage = GroupUtils.scanForGroupClasses("");
-        assertTrue(groupClassesInPackage.contains(ExampleCustomGroup.class), "Expected example group class to be found");
-    }
+	@Test
+	public void classpathScanRetrievesExampleGroup() {
+		final Set<Class<?>> groupClassesInPackage = GroupUtils.scanForGroupClasses("");
+		assertTrue(groupClassesInPackage.contains(ExampleCustomGroup.class), "Expected example group class to be found");
+	}
 
 }

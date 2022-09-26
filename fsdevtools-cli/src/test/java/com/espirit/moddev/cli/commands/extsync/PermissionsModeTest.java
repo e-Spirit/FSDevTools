@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2021 e-Spirit GmbH
+ * Copyright (C) 2022 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@
 
 package com.espirit.moddev.cli.commands.extsync;
 
-
 import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
@@ -30,33 +29,32 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-
 public class PermissionsModeTest {
 
-    @Test
-    public void toPermissionsMode_invalidValue() {
-        assertThrows(IllegalArgumentException.class, () -> PermissionsMode.toPermissionsMode("4211_invalid-value"));
-    }
+	@Test
+	public void toPermissionsMode_invalidValue() {
+		assertThrows(IllegalArgumentException.class, () -> PermissionsMode.toPermissionsMode("4211_invalid-value"));
+	}
 
-    @Test
-    public void toPermissionsMode_lowerCase() {
-        for (final PermissionsMode mode : PermissionsMode.values()) {
-            assertEquals(mode, PermissionsMode.toPermissionsMode(mode.name().toLowerCase(Locale.ROOT)));
-        }
-    }
+	@Test
+	public void toPermissionsMode_lowerCase() {
+		for (final PermissionsMode mode : PermissionsMode.values()) {
+			assertEquals(mode, PermissionsMode.toPermissionsMode(mode.name().toLowerCase(Locale.ROOT)));
+		}
+	}
 
-    @Test
-    public void toPermissionsMode_without_underscore() {
-        for (final PermissionsMode mode : PermissionsMode.values()) {
-            assertEquals(mode, PermissionsMode.toPermissionsMode(mode.name().replaceAll("_", "")));
-        }
-    }
+	@Test
+	public void toPermissionsMode_without_underscore() {
+		for (final PermissionsMode mode : PermissionsMode.values()) {
+			assertEquals(mode, PermissionsMode.toPermissionsMode(mode.name().replaceAll("_", "")));
+		}
+	}
 
-    @Test
-    public void toPermissionsMode_with_minus() {
-        for (final PermissionsMode mode : PermissionsMode.values()) {
-            assertEquals(mode, PermissionsMode.toPermissionsMode(mode.name().replaceAll("_", "-")));
-        }
-    }
+	@Test
+	public void toPermissionsMode_with_minus() {
+		for (final PermissionsMode mode : PermissionsMode.values()) {
+			assertEquals(mode, PermissionsMode.toPermissionsMode(mode.name().replaceAll("_", "-")));
+		}
+	}
 
 }
