@@ -24,8 +24,8 @@ package com.espirit.moddev.shared.exception;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -40,6 +40,7 @@ import java.util.List;
 public class MultiException extends RuntimeException {
 
 	private final List<Exception> _exceptions;
+	private String _message;
 
 	public MultiException(@NotNull final String message, @NotNull final Collection<Exception> exceptions) {
 		super(message);
@@ -47,7 +48,43 @@ public class MultiException extends RuntimeException {
 		addExceptions(exceptions);
 	}
 
-	private void addExceptions(final Collection<Exception> exceptions) {
+	@Override
+	public String getMessage() {
+		if (_message == null) {
+			final StringWriter stringWriter = new StringWriter();
+			try (final PrintWriter writer = new PrintWriter(stringWriter)) {
+				writer.print(super.getMessage());
+				writer.print("\n\n");
+				// summary
+				writer.print("-- SUMMARY --");
+				writer.print("\n");
+				for (int index = 0; index < _exceptions.size(); index++) {
+					final Exception exception = _exceptions.get(index);
+					final String numberSuffix = "#" + getNumberWithLeadingChar(index + 1, _exceptions.size(), '0');
+					if (exception.getMessage() != null) {
+						writer.print(numberSuffix + ": " + exception.getMessage());
+					} else {
+						writer.print(numberSuffix + ": <Exception message is null - see stacktrace for details>");
+					}
+					writer.print("\n");
+				}
+				writer.print("-- END OF SUMMARY --\n");
+
+				// stracktraces
+				for (int index = 0; index < _exceptions.size(); index++) {
+					final Exception exception = _exceptions.get(index);
+					final String numberSuffix = "#" + getNumberWithLeadingChar(index + 1, _exceptions.size(), '0');
+					writer.print("\n\n-- " + numberSuffix + " : STACKTRACE --\n");
+					exception.printStackTrace(writer);
+					writer.print("-- " + numberSuffix + " : END OF STACKTRACE --\n");
+				}
+			}
+			_message = stringWriter.toString();
+		}
+		return _message;
+	}
+
+	private void addExceptions(@NotNull final Collection<Exception> exceptions) {
 		for (final Exception exception : exceptions) {
 			if (exception instanceof MultiException) {
 				addExceptions(((MultiException) exception)._exceptions);
@@ -57,46 +94,14 @@ public class MultiException extends RuntimeException {
 		}
 	}
 
-	public List<Exception> getExceptions() {
-		return _exceptions;
-	}
-
-	@Override
-	public void printStackTrace(final PrintStream writer) {
-		writer.println(getMessage());
-		for (int index = 0; index < _exceptions.size(); index++) {
-            final Exception exception = _exceptions.get(index);
-            final String numberSuffix = "#" + getNumberWithLeadingChar(index + 1, _exceptions.size(), '0');
-            writer.print(numberSuffix + ": " + exception.getMessage());
-            writer.print("\n\n-- STACKTRACE " + numberSuffix + " --\n");
-            exception.printStackTrace(writer);
-            writer.print("-- END OF STACKTRACE --\n\n");
-		}
-		super.printStackTrace(writer);
-	}
-
-	@Override
-	public void printStackTrace(final PrintWriter writer) {
-		writer.println(getMessage());
-		for (int index = 0; index < _exceptions.size(); index++) {
-			final Exception exception = _exceptions.get(index);
-			final String numberSuffix = "#" + getNumberWithLeadingChar(index + 1, _exceptions.size(), '0');
-			writer.print(numberSuffix + ": " + exception.getMessage());
-			writer.print("\n\n-- STACKTRACE " + numberSuffix + " --\n");
-			exception.printStackTrace(writer);
-			writer.print("-- END OF STACKTRACE --\n\n");
-		}
-	}
-
-	private String getNumberWithLeadingChar(final int number, final int max, final char leadingChar) {
+	@NotNull
+	private static String getNumberWithLeadingChar(final int number, final int max, final char leadingChar) {
 		final int digits = String.valueOf(number).length();
 		final int maxLength = String.valueOf(max).length();
 		final int leadingZeros = maxLength - digits;
 		final StringBuilder sb = new StringBuilder();
 		if (leadingZeros > 0) {
-			for (int i = 0; i < leadingZeros; i++) {
-				sb.append(leadingChar);
-			}
+			sb.append(String.valueOf(leadingChar).repeat(leadingZeros));
 		}
 		sb.append(number);
 		return sb.toString();

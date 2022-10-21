@@ -1,5 +1,9 @@
 # Release notes
 
+## Version 4.0.2
+
+* fixed logging for MultiExceptions in "module installBulk" command
+
 ## Version 4.0.1
 
 * added missing add-opens for JDK 17
