@@ -23,7 +23,6 @@
 package com.espirit.moddev.cli.commands.schedule.startCommand;
 
 import de.espirit.firstspirit.access.schedule.ScheduleEntry;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;

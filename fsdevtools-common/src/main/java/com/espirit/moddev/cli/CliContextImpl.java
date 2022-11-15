@@ -27,7 +27,6 @@ import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.exception.CliError;
 import com.espirit.moddev.cli.exception.CliException;
 import com.espirit.moddev.shared.StringUtils;
-
 import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.UserService;
@@ -39,7 +38,6 @@ import de.espirit.firstspirit.agency.SpecialistsBroker;
 import de.espirit.firstspirit.common.IOError;
 import de.espirit.firstspirit.common.MaximumNumberOfSessionsExceededException;
 import de.espirit.firstspirit.server.authentication.AuthenticationException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,8 +47,6 @@ import java.util.Map;
 
 /**
  * Default implementation of {@link com.espirit.moddev.cli.api.CliContext}.
- *
- * @author e-Spirit GmbH
  */
 public class CliContextImpl implements CliContext {
 
@@ -150,11 +146,11 @@ public class CliContextImpl implements CliContext {
 		if (project == null && clientConfig.isCreatingProjectIfMissing()) {
 			project = createProject(projectName);
 		}
-		LOGGER.debug("Activate project if deactivated: " + clientConfig.isActivateProjectIfDeactivated());
+		LOGGER.debug("activate project if deactivated: " + clientConfig.isActivateProjectIfDeactivated());
 		if (clientConfig.isActivateProjectIfDeactivated()) {
 			activateProject(projectName, project);
 		}
-		LOGGER.info("Project is '{}'", project);
+		LOGGER.info("project is '{}'", project);
 		this.project = project;
 	}
 

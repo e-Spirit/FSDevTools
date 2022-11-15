@@ -22,11 +22,10 @@
 
 package com.espirit.moddev.cli.commands.module.utils;
 
+import com.google.common.collect.Lists;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
 import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
 import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
-
-import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

@@ -24,8 +24,10 @@ package com.espirit.moddev.cli.commands.module.installCommand;
 
 import com.espirit.moddev.cli.ConnectionBuilder;
 import com.espirit.moddev.cli.commands.SimpleCommand;
-import com.espirit.moddev.cli.commands.module.ModuleCommandNames;
 import com.espirit.moddev.cli.commands.module.ModuleCommandGroup;
+import com.espirit.moddev.cli.commands.module.ModuleCommandNames;
+import com.espirit.moddev.cli.commands.module.common.ModuleInstallationConfiguration;
+import com.espirit.moddev.cli.commands.module.common.ModuleInstallationParameters;
 import com.espirit.moddev.cli.commands.module.utils.ModuleInstaller;
 import com.espirit.moddev.shared.annotation.VisibleForTesting;
 import com.github.rvesse.airline.annotations.Command;
@@ -36,17 +38,16 @@ import com.github.rvesse.airline.annotations.restrictions.Path;
 import com.github.rvesse.airline.annotations.restrictions.PathKind;
 import com.github.rvesse.airline.annotations.restrictions.Required;
 import de.espirit.firstspirit.access.Connection;
-import de.espirit.firstspirit.agency.ModuleAdminAgent;
 import de.espirit.firstspirit.common.MaximumNumberOfSessionsExceededException;
 import de.espirit.firstspirit.server.authentication.AuthenticationException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.espirit.moddev.shared.StringUtils.isNullOrEmpty;
 
@@ -63,7 +64,7 @@ import static com.espirit.moddev.shared.StringUtils.isNullOrEmpty;
 		descriptions = {"Installs the videomanagementpro module with a given project app configuration and configures the VideoManagementProService with the given ini file."
 		}
 )
-public class InstallModuleCommand extends SimpleCommand<InstallModuleResult> {
+public class InstallModuleCommand extends SimpleCommand<InstallModuleCommandResult> {
 
 	protected static final Logger LOGGER = LoggerFactory.getLogger(InstallModuleCommand.class);
 
@@ -90,41 +91,42 @@ public class InstallModuleCommand extends SimpleCommand<InstallModuleResult> {
 	private String _webAppScopes;
 	@Option(type = OptionType.COMMAND, name = {"-wacf", "--webAppConfigurationFiles"}, description = "Define a map-like configuration for the webapps of the given module - with comma-separated key-values.", title = "webAppConfigurationFiles")
 	private String _webAppConfigurationFiles;
-	@Option(type = OptionType.COMMAND, name = {"-dwa", "--deployWebApps"}, description = "Define whether all related webapps of the module should be immediately deployed after the installation or not [true = deploy (default) | false = no deploy]", title = "deployWebApps")
+	@Option(arity = 1, type = OptionType.COMMAND, name = {"-dwa", "--deployWebApps"}, description = "Define whether all related webapps of the module should be immediately deployed after the installation or not [true = deploy (default) | false = no deploy]", title = "deployWebApps")
 	private boolean _deploy = true;
 
 	@Override
-	public InstallModuleResult call() {
+	public InstallModuleCommandResult call() {
 		try (Connection connection = create()) {
 			connection.connect();
-			return installModule(connection);
-		} catch (IOException | AuthenticationException | MaximumNumberOfSessionsExceededException | IllegalArgumentException e) {
-			return new InstallModuleResult(_fsm, e);
+			final ModuleInstallationConfiguration configuration = createModuleInstallationConfiguration();
+			configuration.verify(connection);
+			return new ModuleInstaller(connection).installModule(ModuleInstallationParameters.forConfiguration(configuration));
+		} catch (final FileNotFoundException e) {
+			return new InstallModuleCommandResult(_fsm, e);
+		} catch (final IOException | AuthenticationException | MaximumNumberOfSessionsExceededException e) {
+			return new InstallModuleCommandResult(_fsm, new IllegalStateException("Unable to connect to FirstSpirit server.", e));
+		} catch (final Exception exception) {
+			return new InstallModuleCommandResult(_fsm, exception);
 		}
+	}
+
+	@NotNull
+	private ModuleInstallationConfiguration createModuleInstallationConfiguration() {
+		final String projectName = retrieveProjectNameOrFallback();
+		final ModuleInstallationConfiguration configuration = new ModuleInstallationConfiguration();
+		configuration.setFsm(_fsm);
+		configuration.setModuleProjectName(projectName);
+		configuration.setWebAppScopes(splitAndTrim(_webAppScopes));
+		configuration.setDeploy(String.valueOf(_deploy));
+		configuration.setProjectAppConfigurationFile(_projectAppConfigurationFile);
+		configuration.setServiceConfigurationFiles(splitAndTrim(_serviceConfigurationsFiles));
+		configuration.setWebAppConfigurationFiles(splitAndTrim(_webAppConfigurationFiles));
+		return configuration;
 	}
 
 	@VisibleForTesting
 	public void setFsm(@NotNull final String fsm) {
 		_fsm = fsm;
-	}
-
-	@NotNull
-	private InstallModuleResult installModule(Connection connection) throws IOException {
-		String projectName = retrieveProjectNameOrFallback();
-
-		final ModuleInstallationConfiguration configuration = new ModuleInstallationConfiguration();
-		configuration.setFsm(_fsm);
-		configuration.setModuleProjectName(projectName);
-		configuration.setWebAppScopes(splitAndTrim(_webAppScopes));
-		configuration.setDeploy(Boolean.toString(_deploy));
-		configuration.setProjectAppConfigurationFile(_projectAppConfigurationFile);
-		configuration.setServiceConfigurationFiles(splitAndTrim(_serviceConfigurationsFiles));
-		configuration.setWebAppConfigurationFiles(splitAndTrim(_webAppConfigurationFiles));
-		configuration.verify(connection);
-		final ModuleInstallationParameters parameters = ModuleInstallationParameters.forConfiguration(configuration);
-
-		final ModuleAdminAgent.ModuleResult result = new ModuleInstaller(connection).install(parameters, parameters.getDeploy());
-		return new InstallModuleResult(result.getDescriptor().getModuleName());
 	}
 
 	private List<String> splitAndTrim(final String text) {

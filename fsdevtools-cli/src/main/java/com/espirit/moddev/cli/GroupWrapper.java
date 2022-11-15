@@ -31,8 +31,6 @@ import java.util.Locale;
  * over airline's API. The different constructors can be used to
  * wrap a given annotation, or to create a custom group for later
  * usage.
- *
- * @author e-Spirit GmbH
  */
 public class GroupWrapper {
 
@@ -88,7 +86,7 @@ public class GroupWrapper {
 	 * @param description the group's description
 	 */
 	public GroupWrapper(String name, String description) {
-		this.name = name.toLowerCase(Locale.UK);
+		this.name = name.toLowerCase(Locale.ROOT);
 		this.description = description;
 		commands = new Class<?>[0];
 		defaultCommand = null;
@@ -101,7 +99,7 @@ public class GroupWrapper {
 	 * @param groupAnnotation {@link com.github.rvesse.airline.annotations.Group} used to initializes the public properties
 	 */
 	public GroupWrapper(Group groupAnnotation) {
-		name = groupAnnotation.name().toLowerCase(Locale.UK);
+		name = groupAnnotation.name().toLowerCase(Locale.ROOT);
 		description = groupAnnotation.description();
 		commands = groupAnnotation.commands();
 		defaultCommand = groupAnnotation.defaultCommand();

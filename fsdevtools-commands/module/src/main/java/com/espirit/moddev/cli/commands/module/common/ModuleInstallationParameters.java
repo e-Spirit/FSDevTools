@@ -20,16 +20,25 @@
  *
  */
 
-package com.espirit.moddev.cli.commands.module.installCommand;
+package com.espirit.moddev.cli.commands.module.common;
 
 import com.espirit.moddev.shared.StringUtils;
 import com.espirit.moddev.shared.annotation.VisibleForTesting;
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 import com.espirit.moddev.shared.webapp.WebAppIdentifierParser;
-import de.espirit.common.tools.Strings;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.StringJoiner;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -50,18 +59,6 @@ public class ModuleInstallationParameters {
 	private final boolean _deploy;
 
 	/**
-	 * Instantiates a parameters object and uses empty configurations for services, project apps and webapps.
-	 *
-	 * @param projectName the name of the FirstSpirit project the module's components should be installed to
-	 * @param fsm         the module file (fsm)
-	 * @deprecated please use the {@link ModuleInstallationParametersBuilder} instead.
-	 */
-	@Deprecated
-	public ModuleInstallationParameters(String projectName, File fsm) {
-		this(projectName, fsm, new HashMap(), null, new ArrayList<>(), new HashMap<>(), true);
-	}
-
-	/**
 	 * @param projectName             the optional name of the FirstSpirit project the module's components should be installed to
 	 * @param fsm                     the module file (fsm)
 	 * @param serviceConfigurations   configurations for the module's services
@@ -69,7 +66,13 @@ public class ModuleInstallationParameters {
 	 * @param webAppScopeDefinitions  scope configurations for the module's webapp
 	 * @param webAppConfigurations    configurations for the module's webapps per scope
 	 */
-	private ModuleInstallationParameters(String projectName, File fsm, Map<String, File> serviceConfigurations, File projectAppConfiguration, List<WebAppIdentifier> webAppScopeDefinitions, Map<WebAppIdentifier, File> webAppConfigurations, boolean deploy) {
+	private ModuleInstallationParameters(@Nullable final String projectName,
+										 @NotNull final File fsm,
+										 @Nullable final Map<String, File> serviceConfigurations,
+										 @Nullable final File projectAppConfiguration,
+										 @Nullable final List<WebAppIdentifier> webAppScopeDefinitions,
+										 @Nullable final Map<WebAppIdentifier, File> webAppConfigurations,
+										 final boolean deploy) {
 		_projectName = projectName;
 		_fsm = fsm;
 		_serviceConfigurations = serviceConfigurations != null ? serviceConfigurations : new HashMap<>();
@@ -79,30 +82,37 @@ public class ModuleInstallationParameters {
 		_deploy = deploy;
 	}
 
+	@NotNull
 	public static ModuleInstallationParametersBuilder builder() {
 		return new ModuleInstallationParametersBuilder();
 	}
 
+	@Nullable
 	public String getProjectName() {
 		return _projectName;
 	}
 
+	@NotNull
 	public File getFsm() {
 		return _fsm;
 	}
 
+	@NotNull
 	public Map<String, File> getServiceConfigurations() {
 		return _serviceConfigurations;
 	}
 
+	@NotNull
 	public Optional<File> getProjectAppConfiguration() {
 		return Optional.ofNullable(_projectAppConfiguration);
 	}
 
+	@NotNull
 	public List<WebAppIdentifier> getWebAppScopes() {
 		return Collections.unmodifiableList(_webAppScopes);
 	}
 
+	@NotNull
 	public Map<WebAppIdentifier, File> getWebAppConfigurations() {
 		return _webAppConfigurations;
 	}
@@ -111,15 +121,16 @@ public class ModuleInstallationParameters {
 		return _deploy;
 	}
 
-	public static ModuleInstallationParameters forConfiguration(final ModuleInstallationConfiguration configuration) {
+	@NotNull
+	public static ModuleInstallationParameters forConfiguration(@NotNull final ModuleInstallationConfiguration configuration) {
 		return ModuleInstallationParameters.builder()
 				.fsm(configuration.getFsm())
 				.projectName(configuration.getModuleProjectName())
-				.webAppScopes(Strings.implode(configuration.getWebAppScopes(), ","))
+				.webAppScopes(String.join(",", configuration.getWebAppScopes()))
 				.deploy(configuration.getDeploy())
 				.projectAppConfigurationFile(configuration.getProjectAppConfigurationFile())
-				.webAppConfigurationFiles(Strings.implode(configuration.getWebAppConfigurationFiles(), ","))
-				.serviceConfigurationFiles(Strings.implode(configuration.getServiceConfigurationFiles(), ","))
+				.webAppConfigurationFiles(String.join(",", configuration.getWebAppConfigurationFiles()))
+				.serviceConfigurationFiles(String.join(",", configuration.getServiceConfigurationFiles()))
 				.build();
 	}
 
@@ -136,21 +147,21 @@ public class ModuleInstallationParameters {
 		}
 
 		/**
-		 * This method creates a new instance of @see com.espirit.moddev.moduleinstaller.ModuleInstallationParameters
-		 * based on all set parameters.
+		 * This method creates a new instance of {@link ModuleInstallationParameters} based on all set parameters.
 		 *
-		 * @return an instance of @see com.espirit.moddev.moduleinstaller.ModuleInstallationParameters
+		 * @return an instance of {@link ModuleInstallationParameters}
 		 */
+		@NotNull
 		public ModuleInstallationParameters build() {
-			File firstSpiritModule = new File(_fsm);
+			final File firstSpiritModule = new File(_fsm);
 			if (!firstSpiritModule.isFile() || !firstSpiritModule.exists()) {
-				throw new IllegalArgumentException("Could not open .fsm file: " + firstSpiritModule.getPath());
+				throw new IllegalArgumentException("Could not find .fsm file: " + firstSpiritModule.getPath());
 			}
 
-			List<WebAppIdentifier> splittedWebAppScopes = new WebAppIdentifierParser().extractWebScopes(_webAppScopes);
-			File projectAppConfigFile = createAndValidateOptionalProjectAppConfigurationFile(_projectAppConfigurationFile);
-			Map<String, File> configurationFileForServiceName = getAndValidateStringFilesMap(_serviceConfigurationFiles);
-			Map<WebAppIdentifier, File> webAppConfigurationFilesForWebScopes = getAndValidateWebScopeFileMap(_webAppConfigurationFiles);
+			final List<WebAppIdentifier> splittedWebAppScopes = new WebAppIdentifierParser().extractWebScopes(_webAppScopes);
+			final File projectAppConfigFile = createAndValidateOptionalProjectAppConfigurationFile(_projectAppConfigurationFile);
+			final Map<String, File> configurationFileForServiceName = getAndValidateStringFilesMap(_serviceConfigurationFiles);
+			final Map<WebAppIdentifier, File> webAppConfigurationFilesForWebScopes = getAndValidateWebScopeFileMap(_webAppConfigurationFiles);
 			return new ModuleInstallationParameters(_projectName, firstSpiritModule, configurationFileForServiceName, projectAppConfigFile, splittedWebAppScopes, webAppConfigurationFilesForWebScopes, shouldDeploy());
 		}
 
@@ -160,27 +171,31 @@ public class ModuleInstallationParameters {
 		}
 
 		@VisibleForTesting
-		File createAndValidateOptionalProjectAppConfigurationFile(String projectAppConfigurationFile) {
-			File result = createOptionalProjectAppConfigurationFile(projectAppConfigurationFile);
+		@Nullable
+		File createAndValidateOptionalProjectAppConfigurationFile(@Nullable final String projectAppConfigurationFile) {
+			final File result = createOptionalProjectAppConfigurationFile(projectAppConfigurationFile);
 			if (result != null && (!result.isFile() || !result.exists())) {
 				throw new IllegalArgumentException("Project app configuration file doesn't exist or is not a file!");
 			}
 			return result;
 		}
 
-		public File createOptionalProjectAppConfigurationFile(String projectAppConfigurationFile) {
+		@VisibleForTesting
+		@Nullable
+		public File createOptionalProjectAppConfigurationFile(@Nullable final String projectAppConfigurationFile) {
 			return Optional.ofNullable(projectAppConfigurationFile)
 					.map(File::new)
 					.orElse(null);
 		}
 
-		private Map<WebAppIdentifier, File> getAndValidateWebScopeFileMap(String webAppConfigurationFiles) {
-			Map<WebAppIdentifier, File> webScopeFileMap = getWebScopeFileMap(webAppConfigurationFiles);
+		@NotNull
+		private Map<WebAppIdentifier, File> getAndValidateWebScopeFileMap(@Nullable final String webAppConfigurationFiles) {
+			final Map<WebAppIdentifier, File> webScopeFileMap = getWebScopeFileMap(webAppConfigurationFiles);
 			validateWebScopeFileMap(webScopeFileMap);
 			return webScopeFileMap;
 		}
 
-		private void validateWebScopeFileMap(Map<WebAppIdentifier, File> webScopeFileMap) {
+		private void validateWebScopeFileMap(@NotNull final Map<WebAppIdentifier, File> webScopeFileMap) {
 			for (Map.Entry<WebAppIdentifier, File> entry : webScopeFileMap.entrySet()) {
 				if (!entry.getValue().isFile() || !entry.getValue().exists()) {
 					throw new IllegalArgumentException("File for webapp configuration with scope " + entry.getKey() + " doesn't exist or is not a file.");
@@ -188,23 +203,26 @@ public class ModuleInstallationParameters {
 			}
 		}
 
-		public Map<WebAppIdentifier, File> getWebScopeFileMap(String webAppConfigurationFiles) {
-			Set<Map.Entry<String, File>> entries = getStringFilesMap(webAppConfigurationFiles).entrySet();
+		@NotNull
+		public Map<WebAppIdentifier, File> getWebScopeFileMap(@Nullable final String webAppConfigurationFiles) {
+			final Set<Map.Entry<String, File>> entries = getStringFilesMap(webAppConfigurationFiles).entrySet();
 			return entries.stream().collect(
 					toMap(entry -> new WebAppIdentifierParser().parseSingle(entry.getKey()), Map.Entry::getValue));
 		}
 
-		public Map<String, File> getStringFilesMap(String webAppConfigurations) {
-			if (StringUtils.isNullOrEmpty(webAppConfigurations)) {
+		@NotNull
+		public Map<String, File> getStringFilesMap(@Nullable final String configurations) {
+			if (StringUtils.isNullOrEmpty(configurations)) {
 				return new HashMap<>();
 			}
-			return Arrays.stream(webAppConfigurations.split(","))
+			return Arrays.stream(configurations.split(","))
 					.map(propertyString -> propertyString.split("="))
 					.collect(toMap(entry -> entry[0], entry -> new File(entry[1])));
 		}
 
-		private Map<String, File> getAndValidateStringFilesMap(String configurations) {
-			Map<String, File> result = getStringFilesMap(configurations);
+		@NotNull
+		private Map<String, File> getAndValidateStringFilesMap(@Nullable final String configurations) {
+			final Map<String, File> result = getStringFilesMap(configurations);
 			for (Map.Entry<String, File> entry : result.entrySet()) {
 				if (!entry.getValue().exists() || !entry.getValue().isFile()) {
 					throw new IllegalArgumentException("File doesn't exist for key " + entry.getKey());
@@ -213,43 +231,59 @@ public class ModuleInstallationParameters {
 			return result;
 		}
 
-		public ModuleInstallationParametersBuilder webAppConfigurationFiles(String webAppConfigurationFiles) {
+		@NotNull
+		public ModuleInstallationParametersBuilder webAppConfigurationFiles(@NotNull final String webAppConfigurationFiles) {
 			_webAppConfigurationFiles = webAppConfigurationFiles;
 			return this;
 		}
 
+		@NotNull
 		public ModuleInstallationParametersBuilder webAppScopes(String webAppScopes) {
 			_webAppScopes = webAppScopes;
 			return this;
 		}
 
+		@NotNull
 		public ModuleInstallationParametersBuilder projectAppConfigurationFile(String projectAppConfigurationFile) {
 			_projectAppConfigurationFile = projectAppConfigurationFile;
 			return this;
 		}
 
+		@NotNull
 		public ModuleInstallationParametersBuilder serviceConfigurationFiles(String serviceConfigurationFile) {
 			_serviceConfigurationFiles = serviceConfigurationFile;
 			return this;
 		}
 
+		@NotNull
 		public ModuleInstallationParametersBuilder fsm(String fsm) {
 			_fsm = fsm;
 			return this;
 		}
 
+		@NotNull
 		public ModuleInstallationParametersBuilder projectName(String projectName) {
 			_projectName = projectName;
 			return this;
 		}
 
+		@NotNull
 		public ModuleInstallationParametersBuilder deploy(String deploy) {
 			_deploy = deploy;
 			return this;
 		}
 
+		@Override
 		public String toString() {
-			return "ModuleInstallationRawParameters.ModuleInstallationRawParametersBuilder(webAppConfigurationFiles=" + _webAppConfigurationFiles + ", webAppScopes=" + _webAppScopes + ", projectAppConfigurationFile=" + _projectAppConfigurationFile + ", serviceConfigurationFiles=" + _serviceConfigurationFiles + ", fsm=" + _fsm + ", projectName=" + _projectName + ")";
+			return new StringJoiner(", ", ModuleInstallationParametersBuilder.class.getSimpleName() + "[", "]")
+					.add("webAppConfigurationFiles='" + _webAppConfigurationFiles + "'")
+					.add("webAppScopes='" + _webAppScopes + "'")
+					.add("projectAppConfigurationFile='" + _projectAppConfigurationFile + "'")
+					.add("serviceConfigurationFiles='" + _serviceConfigurationFiles + "'")
+					.add("fsm='" + _fsm + "'")
+					.add("projectName='" + _projectName + "'")
+					.add("deploy='" + _deploy + "'")
+					.toString();
 		}
 	}
 }

@@ -31,6 +31,7 @@ import com.espirit.moddev.cli.commands.module.configureCommand.json.components.c
 import com.espirit.moddev.cli.commands.module.configureCommand.json.components.common.ProjectNotFoundResult;
 import com.espirit.moddev.cli.commands.module.utils.FileSystemUtil;
 import com.espirit.moddev.cli.commands.module.utils.ModuleUtil;
+import com.espirit.moddev.cli.commands.module.utils.WebAppUtil;
 import com.espirit.moddev.shared.StringUtils;
 import com.espirit.moddev.shared.annotation.VisibleForTesting;
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
@@ -203,9 +204,9 @@ public class ComponentWebApps implements Configurable {
 					.stream()
 					.anyMatch(webAppId::equals);
 			if (!updateWebComponent) {
-				LOGGER.debug("Installing web component '{}:{}' in web app '{}'...", moduleName, webComponentName, _webAppName.toString());
+				LOGGER.debug("Installing web component '{}:{}' in web app '{}'...", moduleName, webComponentName, _webAppName);
 			} else {
-				LOGGER.debug("Updating web component '{}:{}' in web app '{}'...", moduleName, webComponentName, _webAppName.toString());
+				LOGGER.debug("Updating web component '{}:{}' in web app '{}'...", moduleName, webComponentName, _webAppName);
 			}
 
 			try {
@@ -280,7 +281,7 @@ public class ComponentWebApps implements Configurable {
 				return String.format(MESSAGE_GLOBAL_WEBAPP, _moduleName, _componentName, globalWebAppId.getGlobalId());
 			} else {
 				final ProjectWebAppId projectWebAppId = (ProjectWebAppId) _webAppId;
-				return String.format(MESSAGE_PROJECT_WEBAPP, _moduleName, _componentName, projectWebAppId.getWebScope().toString().toLowerCase(Locale.UK), projectWebAppId.getProject().getName());
+				return String.format(MESSAGE_PROJECT_WEBAPP, _moduleName, _componentName, projectWebAppId.getWebScope().toString().toLowerCase(Locale.ROOT), projectWebAppId.getProject().getName());
 			}
 		}
 
@@ -318,7 +319,7 @@ public class ComponentWebApps implements Configurable {
 
 		@Override
 		public String toString() {
-			return String.format(_updateWebComponent ? MESSAGE_UPDATE : MESSAGE_INSTALL, _moduleName, _componentName, WebAppIdentifier.getName(_webAppId), _moduleException);
+			return String.format(_updateWebComponent ? MESSAGE_UPDATE : MESSAGE_INSTALL, _moduleName, _componentName, WebAppUtil.getReadableWebAppName(_webAppId), _moduleException);
 		}
 
 	}

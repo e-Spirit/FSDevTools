@@ -23,7 +23,6 @@
 package com.espirit.moddev.cli.results;
 
 import com.espirit.moddev.cli.api.result.Result;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +30,6 @@ import org.slf4j.LoggerFactory;
  * General {@link com.espirit.moddev.cli.api.result.Result} implementation.
  *
  * @param <CUSTOM_RESULT_TYPE> Type of the result produced by the command
- * @author e-Spirit GmbH
  */
 public class SimpleResult<CUSTOM_RESULT_TYPE> implements Result<CUSTOM_RESULT_TYPE> {
 

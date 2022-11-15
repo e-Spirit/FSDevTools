@@ -52,12 +52,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.espirit.moddev.cli.api.json.common.AttributeNames.*;
+import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_COMPONENT_NAME;
+import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_FILES;
+import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_PROJECT_APPS;
+import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_PROJECT_NAME;
 import static com.espirit.moddev.cli.commands.module.utils.FileSystemUtilTest.verifyDirDoesNotExist;
 import static com.espirit.moddev.cli.commands.module.utils.FileSystemUtilTest.verifyFile;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SuppressWarnings("unchecked")
 public class ComponentProjectAppsTest {

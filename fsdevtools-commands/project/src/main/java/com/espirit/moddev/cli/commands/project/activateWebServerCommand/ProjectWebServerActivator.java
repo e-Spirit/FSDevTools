@@ -24,7 +24,6 @@ package com.espirit.moddev.cli.commands.project.activateWebServerCommand;
 
 import com.espirit.moddev.shared.annotation.VisibleForTesting;
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
-
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.access.script.ExecutionException;
@@ -32,7 +31,6 @@ import de.espirit.firstspirit.access.store.LockException;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
 import de.espirit.firstspirit.agency.WebAppId;
 import de.espirit.firstspirit.module.WebEnvironment;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,8 +92,7 @@ public class ProjectWebServerActivator {
 	 * @param moduleAdminAgent a moduleAdminAgent derived from a connection
 	 * @param scope            web app to be undeployed / deployed
 	 */
-	private boolean migrateActiveWebServer(String activeServerName, ModuleAdminAgent moduleAdminAgent, Project project,
-										   WebAppIdentifier scope, String scopeName) {
+	private boolean migrateActiveWebServer(String activeServerName, ModuleAdminAgent moduleAdminAgent, Project project, WebAppIdentifier scope, String scopeName) {
 		final String oldActiveServerName = project.getActiveWebServer(scopeName);
 		if (oldActiveServerName != null && !oldActiveServerName.isEmpty()) {
 			final boolean
@@ -136,8 +133,7 @@ public class ProjectWebServerActivator {
 	 * @param moduleAdminAgent a moduleAdminAgent derived from a connection
 	 * @param scope            web app to be undeployed / deployed
 	 */
-	private void recoverDeploymentForScope(String scopeName, String activeServerName, Project project,
-										   ModuleAdminAgent moduleAdminAgent, WebAppIdentifier scope) {
+	private void recoverDeploymentForScope(String scopeName, String activeServerName, Project project, ModuleAdminAgent moduleAdminAgent, WebAppIdentifier scope) {
 		LOGGER.warn("The migration from an old web server to a new web server failed. Try to recover state!");
 		final String oldActiveServerName = project.getActiveWebServer(scopeName);
 		if (oldActiveServerName != null && !oldActiveServerName.isEmpty()) {
@@ -259,7 +255,7 @@ public class ProjectWebServerActivator {
 		try {
 			final boolean successIndicator = moduleAdminAgent.undeployWebApp(webAppId);
 			if (!successIndicator) {
-				LOGGER.error("Scope with id '{}' could not be undeployed from server", webAppId.toString());
+				LOGGER.error("Web app '{}' could not be undeployed from server", webAppId);
 				return false;
 			}
 		} catch (SecurityException e) {
@@ -271,9 +267,9 @@ public class ProjectWebServerActivator {
 			return false;
 		} catch (IllegalArgumentException e) {
 			if (scope.isGlobal()) {
-				LOGGER.error(webAppId.toString() + " could not be undeployed. Make sure the defined global web app id exists!", e);
+				LOGGER.error(webAppId + " could not be undeployed. Make sure the defined global web app id exists!", e);
 			} else {
-				LOGGER.error(scope.getScope().name() + " could not be undeployed", e);
+				LOGGER.error(webAppId + " could not be undeployed.", e);
 			}
 			return false;
 		}

@@ -22,14 +22,13 @@
 
 package com.espirit.moddev.cli.commands.schedule.listCommand;
 
+import com.espirit.moddev.cli.commands.schedule.utils.ScheduleTestUtils;
 import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.admin.ProjectStorage;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.access.schedule.ScheduleEntry;
 import de.espirit.firstspirit.access.schedule.ScheduleStorage;
-
-import com.espirit.moddev.cli.commands.schedule.utils.ScheduleTestUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 

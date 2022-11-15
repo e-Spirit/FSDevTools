@@ -36,8 +36,6 @@ import java.util.stream.Collectors;
 /**
  * This class is a utility class for group extraction. It offers some convenience methods that use reflection to scan packages, read classes and
  * annotations etc.
- *
- * @author e-Spirit GmbH
  */
 public final class GroupUtils {
 

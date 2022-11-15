@@ -22,6 +22,11 @@
 
 package com.espirit.moddev.cli;
 
+import com.espirit.moddev.cli.api.CliContext;
+import com.espirit.moddev.cli.api.configuration.Config;
+import com.espirit.moddev.cli.api.configuration.ImportConfig;
+import com.espirit.moddev.connection.FsConnectionType;
+import com.espirit.moddev.util.FsUtil;
 import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.BaseContext;
 import de.espirit.firstspirit.access.Connection;
@@ -30,12 +35,6 @@ import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.agency.BrokerAgent;
 import de.espirit.firstspirit.agency.LanguageAgent;
 import de.espirit.firstspirit.agency.SpecialistsBroker;
-
-import com.espirit.moddev.cli.api.CliContext;
-import com.espirit.moddev.cli.api.configuration.Config;
-import com.espirit.moddev.cli.api.configuration.ImportConfig;
-import com.espirit.moddev.connection.FsConnectionType;
-import com.espirit.moddev.util.FsUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,9 +53,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * @author e-Spirit GmbH
- */
 public class CliContextImplTest {
 
 	private ImportConfig clientConfig;

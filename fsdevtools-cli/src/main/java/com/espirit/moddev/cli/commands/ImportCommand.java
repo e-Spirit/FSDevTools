@@ -42,8 +42,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Command that executes a FirstSpirit ImportOperation. Uses a FirstSpirit context.
- *
- * @author e-Spirit GmbH
  */
 @Command(name = "import", description = "Imports a FirstSpirit project into a FirstSpirit Server.")
 @Examples(
@@ -150,7 +148,7 @@ public class ImportCommand extends SimpleCommand<ImportResult> implements Import
 			LOGGER.info("importing from directory '{}'", syncDirStr);
 			final ImportOperation.Result result = importOperation.perform(getSynchronizationDirectory(syncDirStr));
 			return new ImportResult(getContext().requireSpecialist(StoreAgent.TYPE), result);
-		} catch (@SuppressWarnings("squid:S2221") final Exception e) {
+		} catch (final Exception e) {
 			return new ImportResult(e);
 		}
 	}

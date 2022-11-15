@@ -22,11 +22,10 @@
 
 package com.espirit.moddev.cli.commands.service.restartCommand;
 
-import de.espirit.firstspirit.access.ServiceNotFoundException;
-
 import com.espirit.moddev.cli.commands.service.common.ServiceInfo;
 import com.espirit.moddev.cli.commands.service.common.ServiceProcessCommandBaseTest;
 import com.espirit.moddev.cli.commands.service.common.ServiceProcessResult;
+import de.espirit.firstspirit.access.ServiceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

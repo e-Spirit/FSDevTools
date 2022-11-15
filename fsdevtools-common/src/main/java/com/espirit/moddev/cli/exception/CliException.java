@@ -26,8 +26,6 @@ import com.espirit.moddev.cli.api.configuration.Config;
 
 /**
  * General runtime exception that can be thrown in the cli application.
- *
- * @author e-Spirit GmbH
  */
 public class CliException extends RuntimeException {
 

@@ -24,7 +24,6 @@ package com.espirit.moddev.cli.test.projectCommand;
 
 import com.espirit.moddev.cli.CliContextImpl;
 import com.espirit.moddev.cli.api.result.Result;
-
 import com.espirit.moddev.cli.commands.test.projectCommand.TestProjectCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

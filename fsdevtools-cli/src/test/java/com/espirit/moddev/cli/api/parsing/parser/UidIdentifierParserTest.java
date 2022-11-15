@@ -40,9 +40,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author e-Spirit GmbH
- */
 public class UidIdentifierParserTest {
 
 	private UidIdentifierParser testling;
@@ -82,6 +79,7 @@ public class UidIdentifierParserTest {
 		boolean appliesTo = testling.appliesTo("pagexyz :bla");
 		assertFalse(appliesTo, "Parser should apply to string pagexyz :bla");
 	}
+
 
 	@Test
 	public void testParseWithNonExistentPrefix() {

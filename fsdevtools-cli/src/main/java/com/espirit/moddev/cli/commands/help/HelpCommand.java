@@ -27,7 +27,6 @@ import com.github.rvesse.airline.annotations.Arguments;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.builder.CliBuilder;
 import com.github.rvesse.airline.help.Help;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +40,6 @@ import java.util.concurrent.Callable;
  * This command uses airline's builtin help function to retrieve information for all
  * known commands. This implementation uses the default commands and groups via the
  * Cli class.
- *
- * @author e-Spirit GmbH
  */
 @Command(
 		name = HelpCommand.COMMAND_NAME,

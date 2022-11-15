@@ -27,8 +27,6 @@ import java.util.Map;
 
 /**
  * The type Environment encapsulates the system environment variables to make them testable.
- *
- * @author e-Spirit GmbH
  */
 public class Environment {
 

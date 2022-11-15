@@ -24,9 +24,6 @@ package com.espirit.moddev.cli.testcommands.reflectiontest;
 
 import com.espirit.moddev.cli.api.command.Command;
 
-/**
- * @author e-Spirit GmbH
- */
 @com.github.rvesse.airline.annotations.Command(name = "command_with_description_after_convention")
 public final class CommandWithDescriptionMethod implements Command {
 	public static String getDescription() {

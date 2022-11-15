@@ -23,7 +23,6 @@
 package com.espirit.moddev.cli.commands.module.configureCommand.json.components.common;
 
 import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
-
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

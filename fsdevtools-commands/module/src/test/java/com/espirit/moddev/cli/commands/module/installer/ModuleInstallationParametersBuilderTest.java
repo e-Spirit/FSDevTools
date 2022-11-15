@@ -22,7 +22,7 @@
 
 package com.espirit.moddev.cli.commands.module.installer;
 
-import com.espirit.moddev.cli.commands.module.installCommand.ModuleInstallationParameters;
+import com.espirit.moddev.cli.commands.module.common.ModuleInstallationParameters;
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

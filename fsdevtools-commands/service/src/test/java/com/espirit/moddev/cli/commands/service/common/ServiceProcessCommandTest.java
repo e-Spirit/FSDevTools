@@ -23,7 +23,6 @@
 package com.espirit.moddev.cli.commands.service.common;
 
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
-
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

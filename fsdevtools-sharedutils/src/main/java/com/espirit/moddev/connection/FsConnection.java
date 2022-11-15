@@ -44,8 +44,6 @@ import java.io.IOException;
 
 /**
  * Default builder for FirstSpirit {@link Connection}s.
- *
- * @author e-Spirit GmbH
  */
 public class FsConnection implements Connection {
 

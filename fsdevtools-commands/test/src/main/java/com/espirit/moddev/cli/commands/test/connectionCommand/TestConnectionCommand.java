@@ -32,8 +32,6 @@ import de.espirit.firstspirit.access.Connection;
 
 /**
  * Command for connection testing. Creating a connection to FirstSpirit leads to a successful or unsuccessful result.
- *
- * @author e-Spirit GmbH
  */
 @com.github.rvesse.airline.annotations.Command(name = TestCommandNames.CONNECTION, groupNames = TestCommandGroup.NAME, description = "Testing a FirstSpirit connection")
 public class TestConnectionCommand extends GlobalConfig implements Command<TestResult> {

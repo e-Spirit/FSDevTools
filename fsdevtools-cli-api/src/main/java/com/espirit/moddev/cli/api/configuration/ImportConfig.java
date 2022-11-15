@@ -24,8 +24,6 @@ package com.espirit.moddev.cli.api.configuration;
 
 /**
  * {@link com.espirit.moddev.cli.api.configuration.Config} specialization that defines additional means to access the configuration for an import operation.
- *
- * @author e-Spirit GmbH
  */
 public interface ImportConfig extends Config {
 

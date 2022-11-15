@@ -26,8 +26,6 @@ import com.espirit.moddev.util.FsUtil;
 
 /**
  * Constants that are used in the context of FirstSpirit and the cli classes.
- *
- * @author e-Spirit GmbH
  */
 public enum CliConstants {
 

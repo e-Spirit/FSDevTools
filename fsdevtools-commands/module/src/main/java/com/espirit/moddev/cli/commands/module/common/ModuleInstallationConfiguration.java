@@ -20,10 +20,11 @@
  *
  */
 
-package com.espirit.moddev.cli.commands.module.installCommand;
+package com.espirit.moddev.cli.commands.module.common;
 
 import com.espirit.moddev.shared.annotation.RequiredForSerialization;
 import com.espirit.moddev.shared.exception.MultiException;
+import com.espirit.moddev.shared.webapp.GlobalWebAppIdentifier;
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 import com.espirit.moddev.shared.webapp.WebAppIdentifierParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -32,6 +33,7 @@ import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.agency.GlobalWebAppId;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
 import de.espirit.firstspirit.agency.WebAppId;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -137,6 +139,7 @@ public class ModuleInstallationConfiguration {
 	}
 
 	@RequiredForSerialization
+	@NotNull
 	public List<String> getServiceConfigurationFiles() {
 		return _serviceConfigurationFiles;
 	}
@@ -148,6 +151,7 @@ public class ModuleInstallationConfiguration {
 	}
 
 	@RequiredForSerialization
+	@NotNull
 	public List<String> getWebAppConfigurationFiles() {
 		return _webAppConfigurationFiles;
 	}
@@ -221,7 +225,7 @@ public class ModuleInstallationConfiguration {
 			try {
 				final WebAppIdentifier webAppIdentifier = webAppIdentifierParser.parseSingle(scope, false);
 				if (webAppIdentifier.isGlobal()) {
-					final WebAppIdentifier.GlobalWebAppIdentifier globalWebAppIdentifier = (WebAppIdentifier.GlobalWebAppIdentifier) webAppIdentifier;
+					final GlobalWebAppIdentifier globalWebAppIdentifier = (GlobalWebAppIdentifier) webAppIdentifier;
 					final GlobalWebAppId globalWebAppId = WebAppId.Factory.create(globalWebAppIdentifier.getGlobalWebAppId());
 					if (!globalWebApps.contains(globalWebAppId.getGlobalId())) {
 						exceptions.add(new IllegalArgumentException(_fsm + " - Unknown global scope '" + globalWebAppId.getGlobalId() + "'!"));

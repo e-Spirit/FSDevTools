@@ -22,15 +22,6 @@
 
 package com.espirit.moddev.cli.commands.module.configureCommand.json.components;
 
-import de.espirit.firstspirit.access.Connection;
-import de.espirit.firstspirit.access.ServiceNotFoundException;
-import de.espirit.firstspirit.agency.ModuleAdminAgent;
-import de.espirit.firstspirit.agency.SpecialistsBroker;
-import de.espirit.firstspirit.io.FileSystem;
-import de.espirit.firstspirit.io.MemoryFileSystem;
-import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
-import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
-
 import com.espirit.moddev.cli.api.result.ExecutionErrorResult;
 import com.espirit.moddev.cli.api.result.ExecutionResult;
 import com.espirit.moddev.cli.api.result.ExecutionResults;
@@ -40,6 +31,14 @@ import com.espirit.moddev.cli.configuration.GlobalConfig;
 import com.espirit.moddev.util.JacksonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import de.espirit.firstspirit.access.Connection;
+import de.espirit.firstspirit.access.ServiceNotFoundException;
+import de.espirit.firstspirit.agency.ModuleAdminAgent;
+import de.espirit.firstspirit.agency.SpecialistsBroker;
+import de.espirit.firstspirit.io.FileSystem;
+import de.espirit.firstspirit.io.MemoryFileSystem;
+import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
+import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

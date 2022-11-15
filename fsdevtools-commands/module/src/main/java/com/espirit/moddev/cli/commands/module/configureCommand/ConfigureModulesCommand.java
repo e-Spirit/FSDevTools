@@ -230,16 +230,16 @@ public class ConfigureModulesCommand extends SimpleCommand<ConfigureModulesComma
 	static Collection<WebAppId> extractWebAppsToDeploy(@NotNull final ExecutionResults results) {
 		//@formatter:off
 		return results
-				.stream()																		// stream
-				.filter(result -> {        														// only WebComponentResults with #getDeploy == true
+				.stream()                                                                        // stream
+				.filter(result -> {                                                                // only WebComponentResults with #getDeploy == true
 					if (!(result instanceof ComponentWebApps.WebComponentResult)) {
 						return false;
 					}
 					return ((ComponentWebApps.WebComponentResult) result).getDeploy();
 				})
-				.distinct()                    													// distinct WebComponentResults (each WebApp is only included once, because WebApp#equals is correctly implemented)
+				.distinct()                                                                        // distinct WebComponentResults (each WebApp is only included once, because WebApp#equals is correctly implemented)
 				.map(result -> ((ComponentWebApps.WebComponentResult) result).getWebAppId())    // map to WebAppId
-				.collect(Collectors.toList()); 													// map to list
+				.collect(Collectors.toList());                                                    // map to list
 		//@formatter:on
 	}
 

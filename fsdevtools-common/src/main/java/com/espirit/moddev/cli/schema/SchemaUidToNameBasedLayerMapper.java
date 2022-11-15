@@ -24,7 +24,6 @@ package com.espirit.moddev.cli.schema;
 
 import com.espirit.moddev.cli.exception.LayerMappingException;
 import de.espirit.firstspirit.transport.LayerMapper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

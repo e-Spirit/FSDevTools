@@ -66,6 +66,7 @@ public class SchemaIdentifierTest {
 		assertThat("Expected schema identifiers with different options to not be equal", identifier, not(equalTo(anotherUnequalIdentifier)));
 	}
 
+
 	@Test
 	public void addToExportOperation_with_OptionsMap() {
 		final HashMap<String, String> schemaOptionsMap = new HashMap<>();
@@ -79,6 +80,7 @@ public class SchemaIdentifierTest {
 		// verify the SchemaOptions' setExportMapping has been set to 'true':
 		verify(schemaOptions).setExportGidMapping(true);
 	}
+
 
 	@Test
 	public void addToExportOperation_without_OptionsMap() {

@@ -28,8 +28,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Specialization of {@link SimpleResult} that can be used in conjunction with test project commands.
- *
- * @author e-Spirit GmbH
  */
 public class TestResult extends SimpleResult<Void> {
 

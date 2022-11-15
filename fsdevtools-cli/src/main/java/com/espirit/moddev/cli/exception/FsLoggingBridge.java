@@ -23,7 +23,6 @@
 package com.espirit.moddev.cli.exception;
 
 import de.espirit.common.base.Logger;
-
 import org.slf4j.LoggerFactory;
 
 /**

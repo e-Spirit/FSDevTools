@@ -24,7 +24,6 @@ package com.espirit.moddev.cli.api.command;
 
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.api.result.Result;
-
 import de.espirit.firstspirit.access.project.ProjectScriptContext;
 
 import java.util.concurrent.Callable;
@@ -40,7 +39,6 @@ import java.util.concurrent.Callable;
  * connection available to the command.
  *
  * @param <RESULT_TYPE> the custom result type for this command class
- * @author e-Spirit GmbH
  */
 public interface Command<RESULT_TYPE extends Result> extends Callable<RESULT_TYPE> {
 }

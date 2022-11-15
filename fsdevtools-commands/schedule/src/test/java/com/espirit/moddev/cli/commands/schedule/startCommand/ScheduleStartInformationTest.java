@@ -22,9 +22,8 @@
 
 package com.espirit.moddev.cli.commands.schedule.startCommand;
 
-import de.espirit.firstspirit.access.schedule.ScheduleEntry;
-
 import com.espirit.moddev.cli.commands.schedule.utils.ScheduleTestUtils;
+import de.espirit.firstspirit.access.schedule.ScheduleEntry;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;

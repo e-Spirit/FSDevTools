@@ -24,19 +24,18 @@ package com.espirit.moddev.cli.commands.module.installBulkCommand;
 
 import com.espirit.moddev.cli.ConnectionBuilder;
 import com.espirit.moddev.cli.api.annotations.ParameterExamples;
+import com.espirit.moddev.cli.api.result.AbstractCommandResult;
 import com.espirit.moddev.cli.api.result.ExecutionResults;
 import com.espirit.moddev.cli.commands.SimpleCommand;
 import com.espirit.moddev.cli.commands.module.ModuleCommandGroup;
 import com.espirit.moddev.cli.commands.module.ModuleCommandNames;
-import com.espirit.moddev.cli.commands.module.installCommand.InstallModuleResult;
-import com.espirit.moddev.cli.commands.module.installCommand.ModuleInstallationConfiguration;
-import com.espirit.moddev.cli.commands.module.installCommand.ModuleInstallationParameters;
+import com.espirit.moddev.cli.commands.module.common.ModuleInstallationConfiguration;
+import com.espirit.moddev.cli.commands.module.common.ModuleInstallationParameters;
+import com.espirit.moddev.cli.commands.module.installCommand.InstallModuleCommandResult;
+import com.espirit.moddev.cli.commands.module.utils.ModuleInstallationResult;
 import com.espirit.moddev.cli.commands.module.utils.ModuleInstaller;
 import com.espirit.moddev.cli.commands.module.utils.WebAppUtil;
-import com.espirit.moddev.cli.results.SimpleResult;
 import com.espirit.moddev.shared.exception.MultiException;
-import com.espirit.moddev.shared.exception.WrappedException;
-import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;
@@ -45,27 +44,18 @@ import com.github.rvesse.airline.annotations.restrictions.Once;
 import com.github.rvesse.airline.annotations.restrictions.PathKind;
 import com.github.rvesse.airline.annotations.restrictions.Required;
 import de.espirit.firstspirit.access.Connection;
-import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
 import de.espirit.firstspirit.agency.WebAppId;
-import de.espirit.firstspirit.server.module.ModuleException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static com.espirit.moddev.shared.webapp.WebAppIdentifier.isFs5RootWebApp;
-import static de.espirit.firstspirit.access.ConnectionManager.SOCKET_MODE;
 
 /**
  * Installs a set of modules on a FirstSpirit server. The configuration of this command is done by a config file in
@@ -94,7 +84,7 @@ import static de.espirit.firstspirit.access.ConnectionManager.SOCKET_MODE;
 				"Example configFile.json:"
 		}
 )
-public class InstallModulesCommand extends SimpleCommand<InstallModulesResult> {
+public class InstallModulesCommand extends SimpleCommand<InstallModulesCommandResult> {
 
 	protected static final Logger LOGGER = LoggerFactory.getLogger(InstallModulesCommand.class);
 
@@ -113,7 +103,7 @@ public class InstallModulesCommand extends SimpleCommand<InstallModulesResult> {
 	)
 	private String _configFile;
 
-	@Option(type = OptionType.COMMAND, name = {"-dwa", "--deployWebApps"}, description = "Define whether all related web apps of the modules should be immediately deployed after the installation or not [true = deploy (default) | false = no deploy]", title = "deployWebApps")
+	@Option(arity = 1, type = OptionType.COMMAND, name = {"-dwa", "--deployWebApps"}, description = "Define whether all related web apps of the modules should be immediately deployed after the installation or not [true = deploy (default) | false = no deploy]", title = "deployWebApps")
 	@Once
 	@ParameterExamples(
 			examples = {
@@ -128,16 +118,17 @@ public class InstallModulesCommand extends SimpleCommand<InstallModulesResult> {
 	private boolean _deploy = true;
 
 	@Override
-	public InstallModulesResult call() {
+	public InstallModulesCommandResult call() {
 		try (final Connection connection = ConnectionBuilder.with(this).build()) {
 			connection.connect();
 			return bulkInstall(connection);
-		} catch (Exception e) {
-			return new InstallModulesResult(new MultiException(e.getMessage(), Collections.singletonList(e)));
+		} catch (final Exception exception) {
+			return new InstallModulesCommandResult(new MultiException(exception.getMessage(), Collections.singletonList(exception)));
 		}
 	}
 
-	private InstallModulesResult bulkInstall(@NotNull final Connection connection) throws IOException {
+	@NotNull
+	private InstallModulesCommandResult bulkInstall(@NotNull final Connection connection) throws IOException {
 		final List<ModuleInstallationConfiguration> configurations = ModuleInstallationConfiguration.fromFile(_configFile);
 		final List<ModuleInstallationParameters> installationParameters = new ArrayList<>();
 
@@ -150,14 +141,17 @@ public class InstallModulesCommand extends SimpleCommand<InstallModulesResult> {
 
 		// we got at least one error --> return here without installing anything
 		if (!parameterErrorResults.isEmpty()) {
-			return new InstallModulesResult(new MultiException("Error verifying configurations.", parameterErrorResults));
+			return new InstallModulesCommandResult(new MultiException("Error verifying module configurations.", parameterErrorResults));
 		}
 
 		// finally: install modules, deploy and return the result
 		return installModulesAndDeploy(connection, installationParameters);
 	}
 
-	private ArrayList<Exception> verifyAndCreateParameters(final Connection connection, final List<ModuleInstallationConfiguration> configurations, final List<ModuleInstallationParameters> installationParameters) {
+	@NotNull
+	private ArrayList<Exception> verifyAndCreateParameters(@NotNull final Connection connection,
+														   @NotNull final List<ModuleInstallationConfiguration> configurations,
+														   @NotNull final List<ModuleInstallationParameters> installationParameters) {
 		final ArrayList<Exception> results = new ArrayList<>();
 		for (final ModuleInstallationConfiguration config : configurations) {
 			try {
@@ -190,132 +184,47 @@ public class InstallModulesCommand extends SimpleCommand<InstallModulesResult> {
 	 *
 	 * @param connection the connection to use for the installation
 	 * @param parameters the list of {@link ModuleInstallationParameters module parameters} used for the installation
-	 * @return a {@link List list} of {@link InstallModuleResult InstallModuleResults} containing results for {@code all} installation processes.
+	 * @return a {@link List list} of {@link InstallModulesCommandResult results} containing results for {@code all} installation processes.
 	 */
-	private InstallModulesResult installModulesAndDeploy(@NotNull final Connection connection, final List<ModuleInstallationParameters> parameters) {
-		final ArrayList<InstallModuleResult> results = new ArrayList<>();
-		final Set<WebAppId> updatedWebApps = new HashSet<>();
+	@NotNull
+	private InstallModulesCommandResult installModulesAndDeploy(@NotNull final Connection connection, @NotNull final List<ModuleInstallationParameters> parameters) {
+		final ArrayList<InstallModuleCommandResult> results = new ArrayList<>();
+		final Set<WebAppId> overallUpdatedWebApps = new HashSet<>();
+		final ModuleInstaller moduleInstaller = new ModuleInstaller(connection);
 		for (final ModuleInstallationParameters singleParameter : parameters) {
-			InstallModuleResult totalInstallResult;
 			try {
 				if (!connection.isConnected()) {
 					throw new IllegalStateException("Connection is null or not connected!");
 				}
-
-				final SingleModuleInstallResult singleInstallResult = installModule(connection, singleParameter);
-				final Optional<ModuleAdminAgent.ModuleResult> installResult = singleInstallResult.getModuleResult();
-				if (installResult.isPresent()) {
-					// store updated web apps
-					updatedWebApps.addAll(singleInstallResult.getUpdatedWebApps());
-					// store all configured web apps in the list of updated web apps ; needed for the initial installation of a module
-					final List<WebAppIdentifier> webAppScopes = singleParameter.getWebAppScopes();
-					for (final WebAppIdentifier webAppScope : webAppScopes) {
-						if (webAppScope.isGlobal()) {
-							// global web app --> no project needed
-							updatedWebApps.add(webAppScope.createWebAppId(null));
-						} else {
-							// project specific web app --> get the project and use it for the web app scope
-							final Project project = getProject(connection, singleParameter.getProjectName());
-							if (project != null) {
-								updatedWebApps.add(webAppScope.createWebAppId(project));
-							}
-						}
-					}
+				LOGGER.info(AbstractCommandResult.LINE_SEPARATOR);
+				final InstallModuleCommandResult singleInstallResult = moduleInstaller.installModule(singleParameter);
+				final ModuleInstallationResult installationResult = singleInstallResult.getInstallationResult();
+				if (installationResult != null) {
+					final ModuleAdminAgent.ModuleResult moduleResult = installationResult.getModuleResult();
+					final ArrayList<WebAppId> updatedWebApps = new ArrayList<>(moduleResult.getUpdatedWebApps());
+					overallUpdatedWebApps.addAll(updatedWebApps);
+					results.add(singleInstallResult);
+				} else {
+					results.add(singleInstallResult);
 				}
-				totalInstallResult = installResult.map(moduleResult -> new InstallModuleResult(moduleResult.getDescriptor().getModuleName())).orElseGet(() -> {
-					final ModuleException exception = new ModuleException("Cannot get installation result for module " + singleParameter.getFsm());
-					return new InstallModuleResult(singleParameter.getFsm().toString(), exception);
-				});
-			} catch (final Exception installException) {
-				totalInstallResult = new InstallModuleResult(singleParameter.getFsm().toString(), installException);
+			} catch (final Exception exception) {
+				results.add(new InstallModuleCommandResult(singleParameter.getFsm().getAbsolutePath(), exception));
 			}
-			results.add(totalInstallResult);
-		}
-
-		// return if we have an error
-		final boolean hasError = results.stream().anyMatch(SimpleResult::isError);
-		if (hasError) {
-			final List<Exception> exceptions = results
-					.stream()
-					.filter(SimpleResult::isError)
-					.map((Function<InstallModuleResult, Exception>) installModuleResult -> new WrappedException(String.format("'%s' -> %s", installModuleResult.getModuleName(), installModuleResult.getError().getMessage()), installModuleResult.getError()))
-					.collect(Collectors.toList());
-			return new InstallModulesResult(results, new MultiException("Error installing modules!", exceptions));
 		}
 
 		// deploy related web apps
-		if (shouldDeploy()) {
-			// check for fs5root web app if the connection mode != SOCKET
-			if (SOCKET_MODE != connection.getMode()) {
-				for (final WebAppId updatedWebApp : updatedWebApps) {
-					if (isFs5RootWebApp(updatedWebApp)) {
-						throw new IllegalStateException("Cannot use a non socket connection to deploy a web component to the FirstSpirit root WebApp. Use SOCKET as connection mode!");
-					}
-				}
-			}
-			final ExecutionResults result = WebAppUtil.deployWebApps(connection, updatedWebApps);
-			if (result.hasError()) {
-				final String failedWebAppNames = result.stream()
-						.filter(executionResult -> executionResult instanceof WebAppUtil.AbstractWebAppDeployFailedResult)
-						.map(executionResult -> WebAppIdentifier.getName(((WebAppUtil.AbstractWebAppDeployFailedResult) executionResult).getWebAppId()))
-						.collect(Collectors.joining(", ", "[ ", " ]"));
-				throw new IllegalStateException("Error deploying the following web apps: " + failedWebAppNames + " . Please see the server.log for more details.");
-			}
+		final ExecutionResults executionResults = new ExecutionResults();
+		results.forEach(installModuleCommandResult -> executionResults.add(installModuleCommandResult.get()));
+		if (_deploy) {
+			final ExecutionResults deployExecutionResults = WebAppUtil.deployWebApps(connection, overallUpdatedWebApps);
+			deployExecutionResults.stream().forEach(executionResults::add);
 		}
-		return new InstallModulesResult(results);
-	}
-
-	private Project getProject(final Connection connection, final String projectName) {
-		String projectToRetrieve = projectName;
-		if (projectToRetrieve == null || projectToRetrieve.isEmpty()) {
-			projectToRetrieve = super.getProject();
-		}
-		return connection.getProjectByName(projectToRetrieve);
+		return new InstallModulesCommandResult(executionResults);
 	}
 
 	@Override
 	public boolean needsContext() {
 		return false;
-	}
-
-	private boolean shouldDeploy() {
-		return _deploy;
-	}
-
-	/**
-	 * Installs a module on a FirstSpirit server. Uses the given connection.
-	 * If any of the configured components is already installed, it is updated.
-	 *
-	 * @param connection a connected FirstSpirit connection that is used to install the module
-	 * @param parameters a parameter bean that defines how the module should be installed
-	 * @return the optional {@link ModuleAdminAgent.ModuleResult}, which is empty on failure
-	 * @throws IOException may be thrown server side while installing the module
-	 */
-	@NotNull
-	public SingleModuleInstallResult installModule(Connection connection, ModuleInstallationParameters parameters) throws IOException {
-		final ModuleInstaller moduleInstaller = new ModuleInstaller(connection);
-		final ModuleAdminAgent.ModuleResult moduleInstallResult = moduleInstaller.install(parameters, false);
-		final ArrayList<WebAppId> updatedWebApps = new ArrayList<>(moduleInstallResult.getUpdatedWebApps());
-		return new SingleModuleInstallResult(moduleInstallResult, updatedWebApps);
-	}
-
-	private static class SingleModuleInstallResult {
-
-		private final ModuleAdminAgent.ModuleResult _moduleResult;
-		private final Collection<WebAppId> _updatedWebApps;
-
-		private SingleModuleInstallResult(final ModuleAdminAgent.ModuleResult moduleResult, final Collection<WebAppId> updatedWebApps) {
-			_moduleResult = moduleResult;
-			_updatedWebApps = new ArrayList<>(updatedWebApps);
-		}
-
-		public Optional<ModuleAdminAgent.ModuleResult> getModuleResult() {
-			return Optional.of(_moduleResult);
-		}
-
-		public Collection<WebAppId> getUpdatedWebApps() {
-			return _updatedWebApps;
-		}
 	}
 
 }

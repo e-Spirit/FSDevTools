@@ -39,8 +39,6 @@ import static com.espirit.moddev.cli.commands.service.common.ServiceInfo.Service
 
 /**
  * Command class that can start a FirstSpirit services.
- *
- * @author e-Spirit GmbH
  */
 @Command(name = ServiceCommandNames.START, groupNames = ServiceCommandGroup.NAME, description = "Starts a FirstSpirit service if it is not running.")
 @Examples(

@@ -1,5 +1,14 @@
 # Release notes
 
+## Version 4.2.0
+
+* updated default *log4J2.xml* to reduce the default logging for some packages, this was a regression of v4.0.0
+* fixed exceptions being logged twice under some circumstances
+* commands "*module install*" & "*module installBulk*":
+  * project app components will now be updated by the CLI instead of the FirstSpirit server
+  * web app components will now be updated by the CLI instead of the FirstSpirit server
+  * fixed parameter "*--deployWebApps/-dwa*" not working properly
+
 ## Version 4.1.0
 
 * new commands for Content Transport:

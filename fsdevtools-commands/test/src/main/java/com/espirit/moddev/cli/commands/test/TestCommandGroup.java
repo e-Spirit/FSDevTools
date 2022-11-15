@@ -27,8 +27,6 @@ import com.github.rvesse.airline.annotations.Group;
 
 /**
  * {@link com.github.rvesse.airline.annotations.Group} that contains commands like testing the connection to FirstSpirit.
- *
- * @author e-Spirit GmbH
  */
 @Group(name = TestCommandGroup.NAME, description = "Test connections, projects and more.", defaultCommand = TestConnectionCommand.class)
 public class TestCommandGroup {

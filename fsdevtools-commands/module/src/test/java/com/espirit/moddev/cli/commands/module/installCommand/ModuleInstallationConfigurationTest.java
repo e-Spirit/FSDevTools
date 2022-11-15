@@ -22,10 +22,10 @@
 
 package com.espirit.moddev.cli.commands.module.installCommand;
 
+import com.espirit.moddev.cli.commands.module.common.ModuleInstallationConfiguration;
 import de.espirit.firstspirit.agency.GlobalWebAppId;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
 import de.espirit.firstspirit.server.module.WebAppType;
-
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

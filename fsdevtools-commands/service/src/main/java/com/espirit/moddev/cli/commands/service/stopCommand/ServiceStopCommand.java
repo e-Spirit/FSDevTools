@@ -39,8 +39,6 @@ import static com.espirit.moddev.cli.commands.service.common.ServiceInfo.Service
 
 /**
  * Command class that can stop a FirstSpirit services.
- *
- * @author e-Spirit GmbH
  */
 @Command(name = ServiceCommandNames.STOP, groupNames = ServiceCommandGroup.NAME, description = "Stops a FirstSpirit service if it is running.")
 @Examples(

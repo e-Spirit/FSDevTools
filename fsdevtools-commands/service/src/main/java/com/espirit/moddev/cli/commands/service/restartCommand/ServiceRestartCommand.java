@@ -38,8 +38,6 @@ import static com.espirit.moddev.cli.commands.service.common.ServiceInfo.Service
 
 /**
  * Command class that can restart a FirstSpirit services.
- *
- * @author e-Spirit GmbH
  */
 @Command(name = ServiceCommandNames.RESTART, groupNames = ServiceCommandGroup.NAME, description = "Restarts a FirstSpirit service. Starts, even if it's not running.")
 @Examples(

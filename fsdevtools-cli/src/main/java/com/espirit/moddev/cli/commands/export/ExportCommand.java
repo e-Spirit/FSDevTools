@@ -38,8 +38,6 @@ import static com.espirit.moddev.cli.api.parsing.parser.SchemaIdentifierParser.C
 /**
  * This command can be used to export elements from all stores at the same time.
  * It makes use of its command arguments to retrieve elements for the export.
- *
- * @author e-Spirit GmbH
  */
 @Command(name = "export")
 @Examples(examples =

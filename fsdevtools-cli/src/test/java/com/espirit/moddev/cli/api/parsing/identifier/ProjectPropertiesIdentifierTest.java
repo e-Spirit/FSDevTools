@@ -32,9 +32,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
-/**
- * @author e-Spirit GmbH
- */
 public class ProjectPropertiesIdentifierTest {
 
 	@Test

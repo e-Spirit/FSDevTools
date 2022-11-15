@@ -44,9 +44,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-/**
- * @author e-Spirit GmbH
- */
 public class UidIdentifierTest {
 
 	@NotNull
@@ -79,6 +76,7 @@ public class UidIdentifierTest {
 		assertThat("Expected two different full qualified uids for non equal template store and same uid", uid, not(equalTo(anotherUnequalUid)));
 	}
 
+
 	/**
 	 * The following two tests should ensure, that only elements are added to an ExportOperation
 	 * whose mapped classes correspond with the element selected from the corresponding store.
@@ -88,6 +86,7 @@ public class UidIdentifierTest {
 		ExportOperation exportOperation = createMediaElementAndExportItWithGivenUidMappingUidType(UidMapping.MEDIA);
 		verify(exportOperation).addElement(any());
 	}
+
 
 	@Test
 	public void addToExportOperationWithNonMatchingClass() {

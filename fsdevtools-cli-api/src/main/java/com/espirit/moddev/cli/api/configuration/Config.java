@@ -30,8 +30,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface that defines means to access the configuration values.
- *
- * @author e-Spirit GmbH
  */
 public interface Config {
 

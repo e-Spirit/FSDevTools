@@ -20,35 +20,23 @@
  *
  */
 
-package com.espirit.moddev.cli.commands.module.installCommand;
+package com.espirit.moddev.cli.api.result;
 
-import com.espirit.moddev.cli.results.SimpleResult;
+import org.jetbrains.annotations.NotNull;
 
-/**
- * Specialization of the generic {@link SimpleResult} class that holds a module name.
- *
- * @author e-Spirit GmbH
- */
-public class InstallModuleResult extends SimpleResult<String> {
+public class DefaultExecutionErrorResult<T extends Exception> extends DefaultExecutionResult implements ExecutionErrorResult<T> {
 
-	public InstallModuleResult(String result) {
-		super(result);
+	private final T _exception;
+
+	public DefaultExecutionErrorResult(@NotNull final String message, @NotNull final T exception) {
+		super(message);
+		_exception = exception;
 	}
 
-	public InstallModuleResult(final String pathToFsm, Exception exception) {
-		super(pathToFsm, exception);
-	}
-
-	public String getModuleName() {
-		return result;
-	}
-
+	@NotNull
 	@Override
-	public void log() {
-		if (isError()) {
-			SimpleResult.LOGGER.error("There was an error installing the module '" + getModuleName() + "'");
-		} else {
-			SimpleResult.LOGGER.info("Module installed successfully. ModuleName: '" + getModuleName() + "'");
-		}
+	public T getException() {
+		return _exception;
 	}
+
 }

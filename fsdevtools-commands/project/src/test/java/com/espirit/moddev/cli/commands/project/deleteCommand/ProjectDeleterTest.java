@@ -25,7 +25,6 @@ package com.espirit.moddev.cli.commands.project.deleteCommand;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.admin.ProjectStorage;
 import de.espirit.firstspirit.access.project.Project;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

@@ -22,6 +22,21 @@
 
 package com.espirit.moddev.cli.commands.module.configureCommand.json.components;
 
+import com.espirit.moddev.cli.api.result.ExecutionResult;
+import com.espirit.moddev.cli.api.result.ExecutionResults;
+import com.espirit.moddev.cli.commands.module.configureCommand.json.JsonTestUtil;
+import com.espirit.moddev.cli.commands.module.configureCommand.json.components.common.ComponentNotFoundResult;
+import com.espirit.moddev.cli.commands.module.configureCommand.json.components.common.MultipleComponentsFoundResult;
+import com.espirit.moddev.cli.commands.module.configureCommand.json.components.common.NoProjectNameDefinedResult;
+import com.espirit.moddev.cli.commands.module.configureCommand.json.components.common.ProjectNotFoundResult;
+import com.espirit.moddev.cli.commands.module.utils.FileSystemUtil;
+import com.espirit.moddev.cli.commands.module.utils.WebAppUtil;
+import com.espirit.moddev.cli.configuration.GlobalConfig;
+import com.espirit.moddev.shared.webapp.GlobalWebAppIdentifier;
+import com.espirit.moddev.shared.webapp.WebAppIdentifier;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
@@ -33,20 +48,6 @@ import de.espirit.firstspirit.module.WebEnvironment;
 import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
 import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
 import de.espirit.firstspirit.server.module.ModuleException;
-
-import com.espirit.moddev.cli.api.result.ExecutionResult;
-import com.espirit.moddev.cli.api.result.ExecutionResults;
-import com.espirit.moddev.cli.commands.module.configureCommand.json.JsonTestUtil;
-import com.espirit.moddev.cli.commands.module.configureCommand.json.components.common.ComponentNotFoundResult;
-import com.espirit.moddev.cli.commands.module.configureCommand.json.components.common.MultipleComponentsFoundResult;
-import com.espirit.moddev.cli.commands.module.configureCommand.json.components.common.NoProjectNameDefinedResult;
-import com.espirit.moddev.cli.commands.module.configureCommand.json.components.common.ProjectNotFoundResult;
-import com.espirit.moddev.cli.commands.module.utils.FileSystemUtil;
-import com.espirit.moddev.cli.configuration.GlobalConfig;
-import com.espirit.moddev.shared.webapp.WebAppIdentifier;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
@@ -417,7 +418,7 @@ public class ComponentWebAppsTest {
 		assertThat(webApp.getDeploy()).isTrue();
 		assertThat(webApp.getFiles()).isSameAs(Collections.EMPTY_LIST);
 		assertThat(webApp.getWebAppName().isGlobal()).isTrue();
-		assertThat(((WebAppIdentifier.GlobalWebAppIdentifier) (webApp.getWebAppName())).getGlobalWebAppId()).isEqualTo(webAppName);
+		assertThat(((GlobalWebAppIdentifier) (webApp.getWebAppName())).getGlobalWebAppId()).isEqualTo(webAppName);
 	}
 
 	@Test
@@ -431,7 +432,7 @@ public class ComponentWebAppsTest {
 		assertThat(webApp.getDeploy()).isTrue();
 		assertThat(webApp.getFiles()).isSameAs(Collections.EMPTY_LIST);
 		assertThat(webApp.getWebAppName().isGlobal()).isFalse();
-		assertThat(webApp.getWebAppName().getScope().toString()).isEqualTo(webAppName.toUpperCase(Locale.UK));
+		assertThat(webApp.getWebAppName().getScope().toString()).isEqualTo(webAppName.toUpperCase(Locale.ROOT));
 	}
 
 	@Test
@@ -583,7 +584,7 @@ public class ComponentWebAppsTest {
 		// verify
 		assertThat(result).isInstanceOf(ComponentWebApps.WebComponentResult.class);
 		final ComponentWebApps.WebComponentResult webComponentResult = (ComponentWebApps.WebComponentResult) result;
-		assertThat(webComponentResult.toString()).isEqualTo(String.format(ComponentWebApps.WebComponentResult.MESSAGE_GLOBAL_WEBAPP, MODULE_NAME, COMPONENT_NAME, ((WebAppIdentifier.GlobalWebAppIdentifier) webApp._webAppName).getGlobalWebAppId()));
+		assertThat(webComponentResult.toString()).isEqualTo(String.format(ComponentWebApps.WebComponentResult.MESSAGE_GLOBAL_WEBAPP, MODULE_NAME, COMPONENT_NAME, ((GlobalWebAppIdentifier) webApp._webAppName).getGlobalWebAppId()));
 		assertThat(webComponentResult.getDeploy()).isTrue();
 		assertThat(webComponentResult.getWebAppId()).isEqualTo(webApp._webAppName.createWebAppId(null));
 		verifyFile(_fileSystem, "1.json");
@@ -717,7 +718,7 @@ public class ComponentWebAppsTest {
 		final WebAppId webAppId = _globalWebApp.createWebAppId(null);
 		final ComponentWebApps.WebComponentInstallFailedResult result = new ComponentWebApps.WebComponentInstallFailedResult(MODULE_NAME, COMPONENT_NAME, webAppId, false, moduleException);
 		final IllegalStateException exception = result.getException();
-		assertThat(exception.getMessage()).isEqualTo(String.format(ComponentWebApps.WebComponentInstallFailedResult.MESSAGE_INSTALL, MODULE_NAME, COMPONENT_NAME, WebAppIdentifier.getName(webAppId), ModuleException.class.getName() + ": " + errorMessage));
+		assertThat(exception.getMessage()).isEqualTo(String.format(ComponentWebApps.WebComponentInstallFailedResult.MESSAGE_INSTALL, MODULE_NAME, COMPONENT_NAME, WebAppUtil.getReadableWebAppName(webAppId), ModuleException.class.getName() + ": " + errorMessage));
 	}
 
 	@Test
@@ -726,7 +727,7 @@ public class ComponentWebAppsTest {
 		final ModuleException moduleException = new ModuleException(errorMessage);
 		final WebAppId webAppId = _globalWebApp.createWebAppId(null);
 		final ComponentWebApps.WebComponentInstallFailedResult result = new ComponentWebApps.WebComponentInstallFailedResult(MODULE_NAME, COMPONENT_NAME, webAppId, false, moduleException);
-		assertThat(result.toString()).isEqualTo(String.format(ComponentWebApps.WebComponentInstallFailedResult.MESSAGE_INSTALL, MODULE_NAME, COMPONENT_NAME, WebAppIdentifier.getName(webAppId), ModuleException.class.getName() + ": " + errorMessage));
+		assertThat(result.toString()).isEqualTo(String.format(ComponentWebApps.WebComponentInstallFailedResult.MESSAGE_INSTALL, MODULE_NAME, COMPONENT_NAME, WebAppUtil.getReadableWebAppName(webAppId), ModuleException.class.getName() + ": " + errorMessage));
 	}
 
 	@Test
@@ -736,7 +737,7 @@ public class ComponentWebAppsTest {
 		final WebAppId webAppId = _globalWebApp.createWebAppId(null);
 		final ComponentWebApps.WebComponentInstallFailedResult result = new ComponentWebApps.WebComponentInstallFailedResult(MODULE_NAME, COMPONENT_NAME, webAppId, true, moduleException);
 		final IllegalStateException exception = result.getException();
-		assertThat(exception.getMessage()).isEqualTo(String.format(ComponentWebApps.WebComponentInstallFailedResult.MESSAGE_UPDATE, MODULE_NAME, COMPONENT_NAME, WebAppIdentifier.getName(webAppId), ModuleException.class.getName() + ": " + errorMessage));
+		assertThat(exception.getMessage()).isEqualTo(String.format(ComponentWebApps.WebComponentInstallFailedResult.MESSAGE_UPDATE, MODULE_NAME, COMPONENT_NAME, WebAppUtil.getReadableWebAppName(webAppId), ModuleException.class.getName() + ": " + errorMessage));
 	}
 
 	@Test
@@ -745,7 +746,7 @@ public class ComponentWebAppsTest {
 		final ModuleException moduleException = new ModuleException(errorMessage);
 		final WebAppId webAppId = _globalWebApp.createWebAppId(null);
 		final ComponentWebApps.WebComponentInstallFailedResult result = new ComponentWebApps.WebComponentInstallFailedResult(MODULE_NAME, COMPONENT_NAME, webAppId, true, moduleException);
-		assertThat(result.toString()).isEqualTo(String.format(ComponentWebApps.WebComponentInstallFailedResult.MESSAGE_UPDATE, MODULE_NAME, COMPONENT_NAME, WebAppIdentifier.getName(webAppId), ModuleException.class.getName() + ": " + errorMessage));
+		assertThat(result.toString()).isEqualTo(String.format(ComponentWebApps.WebComponentInstallFailedResult.MESSAGE_UPDATE, MODULE_NAME, COMPONENT_NAME, WebAppUtil.getReadableWebAppName(webAppId), ModuleException.class.getName() + ": " + errorMessage));
 	}
 
 }

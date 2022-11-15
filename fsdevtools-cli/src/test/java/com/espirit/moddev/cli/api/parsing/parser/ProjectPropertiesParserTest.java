@@ -36,9 +36,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author e-Spirit GmbH
- */
+
 public class ProjectPropertiesParserTest {
 
 	@NotNull
@@ -82,6 +80,7 @@ public class ProjectPropertiesParserTest {
 		assertEquals(new ProjectPropertiesIdentifier(enumSet), result.get(0));
 	}
 
+
 	@Test
 	public void parseAllWhitespace() {
 		List<ProjectPropertiesIdentifier> result = testling.parse(List.of("projectproperty: ALL"));
@@ -90,6 +89,7 @@ public class ProjectPropertiesParserTest {
 		assertEquals(new ProjectPropertiesIdentifier(enumSet), result.get(0));
 	}
 
+
 	@Test
 	public void parseAllWithAdditionalProperty() {
 		List<ProjectPropertiesIdentifier> result = testling.parse(List.of("projectproperty:LANGUAGES", "projectproperty:ALL"));
@@ -97,6 +97,7 @@ public class ProjectPropertiesParserTest {
 		EnumSet<PropertiesTransportOptions.ProjectPropertyType> enumSet = EnumSet.allOf(PropertiesTransportOptions.ProjectPropertyType.class);
 		assertEquals(new ProjectPropertiesIdentifier(enumSet), result.get(0));
 	}
+
 
 	@Test
 	public void parseAllWithAdditionalProperties() {

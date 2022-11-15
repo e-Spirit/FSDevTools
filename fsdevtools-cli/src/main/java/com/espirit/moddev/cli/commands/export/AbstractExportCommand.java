@@ -58,8 +58,6 @@ import java.util.List;
 /**
  * This class gathers shared logic and options for different export commands. It can be extended for custom implementations of uid filtering, or to
  * override configurations.
- *
- * @author e-Spirit GmbH
  */
 public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> {
 
@@ -256,7 +254,6 @@ public abstract class AbstractExportCommand extends SimpleCommand<ExportResult> 
 	 *
 	 * @return the export result
 	 */
-	@SuppressWarnings("squid:S2221")
 	protected ExportResult exportStoreElements() {
 		try {
 			// no arguments --> call help-command

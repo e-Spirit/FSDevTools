@@ -25,8 +25,8 @@ package com.espirit.moddev.cli.commands.service.listCommand;
 import com.espirit.moddev.cli.commands.SimpleCommand;
 import com.espirit.moddev.cli.commands.service.ServiceCommandGroup;
 import com.espirit.moddev.cli.commands.service.ServiceCommandNames;
-import com.espirit.moddev.cli.utils.ServiceUtils;
 import com.espirit.moddev.cli.results.SimpleResult;
+import com.espirit.moddev.cli.utils.ServiceUtils;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.help.Examples;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
@@ -37,8 +37,6 @@ import java.util.List;
 
 /**
  * Command class that can list FirstSpirit services.
- *
- * @author e-Spirit GmbH
  */
 @Command(name = ServiceCommandNames.LIST, groupNames = ServiceCommandGroup.NAME, description = "Lists all services with name that can be found on the FirstSpirit.")
 @Examples(

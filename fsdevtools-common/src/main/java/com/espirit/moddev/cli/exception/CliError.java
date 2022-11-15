@@ -29,8 +29,6 @@ import java.util.ResourceBundle;
 
 /**
  * Errors that can occur in the cli application.
- *
- * @author e-Spirit GmbH
  */
 public enum CliError {
 

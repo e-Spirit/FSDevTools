@@ -23,7 +23,6 @@
 package com.espirit.moddev.cli.api.parsing.identifier;
 
 import com.espirit.moddev.shared.StringUtils;
-
 import de.espirit.firstspirit.access.store.Store;
 import de.espirit.firstspirit.access.store.contentstore.Content2;
 import de.espirit.firstspirit.access.store.contentstore.ContentStoreRoot;

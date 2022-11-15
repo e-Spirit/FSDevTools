@@ -35,7 +35,6 @@ import de.espirit.firstspirit.server.scheduler.MailTaskDTO;
 import de.espirit.firstspirit.server.scheduler.ScheduleTaskDTO;
 import de.espirit.firstspirit.server.scheduler.ScheduleTaskTemplateDTO;
 import de.espirit.firstspirit.server.scheduler.ScriptTaskDTO;
-
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

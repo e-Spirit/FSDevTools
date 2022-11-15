@@ -25,6 +25,7 @@ package com.espirit.moddev.cli.api.parsing.identifier;
 import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.access.store.Store;
 import de.espirit.firstspirit.access.store.contentstore.Content2;
+import de.espirit.firstspirit.access.store.globalstore.GCAPage;
 import de.espirit.firstspirit.access.store.mediastore.Media;
 import de.espirit.firstspirit.access.store.mediastore.MediaFolder;
 import de.espirit.firstspirit.access.store.pagestore.Page;
@@ -35,8 +36,6 @@ import de.espirit.firstspirit.access.store.sitestore.PageRefFolder;
 import de.espirit.firstspirit.access.store.templatestore.*;
 
 import java.util.Locale;
-
-import de.espirit.firstspirit.access.store.globalstore.GCAPage;
 
 /**
  * This enum specifies all valid prefixes for {@link UidIdentifier}. A prefix
@@ -65,6 +64,7 @@ public enum UidMapping {
 	STYLETEMPLATE(Store.Type.TEMPLATESTORE, IDProvider.UidType.TEMPLATESTORE_STYLETEMPLATE, StyleTemplate.class),
 	TABLEFORMATTEMPLATE(Store.Type.TEMPLATESTORE, IDProvider.UidType.TEMPLATESTORE_TABLEFORMATTEMPLATE, TableFormatTemplate.class);
 
+
 	private IDProvider.UidType uidType;
 	private Class<?> correspondingType;
 	private Store.Type storeType;
@@ -81,7 +81,7 @@ public enum UidMapping {
 	 * @return the prefix string that corresponds to this mapping
 	 */
 	public String getPrefix() {
-		return this.name().toLowerCase(Locale.UK);
+		return this.name().toLowerCase(Locale.ROOT);
 	}
 
 	/**

@@ -26,9 +26,6 @@ import com.espirit.moddev.cli.api.result.ExecutionErrorResult;
 import com.espirit.moddev.cli.api.result.ExecutionResults;
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 import com.google.common.collect.Lists;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.agency.GlobalWebAppId;
@@ -37,6 +34,8 @@ import de.espirit.firstspirit.agency.ProjectWebAppId;
 import de.espirit.firstspirit.agency.SpecialistsBroker;
 import de.espirit.firstspirit.agency.WebAppId;
 import de.espirit.firstspirit.module.WebEnvironment;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -67,6 +66,35 @@ public class WebAppUtilTest {
 	public void isRootWebAppAndNotInSocketMode_socketMode_rootWebApp() {
 		when(_connection.getMode()).thenReturn(SOCKET_MODE);
 		assertThat(WebAppUtil.isRootWebAppAndNotInSocketMode(_connection, WebAppIdentifier.FS5_ROOT.createWebAppId(null))).isFalse();
+	}
+
+	@Test
+	public void getReadableWebAppName_global_web_app() {
+		// setup
+		final GlobalWebAppId webAppId = mock(GlobalWebAppId.class);
+		when(webAppId.getGlobalId()).thenReturn("fs5webedit");
+
+		// test
+		final String webAppName = WebAppUtil.getReadableWebAppName(webAppId);
+
+		// verify
+		assertThat(webAppName).isEqualTo("global(fs5webedit)");
+	}
+
+	@Test
+	public void getReadableWebAppName_project_web_app() {
+		// setup
+		final Project project = mock(Project.class);
+		when(project.getName()).thenReturn("MyProject");
+		final ProjectWebAppId webAppId = mock(ProjectWebAppId.class);
+		when(webAppId.getWebScope()).thenReturn(WebEnvironment.WebScope.WEBEDIT);
+		when(webAppId.getProject()).thenReturn(project);
+
+		// test
+		final String webAppName = WebAppUtil.getReadableWebAppName(webAppId);
+
+		// verify
+		assertThat(webAppName).isEqualTo("webedit(MyProject)");
 	}
 
 	@Test
@@ -167,9 +195,9 @@ public class WebAppUtilTest {
 		assertThat(results.size()).isEqualTo(3);
 		assertThat(results.get(0)).isInstanceOf(WebAppUtil.RootWebAppDeployNotAllowedResult.class);
 		assertThat(results.get(1)).isInstanceOf(WebAppUtil.WebAppDeployedResult.class);
-		assertThat(results.get(1).toString()).isEqualTo(String.format(WebAppUtil.WebAppDeployedResult.MESSAGE, WebAppIdentifier.getName(webApp1)));
+		assertThat(results.get(1).toString()).isEqualTo(String.format(WebAppUtil.WebAppDeployedResult.MESSAGE, WebAppUtil.getReadableWebAppName(webApp1)));
 		assertThat(results.get(2)).isInstanceOf(WebAppUtil.WebAppDeployFailedResult.class);
-		assertThat(((ExecutionErrorResult<?>) results.get(2)).getException().getMessage()).isEqualTo(String.format(WebAppUtil.WebAppDeployFailedResult.MESSAGE, WebAppIdentifier.getName(webApp2)));
+		assertThat(((ExecutionErrorResult<?>) results.get(2)).getException().getMessage()).isEqualTo(String.format(WebAppUtil.WebAppDeployFailedResult.MESSAGE, WebAppUtil.getReadableWebAppName(webApp2), WebAppUtil.WebAppDeployFailedResult.ERROR_DEPLOYING));
 	}
 
 }

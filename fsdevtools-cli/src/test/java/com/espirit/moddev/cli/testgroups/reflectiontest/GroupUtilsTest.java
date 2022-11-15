@@ -31,9 +31,6 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author e-Spirit GmbH
- */
 public class GroupUtilsTest {
 
 	public static final String DEFAULT_GROUP_TEST_PACKAGE_NAME = "com.espirit.moddev.cli.testgroups.reflectiontest";

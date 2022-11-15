@@ -120,7 +120,7 @@ public class RootNodeIdentifierParser implements Parser<RootNodeIdentifier> {
 		if (couldBeNakedStoreIdentifier(splitted)) {
 			return isKnownNakedStoreIdentifier(input);
 		} else if (hasTwoTokens(splitted)) {
-			return splitted[0].toLowerCase(Locale.UK).trim().equals(ROOT_NODE_IDENTIFIER);
+			return splitted[0].toLowerCase(Locale.ROOT).trim().equals(ROOT_NODE_IDENTIFIER);
 		}
 
 		return false;

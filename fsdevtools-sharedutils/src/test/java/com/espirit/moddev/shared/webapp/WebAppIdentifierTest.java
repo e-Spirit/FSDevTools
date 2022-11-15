@@ -57,9 +57,9 @@ public class WebAppIdentifierTest {
 	@Test
 	public void testFactoryWebAppNameForGlobalWebAppIdentifier() {
 		WebAppIdentifier parsed = forGlobalWebApp("fs5root");
-		assertTrue(parsed instanceof WebAppIdentifier.GlobalWebAppIdentifier);
+		assertTrue(parsed instanceof GlobalWebAppIdentifier);
 		assertEquals(GLOBAL, parsed.getScope());
-		assertEquals("fs5root", ((WebAppIdentifier.GlobalWebAppIdentifier) parsed).getGlobalWebAppId());
+		assertEquals("fs5root", ((GlobalWebAppIdentifier) parsed).getGlobalWebAppId());
 	}
 
 	@Test

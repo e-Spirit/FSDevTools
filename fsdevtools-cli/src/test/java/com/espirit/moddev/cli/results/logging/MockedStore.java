@@ -40,8 +40,8 @@ import de.espirit.firstspirit.store.access.PermissionMap;
 import java.awt.*;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.zip.ZipFile;
 
 public class MockedStore implements Store {

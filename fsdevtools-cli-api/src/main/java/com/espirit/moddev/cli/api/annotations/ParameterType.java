@@ -29,8 +29,6 @@ import java.lang.annotation.Target;
 
 /**
  * This is a marker interface that can be used to define a parameter type.
- *
- * @author e-Spirit GmbH
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

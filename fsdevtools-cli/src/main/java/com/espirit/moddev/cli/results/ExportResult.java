@@ -26,10 +26,9 @@ import com.espirit.moddev.cli.results.logging.AdvancedLogger;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 
+
 /**
  * Specialization of {@link com.espirit.moddev.cli.results.SimpleResult} that can be used in conjunction with export commands.
- *
- * @author e-Spirit GmbH
  */
 public class ExportResult extends SimpleResult<ExportOperation.Result> {
 
@@ -77,5 +76,6 @@ public class ExportResult extends SimpleResult<ExportOperation.Result> {
 	private void logElementBasedResult(final ExportOperation.Result exportResult) {
 		AdvancedLogger.logExportResult(LOGGER, _storeAgent, exportResult);
 	}
+
 
 }

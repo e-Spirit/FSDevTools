@@ -23,12 +23,10 @@
 package com.espirit.moddev.cli.test.connectionCommand;
 
 import com.espirit.moddev.cli.api.result.Result;
-
 import com.espirit.moddev.cli.commands.test.connectionCommand.TestConnectionCommand;
+import de.espirit.firstspirit.access.Connection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import de.espirit.firstspirit.access.Connection;
 
 import java.io.IOException;
 

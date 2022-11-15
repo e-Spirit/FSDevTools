@@ -31,8 +31,6 @@ import java.io.File;
 
 /**
  * Helper class to create the synchronization directory if needed.
- *
- * @author e-Spirit GmbH
  */
 public class SyncDirectoryFactory {
 

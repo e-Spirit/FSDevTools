@@ -48,8 +48,6 @@ import java.util.*;
 /**
  * Utility class providing means to log the result of an ExportOperation in the element based
  * format.
- *
- * @author e-Spirit GmbH
  */
 public enum AdvancedLogger {
 	;
@@ -282,7 +280,6 @@ public enum AdvancedLogger {
 		}
 	}
 
-	@SuppressWarnings("squid:S2629")
 	static void logStoreElements(Logger logger, final StoreAgent storeAgent, final Map<Store.Type, List<ElementExportInfo>> storeElements) {
 		if (!logger.isInfoEnabled()) {
 			// nothing to do if loglevel is not at least info
@@ -320,7 +317,6 @@ public enum AdvancedLogger {
 		}
 	}
 
-	@SuppressWarnings("squid:S2629")
 	static void logEntityTypes(Logger logger, final Collection<EntityTypeExportInfo> entityTypes) {
 		if (!logger.isInfoEnabled()) {
 			return;
@@ -476,7 +472,7 @@ public enum AdvancedLogger {
 
 			nameBuf.append(Character.toUpperCase(text.charAt(0)));
 			if (text.length() > 1) {
-				nameBuf.append(text.substring(1, text.length()).toLowerCase(Locale.ENGLISH));
+				nameBuf.append(text.substring(1, text.length()).toLowerCase(Locale.ROOT));
 			}
 		}
 		return nameBuf.toString();
@@ -539,7 +535,7 @@ public enum AdvancedLogger {
 		} else if (status == ExportStatus.UPDATED) {
 			try {
 				addEntitiesToResult(storeAgent, ExportStatus.UPDATED, result, importResult.getUpdatedEntities());
-			} catch (@SuppressWarnings("squid:S1166") final Exception ignore) {
+			} catch (final Exception ignore) {
 				// ignore
 				// -> we need to catch this because of 5.2.R8
 				// --> ImportOperation.Result#getUpdatedEntities() does not exist in versions < 5.2.800

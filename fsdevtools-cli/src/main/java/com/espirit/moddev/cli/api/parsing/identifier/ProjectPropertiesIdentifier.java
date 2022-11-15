@@ -22,11 +22,11 @@
 
 package com.espirit.moddev.cli.api.parsing.identifier;
 
-import java.util.EnumSet;
-
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 import de.espirit.firstspirit.transport.PropertiesTransportOptions;
+
+import java.util.EnumSet;
 
 public class ProjectPropertiesIdentifier implements Identifier {
 

@@ -23,13 +23,12 @@
 package com.espirit.moddev.cli.commands.module.configureCommand.json.components;
 
 import com.espirit.moddev.cli.commands.module.configureCommand.json.JsonTestUtil;
+import com.espirit.moddev.cli.commands.module.utils.WebAppUtil;
 import com.espirit.moddev.cli.configuration.GlobalConfig;
-import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -104,7 +103,7 @@ public class ComponentsTest {
 		assertThat(deserialized._webComponents).isNotNull();
 		assertThat(deserialized._webComponents).hasSize(1);
 		assertThat(deserialized._webComponents.get(0).getComponentName()).isEqualTo(webComponentName);
-		assertThat(WebAppIdentifier.getName(deserialized._webComponents.get(0).getWebApps().get(0).getWebAppName().createWebAppId(null))).isEqualTo(webAppName);
+		assertThat(WebAppUtil.getReadableWebAppName(deserialized._webComponents.get(0).getWebApps().get(0).getWebAppName().createWebAppId(null))).isEqualTo(webAppName);
 		assertThat(deserialized._projectComponents).isNotNull();
 		assertThat(deserialized._projectComponents).hasSize(1);
 		assertThat(deserialized._projectComponents.get(0).getComponentName()).isEqualTo(projectComponentName);

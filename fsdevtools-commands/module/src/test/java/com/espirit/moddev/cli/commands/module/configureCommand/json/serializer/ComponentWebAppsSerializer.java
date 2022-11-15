@@ -23,7 +23,6 @@
 package com.espirit.moddev.cli.commands.module.configureCommand.json.serializer;
 
 import com.espirit.moddev.cli.commands.module.configureCommand.json.components.ComponentWebApps;
-import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
@@ -69,7 +68,7 @@ public class ComponentWebAppsSerializer extends StdSerializer<ComponentWebApps> 
 		@Override
 		public void serialize(@NotNull final ComponentWebApps.WebApp value, @NotNull final JsonGenerator generator, @NotNull final SerializerProvider provider) throws IOException {
 			generator.writeStartObject();
-			generator.writeStringField(ATTR_WEB_APP_NAME, WebAppIdentifier.getName(value.getWebAppName()));
+			generator.writeStringField(ATTR_WEB_APP_NAME, value.getWebAppName().toString());
 			if (value.getRawProjectName() != null) {
 				generator.writeStringField(ATTR_PROJECT_NAME, value.getRawProjectName());
 			}

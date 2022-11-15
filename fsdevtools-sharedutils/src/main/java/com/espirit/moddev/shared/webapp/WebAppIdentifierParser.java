@@ -30,11 +30,11 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static de.espirit.firstspirit.module.WebEnvironment.WebScope.GLOBAL;
-import static java.util.Locale.UK;
 import static java.util.stream.Collectors.toList;
 
 public class WebAppIdentifierParser {
@@ -55,7 +55,7 @@ public class WebAppIdentifierParser {
 			String globalWebAppId = globalMatcher.group(1);
 			return WebAppIdentifier.forGlobalWebApp(globalWebAppId);
 		} else {
-			String upperCaseScope = scopeOrGlobalWebAppId.toUpperCase(UK);
+			String upperCaseScope = scopeOrGlobalWebAppId.toUpperCase(Locale.ROOT);
 			WebScope parsedScope;
 			try {
 				parsedScope = WebScope.valueOf(upperCaseScope);

@@ -30,7 +30,6 @@ import de.espirit.firstspirit.access.admin.ProjectStorage;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.access.script.ExecutionException;
 import de.espirit.firstspirit.access.store.LockException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,7 +92,6 @@ public class ProjectDeleter {
 		return projectStorage;
 	}
 
-	@SuppressWarnings("squid:S2221")
 	private static boolean performDeletion(Project project, ProjectStorage projectStorage) {
 		try {
 			LOGGER.debug("Deactivate project.");

@@ -30,7 +30,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-import static com.espirit.moddev.cli.api.json.common.AttributeNames.*;
+import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_COMPONENTS;
+import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_MODULE_NAME;
 
 public class ModuleConfigurationSerializer extends StdSerializer<ModuleConfiguration> {
 

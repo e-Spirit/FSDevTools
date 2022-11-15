@@ -38,9 +38,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * @author e-Spirit GmbH
- */
+
 public class PathIdentifierParserTest {
 
 	private PathIdentifierParser testling;
@@ -82,10 +80,12 @@ public class PathIdentifierParserTest {
 		assertFalse(appliesTo, "Parser should apply to string pathxyz :bla");
 	}
 
+
 	@Test
 	public void testParseWithNonExistentPrefix() {
 		assertThrows(IllegalArgumentException.class, () -> testling.parse(Collections.singletonList("xxxxx:myPath")));
 	}
+
 
 	@Test
 	public void testParseMultiple() {
@@ -93,15 +93,18 @@ public class PathIdentifierParserTest {
 		Assertions.assertThat(parse).hasSize(2);
 	}
 
+
 	@Test
 	public void testEmptyPath() {
 		assertThrows(IllegalArgumentException.class, () -> testling.parse(Collections.singletonList("path:")));
 	}
 
+
 	@Test
 	public void testEmptyPathWhitespaces() {
 		assertThrows(IllegalArgumentException.class, () -> testling.parse(Collections.singletonList("path: ")));
 	}
+
 
 	@Test
 	public void testNoLeadingSlash() {

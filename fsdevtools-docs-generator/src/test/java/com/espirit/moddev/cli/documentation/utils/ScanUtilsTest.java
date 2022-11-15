@@ -29,7 +29,9 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
 import java.util.Optional;
 
-import static com.espirit.moddev.cli.documentation.testclasses.NonCommandClass.*;
+import static com.espirit.moddev.cli.documentation.testclasses.NonCommandClass.DEFAULT_VALUE;
+import static com.espirit.moddev.cli.documentation.testclasses.NonCommandClass.FIELD_VALUE;
+import static com.espirit.moddev.cli.documentation.testclasses.NonCommandClass.VALUE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;

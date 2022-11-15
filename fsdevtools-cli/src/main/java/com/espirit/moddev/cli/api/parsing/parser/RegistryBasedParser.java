@@ -24,15 +24,13 @@ package com.espirit.moddev.cli.api.parsing.parser;
 
 import com.espirit.moddev.cli.api.parsing.exceptions.NoSuitableParserRegisteredException;
 import com.espirit.moddev.cli.api.parsing.identifier.Identifier;
-
+import org.apache.commons.collections4.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.collections4.map.HashedMap;
 
 public class RegistryBasedParser implements Parser<Identifier> {
 	protected static final Logger LOGGER = LoggerFactory.getLogger(RegistryBasedParser.class);

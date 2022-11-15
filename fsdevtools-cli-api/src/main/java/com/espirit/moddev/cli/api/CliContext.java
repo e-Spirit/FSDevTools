@@ -27,8 +27,6 @@ import de.espirit.firstspirit.agency.SpecialistsBroker;
 
 /**
  * Exists to create a closeable project script context.
- *
- * @author e-Spirit GmbH
  */
 public interface CliContext extends ProjectScriptContext, AutoCloseable {
 	SpecialistsBroker getSpecialistsBroker();

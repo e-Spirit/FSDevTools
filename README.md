@@ -67,14 +67,14 @@ Information about how to compile and extend this project is described in the [de
 
 ## Legal Notices
 
-FSDevTools is a product of [e-Spirit GmbH](https://www.e-spirit.com), Dortmund, Germany.
+FSDevTools is a product of [Crownpeak Technology GmbH](https://www.e-spirit.com), Dortmund, Germany.
 
-Only a license agreed upon with e-Spirit GmbH is valid with respect to the user for using FSDevTools.
+Only a license agreed upon with Crownpeak Technology GmbH is valid with respect to the user for using FSDevTools.
 
 ## Disclaimer
 
-This document is provided for information purposes only. 
-e-Spirit may change the contents hereof without notice. 
+This document is provided for information purposes only.
+Crownpeak may change the contents hereof without notice. 
 This document is not warranted to be error-free, nor subject to any other warranties or conditions, whether expressed orally or implied in law, including implied warranties and conditions of merchantability or fitness for a particular purpose.
-e-Spirit specifically disclaims any liability with respect to this document and no contractual obligations are formed either directly or indirectly by this document.
+Crownpeak specifically disclaims any liability with respect to this document and no contractual obligations are formed either directly or indirectly by this document.
 The technologies, functionality, services, and processes described herein are subject to change without notice.

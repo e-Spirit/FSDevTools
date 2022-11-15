@@ -38,8 +38,6 @@ import java.util.Map;
 
 /**
  * Utility class for various reflection-based techniques.
- *
- * @author e-Spirit GmbH
  */
 public final class ReflectionUtils {
 

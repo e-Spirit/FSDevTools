@@ -28,13 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class SchemaIdentifierParser implements Parser<SchemaIdentifier> {
@@ -84,7 +78,7 @@ public class SchemaIdentifierParser implements Parser<SchemaIdentifier> {
 	@Override
 	public boolean appliesTo(@NotNull final String input) {
 		final String[] split = input.split(DELIMITER.pattern());
-		return split.length == 2 && split[0].toLowerCase(Locale.UK).trim().equals(CUSTOM_PREFIX_SCHEMA_OPTION);
+		return split.length == 2 && split[0].toLowerCase(Locale.ROOT).trim().equals(CUSTOM_PREFIX_SCHEMA_OPTION);
 	}
 
 	@NotNull

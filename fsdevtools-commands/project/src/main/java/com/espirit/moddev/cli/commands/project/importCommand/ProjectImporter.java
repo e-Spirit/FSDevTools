@@ -23,7 +23,6 @@
 package com.espirit.moddev.cli.commands.project.importCommand;
 
 import com.espirit.moddev.shared.annotation.VisibleForTesting;
-import de.espirit.common.tools.Strings;
 import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ServerActionHandle;
@@ -166,7 +165,7 @@ public class ProjectImporter {
 
 		// throw exception
 		if (!missingTargetLayers.isEmpty()) {
-			throw new IllegalStateException("The following target layers do not exist: [ " + Strings.implode(missingTargetLayers, ", ") + " ]");
+			throw new IllegalStateException("The following target layers do not exist: [ " + String.join(", ", missingTargetLayers) + " ]");
 		}
 	}
 

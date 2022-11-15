@@ -38,6 +38,7 @@ import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
+
 public class LicenseTest {
 
 	private static final String[] EXTENSIONS_TO_CHECK = new String[]{".java", ".gradle", ".groovy", ".properties"};
@@ -45,6 +46,7 @@ public class LicenseTest {
 	private static final String[] FILES_TO_IGNORE = new String[]{"/gradle.properties"};
 
 	private static final String LICENSE_YEAR = "2022";
+	private static final String LICENSE_VENDOR = "Crownpeak Technology GmbH";
 
 	@Test
 	public void testLicenses() throws IOException {
@@ -79,7 +81,7 @@ public class LicenseTest {
 					}
 				}
 				for (final String extension : EXTENSIONS_TO_CHECK) {
-					if (fileName.toLowerCase(Locale.ENGLISH).endsWith(extension)) {
+					if (fileName.toLowerCase(Locale.ROOT).endsWith(extension)) {
 						return true;
 					}
 				}
@@ -93,7 +95,7 @@ public class LicenseTest {
 					results.add(testPath(file.toPath()));
 				} else if (file.isFile()) {
 					final String fileContent = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
-					if (!fileContent.contains("Copyright (C) " + LICENSE_YEAR + " Crownpeak Technology GmbH") || !fileContent.contains("http://www.apache.org/licenses/LICENSE-2.0")) {
+					if (!fileContent.contains("Copyright (C) " + LICENSE_YEAR + " " + LICENSE_VENDOR) || !fileContent.contains("http://www.apache.org/licenses/LICENSE-2.0")) {
 						results.add(new ExecutionResult() {
 							@Override
 							public String toString() {

@@ -40,8 +40,24 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static com.espirit.moddev.util.FsUtil.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.espirit.moddev.util.FsUtil.DIR_CONF;
+import static com.espirit.moddev.util.FsUtil.DIR_FIRSTSPIRIT_5;
+import static com.espirit.moddev.util.FsUtil.DIR_JETTY_SERVICE;
+import static com.espirit.moddev.util.FsUtil.DIR_LIB_ISOLATED;
+import static com.espirit.moddev.util.FsUtil.DIR_LIB_LEGACY;
+import static com.espirit.moddev.util.FsUtil.DIR_MODULES;
+import static com.espirit.moddev.util.FsUtil.DIR_SERVER;
+import static com.espirit.moddev.util.FsUtil.FILE_FS_LICENSE_CONF;
+import static com.espirit.moddev.util.FsUtil.FILE_FS_LOGGING_CONF;
+import static com.espirit.moddev.util.FsUtil.FILE_FS_SERVER_CONF;
+import static com.espirit.moddev.util.FsUtil.FILE_FS_WRAPPER_CONF;
+import static com.espirit.moddev.util.FsUtil.FILE_FS_WRAPPER_ISOLATED_CONF;
+import static com.espirit.moddev.util.FsUtil.FILE_JETTY_PROPERTIES;
+import static com.espirit.moddev.util.FsUtil.FILE_SERVER_JAR_ISOLATED;
+import static com.espirit.moddev.util.FsUtil.FILE_SERVER_JAR_LEGACY;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ServerConfiguratorTest {
 

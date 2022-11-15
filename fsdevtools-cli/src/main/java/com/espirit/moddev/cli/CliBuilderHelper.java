@@ -29,12 +29,7 @@ import com.github.rvesse.airline.annotations.Group;
 import com.github.rvesse.airline.builder.CliBuilder;
 import com.github.rvesse.airline.builder.GroupBuilder;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 /**
@@ -46,7 +41,6 @@ public final class CliBuilderHelper {
 	}
 
 	//TODO: Test these methods
-	@SuppressWarnings("squid:S1905")
 	static Map<GroupWrapper, List<Class<Command>>> gatherGroupsFromCommandClasses(Set<Class<? extends Command>> commandClasses,
 																				  Set<Class<?>> groupClasses) {
 		Map<GroupWrapper, List<Class<Command>>> groupMappings = new HashMap<>();

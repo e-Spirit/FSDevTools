@@ -22,27 +22,29 @@
 
 package com.espirit.moddev.cli.exception;
 
+import com.espirit.moddev.cli.Cli;
 import com.espirit.moddev.cli.api.event.CliEventHandler;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
 
 /**
  * Listener that will exit the cli application with {@link System#exit(int)} if an error occurs.
- *
- * @author e-Spirit GmbH
  */
 public final class SystemExitHandler implements CliEventHandler {
 	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(SystemExitHandler.class);
 
 	@Override
-	@SuppressWarnings("squid:S1147")
-	public final void afterExceptionalTermination(Throwable e) {
-		LOGGER.error("An unexpected error occurred during command execution", e);
+	public void afterExceptionalTermination(@NotNull final Throwable throwable) {
+		if (!Objects.equals(throwable, Cli.COMMAND_EXECUTION_EXCEPTION)) {
+			LOGGER.error("An unexpected error occurred during CLI execution!", throwable);
+		}
 		System.exit(1);
 	}
 
 	@Override
-	@SuppressWarnings("squid:S1147")
-	public final void afterTermination() {
+	public void afterTermination() {
 		LOGGER.trace("Execution terminated without exception. Calling System.exit(0).");
 		System.exit(0);
 	}

@@ -22,15 +22,6 @@
 
 package com.espirit.moddev.cli.commands.module.configureCommand;
 
-import de.espirit.firstspirit.access.Connection;
-import de.espirit.firstspirit.access.ConnectionManager;
-import de.espirit.firstspirit.agency.GlobalWebAppId;
-import de.espirit.firstspirit.agency.ModuleAdminAgent;
-import de.espirit.firstspirit.agency.SpecialistsBroker;
-import de.espirit.firstspirit.agency.WebAppId;
-import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
-import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
-
 import com.espirit.moddev.cli.api.result.ExecutionResult;
 import com.espirit.moddev.cli.api.result.ExecutionResults;
 import com.espirit.moddev.cli.commands.module.configureCommand.json.ModuleConfiguration;
@@ -41,6 +32,14 @@ import com.espirit.moddev.cli.commands.module.configureCommand.json.components.c
 import com.espirit.moddev.cli.commands.module.utils.WebAppUtil;
 import com.espirit.moddev.cli.configuration.GlobalConfig;
 import com.google.common.collect.Lists;
+import de.espirit.firstspirit.access.Connection;
+import de.espirit.firstspirit.access.ConnectionManager;
+import de.espirit.firstspirit.agency.GlobalWebAppId;
+import de.espirit.firstspirit.agency.ModuleAdminAgent;
+import de.espirit.firstspirit.agency.SpecialistsBroker;
+import de.espirit.firstspirit.agency.WebAppId;
+import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
+import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

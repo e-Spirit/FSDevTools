@@ -22,20 +22,20 @@
 
 package com.espirit.moddev.cli.api.parsing.identifier;
 
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * @author e-Spirit GmbH
- */
+
 public class PathIdentifierTest {
 
 	@Test
 	public void testNullStore() {
 		Assertions.assertThrows(IllegalArgumentException.class, () -> new PathIdentifier(null));
 	}
+
 
 	@Test
 	public void testEquality() {

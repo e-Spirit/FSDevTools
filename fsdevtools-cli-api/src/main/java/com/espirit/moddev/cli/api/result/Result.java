@@ -28,7 +28,6 @@ package com.espirit.moddev.cli.api.result;
  * through exceptions.
  *
  * @param <CUSTOM_RESULT_TYPE> the result type.
- * @author e-Spirit GmbH
  */
 public interface Result<CUSTOM_RESULT_TYPE> {
 

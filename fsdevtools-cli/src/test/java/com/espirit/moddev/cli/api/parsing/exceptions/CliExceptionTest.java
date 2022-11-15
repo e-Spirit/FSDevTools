@@ -41,9 +41,6 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/**
- * @author e-Spirit GmbH
- */
 public class CliExceptionTest {
 
 	private Config config;

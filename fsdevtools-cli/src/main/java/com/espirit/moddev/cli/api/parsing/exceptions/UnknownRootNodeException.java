@@ -24,8 +24,6 @@ package com.espirit.moddev.cli.api.parsing.exceptions;
 
 /**
  * States, that a given FirstSpirit root node identifier is not a known one.
- *
- * @author e-Spirit GmbH
  */
 public class UnknownRootNodeException extends RuntimeException {
 

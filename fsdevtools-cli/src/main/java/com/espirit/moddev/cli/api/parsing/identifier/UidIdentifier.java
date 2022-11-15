@@ -23,19 +23,17 @@
 package com.espirit.moddev.cli.api.parsing.identifier;
 
 import com.espirit.moddev.cli.api.parsing.exceptions.IDProviderNotFoundException;
+import com.espirit.moddev.shared.StringUtils;
 import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.access.store.Store;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
-import com.espirit.moddev.shared.StringUtils;
 import org.slf4j.LoggerFactory;
 
 /**
  * FirstSpirit's uids are unique across all stores only in conjunction with their {@link de.espirit.firstspirit.access.store.IDProvider.UidType}.
  * This class encapsulates a uid and its {@link de.espirit.firstspirit.access.store.IDProvider.UidType} and therewith provides a full qualified representation of the uid.
  * It also allows to parse an arbitrary number of {@link java.lang.String} representations of combinations of uids and {@link de.espirit.firstspirit.access.store.IDProvider.UidType}s to instances of this class.
- *
- * @author e-Spirit GmbH
  */
 public class UidIdentifier implements Identifier {
 	protected static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(UidIdentifier.class);

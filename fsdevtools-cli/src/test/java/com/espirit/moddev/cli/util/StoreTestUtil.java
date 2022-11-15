@@ -36,8 +36,6 @@ import static org.mockito.Mockito.when;
 
 /**
  * This utility class provides methods for testing with the firstspirit template store.
- *
- * @author e-Spirit GmbH
  */
 public class StoreTestUtil {
 
@@ -137,8 +135,6 @@ public class StoreTestUtil {
 	 * Uses a backing collection to be able to freely add and remove entries - a functionality
 	 * that the firstspirit implementations consciously don't do. So this is should only be used in
 	 * testing environments for mocking.
-	 *
-	 * @author e-Spirit GmbH
 	 */
 	public static class SimpleListable implements Listable<IDProvider> {
 		List<IDProvider> children = new ArrayList<>();

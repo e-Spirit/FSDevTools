@@ -22,10 +22,6 @@
 
 package com.espirit.moddev.cli.commands.module.configureCommand.json;
 
-import de.espirit.firstspirit.access.Connection;
-import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
-import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
-
 import com.espirit.moddev.cli.api.result.ExecutionErrorResult;
 import com.espirit.moddev.cli.api.result.ExecutionResults;
 import com.espirit.moddev.cli.commands.module.configureCommand.json.components.Components;
@@ -36,6 +32,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.google.common.collect.Lists;
+import de.espirit.firstspirit.access.Connection;
+import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
+import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

@@ -72,7 +72,6 @@ public class EntityTypeImportInfoImpl extends ImportInfoImpl implements EntityTy
 	}
 
 	@Override
-	@SuppressWarnings("squid:S2384")
 	public Collection<BasicEntityInfo> getEntities() {
 		return _entities;
 	}

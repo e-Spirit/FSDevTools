@@ -26,8 +26,6 @@ import java.util.Locale;
 
 /**
  * Error severities used in the cli application.
- *
- * @author e-Spirit GmbH
  */
 public enum CliErrorSevereness {
 
@@ -59,6 +57,6 @@ public enum CliErrorSevereness {
 
 	@Override
 	public String toString() {
-		return name().charAt(0) + name().substring(1).toLowerCase(Locale.UK);
+		return name().charAt(0) + name().substring(1).toLowerCase(Locale.ROOT);
 	}
 }

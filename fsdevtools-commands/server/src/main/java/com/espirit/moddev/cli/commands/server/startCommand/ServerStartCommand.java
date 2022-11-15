@@ -25,8 +25,8 @@ package com.espirit.moddev.cli.commands.server.startCommand;
 import com.espirit.moddev.cli.commands.server.ServerCommandGroup;
 import com.espirit.moddev.cli.commands.server.ServerCommandNames;
 import com.espirit.moddev.cli.commands.server.common.AbstractServerCommand;
-import com.espirit.moddev.cli.results.SimpleResult;
 import com.espirit.moddev.cli.commands.server.utils.ServerRunner;
+import com.espirit.moddev.cli.results.SimpleResult;
 import com.espirit.moddev.shared.annotation.VisibleForTesting;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
@@ -41,8 +41,6 @@ import java.time.Duration;
 /**
  * This Command can start a FirstSpirit server. Uses ServerRunner implementations to achieve
  * It makes use of its command arguments to decide which server to start.
- *
- * @author e-Spirit GmbH
  */
 @Command(name = ServerCommandNames.START, groupNames = ServerCommandGroup.NAME, description = "Starts a FirstSpirit server in the given directory." +
 		"WARNING: If you execute commands asynchronously, you may end up in unpredictable behavior.")

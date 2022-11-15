@@ -26,8 +26,6 @@ import com.espirit.moddev.cli.CliConstants;
 
 /**
  * This exception is used to signal an unknown command.
- *
- * @author e-Spirit GmbH
  */
 public class UnknownCommandException extends Exception {
 

@@ -31,7 +31,6 @@ import de.espirit.firstspirit.access.export.ExportParameters;
 import de.espirit.firstspirit.access.export.ExportProgress;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.access.script.ExecutionException;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

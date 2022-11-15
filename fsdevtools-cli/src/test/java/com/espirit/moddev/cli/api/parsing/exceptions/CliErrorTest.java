@@ -40,12 +40,10 @@ import java.util.ResourceBundle;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-/**
- * @author e-Spirit GmbH
- */
 public class CliErrorTest {
 
 	private ResourceBundle bundle = ResourceBundle.getBundle(CliError.class.getSimpleName());
+
 
 	@Test
 	public void testToString() throws Exception {

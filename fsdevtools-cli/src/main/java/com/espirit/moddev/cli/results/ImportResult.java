@@ -22,15 +22,12 @@
 
 package com.espirit.moddev.cli.results;
 
+import com.espirit.moddev.cli.results.logging.AdvancedLogger;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.nexport.operations.ImportOperation;
 
-import com.espirit.moddev.cli.results.logging.AdvancedLogger;
-
 /**
  * Specialization of {@link com.espirit.moddev.cli.results.SimpleResult} that can be used in conjunction with import commands.
- *
- * @author e-Spirit GmbH
  */
 public class ImportResult extends SimpleResult<ImportOperation.Result> {
 

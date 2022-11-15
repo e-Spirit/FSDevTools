@@ -23,8 +23,8 @@
 package com.espirit.moddev.cli.commands.server.startCommand;
 
 import com.espirit.moddev.cli.commands.server.common.AbstractServerCommandTest;
-import com.espirit.moddev.cli.results.SimpleResult;
 import com.espirit.moddev.cli.commands.server.utils.ServerRunner;
+import com.espirit.moddev.cli.results.SimpleResult;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 

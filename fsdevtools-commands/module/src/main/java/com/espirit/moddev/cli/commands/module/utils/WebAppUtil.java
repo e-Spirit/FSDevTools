@@ -25,12 +25,19 @@ package com.espirit.moddev.cli.commands.module.utils;
 import com.espirit.moddev.cli.api.result.ExecutionErrorResult;
 import com.espirit.moddev.cli.api.result.ExecutionResult;
 import com.espirit.moddev.cli.api.result.ExecutionResults;
+import com.espirit.moddev.shared.StringUtils;
 import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import com.espirit.moddev.shared.webapp.GlobalWebAppIdentifier;
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 import de.espirit.firstspirit.access.Connection;
+import de.espirit.firstspirit.access.ServerConfiguration;
+import de.espirit.firstspirit.access.project.Project;
+import de.espirit.firstspirit.access.store.LockException;
+import de.espirit.firstspirit.agency.GlobalWebAppId;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
 import de.espirit.firstspirit.agency.ProjectWebAppId;
 import de.espirit.firstspirit.agency.WebAppId;
+import de.espirit.firstspirit.server.module.WebAppType;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +58,41 @@ public class WebAppUtil {
 
 	@VisibleForTesting
 	static final String SOCKET_FS_5_ROOT_ERROR_MESSAGE = "Cannot use a non socket connection to deploy the FirstSpirit root web app. You must use SOCKET as connection mode.";
+
+	public static boolean setActiveWebServer(@NotNull final ServerConfiguration serverConfiguration, @NotNull final WebAppId webAppId) {
+		if (webAppId instanceof GlobalWebAppId) {
+			return true;
+		}
+
+		final String webAppName = getReadableWebAppName(webAppId);
+		LOGGER.info("Setting active webserver for project web app '{}'...", webAppName);
+		final ProjectWebAppId projectWebAppId = (ProjectWebAppId) webAppId;
+		final Project project = projectWebAppId.getProject();
+		final String scopeName = projectWebAppId.getWebScope().name();
+		String activeWebServer = project.getActiveWebServer(scopeName);
+		if (StringUtils.isNullOrEmpty(activeWebServer)) {
+			activeWebServer = serverConfiguration.getActiveWebserverConfiguration(WebAppType.FS5ROOT.getId());
+			if (StringUtils.isNullOrEmpty(activeWebServer)) {
+				LOGGER.warn("Project web app '{}' has no active web server. Using default webserver of global root.", webAppName);
+			} else {
+				LOGGER.warn("Project web app '{}' has no active web server. Using webserver '{}' of global root.", webAppName, activeWebServer);
+			}
+			try {
+				project.lock();
+				project.setActiveWebServer(scopeName, activeWebServer);
+				project.save();
+			} catch (final LockException e) {
+				LOGGER.error(String.format("Cannot update active webserver for project web app '%s': error updating project!", webAppName), e);
+				return false;
+			} finally {
+				project.unlock();
+			}
+			LOGGER.info("Webserver for project web app '{}' successfully set to '{}'.", webAppName, activeWebServer);
+		} else {
+			LOGGER.info("Webserver for project web app '{}' is already set to '{}'. Nothing to change.", webAppName, activeWebServer);
+		}
+		return true;
+	}
 
 	/**
 	 * Deploys the given {@link WebAppId web apps} and returns the {@link ExecutionResults results}.
@@ -75,7 +117,8 @@ public class WebAppUtil {
 
 		// finally deploy
 		final ModuleAdminAgent moduleAdminAgent = connection.getBroker().requireSpecialist(ModuleAdminAgent.TYPE);
-		LOGGER.info("Deploying web apps {}...", distinctWebApps.stream().map(WebAppIdentifier::getName).collect(Collectors.joining(", ", "[ ", " ]")));
+
+		LOGGER.info("Deploying web apps {}...", distinctWebApps.stream().map(WebAppUtil::getReadableWebAppName).collect(Collectors.joining(", ", "[ ", " ]")));
 		final List<WebAppId> deployedWebApps = new ArrayList<>();
 		final List<WebAppId> failedWebApps = new ArrayList<>();
 		for (final WebAppId webAppId : distinctWebApps) {
@@ -87,21 +130,31 @@ public class WebAppUtil {
 				continue;
 			}
 
+			final String webAppName = getReadableWebAppName(webAppId);
+
+			// update the active web server
+			final boolean activeServerForProjectSet = setActiveWebServer(connection.getServerConfiguration(), webAppId);
+			if (!activeServerForProjectSet) {
+				results.add(new WebAppDeployFailedResult(webAppId, WebAppDeployFailedResult.ERROR_UPDATING_WEBSERVER));
+				failedWebApps.add(webAppId);
+				continue;
+			}
+
 			// deploy the web app
-			LOGGER.info("Deploying web app '{}'...", WebAppIdentifier.getName(webAppId));
+			LOGGER.info("Deploying web app '{}'...", webAppName);
 			if (moduleAdminAgent.deployWebApp(webAppId)) {
-				LOGGER.info("Successfully deployed web app '{}'.", WebAppIdentifier.getName(webAppId));
+				LOGGER.info("Web app '{}' successfully deployed.", webAppName);
 				results.add(new WebAppDeployedResult(webAppId));
 				deployedWebApps.add(webAppId);
 			} else {
-				LOGGER.error("Error deploying web app '{}'!", WebAppIdentifier.getName(webAppId));
-				results.add(new WebAppDeployFailedResult(webAppId));
+				LOGGER.error("Error deploying web app '{}'!", webAppName);
+				results.add(new WebAppDeployFailedResult(webAppId, WebAppDeployFailedResult.ERROR_DEPLOYING));
 				failedWebApps.add(webAppId);
 			}
 		}
 		// logging
-		final String deployedWebAppNames = deployedWebApps.stream().map(WebAppIdentifier::getName).collect(Collectors.joining(", ", "[ ", " ]"));
-		final String failedWebAppNames = failedWebApps.stream().map(WebAppIdentifier::getName).collect(Collectors.joining(", ", "[ ", " ]"));
+		final String deployedWebAppNames = deployedWebApps.stream().map(WebAppUtil::getReadableWebAppName).collect(Collectors.joining(", ", "[ ", " ]"));
+		final String failedWebAppNames = failedWebApps.stream().map(WebAppUtil::getReadableWebAppName).collect(Collectors.joining(", ", "[ ", " ]"));
 		if (!deployedWebApps.isEmpty() && failedWebApps.isEmpty()) {
 			// deployed web apps only (no errors)
 			LOGGER.info("Successfully deployed webapps: {}.", deployedWebAppNames);
@@ -110,7 +163,7 @@ public class WebAppUtil {
 			LOGGER.warn("Error deploying web apps: {}.", failedWebAppNames);
 		} else {
 			// deployed & failed web apps
-			LOGGER.warn("Finished webapp deployment with errors. Successful deployments = {}, failed deployments = {}.", deployedWebAppNames, failedWebAppNames);
+			LOGGER.warn("Finished web app deployment with errors. Successful deployments = {}, failed deployments = {}.", deployedWebAppNames, failedWebAppNames);
 		}
 		return results;
 	}
@@ -140,17 +193,31 @@ public class WebAppUtil {
 		if (SOCKET_MODE == connection.getMode()) {
 			return false;
 		}
-		return WebAppIdentifier.isFs5RootWebApp(webAppId);
+		return isFs5RootWebApp(webAppId);
+	}
+
+	private static boolean isFs5RootWebApp(@NotNull final WebAppId candidate) {
+		return WebAppIdentifier.FS5_ROOT.createWebAppId(null).equals(candidate);
+	}
+
+	@NotNull
+	public static String getReadableWebAppName(@NotNull final WebAppId webAppId) {
+		final WebAppIdentifier webAppIdentifier = WebAppIdentifier.fromWebAppId(webAppId);
+		if (!webAppIdentifier.isGlobal()) {
+			final ProjectWebAppId projectWebAppId = (ProjectWebAppId) webAppId;
+			return webAppIdentifier.toString() + '(' + projectWebAppId.getProject().getName() + ')';
+		} else {
+			final GlobalWebAppIdentifier globalWebAppIdentifier = (GlobalWebAppIdentifier) webAppIdentifier;
+			return "global(" + globalWebAppIdentifier.getGlobalWebAppId() + ")";
+		}
 	}
 
 	public static class AbstractWebAppDeployFailedResult implements ExecutionErrorResult<IllegalStateException> {
 
-		private final WebAppId _webAppId;
-		private final IllegalStateException _exception;
+		protected final IllegalStateException _exception;
 
-		public AbstractWebAppDeployFailedResult(@NotNull final WebAppId webAppId) {
-			_webAppId = webAppId;
-			_exception = new IllegalStateException(toString());
+		public AbstractWebAppDeployFailedResult(@NotNull final IllegalStateException exception) {
+			_exception = exception;
 		}
 
 		@NotNull
@@ -159,9 +226,9 @@ public class WebAppUtil {
 			return _exception;
 		}
 
-		@NotNull
-		public final WebAppId getWebAppId() {
-			return _webAppId;
+		@Override
+		public String toString() {
+			return getException().getMessage();
 		}
 
 	}
@@ -170,12 +237,7 @@ public class WebAppUtil {
 	static class RootWebAppDeployNotAllowedResult extends AbstractWebAppDeployFailedResult {
 
 		public RootWebAppDeployNotAllowedResult(@NotNull final WebAppId rootWebAppId) {
-			super(rootWebAppId);
-		}
-
-		@Override
-		public String toString() {
-			return SOCKET_FS_5_ROOT_ERROR_MESSAGE;
+			super(new IllegalStateException(SOCKET_FS_5_ROOT_ERROR_MESSAGE));
 		}
 
 	}
@@ -184,7 +246,7 @@ public class WebAppUtil {
 	public static class WebAppDeployedResult implements ExecutionResult {
 
 		@VisibleForTesting
-		static final String MESSAGE = "Successfully deployed web app '%s'.";
+		static final String MESSAGE = "Web app '%s' successfully deployed.";
 
 		private final WebAppId _webAppId;
 
@@ -194,7 +256,7 @@ public class WebAppUtil {
 
 		@Override
 		public String toString() {
-			return String.format(MESSAGE, WebAppIdentifier.getName(_webAppId));
+			return String.format(MESSAGE, getReadableWebAppName(_webAppId));
 		}
 
 	}
@@ -202,16 +264,14 @@ public class WebAppUtil {
 	@VisibleForTesting
 	static class WebAppDeployFailedResult extends AbstractWebAppDeployFailedResult {
 
+		public static final String ERROR_UPDATING_WEBSERVER = "Error updating active web server.";
+		public static final String ERROR_DEPLOYING = "FirstSpirit failed to deploy web app.";
+
 		@VisibleForTesting
-		static final String MESSAGE = "Error deploying web app '%s'!";
+		static final String MESSAGE = "Error deploying web app '%s': %s";
 
-		public WebAppDeployFailedResult(@NotNull final WebAppId webAppId) {
-			super(webAppId);
-		}
-
-		@Override
-		public String toString() {
-			return String.format(MESSAGE, WebAppIdentifier.getName(getWebAppId()));
+		public WebAppDeployFailedResult(@NotNull final WebAppId webAppId, @NotNull final String reason) {
+			super(new IllegalStateException(String.format(MESSAGE, getReadableWebAppName(webAppId), reason)));
 		}
 
 	}

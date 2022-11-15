@@ -1,22 +1,31 @@
 <Configuration status="warn" name="FirstSpirit CLI">
     <Appenders>
         <Console name="LogToConsole" target="SYSTEM_OUT">
-           <PatternLayout pattern="%5p %m%n"/>
-           <ThresholdFilter level="info"/>
+            <PatternLayout pattern="%5p %m%n"/>
+            <ThresholdFilter level="INFO"/>
         </Console>
         <RollingFile name="LogToRollingFile" fileName="fs-cli.log" filePattern="fs-cli_%d{yyyy-MM-dd}-%i.log.gz">
             <PatternLayout>
                 <pattern>%d %5p %c{1} - %m%n</pattern>
             </PatternLayout>
             <Policies>
-                <TimeBasedTriggeringPolicy interval="24" />
-                <SizeBasedTriggeringPolicy size="10 MB" />
+                <TimeBasedTriggeringPolicy interval="24"/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
             </Policies>
             <DefaultRolloverStrategy max="10"/>
-            <ThresholdFilter level="debug"/>
+            <ThresholdFilter level="INFO"/>
         </RollingFile>
     </Appenders>
     <Loggers>
+        <Logger name="com.espirit.moddev.cli" level="DEBUG"/>
+        <Logger name="de.espirit" level="INFO"/>
+        <Logger name="de.espirit.firstspirit.common.FeatureSwitchUpdater" level="OFF"/>
+        <Logger name="de.espirit.firstspirit.io.InetAddressUtil" level="OFF"/>
+        <Logger name="org.eclipse.jetty" level="WARN"/>
+        <Logger name="org.apache" level="WARN"/>
+        <Logger name="httpclient.wire" level="INFO"/>
+        <Logger name="org.apache.commons.httpclient" level="INFO"/>
+        <Logger name="org.reflections" level="ERROR"/>
         <Root level="all">
             <AppenderRef ref="LogToRollingFile"/>
             <AppenderRef ref="LogToConsole"/>

@@ -30,9 +30,7 @@ import de.espirit.firstspirit.store.access.nexport.ExportUtil;
 import de.espirit.firstspirit.store.access.nexport.operations.ExportOperation;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author e-Spirit GmbH
- */
+
 public class PathIdentifier implements Identifier {
 
 	protected static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(PathIdentifier.class);
@@ -50,6 +48,7 @@ public class PathIdentifier implements Identifier {
 		_path = path;
 	}
 
+
 	@Override
 	public void addToExportOperation(StoreAgent storeAgent, boolean useReleaseState, ExportOperation exportOperation) {
 		final IDProvider element = ExportUtil.getElementByPath(storeAgent, useReleaseState, _path);
@@ -65,6 +64,7 @@ public class PathIdentifier implements Identifier {
 		return _path;
 	}
 
+
 	@Override
 	public boolean equals(final Object o) {
 		if (o == null || o.getClass() != this.getClass()) {
@@ -76,10 +76,12 @@ public class PathIdentifier implements Identifier {
 		}
 	}
 
+
 	@Override
 	public int hashCode() {
 		return _path.hashCode();
 	}
+
 
 	@Override
 	public String toString() {

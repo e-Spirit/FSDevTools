@@ -22,10 +22,9 @@
 
 package com.espirit.moddev.cli.commands.project.activateWebServerCommand;
 
+import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.project.Project;
-
-import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;

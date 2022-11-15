@@ -26,8 +26,6 @@ import com.espirit.moddev.cli.api.parsing.exceptions.UnknownRootNodeException;
 import com.espirit.moddev.cli.api.parsing.exceptions.UnregisteredPrefixException;
 import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 import com.espirit.moddev.cli.api.parsing.identifier.UidMapping;
-import de.espirit.firstspirit.access.store.IDProvider;
-import de.espirit.firstspirit.access.store.ReferenceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +67,7 @@ public class UidIdentifierParser implements Parser<UidIdentifier> {
 					if (uidScanner.hasNext()) {
 						final String secondPart = uidScanner.next();
 						try {
-							final UidIdentifier fqUid = new UidIdentifier(UidMapping.valueOf(firstPart.toUpperCase(Locale.UK)), secondPart);
+							final UidIdentifier fqUid = new UidIdentifier(UidMapping.valueOf(firstPart.toUpperCase(Locale.ROOT)), secondPart);
 							list.add(fqUid);
 						} catch (IllegalArgumentException e) {
 							LOGGER.trace("Identifier string caused an exception, leading to an UnregisteredPrefixException", e);
@@ -91,7 +89,7 @@ public class UidIdentifierParser implements Parser<UidIdentifier> {
 			return false;
 		}
 		try {
-			UidMapping.valueOf(splitted[0].trim().toUpperCase(Locale.UK));
+			UidMapping.valueOf(splitted[0].trim().toUpperCase(Locale.ROOT));
 			return true;
 		} catch (IllegalArgumentException e) {
 			LOGGER.trace("Identifier string caused an exception, leading to an UnregisteredPrefixException", e);

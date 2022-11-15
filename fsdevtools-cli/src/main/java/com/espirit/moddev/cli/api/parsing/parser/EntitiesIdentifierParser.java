@@ -75,6 +75,6 @@ public class EntitiesIdentifierParser implements Parser<EntitiesIdentifier> {
 			return false;
 		}
 
-		return splitted[0].toLowerCase(Locale.UK).trim().equals(ENTITIES_IDENTIFIER);
+		return splitted[0].toLowerCase(Locale.ROOT).trim().equals(ENTITIES_IDENTIFIER);
 	}
 }

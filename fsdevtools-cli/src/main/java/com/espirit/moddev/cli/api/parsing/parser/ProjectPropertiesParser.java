@@ -22,19 +22,14 @@
 
 package com.espirit.moddev.cli.api.parsing.parser;
 
-import java.util.*;
-import java.util.regex.Pattern;
-
+import com.espirit.moddev.cli.api.parsing.identifier.ProjectPropertiesIdentifier;
+import de.espirit.firstspirit.transport.PropertiesTransportOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.espirit.moddev.cli.api.parsing.identifier.ProjectPropertiesIdentifier;
+import java.util.*;
+import java.util.regex.Pattern;
 
-import de.espirit.firstspirit.transport.PropertiesTransportOptions;
-
-/**
- * @author e-Spirit GmbH
- */
 public class ProjectPropertiesParser implements Parser<ProjectPropertiesIdentifier> {
 	protected static final Logger LOGGER = LoggerFactory.getLogger(ProjectPropertiesParser.class);
 
@@ -71,7 +66,7 @@ public class ProjectPropertiesParser implements Parser<ProjectPropertiesIdentifi
 							tempEnum = EnumSet.allOf(PropertiesTransportOptions.ProjectPropertyType.class);
 							break;
 						} else {
-							tempEnum.add(PropertiesTransportOptions.ProjectPropertyType.valueOf(secondPart.toUpperCase(Locale.UK)));
+							tempEnum.add(PropertiesTransportOptions.ProjectPropertyType.valueOf(secondPart.toUpperCase(Locale.ROOT)));
 						}
 					} else {
 						throw new IllegalArgumentException("Wrong input format for input string " + identifier);
@@ -83,6 +78,7 @@ public class ProjectPropertiesParser implements Parser<ProjectPropertiesIdentifi
 		list.add(fqUid);
 		return list;
 	}
+
 
 	/**
 	 * @return Returns a set of all possible values for the related keyword {@link #CUSTOM_PREFIX_PROJECT_PROPERTIES}
@@ -96,10 +92,11 @@ public class ProjectPropertiesParser implements Parser<ProjectPropertiesIdentifi
 		return result;
 	}
 
+
 	@Override
 	public boolean appliesTo(String input) {
 		final String[] splitted = input.split(DELIMITER.pattern());
-		return splitted.length == 2 && splitted[0].toLowerCase(Locale.UK).trim().equals(CUSTOM_PREFIX_PROJECT_PROPERTIES);
+		return splitted.length == 2 && splitted[0].toLowerCase(Locale.ROOT).trim().equals(CUSTOM_PREFIX_PROJECT_PROPERTIES);
 	}
 
 }

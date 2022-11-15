@@ -41,9 +41,6 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author e-Spirit GmbH
- */
 public class SyncDirectoryFactoryTest {
 
 	@TempDir

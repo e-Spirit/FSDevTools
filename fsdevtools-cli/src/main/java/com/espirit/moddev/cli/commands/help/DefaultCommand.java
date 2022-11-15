@@ -24,8 +24,6 @@ package com.espirit.moddev.cli.commands.help;
 
 import com.espirit.moddev.cli.api.command.Command;
 import com.github.rvesse.airline.annotations.Arguments;
-
-import com.github.rvesse.airline.help.Help;
 import com.github.rvesse.airline.model.GlobalMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +33,6 @@ import java.util.List;
 
 /**
  * This command is the default command.
- *
- * @author e-Spirit GmbH
  */
 @com.github.rvesse.airline.annotations.Command(name = "DefaultCommand", hidden = true)
 public class DefaultCommand implements Command<HelpResult> {

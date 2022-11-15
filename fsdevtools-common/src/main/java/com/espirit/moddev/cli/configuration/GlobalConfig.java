@@ -42,8 +42,6 @@ import java.util.Locale;
  * A configuration class for a common configuration in a FirstSpirit environment.
  * Some getters return the value of a corresponding environment variable, if the provided
  * value is empty or no value is provided at all.
- *
- * @author e-Spirit GmbH
  */
 public class GlobalConfig implements Config {
 
@@ -203,7 +201,7 @@ public class GlobalConfig implements Config {
 		if (_fsMode == null) {
 			boolean environmentContainsPort = getEnvironment().containsKey(CliConstants.KEY_FS_MODE.value());
 			if (environmentContainsPort) {
-				return FsConnectionType.valueOf(getEnvironment().get(CliConstants.KEY_FS_MODE.value()).trim().toUpperCase(Locale.UK));
+				return FsConnectionType.valueOf(getEnvironment().get(CliConstants.KEY_FS_MODE.value()).trim().toUpperCase(Locale.ROOT));
 			}
 			return FsConnectionType.valueOf(CliConstants.DEFAULT_CONNECTION_MODE.value());
 		}

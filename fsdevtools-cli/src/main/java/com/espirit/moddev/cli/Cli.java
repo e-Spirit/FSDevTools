@@ -58,10 +58,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_COMMAND;
-import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_ERROR;
-import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_EXCEPTION;
-import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_RESULT;
+import static com.espirit.moddev.cli.api.json.common.AttributeNames.*;
 
 /**
  * Class to represent a command line interface. Is meant to be used from the command line
@@ -71,14 +68,14 @@ import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_RESULT;
  * method of this class (which is normally used from command line) uses a handler to
  * call System.exit() with an appropriate error code in case of regular termination or
  * in case of an exception.
- *
- * @author e-Spirit GmbH
  */
 public final class Cli {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Cli.class);
 	private static final Set<Class<? extends Command>> commandClasses = CommandUtils.scanForCommandClasses();
 	private static final Set<Class<?>> groupClasses = GroupUtils.scanForGroupClasses();
+
+	public static Exception COMMAND_EXECUTION_EXCEPTION = null;
 
 	private final Properties buildProperties;
 	private final Properties gitProperties;
@@ -127,7 +124,6 @@ public final class Cli {
 	 *
 	 * @param args the input arguments
 	 */
-	@SuppressWarnings("squid:S1162")
 	public void execute(final String[] args) throws Exception {
 		setLoggingSystemProperties();
 
@@ -213,25 +209,28 @@ public final class Cli {
 	 *
 	 * @param command the command instance to execute
 	 */
-	@SuppressWarnings("squid:S1162")
 	public void executeCommand(Command<Result<?>> command) throws Exception {
 		LOGGER.info("Executing " + command.getClass().getSimpleName());
 		CliContext context = null;
+		Result<?> result = null;
 		try {
 			context = getCliContextOrNull(command);
-			Result<?> result = command.call();
+			result = command.call();
 			logResult(result);
-			writeCommandResultToResultFile(command, result);
+			writeCommandResultToResultFile(command, result, result.isError());
 		} catch (final Exception exception) {
 			// write result file
-			writeObjectToResultFile(getResultFile(command), new WrappedExceptionResult(getCommandIdentifier(command), exception));
+			if (result == null || !writeCommandResultToResultFile(command, result, true)) {
+				writeObjectToResultFile(getResultFile(command), new WrappedExceptionResult(getCommandIdentifier(command), exception));
+			}
 			// log error
+			COMMAND_EXECUTION_EXCEPTION = exception;
 			if (exception instanceof ClassCastException) {
 				LOGGER.trace("Cannot perform a cast - most likely because the command's call method returns Object as a result, instead of Result.", exception);
 			} else {
 				LOGGER.error("Exception occurred during context initialization or command execution", exception);
-				throw exception;
 			}
+			throw exception;
 		} finally {
 			closeContext(context);
 		}
@@ -253,26 +252,27 @@ public final class Cli {
 		return commandAnnotation.name();
 	}
 
-	private static void writeCommandResultToResultFile(@NotNull final Command<Result<?>> command, final Result<?> result) throws IOException {
+	private static boolean writeCommandResultToResultFile(@NotNull final Command<Result<?>> command, final Result<?> result, final boolean hasError) throws IOException {
 		if (!(command instanceof Config)) {
 			LOGGER.debug("Command is not an instance of Config. Result file will not be written.");
-			return;
+			return false;
 		}
 		if (result == null) {
 			LOGGER.info("Result is null. Result file will not be written.");
-			return;
+			return false;
 		}
 		final Object resultObject = result.get();
 		if (resultObject == null) {
 			LOGGER.info("ResultObject is null. Result file will not be written.");
-			return;
+			return false;
 		}
 		if (!resultObject.getClass().isAnnotationPresent(JsonSerialize.class)) {
 			LOGGER.debug("ResultObject is not annotated with JsonSerialize. Result file will not be written.");
-			return;
+			return false;
 		}
 		// finally write the result to file
-		writeObjectToResultFile(getResultFile(command), new WrappedCommandResult(getCommandIdentifier(command), resultObject));
+		writeObjectToResultFile(getResultFile(command), new WrappedCommandResult(getCommandIdentifier(command), hasError, resultObject));
+		return true;
 	}
 
 	private static void writeObjectToResultFile(@Nullable final File file, @NotNull final Object object) throws IOException {
@@ -326,7 +326,6 @@ public final class Cli {
 		}
 	}
 
-	@SuppressWarnings("squid:S1162")
 	private static void logResult(Result result) throws Exception {
 		if (result != null) {
 			result.log();
@@ -419,12 +418,13 @@ public final class Cli {
 		@JsonProperty(value = ATTR_COMMAND)
 		private final String _command;
 		@JsonProperty(value = ATTR_ERROR)
-		private final boolean _hasError = false;
+		private final boolean _hasError;
 		@JsonProperty(value = ATTR_RESULT)
 		private final Object _result;
 
-		public WrappedCommandResult(@NotNull final String command, @NotNull final Object result) {
+		public WrappedCommandResult(@NotNull final String command, final boolean hasError, @NotNull final Object result) {
 			_command = command;
+			_hasError = hasError;
 			_result = result;
 		}
 

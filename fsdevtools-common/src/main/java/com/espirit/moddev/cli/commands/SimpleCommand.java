@@ -32,9 +32,9 @@ import com.espirit.moddev.cli.configuration.GlobalConfig;
  * execution environment.
  *
  * @param <RESULT_TYPE> the result type that is returned when a command of this class is called
- * @author e-Spirit GmbH
  */
 public abstract class SimpleCommand<RESULT_TYPE extends Result> extends GlobalConfig implements Command<RESULT_TYPE> {
+
 	@Override
 	public abstract RESULT_TYPE call();
 

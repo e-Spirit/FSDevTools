@@ -32,8 +32,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Command for project availability testing. Requiring a project specific broker leads to a successful or unsuccessful result.
- *
- * @author e-Spirit GmbH
  */
 @com.github.rvesse.airline.annotations.Command(name = TestCommandNames.PROJECT, groupNames = TestCommandGroup.NAME, description = "Testing if a FirstSpirit project can be queried successfully")
 public class TestProjectCommand extends GlobalConfig implements Command<TestResult> {
