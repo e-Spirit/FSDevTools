@@ -22,6 +22,8 @@
 
 package com.espirit.moddev.cli.commands.server.startCommand;
 
+import de.espirit.firstspirit.server.RunLevel;
+
 import com.espirit.moddev.cli.commands.server.common.AbstractServerCommandTest;
 import com.espirit.moddev.cli.commands.server.utils.ServerRunner;
 import com.espirit.moddev.cli.results.SimpleResult;
@@ -50,11 +52,25 @@ public class ServerStartCommandTest extends AbstractServerCommandTest<ServerStar
 	}
 
 	@Test
+	public void getRunLevel_default() {
+		final ServerStartCommand instance = createTestling();
+		assertEquals(ServerStartCommand.DEFAULT_RUN_LEVEL, instance.getRunLevel());
+	}
+
+	@Test
 	public void getWaitTime_customValue() {
 		final ServerStartCommand instance = createTestling();
 		final int expected = 10;
 		instance.setWaitTimeInSeconds(expected);
 		assertEquals(expected, instance.getWaitTimeInSeconds());
+	}
+
+	@Test
+	public void getRunLevel_customValue() {
+		final ServerStartCommand instance = createTestling();
+		final RunLevel expected = RunLevel.IN_PROGRESS;
+		instance.setRunLevel(expected);
+		assertEquals(expected,instance.getRunLevel());
 	}
 
 	@Test

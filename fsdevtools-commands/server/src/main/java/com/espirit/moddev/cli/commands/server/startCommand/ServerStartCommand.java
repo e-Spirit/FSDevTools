@@ -22,6 +22,8 @@
 
 package com.espirit.moddev.cli.commands.server.startCommand;
 
+import de.espirit.firstspirit.server.RunLevel;
+
 import com.espirit.moddev.cli.commands.server.ServerCommandGroup;
 import com.espirit.moddev.cli.commands.server.ServerCommandNames;
 import com.espirit.moddev.cli.commands.server.common.AbstractServerCommand;
@@ -61,12 +63,16 @@ public class ServerStartCommand extends AbstractServerCommand implements com.esp
 	static final String MSG_ERROR = "The server couldn't be started or it takes longer than expected (use --wait-time parameter to increase the time to wait)!";
 	@VisibleForTesting
 	static final long DEFAULT_WAIT_TIME = Duration.ofMinutes(10).getSeconds();
+	@VisibleForTesting
+	static final RunLevel DEFAULT_RUN_LEVEL = RunLevel.STARTED;
 
 	@Required
 	@Option(name = {"-sr", "--server-root"}, description = "A FirstSpirit server's installation directory.", title = "serverRoot")
 	private String _serverDir;
 	@Option(name = {"-wt", "--wait-time"}, description = "The time in seconds to wait for a successful connection (default: 10 minutes)", title = "waitTimeInSeconds")
 	private long _waitTimeInSeconds = DEFAULT_WAIT_TIME;
+	@Option(name = {"-rl", "--run-level"}, description = "The server RunLevel to wait for (default: STARTED)", title = "runLevel")
+	private RunLevel _runLevel = DEFAULT_RUN_LEVEL;
 
 	private ServerRunner _serverRunner;
 
@@ -77,6 +83,7 @@ public class ServerStartCommand extends AbstractServerCommand implements com.esp
 			serverRunner.setUserCredentials(getUser(), getPassword());
 			serverRunner.setConnectionType(getFsMode());
 			serverRunner.setTimeout(Duration.ofSeconds(_waitTimeInSeconds));
+			serverRunner.setRunLevel(_runLevel);
 			serverRunner.start();
 			return new SimpleResult<>(MSG_SUCCESS);
 		} catch (final Exception e) {
@@ -112,5 +119,16 @@ public class ServerStartCommand extends AbstractServerCommand implements com.esp
 	@VisibleForTesting
 	public void setWaitTimeInSeconds(final long waitTimeInSeconds) {
 		_waitTimeInSeconds = waitTimeInSeconds;
+	}
+
+	@NotNull
+	@VisibleForTesting
+	public RunLevel getRunLevel() {
+		return _runLevel;
+	}
+
+	@VisibleForTesting
+	public void setRunLevel(@NotNull final RunLevel runLevel) {
+		_runLevel = runLevel;
 	}
 }

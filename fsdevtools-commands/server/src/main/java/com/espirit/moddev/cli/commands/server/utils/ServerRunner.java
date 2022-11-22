@@ -65,6 +65,7 @@ public class ServerRunner {
 	@Nullable
 	private final Path _serverDir;
 	private Duration _timeout = Duration.ofMinutes(10);
+	private RunLevel _runLevel = RunLevel.STARTED;
 
 	private final ExecutorService _executorService;
 	private final AtomicReference<Future<Optional<Process>>> _serverTask = new AtomicReference<>();
@@ -95,6 +96,10 @@ public class ServerRunner {
 
 	public void setConnectionType(@NotNull final FsConnectionType connectionType) {
 		_connectionType = connectionType;
+	}
+
+	public void setRunLevel(@NotNull final RunLevel runLevel) {
+		_runLevel = runLevel;
 	}
 
 	/**
@@ -162,7 +167,7 @@ public class ServerRunner {
 					LOGGER.info("Waiting for server to complete the startup process...");
 				}
 				final RunLevelAgent runLevelAgent = connection.getBroker().requestSpecialist(RunLevelAgent.TYPE);
-				return runLevelAgent.getRunLevel() == RunLevel.STARTED;
+				return runLevelAgent.getRunLevel().level() >= _runLevel.level();
 			}
 		}, LOG_LOOKUP_RETRY_WAIT, retryCount)) {
 			throw new IllegalStateException("Could not detect a started FirstSpirit server!");

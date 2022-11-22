@@ -1,5 +1,9 @@
 # Release notes
 
+## Version 4.4.0
+
+* added new parameter "*--run-level/-rl*" to "*server start*" command
+
 ## Version 4.3.0
 
 * new command for Content Transport:
