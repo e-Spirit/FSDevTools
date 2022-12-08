@@ -26,6 +26,7 @@ public class FeatureCommandNames {
 
 	public final static String ANALYZE = "analyze";
 	public final static String DOWNLOAD = "download";
+	public final static String REVISION = "revision";
 	public final static String INSTALL = "install";
 	public final static String LIST = "list";
 }

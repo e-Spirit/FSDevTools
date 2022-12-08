@@ -20,9 +20,11 @@
  *
  */
 
+
 import com.espirit.moddev.build.BuildUtils
 import org.apache.tools.ant.filters.FixCrLfFilter
 import org.apache.tools.ant.filters.ReplaceTokens
+
 import java.util.regex.Pattern
 
 /**
@@ -212,6 +214,13 @@ allprojects {
 
 subprojects {
     apply plugin: 'java-library'
+    apply plugin: 'idea'
+    idea {
+        module {
+            downloadJavadoc = true
+            downloadSources = true
+        }
+    }
 
     // setup java
     compileJava.options.encoding = 'UTF-8'
@@ -285,9 +294,9 @@ subprojects {
 jar {
     manifest {
         attributes(
-            'Manifest-Version': "1.0",
-            'Main-Class': "com.espirit.moddev.cli.Main",
-            'Multi-Release': "true",
+                'Manifest-Version': "1.0",
+                'Main-Class': "com.espirit.moddev.cli.Main",
+                'Multi-Release': "true",
         )
     }
 }

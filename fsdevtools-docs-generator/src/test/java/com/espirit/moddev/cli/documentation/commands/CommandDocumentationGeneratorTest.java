@@ -559,7 +559,7 @@ public class CommandDocumentationGeneratorTest {
 	@Test
 	public void getDocumentationInfos() {
 		final Collection<CommandDocumentationInfo> documentationInfos = _generator.getDocumentationInfos();
-		assertThat(documentationInfos).hasSize(25); // currently: 25 commands
+		assertThat(documentationInfos).hasSize(26); // currently: 26 commands
 	}
 
 	@NotNull

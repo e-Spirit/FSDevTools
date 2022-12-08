@@ -140,6 +140,15 @@ public class FeatureHelper {
 				.collect(Collectors.toList());
 	}
 
+	@NotNull
+	public FeatureDescriptor getFeatureDescriptor(@NotNull final FeatureAgent featureAgent, @NotNull final String featureName) {
+		return getFeatureDescriptors(featureAgent)
+				.stream()
+				.filter(descriptor -> featureName.equals(descriptor.getFeatureName()))
+				.findAny()
+				.orElseThrow(() -> new IllegalArgumentException(String.format("Feature '%s' not found!", featureName)));
+	}
+
 	/**
 	 * Upload feature archive to the FirstSpirit server and analyze the feature.
 	 *

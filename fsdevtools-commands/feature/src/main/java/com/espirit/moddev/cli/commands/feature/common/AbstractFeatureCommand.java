@@ -28,12 +28,8 @@ import com.espirit.moddev.cli.commands.SimpleCommand;
 import com.espirit.moddev.cli.results.SimpleResult;
 import com.espirit.moddev.shared.StringUtils;
 import com.espirit.moddev.shared.annotation.VisibleForTesting;
-import de.espirit.firstspirit.access.AdminService;
 import de.espirit.firstspirit.access.Connection;
-import de.espirit.firstspirit.access.ServicesBroker;
-import de.espirit.firstspirit.access.admin.ProjectStorage;
 import de.espirit.firstspirit.access.project.Project;
-import de.espirit.firstspirit.agency.SpecialistsBroker;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,17 +94,13 @@ public abstract class AbstractFeatureCommand extends SimpleCommand<SimpleResult<
 	Project getFirstSpiritProject(@NotNull final Connection connection) {
 		final String projectName = getProject();
 		if (StringUtils.isNullOrEmpty(projectName)) {
-			throw new IllegalStateException("project is not specified");
+			throw new IllegalStateException("Project is not specified");
 		}
-		final SpecialistsBroker connectionBroker = connection.getBroker();
-		final ServicesBroker servicesBroker = connectionBroker.requireSpecialist(ServicesBroker.TYPE);
-		final AdminService adminService = servicesBroker.getService(AdminService.class);
-		final ProjectStorage projectStorage = adminService.getProjectStorage();
-		final Project project = projectStorage.getProject(projectName);
+		final Project project = connection.getProjectByName(projectName);
 		if (project == null) {
-			throw new IllegalStateException(String.format("could not find project \"%s\" on the server (typo in the project name?)", projectName));
+			throw new IllegalStateException(String.format("Could not find project '%s' on the server (typo in the project name?)", projectName));
 		}
-		LOGGER.debug("retrieved project with name \"{}\" and ID \"{}\")", project.getName(), project.getId());
+		LOGGER.debug("Retrieved project with name '{}' and ID '{}')", project.getName(), project.getId());
 		return project;
 	}
 

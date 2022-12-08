@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,6 +63,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -177,6 +179,39 @@ class FeatureHelperTest {
 						featureDescriptor2,
 						featureDescriptor7
 				));
+	}
+
+	@Test
+	void getFeatureDescriptor() {
+		// GIVEN
+		final String featureName = "Feature A";
+		final Revision revision1 = mock(Revision.class);
+		final Revision revision2 = mock(Revision.class);
+		final FeatureDescriptor featureDescriptor1 = mockFeatureDescriptor(featureName, revision1);
+		final FeatureDescriptor featureDescriptor2 = mockFeatureDescriptor(featureName, revision2);
+		when(revision1.compareTo(revision2)).thenReturn(-1);
+		final List<FeatureDescriptor> featureDescriptors = List.of(
+				featureDescriptor1,
+				featureDescriptor2
+		);
+		final FeatureHelper featureHelper = spy(new FeatureHelper());
+		when(featureHelper.getFeatureDescriptors(_featureAgent)).thenReturn(featureDescriptors);
+		// WHEN
+		final FeatureDescriptor result = featureHelper.getFeatureDescriptor(_featureAgent, featureName);
+		// THEN
+		assertThat(result.getRevision()).isSameAs(revision2);
+	}
+
+	@Test
+	void getFeatureDescriptor_throws_if_feature_does_not_exist() {
+		// GIVEN
+		final String featureName = "unknownFeature";
+		final FeatureHelper featureHelper = spy(new FeatureHelper());
+		when(featureHelper.getFeatureDescriptors(_featureAgent)).thenReturn(Collections.emptyList());
+		// WHEN & THEN
+		assertThatThrownBy(() -> featureHelper.getFeatureDescriptor(_featureAgent, featureName))
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage(String.format("Feature '%s' not found!", featureName));
 	}
 
 	@Test

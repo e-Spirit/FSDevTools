@@ -72,11 +72,11 @@ import java.util.stream.Collectors;
 )
 @Examples(
 		examples = {
-				FeatureCommandNames.INSTALL + " --file feature.zip --layerMapping \"*:CREATE_NEW\" --force",
-				FeatureCommandNames.INSTALL + " --file feature.zip --layerMapping \"*:FirstSpiritDBA\"",
-				FeatureCommandNames.INSTALL + " --file feature.zip --layerMapping \"featureLayerA=projectLayer1,featureLayerB=projectLayer2,*=FirstSpiritDBA\"",
-				FeatureCommandNames.INSTALL + " --file feature.zip --layerMapping \"featureLayerA=projectLayer1,featureLayerB=projectLayer2,featureLayerC=CREATE_NEW\"",
-				FeatureCommandNames.INSTALL + " --file feature.zip",
+				FeatureCommandGroup.NAME + " " + FeatureCommandNames.INSTALL + " --file feature.zip --layerMapping \"*:CREATE_NEW\" --force",
+				FeatureCommandGroup.NAME + " " + FeatureCommandNames.INSTALL + " --file feature.zip --layerMapping \"*:FirstSpiritDBA\"",
+				FeatureCommandGroup.NAME + " " + FeatureCommandNames.INSTALL + " --file feature.zip --layerMapping \"featureLayerA=projectLayer1,featureLayerB=projectLayer2,*=FirstSpiritDBA\"",
+				FeatureCommandGroup.NAME + " " + FeatureCommandNames.INSTALL + " --file feature.zip --layerMapping \"featureLayerA=projectLayer1,featureLayerB=projectLayer2,featureLayerC=CREATE_NEW\"",
+				FeatureCommandGroup.NAME + " " + FeatureCommandNames.INSTALL + " --file feature.zip",
 		},
 		descriptions = {
 				"Upload the feature archive \"feature.zip\" to the FirstSpirit server and import the corresponding feature to the specified FirstSpirit project." +

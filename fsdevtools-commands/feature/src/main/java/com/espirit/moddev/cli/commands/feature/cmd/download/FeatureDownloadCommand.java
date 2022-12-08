@@ -60,10 +60,10 @@ import java.nio.file.Paths;
 )
 @Examples(
 		examples = {
-				FeatureCommandNames.DOWNLOAD + " --name \"My Feature\" --file feature.zip --useLatestRevision --useRelease true",
-				FeatureCommandNames.DOWNLOAD + " --name \"My Feature\" --file feature.zip --useLatestRevision",
-				FeatureCommandNames.DOWNLOAD + " --name \"My Feature\" --file feature.zip --useRelease false",
-				FeatureCommandNames.DOWNLOAD + " --name \"My Feature\" --file feature.zip",
+				FeatureCommandGroup.NAME + " " + FeatureCommandNames.DOWNLOAD + " --name \"My Feature\" --file feature.zip --useLatestRevision --useRelease true",
+				FeatureCommandGroup.NAME + " " + FeatureCommandNames.DOWNLOAD + " --name \"My Feature\" --file feature.zip --useLatestRevision",
+				FeatureCommandGroup.NAME + " " + FeatureCommandNames.DOWNLOAD + " --name \"My Feature\" --file feature.zip --useRelease false",
+				FeatureCommandGroup.NAME + " " + FeatureCommandNames.DOWNLOAD + " --name \"My Feature\" --file feature.zip",
 		},
 		descriptions = {
 				"Download feature archive for the feature named \"My Feature\" from the specified FirstSpirit project and store it locally to the \"feature.zip\" file." +
@@ -204,7 +204,7 @@ public class FeatureDownloadCommand extends AbstractFeatureCommand {
 	protected void execute(@NotNull final Connection connection, @NotNull final Project project) throws Exception {
 		final File outputFile = ensureOutputFileExists();
 		final FeatureAgent featureAgent = getFeatureAgent(connection, project);
-		final FeatureDescriptor originalFeatureDescriptor = getOriginalFeatureDescriptor(featureAgent);
+		final FeatureDescriptor originalFeatureDescriptor = getFeatureHelper().getFeatureDescriptor(featureAgent, getFeatureName());
 		final FsObjectsLoggingFormatHelper fsObjectsLoggingFormatHelper = getFsObjectsLoggingFormatHelper();
 		final FeatureDescriptor featureDescriptor = getFeatureDescriptor(featureAgent, originalFeatureDescriptor);
 		final boolean sameFeatureDescriptor = featureDescriptor == originalFeatureDescriptor;
@@ -236,18 +236,6 @@ public class FeatureDownloadCommand extends AbstractFeatureCommand {
 	@NotNull
 	FeatureAgent getFeatureAgent(@NotNull final Connection connection, @NotNull final Project project) {
 		return getFeatureHelper().getFeatureAgent(connection, project);
-	}
-
-	@VisibleForTesting
-	@NotNull
-	FeatureDescriptor getOriginalFeatureDescriptor(@NotNull final FeatureAgent featureAgent) {
-		final String featureName = getFeatureName();
-		return getFeatureHelper()
-				.getFeatureDescriptors(featureAgent)
-				.stream()
-				.filter(descriptor -> featureName.equals(descriptor.getFeatureName()))
-				.findAny()
-				.orElseThrow(() -> new IllegalArgumentException(String.format("Feature '%s' not found!", featureName)));
 	}
 
 	@VisibleForTesting

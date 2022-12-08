@@ -49,7 +49,7 @@ import java.io.File;
 )
 @Examples(
 		examples = {
-				FeatureCommandNames.ANALYZE + " --file \"C:/path/to/feature-file.zip\"",
+				FeatureCommandGroup.NAME + " " + FeatureCommandNames.ANALYZE + " --file \"C:/path/to/feature-file.zip\"",
 		},
 		descriptions = {
 				"Send the \"C:/path/to/feature-file.zip\" feature archive to the FirstSpirit server, analyze it in the context of the specified FirstSpirit project and report any problems/errors/inconsistencies in it.",

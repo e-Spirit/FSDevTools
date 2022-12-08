@@ -32,7 +32,6 @@ import de.espirit.firstspirit.feature.FeatureDescriptor;
 import de.espirit.firstspirit.feature.FeatureFile;
 import de.espirit.firstspirit.feature.FeatureProgress;
 import org.assertj.core.api.Assertions;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -46,7 +45,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
@@ -92,9 +90,12 @@ class FeatureDownloadCommandTest {
 	@Test
 	void execute_delegates_to_sibling_methods() throws Exception {
 		// GIVEN
+		final String featureName = "myFeature";
+		when(_subjectUnderTest.getFeatureName()).thenReturn(featureName);
 		when(_subjectUnderTest.ensureOutputFileExists()).thenReturn(_file);
 		when(_subjectUnderTest.getFeatureAgent(any(), any())).thenReturn(_featureAgent);
-		when(_subjectUnderTest.getOriginalFeatureDescriptor(any())).thenReturn(_originalFeatureDescriptor);
+		when(_subjectUnderTest.getFeatureHelper()).thenReturn(_featureHelper);
+		when(_featureHelper.getFeatureDescriptor(_featureAgent, featureName)).thenReturn(_originalFeatureDescriptor);
 		when(_subjectUnderTest.getFsObjectsLoggingFormatHelper()).thenReturn(_fsObjectsLoggingFormatHelper);
 		when(_subjectUnderTest.getFeatureDescriptor(any(), any())).thenReturn(_featureDescriptor);
 		doCallRealMethod().when(_subjectUnderTest).execute(any(), any());
@@ -103,7 +104,7 @@ class FeatureDownloadCommandTest {
 		// THEN
 		verify(_subjectUnderTest).ensureOutputFileExists();
 		verify(_subjectUnderTest).getFeatureAgent(_connection, _project);
-		verify(_subjectUnderTest).getOriginalFeatureDescriptor(_featureAgent);
+		verify(_featureHelper).getFeatureDescriptor(_featureAgent, featureName);
 		verify(_subjectUnderTest).getFsObjectsLoggingFormatHelper();
 		verify(_fsObjectsLoggingFormatHelper).formatFeatureDescriptor(_featureDescriptor);
 		verify(_subjectUnderTest).getFeatureDescriptor(_featureAgent, _originalFeatureDescriptor);
@@ -112,9 +113,7 @@ class FeatureDownloadCommandTest {
 	}
 
 	@Test
-	void ensureOutputFileExists_input_file_does_not_exist_and_must_be_created(
-			@TempDir final Path tempDir
-	) throws IOException {
+	void ensureOutputFileExists_input_file_does_not_exist_and_must_be_created(@TempDir final Path tempDir) throws IOException {
 		final Path pathToFeatureZip = tempDir.resolve(Paths.get("subdir1", "subdir2", "test-file"));
 		// GIVEN
 		when(_subjectUnderTest.getPathToFeatureZip()).thenReturn(pathToFeatureZip.toString());
@@ -128,9 +127,7 @@ class FeatureDownloadCommandTest {
 	}
 
 	@Test
-	void ensureOutputFileExists_if_input_file_exists_no_exception_is_thrown(
-			@TempDir final Path tempDir
-	) throws IOException {
+	void ensureOutputFileExists_if_input_file_exists_no_exception_is_thrown(@TempDir final Path tempDir) throws IOException {
 		final Path pathToFeatureZip = tempDir.resolve("test-file");
 		final String testData = "test data";
 		Files.writeString(pathToFeatureZip, testData);
@@ -154,9 +151,7 @@ class FeatureDownloadCommandTest {
 	}
 
 	@Test
-	void ensureOutputFileExists_if_directory_is_given_exception_is_thrown(
-			@TempDir final Path tempDir
-	) throws IOException {
+	void ensureOutputFileExists_if_directory_is_given_exception_is_thrown(@TempDir final Path tempDir) throws IOException {
 		assumeThat(tempDir)
 				.isNotNull()
 				.exists();
@@ -174,9 +169,7 @@ class FeatureDownloadCommandTest {
 	}
 
 	@Test
-	void ensureOutputFileExists_should_throw_IOException_it_should_not_try_to_come_up_with_alternative_file_location(
-			@TempDir final Path tempDir
-	) throws IOException {
+	void ensureOutputFileExists_should_throw_IOException_it_should_not_try_to_come_up_with_alternative_file_location(@TempDir final Path tempDir) throws IOException {
 		final Path pathToParentDir = tempDir.resolve("test-parent-dir");
 		final File parentDir = pathToParentDir.toFile();
 		assumeThat(parentDir.mkdir())
@@ -205,56 +198,6 @@ class FeatureDownloadCommandTest {
 		_subjectUnderTest.getFeatureAgent(_connection, _project);
 		// THEN
 		verify(_featureHelper).getFeatureAgent(_connection, _project);
-	}
-
-	@Test
-	void getOriginalFeatureDescriptor_throws_if_feature_does_not_exist() {
-		// GIVEN
-		when(_subjectUnderTest.getFeatureName()).thenReturn("my cool feature");
-		when(_subjectUnderTest.getFeatureHelper()).thenReturn(_featureHelper);
-		final List<FeatureDescriptor> featureDescriptors = List.of(
-				mockFeatureDescriptor("test feature 1"),
-				mockFeatureDescriptor("test feature 2"),
-				mockFeatureDescriptor("test feature 3")
-		);
-		when(_featureHelper.getFeatureDescriptors(any())).thenReturn(featureDescriptors);
-		when(_subjectUnderTest.getOriginalFeatureDescriptor(any())).thenCallRealMethod();
-		// WHEN
-		Assertions.assertThatThrownBy(() -> _subjectUnderTest.getOriginalFeatureDescriptor(_featureAgent))
-				.isInstanceOf(IllegalArgumentException.class)
-				.hasMessage("Feature 'my cool feature' not found!");
-		// THEN
-		verify(_subjectUnderTest).getFeatureName();
-		verify(_subjectUnderTest).getFeatureHelper();
-		verify(_featureHelper).getFeatureDescriptors(_featureAgent);
-	}
-
-	@Test
-	void getOriginalFeatureDescriptor_returns_feature_if_it_exists() {
-		// GIVEN
-		final String featureName = "test feature 3";
-		when(_subjectUnderTest.getFeatureName()).thenReturn(featureName);
-		when(_subjectUnderTest.getFeatureHelper()).thenReturn(_featureHelper);
-		final FeatureDescriptor featureDescriptor = mockFeatureDescriptor(featureName);
-		final List<FeatureDescriptor> featureDescriptors = List.of(
-				mockFeatureDescriptor("test feature 1"),
-				mockFeatureDescriptor("test feature 2"),
-				featureDescriptor,
-				// just to make Mockito happy ("Please remove unnecessary stubbings")
-				mock(FeatureDescriptor.class),
-				mock(FeatureDescriptor.class)
-		);
-		when(_featureHelper.getFeatureDescriptors(any())).thenReturn(featureDescriptors);
-		when(_subjectUnderTest.getOriginalFeatureDescriptor(any())).thenCallRealMethod();
-		// WHEN
-		final FeatureDescriptor result = _subjectUnderTest.getOriginalFeatureDescriptor(_featureAgent);
-		// THEN
-		assertThat(result)
-				.isNotNull()
-				.isSameAs(featureDescriptor);
-		verify(_subjectUnderTest).getFeatureName();
-		verify(_subjectUnderTest).getFeatureHelper();
-		verify(_featureHelper).getFeatureDescriptors(_featureAgent);
 	}
 
 	@Test
@@ -360,10 +303,4 @@ class FeatureDownloadCommandTest {
 		verify(_subjectUnderTest).writeInputStreamIntoFile(inputStream, _file);
 	}
 
-	@NotNull
-	private static FeatureDescriptor mockFeatureDescriptor(@NotNull final String name) {
-		final FeatureDescriptor featureDescriptor = mock(FeatureDescriptor.class);
-		when(featureDescriptor.getFeatureName()).thenReturn(name);
-		return featureDescriptor;
-	}
 }

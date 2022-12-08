@@ -1,5 +1,12 @@
 # Release notes
 
+## Version 4.3.0
+
+* new command for Content Transport:
+  * "*feature revision*": updates the revision of the specified feature 
+  
+For more information about the new command, please use "*fs-cli help feature revision*" or open the included documentation under *docs/index.html*.
+
 ## Version 4.2.0
 
 * updated default *log4J2.xml* to reduce the default logging for some packages, this was a regression of v4.0.0

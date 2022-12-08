@@ -51,8 +51,8 @@ import java.util.stream.Collectors;
 )
 @Examples(
 		examples = {
-				FeatureCommandNames.LIST,
-				FeatureCommandNames.LIST + " --filter \"my test feature\"",
+				FeatureCommandGroup.NAME + " " + FeatureCommandNames.LIST,
+				FeatureCommandGroup.NAME + " " + FeatureCommandNames.LIST + " --filter \"my test feature\"",
 		},
 		descriptions = {
 				"List features available in the specified FirstSpirit project.",
