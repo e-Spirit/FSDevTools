@@ -23,6 +23,7 @@
 package com.espirit.moddev.cli.exception;
 
 import de.espirit.common.base.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -31,82 +32,163 @@ import org.slf4j.LoggerFactory;
 public class FsLoggingBridge implements Logger {
 
 	@Override
-	public boolean isTraceEnabled(final Class<?> aClass) {
-		return LoggerFactory.getLogger(aClass).isTraceEnabled();
+	public boolean isTraceEnabled(@NotNull final Class<?> className) {
+		return LoggerFactory.getLogger(className).isTraceEnabled();
 	}
 
 	@Override
-	public void logTrace(final String s, final Class<?> aClass) {
-		LoggerFactory.getLogger(aClass).trace(s);
+	public boolean isTraceEnabled(@NotNull final String className) {
+		return LoggerFactory.getLogger(className).isTraceEnabled();
 	}
 
 	@Override
-	public void logTrace(final String s, final Throwable throwable, final Class<?> aClass) {
-		LoggerFactory.getLogger(aClass).trace(s, throwable);
+	public void logTrace(@NotNull final String message, @NotNull final Class<?> className) {
+		LoggerFactory.getLogger(className).trace(message);
 	}
 
 	@Override
-	public boolean isDebugEnabled(final Class<?> aClass) {
-		return LoggerFactory.getLogger(aClass).isDebugEnabled();
+	public void logTrace(@NotNull final String message, @NotNull final String className) {
+		LoggerFactory.getLogger(className).trace(message);
 	}
 
 	@Override
-	public void logDebug(final String s, final Throwable throwable, final Class<?> aClass) {
-		LoggerFactory.getLogger(aClass).debug(s, throwable);
+	public void logTrace(@NotNull final String message, @NotNull final Throwable throwable, final Class<?> className) {
+		LoggerFactory.getLogger(className).trace(message, throwable);
 	}
 
 	@Override
-	public void logDebug(final String s, final Class<?> aClass) {
-		LoggerFactory.getLogger(aClass).debug(s);
+	public void logTrace(@NotNull final String message, @NotNull final Throwable throwable, @NotNull final String className) {
+		LoggerFactory.getLogger(className).trace(message, throwable);
 	}
 
 	@Override
-	public boolean isInfoEnabled(final Class<?> aClass) {
-		return LoggerFactory.getLogger(aClass).isInfoEnabled();
+	public boolean isDebugEnabled(@NotNull final Class<?> className) {
+		return LoggerFactory.getLogger(className).isDebugEnabled();
 	}
 
 	@Override
-	public void logInfo(final String s, final Throwable throwable, final Class<?> aClass) {
-		LoggerFactory.getLogger(aClass).info(s, throwable);
+	public boolean isDebugEnabled(@NotNull final String className) {
+		return LoggerFactory.getLogger(className).isDebugEnabled();
 	}
 
 	@Override
-	public void logInfo(final String s, final Class<?> aClass) {
-		LoggerFactory.getLogger(aClass).info(s);
+	public void logDebug(@NotNull final String message, @NotNull final Throwable throwable, @NotNull final Class<?> className) {
+		LoggerFactory.getLogger(className).debug(message, throwable);
 	}
 
 	@Override
-	public boolean isWarnEnabled(final Class<?> aClass) {
-		return LoggerFactory.getLogger(aClass).isWarnEnabled();
+	public void logDebug(@NotNull final String message, @NotNull final Throwable throwable, @NotNull final String className) {
+		LoggerFactory.getLogger(className).debug(message, throwable);
 	}
 
 	@Override
-	public void logWarning(final String s, final Throwable throwable, final Class<?> aClass) {
-		LoggerFactory.getLogger(aClass).warn(s, throwable);
+	public void logDebug(@NotNull final String message, @NotNull final Class<?> className) {
+		LoggerFactory.getLogger(className).debug(message);
 	}
 
 	@Override
-	public void logWarning(final String s, final Class<?> aClass) {
-		LoggerFactory.getLogger(aClass).warn(s);
+	public void logDebug(@NotNull final String message, @NotNull final String className) {
+		LoggerFactory.getLogger(className).debug(message);
 	}
 
 	@Override
-	public void logError(final String s, final Throwable throwable, final Class<?> aClass) {
-		LoggerFactory.getLogger(aClass).error(s, throwable);
+	public boolean isInfoEnabled(@NotNull final Class<?> className) {
+		return LoggerFactory.getLogger(className).isInfoEnabled();
 	}
 
 	@Override
-	public void logError(final String s, final Class<?> aClass) {
-		LoggerFactory.getLogger(aClass).error(s);
+	public boolean isInfoEnabled(@NotNull final String className) {
+		return LoggerFactory.getLogger(className).isInfoEnabled();
 	}
 
 	@Override
-	public void logFatal(final String s, final Class<?> aClass) {
-		logError(s, aClass);
+	public void logInfo(@NotNull final String message, @NotNull final Throwable throwable, @NotNull final Class<?> className) {
+		LoggerFactory.getLogger(className).info(message, throwable);
 	}
 
 	@Override
-	public void logFatal(final String s, final Throwable throwable, final Class<?> aClass) {
-		logError(s, throwable, aClass);
+	public void logInfo(@NotNull final String message, @NotNull final Throwable throwable, @NotNull final String className) {
+		LoggerFactory.getLogger(className).info(message, throwable);
 	}
+
+	@Override
+	public void logInfo(@NotNull final String message, @NotNull final Class<?> className) {
+		LoggerFactory.getLogger(className).info(message);
+	}
+
+	@Override
+	public void logInfo(@NotNull final String message, @NotNull final String className) {
+		LoggerFactory.getLogger(className).info(message);
+	}
+
+	@Override
+	public boolean isWarnEnabled(@NotNull final Class<?> className) {
+		return LoggerFactory.getLogger(className).isWarnEnabled();
+	}
+
+	@Override
+	public boolean isWarnEnabled(@NotNull final String className) {
+		return LoggerFactory.getLogger(className).isWarnEnabled();
+	}
+
+	@Override
+	public void logWarning(@NotNull final String message, @NotNull final Throwable throwable, @NotNull final Class<?> className) {
+		LoggerFactory.getLogger(className).warn(message, throwable);
+	}
+
+	@Override
+	public void logWarning(@NotNull final String message, @NotNull final Throwable throwable, @NotNull final String className) {
+		LoggerFactory.getLogger(className).warn(message, throwable);
+	}
+
+	@Override
+	public void logWarning(@NotNull final String message, @NotNull final Class<?> className) {
+		LoggerFactory.getLogger(className).warn(message);
+	}
+
+	@Override
+	public void logWarning(@NotNull final String message, @NotNull final String className) {
+		LoggerFactory.getLogger(className).warn(message);
+	}
+
+	@Override
+	public void logError(@NotNull final String message, @NotNull final Throwable throwable, @NotNull final Class<?> className) {
+		LoggerFactory.getLogger(className).error(message, throwable);
+	}
+
+	@Override
+	public void logError(@NotNull final String message, @NotNull final Throwable throwable, @NotNull final String className) {
+		LoggerFactory.getLogger(className).error(message, throwable);
+	}
+
+	@Override
+	public void logError(@NotNull final String message, @NotNull final Class<?> className) {
+		LoggerFactory.getLogger(className).error(message);
+	}
+
+	@Override
+	public void logError(@NotNull final String message, @NotNull final String className) {
+		LoggerFactory.getLogger(className).error(message);
+	}
+
+	@Override
+	public void logFatal(@NotNull final String message, @NotNull final Class<?> className) {
+		logError(message, className);
+	}
+
+	@Override
+	public void logFatal(@NotNull final String message, @NotNull final String className) {
+		logError(message, className);
+	}
+
+	@Override
+	public void logFatal(@NotNull final String message, @NotNull final Throwable throwable, @NotNull final Class<?> className) {
+		logError(message, throwable, className);
+	}
+
+	@Override
+	public void logFatal(@NotNull final String message, @NotNull final Throwable throwable, @NotNull final String className) {
+		logError(message, throwable, className);
+	}
+
 }

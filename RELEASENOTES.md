@@ -1,5 +1,10 @@
 # Release notes
 
+## Version 4.4.1
+
+* updated FirstSpirit compile dependency to 5.2.230409 (was 5.2.220907)
+* implemented missing methods in FsLoggingBridge
+
 ## Version 4.4.0
 
 * added new parameter "*--run-level/-rl*" to "*server start*" command

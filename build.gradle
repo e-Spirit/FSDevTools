@@ -33,7 +33,7 @@ import java.util.regex.Pattern
 
 buildscript {
     ext {
-        fsRuntimeVersion = '5.2.220907'
+        fsRuntimeVersion = '5.2.230409'
     }
 }
 
@@ -236,13 +236,14 @@ subprojects {
         compileOnly group: 'de.espirit.firstspirit', name: 'fs-isolated-runtime', version: "${fsRuntimeVersion}"
         implementation "org.slf4j:slf4j-api:${slf4japiVersion}"
 
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
-        testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
-        testImplementation("org.junit.jupiter:junit-jupiter-params:${junitVersion}")
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+        testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+        testImplementation "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
         testImplementation "org.hamcrest:hamcrest-core:${hamcrestCoreVersion}"
         testImplementation "org.mockito:mockito-core:${mockitoVersion}"
         testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
         testImplementation "org.assertj:assertj-core:${assertJVersion}"
+        testImplementation "org.jetbrains:annotations:24.0.1"
         testImplementation group: 'de.espirit.firstspirit', name: 'fs-isolated-runtime', version: "$firstSpiritVersion", ext: 'jar'
     }
 
