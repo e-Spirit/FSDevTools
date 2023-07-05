@@ -132,7 +132,7 @@ public class FileSystemUtilTest {
 		final String targetDirectory = "";
 		final ExecutionResult result = FileSystemUtil.uploadFile(fileSystem, file, targetDirectory);
 		assertThat(result).isInstanceOf(FileSystemUtil.FileUploadFailedResult.class);
-		assertThat(((FileSystemUtil.FileUploadFailedResult) result).getException().getMessage()).isEqualTo(String.format(FileSystemUtil.FileUploadFailedResult.MESSAGE + "java.io.IOException: " + ioExceptionMessage, file, targetDirectory));
+		assertThat(((FileSystemUtil.FileUploadFailedResult) result).getThrowable().getMessage()).isEqualTo(String.format(FileSystemUtil.FileUploadFailedResult.MESSAGE + "java.io.IOException: " + ioExceptionMessage, file, targetDirectory));
 		verifyFileDoesNotExist(fileSystem, "1.json");
 	}
 
@@ -150,7 +150,7 @@ public class FileSystemUtilTest {
 		final String file = "file/does/not/exist.json";
 		final ExecutionResult result = FileSystemUtil.uploadFile(_fileSystem, file, "");
 		assertThat(result).isInstanceOf(FileSystemUtil.FileNotFoundResult.class);
-		assertThat(((FileSystemUtil.FileNotFoundResult) result).getException().getMessage()).isEqualTo(String.format(FileSystemUtil.FileNotFoundResult.MESSAGE, file));
+		assertThat(((FileSystemUtil.FileNotFoundResult) result).getThrowable().getMessage()).isEqualTo(String.format(FileSystemUtil.FileNotFoundResult.MESSAGE, file));
 	}
 
 	@Test
@@ -158,7 +158,7 @@ public class FileSystemUtilTest {
 		final String file = "src/test/resources/dir";
 		final ExecutionResult result = FileSystemUtil.uploadFile(_fileSystem, file, "");
 		assertThat(result).isInstanceOf(FileSystemUtil.ObjectIsNotAFileResult.class);
-		assertThat(((FileSystemUtil.ObjectIsNotAFileResult) result).getException().getMessage()).isEqualTo(String.format(FileSystemUtil.ObjectIsNotAFileResult.MESSAGE, file));
+		assertThat(((FileSystemUtil.ObjectIsNotAFileResult) result).getThrowable().getMessage()).isEqualTo(String.format(FileSystemUtil.ObjectIsNotAFileResult.MESSAGE, file));
 	}
 
 	@Test

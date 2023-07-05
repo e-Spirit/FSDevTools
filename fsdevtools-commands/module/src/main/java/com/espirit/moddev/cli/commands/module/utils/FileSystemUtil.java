@@ -184,7 +184,7 @@ public class FileSystemUtil {
 
 		@NotNull
 		@Override
-		public IOException getException() {
+		public IOException getThrowable() {
 			return new IOException(toString());
 		}
 
@@ -202,7 +202,7 @@ public class FileSystemUtil {
 
 		@NotNull
 		@Override
-		public IOException getException() {
+		public IOException getThrowable() {
 			return new IOException(toString());
 		}
 
@@ -223,7 +223,7 @@ public class FileSystemUtil {
 
 		@NotNull
 		@Override
-		public IOException getException() {
+		public IOException getThrowable() {
 			return _exception;
 		}
 

@@ -75,7 +75,7 @@ public final class Cli {
 	private static final Set<Class<? extends Command>> commandClasses = CommandUtils.scanForCommandClasses();
 	private static final Set<Class<?>> groupClasses = GroupUtils.scanForGroupClasses();
 
-	public static Exception COMMAND_EXECUTION_EXCEPTION = null;
+	public static Throwable COMMAND_EXECUTION_EXCEPTION = null;
 
 	private final Properties buildProperties;
 	private final Properties gitProperties;
@@ -114,8 +114,8 @@ public final class Cli {
 		try {
 			new Cli().execute(args);
 			cliEventHandler.afterTermination();
-		} catch (Exception e) {
-			cliEventHandler.afterExceptionalTermination(e);
+		} catch (Throwable throwable) {
+			cliEventHandler.afterExceptionalTermination(throwable);
 		}
 	}
 
@@ -124,7 +124,7 @@ public final class Cli {
 	 *
 	 * @param args the input arguments
 	 */
-	public void execute(final String[] args) throws Exception {
+	public void execute(final String[] args) throws Throwable {
 		setLoggingSystemProperties();
 
 		try {
@@ -139,8 +139,8 @@ public final class Cli {
 		StopWatch stopwatch = StopWatch.createStarted();
 		try {
 			executeCommand(command);
-		} catch (Exception e) {
-			throw e;
+		} catch (Throwable throwable) {
+			throw throwable;
 		} finally {
 			stopwatch.stop();
 			logExecutionTime(stopwatch);
@@ -209,7 +209,7 @@ public final class Cli {
 	 *
 	 * @param command the command instance to execute
 	 */
-	public void executeCommand(Command<Result<?>> command) throws Exception {
+	public void executeCommand(Command<Result<?>> command) throws Throwable {
 		LOGGER.info("Executing " + command.getClass().getSimpleName());
 		CliContext context = null;
 		Result<?> result = null;
@@ -218,19 +218,19 @@ public final class Cli {
 			result = command.call();
 			logResult(result);
 			writeCommandResultToResultFile(command, result, result.isError());
-		} catch (final Exception exception) {
+		} catch (final Throwable throwable) {
 			// write result file
 			if (result == null || !writeCommandResultToResultFile(command, result, true)) {
-				writeObjectToResultFile(getResultFile(command), new WrappedExceptionResult(getCommandIdentifier(command), exception));
+				writeObjectToResultFile(getResultFile(command), new WrappedExceptionResult(getCommandIdentifier(command), throwable));
 			}
 			// log error
-			COMMAND_EXECUTION_EXCEPTION = exception;
-			if (exception instanceof ClassCastException) {
-				LOGGER.trace("Cannot perform a cast - most likely because the command's call method returns Object as a result, instead of Result.", exception);
+			COMMAND_EXECUTION_EXCEPTION = throwable;
+			if (throwable instanceof ClassCastException) {
+				LOGGER.trace("Cannot perform a cast - most likely because the command's call method returns Object as a result, instead of Result.", throwable);
 			} else {
-				LOGGER.error("Exception occurred during context initialization or command execution", exception);
+				LOGGER.error("Exception occurred during context initialization or command execution", throwable);
 			}
-			throw exception;
+			throw throwable;
 		} finally {
 			closeContext(context);
 		}
@@ -326,7 +326,7 @@ public final class Cli {
 		}
 	}
 
-	private static void logResult(Result result) throws Exception {
+	private static void logResult(Result result) throws Throwable {
 		if (result != null) {
 			result.log();
 			if (result.isError()) {
@@ -403,11 +403,11 @@ public final class Cli {
 		@JsonProperty(value = ATTR_ERROR)
 		private final boolean _hasError = true;
 		@JsonProperty(value = ATTR_EXCEPTION)
-		private final Exception _exception;
+		private final Throwable _exception;
 
-		public WrappedExceptionResult(@NotNull final String command, @Nullable final Exception exception) {
+		public WrappedExceptionResult(@NotNull final String command, @Nullable final Throwable throwable) {
 			_command = command;
-			_exception = exception;
+			_exception = throwable;
 		}
 
 	}

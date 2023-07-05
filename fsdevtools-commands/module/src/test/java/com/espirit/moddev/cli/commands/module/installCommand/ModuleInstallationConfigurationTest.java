@@ -122,7 +122,7 @@ public class ModuleInstallationConfigurationTest {
 		assertEquals("global(unknownWebApp)", webAppScopes.get(0));
 		assertEquals("global(fs5webmon)", webAppScopes.get(1));
 		// verify scopes
-		final ArrayList<Exception> errors = new ArrayList<>();
+		final ArrayList<Throwable> errors = new ArrayList<>();
 		configuration.verifyScopes(moduleAdminAgent, errors);
 		// verify errors
 		assertEquals(1, errors.size());

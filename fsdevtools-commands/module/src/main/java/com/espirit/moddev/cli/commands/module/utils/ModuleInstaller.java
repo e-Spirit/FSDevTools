@@ -95,11 +95,11 @@ public class ModuleInstaller {
 		final ExecutionResults executionResults = new ExecutionResults();
 		final ModuleDescriptor moduleDescriptor = installationResult.getModuleResult().getDescriptor();
 		executionResults.add(new DefaultExecutionResult(String.format("Module '%s' successfully installed in version '%s'.", moduleDescriptor.getModuleName(), moduleDescriptor.getVersion())));
-		installationResult.getConfiguredServices().forEach(result -> executionResults.add(result.getException() == null ? new DefaultExecutionResult(result.toString()) : new DefaultExecutionErrorResult<>(result.toString(), result.getException())));
-		installationResult.getInstalledProjectAppComponentResults().forEach(result -> executionResults.add(result.getException() == null ? new DefaultExecutionResult(result.toString()) : new DefaultExecutionErrorResult<>(result.toString(), result.getException())));
-		installationResult.getUpdatedProjectAppComponentResults().forEach(result -> executionResults.add(result.getException() == null ? new DefaultExecutionResult(result.toString()) : new DefaultExecutionErrorResult<>(result.toString(), result.getException())));
-		installationResult.getInstalledWebAppComponentResults().forEach(result -> executionResults.add(result.getException() == null ? new DefaultExecutionResult(result.toString()) : new DefaultExecutionErrorResult<>(result.toString(), result.getException())));
-		installationResult.getUpdatedWebAppComponentResults().forEach(result -> executionResults.add(result.getException() == null ? new DefaultExecutionResult(result.toString()) : new DefaultExecutionErrorResult<>(result.toString(), result.getException())));
+		installationResult.getConfiguredServices().forEach(result -> executionResults.add(result.getThrowable() == null ? new DefaultExecutionResult(result.toString()) : new DefaultExecutionErrorResult<>(result.toString(), result.getThrowable())));
+		installationResult.getInstalledProjectAppComponentResults().forEach(result -> executionResults.add(result.getThrowable() == null ? new DefaultExecutionResult(result.toString()) : new DefaultExecutionErrorResult<>(result.toString(), result.getThrowable())));
+		installationResult.getUpdatedProjectAppComponentResults().forEach(result -> executionResults.add(result.getThrowable() == null ? new DefaultExecutionResult(result.toString()) : new DefaultExecutionErrorResult<>(result.toString(), result.getThrowable())));
+		installationResult.getInstalledWebAppComponentResults().forEach(result -> executionResults.add(result.getThrowable() == null ? new DefaultExecutionResult(result.toString()) : new DefaultExecutionErrorResult<>(result.toString(), result.getThrowable())));
+		installationResult.getUpdatedWebAppComponentResults().forEach(result -> executionResults.add(result.getThrowable() == null ? new DefaultExecutionResult(result.toString()) : new DefaultExecutionErrorResult<>(result.toString(), result.getThrowable())));
 		if (parameters.getDeploy()) {
 			final ExecutionResults deployExecutionResults = WebAppUtil.deployWebApps(_connection, installationResult.getModuleResult().getUpdatedWebApps());
 			deployExecutionResults.stream().forEach(executionResults::add);
@@ -169,9 +169,9 @@ public class ModuleInstaller {
 							LOGGER.info("Service '{}:{}' (version='{}') configured and started.", moduleName, serviceDescriptor.getName(), serviceDescriptor.getVersion());
 							results.add(new ServiceComponentResult(serviceDescriptor, null));
 						}
-					} catch (final Exception exception) {
+					} catch (final Throwable throwable) {
 						LOGGER.warn("Error configuring and starting service '{}:{}' (version='{}')!", moduleName, serviceDescriptor.getName(), serviceDescriptor.getVersion());
-						results.add(new ServiceComponentResult(serviceDescriptor, exception));
+						results.add(new ServiceComponentResult(serviceDescriptor, throwable));
 					}
 				});
 			}
@@ -310,8 +310,8 @@ public class ModuleInstaller {
 					moduleAdminAgent.installProjectApp(descriptor.getModuleName(), descriptor.getName(), project);
 					LOGGER.info("Updated project app '{}:{} to version {}' in '{}'...", descriptor.getModuleName(), descriptor.getName(), descriptor.getVersion(), project.getName());
 					results.add(new ProjectAppComponentResult(descriptor, null, project));
-				} catch (final Exception exception) {
-					results.add(new ProjectAppComponentResult(descriptor, exception, project));
+				} catch (final Throwable throwable) {
+					results.add(new ProjectAppComponentResult(descriptor, throwable, project));
 				}
 			}
 		});
@@ -351,9 +351,9 @@ public class ModuleInstaller {
 					moduleAdminAgent.installWebApp(descriptor.getModuleName(), descriptor.getName(), webAppId, false);
 					LOGGER.info("Updated web app component '{}:{}' to version {} in web app '{}'.", descriptor.getModuleName(), descriptor.getName(), descriptor.getVersion(), webAppName);
 					result.add(new WebAppComponentResult(descriptor, null, webAppId));
-				} catch (final Exception exception) {
+				} catch (final Throwable throwable) {
 					LOGGER.error("Error updating web app component '{}:{}' in web app '{}'.", descriptor.getModuleName(), descriptor.getName(), webAppName);
-					result.add(new WebAppComponentResult(descriptor, exception, webAppId));
+					result.add(new WebAppComponentResult(descriptor, throwable, webAppId));
 				}
 			}
 		});
@@ -407,9 +407,9 @@ public class ModuleInstaller {
 						} else {
 							LOGGER.info("Project app '{}:{}@{}' installed in '{}'.", moduleName, descriptor.getName(), descriptor.getVersion(), projectName);
 						}
-					} catch (final Exception exception) {
+					} catch (final Throwable throwable) {
 						LOGGER.error("Error installing/updating project app component '{}:{}' in project '{}'.", moduleName, descriptor.getName(), projectName);
-						result.add(new ProjectAppComponentResult(descriptor, exception, project));
+						result.add(new ProjectAppComponentResult(descriptor, throwable, project));
 					}
 
 					parameters.getProjectAppConfiguration().ifPresent(projectAppFile -> createConfigurationFile(ComponentDescriptor.Type.PROJECTAPP, descriptor, projectAppFile, moduleName, projectName, null));
@@ -451,7 +451,7 @@ public class ModuleInstaller {
 					LOGGER.info("Configuring web app component '{}:{}' in scope {}...", moduleName, componentName, scope.getScope());
 					final WebAppComponentResult componentResult = createWebAppAndConfigurations(descriptor, parameters, webAppDescriptor, scope);
 					if (componentResult != null) {
-						if (componentResult.getException() == null) {
+						if (componentResult.getThrowable() == null) {
 							LOGGER.debug("Web app component '{}:{}' in scope '{}' configured.", moduleName, componentName, scope.getScope());
 						} else {
 							LOGGER.warn("Could not configure web app component '{}:{}' in scope '{}'...", moduleName, componentName, scope.getScope());
@@ -511,9 +511,9 @@ public class ModuleInstaller {
 				LOGGER.info("Installed web app component '{}:{}' in web app '{}'.", moduleName, webAppDescriptorName, webAppName);
 			}
 			return new WebAppComponentResult(webAppDescriptor, null, webAppId);
-		} catch (final Exception exception) {
+		} catch (final Throwable throwable) {
 			LOGGER.error("Error installing/updating web app component '{}:{}' in web app '{}'.", moduleName, webAppDescriptorName, webAppName);
-			return new WebAppComponentResult(webAppDescriptor, exception, webAppId);
+			return new WebAppComponentResult(webAppDescriptor, throwable, webAppId);
 		}
 	}
 
@@ -557,7 +557,7 @@ public class ModuleInstaller {
 		final List<WebAppComponentResult> installedOrUpdatedWebAppComponents = new ArrayList<>(installedWebAppComponents);
 		installedOrUpdatedWebAppComponents.addAll(updatedWebAppComponents);
 		final List<WebAppId> installedOrUpdatedWebAppIds = installedOrUpdatedWebAppComponents.stream()
-				.filter(webAppComponentResult -> webAppComponentResult.getException() == null)
+				.filter(webAppComponentResult -> webAppComponentResult.getThrowable() == null)
 				.map(componentResult -> componentResult.getWebAppId(_connection))
 				.filter(Objects::nonNull)
 				.distinct()

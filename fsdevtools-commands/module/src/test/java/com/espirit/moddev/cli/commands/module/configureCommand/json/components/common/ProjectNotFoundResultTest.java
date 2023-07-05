@@ -33,7 +33,7 @@ public class ProjectNotFoundResultTest {
 	@Test
 	public void getException() {
 		final ProjectNotFoundResult result = new ProjectNotFoundResult(PROJECT_NAME);
-		final IllegalStateException exception = result.getException();
+		final IllegalStateException exception = result.getThrowable();
 		assertThat(exception.getMessage()).isEqualTo(String.format(ProjectNotFoundResult.MESSAGE, PROJECT_NAME));
 	}
 

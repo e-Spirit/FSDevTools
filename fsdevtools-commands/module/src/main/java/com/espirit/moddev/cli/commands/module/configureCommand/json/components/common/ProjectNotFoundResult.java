@@ -39,7 +39,7 @@ public class ProjectNotFoundResult implements ExecutionErrorResult<IllegalStateE
 
 	@NotNull
 	@Override
-	public IllegalStateException getException() {
+	public IllegalStateException getThrowable() {
 		return new IllegalStateException(toString());
 	}
 

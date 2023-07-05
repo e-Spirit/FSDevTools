@@ -34,7 +34,7 @@ class MultiExceptionTest {
 	@Test
 	void getMessage() {
 		// setup
-		final List<Exception> exceptions = new ArrayList<>();
+		final List<Throwable> exceptions = new ArrayList<>();
 		exceptions.add(new IllegalStateException("Just an IllegalStateException"));
 		exceptions.add(new RuntimeException("Just an RuntimeException", exceptions.get(0)));
 		final MultiException exception = new MultiException("Custom message!", exceptions);

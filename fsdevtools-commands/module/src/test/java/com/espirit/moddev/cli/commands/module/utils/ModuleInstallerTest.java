@@ -193,8 +193,8 @@ class ModuleInstallerTest {
 
 		// verify
 		assertThat(configuredServiceResults).hasSize(2);
-		assertThat(configuredServiceResults.get(0).getException()).describedAs("Configuration and restart service 'TestService#1' should fail").isSameAs(customRuntimeException);
-		assertThat(configuredServiceResults.get(1).getException()).describedAs("Configuration and restart service 'TestService#2' should be successful").isNull();
+		assertThat(configuredServiceResults.get(0).getThrowable()).describedAs("Configuration and restart service 'TestService#1' should fail").isSameAs(customRuntimeException);
+		assertThat(configuredServiceResults.get(1).getThrowable()).describedAs("Configuration and restart service 'TestService#2' should be successful").isNull();
 	}
 
 	@Test
@@ -220,8 +220,8 @@ class ModuleInstallerTest {
 
 		// verify
 		assertThat(installedProjectAppResults).hasSize(2);
-		assertThat(installedProjectAppResults.get(0).getException()).describedAs("Installation of project app component 'TestProjectApp#1' in project 'TestProject#1' should fail").isSameAs(customRuntimeException);
-		assertThat(installedProjectAppResults.get(1).getException()).describedAs("Installation of project app component 'TestProjectApp#2' in project 'TestProject#1' should be successful").isNull();
+		assertThat(installedProjectAppResults.get(0).getThrowable()).describedAs("Installation of project app component 'TestProjectApp#1' in project 'TestProject#1' should fail").isSameAs(customRuntimeException);
+		assertThat(installedProjectAppResults.get(1).getThrowable()).describedAs("Installation of project app component 'TestProjectApp#2' in project 'TestProject#1' should be successful").isNull();
 	}
 
 	@Test
@@ -246,8 +246,8 @@ class ModuleInstallerTest {
 
 		// verify
 		assertThat(updatedProjectAppResults).hasSize(2);
-		assertThat(updatedProjectAppResults.get(0).getException()).describedAs("Update of project app component 'TestProjectApp#1' in project 'TestProject#1' should fail").isSameAs(customRuntimeException);
-		assertThat(updatedProjectAppResults.get(1).getException()).describedAs("Update of project app component 'TestProjectApp#2' in project 'TestProject#1' should be successful").isNull();
+		assertThat(updatedProjectAppResults.get(0).getThrowable()).describedAs("Update of project app component 'TestProjectApp#1' in project 'TestProject#1' should fail").isSameAs(customRuntimeException);
+		assertThat(updatedProjectAppResults.get(1).getThrowable()).describedAs("Update of project app component 'TestProjectApp#2' in project 'TestProject#1' should be successful").isNull();
 	}
 
 	@Test
@@ -300,12 +300,12 @@ class ModuleInstallerTest {
 		// test & verify
 		final List<ProjectAppComponentResult> installedProjectAppResults = _moduleInstaller.installProjectAppComponents(_moduleDescriptor, parameters);
 		assertThat(installedProjectAppResults).hasSize(2);
-		assertThat(installedProjectAppResults.get(0).getException()).describedAs("Installation of project app component 'TestProjectApp#1' in project 'TestProject#1' should fail").isSameAs(customRuntimeException);
-		assertThat(installedProjectAppResults.get(1).getException()).describedAs("Installation of project app component 'TestProjectApp#2' in project 'TestProject#1' should be successful").isNull();
+		assertThat(installedProjectAppResults.get(0).getThrowable()).describedAs("Installation of project app component 'TestProjectApp#1' in project 'TestProject#1' should fail").isSameAs(customRuntimeException);
+		assertThat(installedProjectAppResults.get(1).getThrowable()).describedAs("Installation of project app component 'TestProjectApp#2' in project 'TestProject#1' should be successful").isNull();
 
 		final List<ProjectAppComponentResult> updatedProjectAppResults = _moduleInstaller.updateProjectAppComponents(_moduleDescriptor, installedProjectAppResults, null);
 		assertThat(updatedProjectAppResults).hasSize(1);
-		assertThat(updatedProjectAppResults.get(0).getException()).describedAs("Installation of project app component 'TestProjectApp#1' in project 'TestProject#2' should fail").isSameAs(customRuntimeException);
+		assertThat(updatedProjectAppResults.get(0).getThrowable()).describedAs("Installation of project app component 'TestProjectApp#1' in project 'TestProject#2' should fail").isSameAs(customRuntimeException);
 	}
 
 	@Test
@@ -341,10 +341,10 @@ class ModuleInstallerTest {
 
 		// verify
 		assertThat(installedWebAppResults).hasSize(4);
-		assertThat(installedWebAppResults.get(0).getException()).describedAs("Installation of global web app component 'TestWebApp#1' in global web app 'fs5webedit' should be successful").isNull();
-		assertThat(installedWebAppResults.get(1).getException()).describedAs("Installation of global web app component 'TestWebApp#1' in global web app 'fs5staging' should be successful").isNull();
-		assertThat(installedWebAppResults.get(2).getException()).describedAs("Installation of global web app component 'TestWebApp#2' in global web app 'fs5webedit' should fail").isSameAs(customRuntimeException);
-		assertThat(installedWebAppResults.get(3).getException()).describedAs("Installation of global web app component 'TestWebApp#2' in global web app 'fs5staging' should fail").isSameAs(customRuntimeException);
+		assertThat(installedWebAppResults.get(0).getThrowable()).describedAs("Installation of global web app component 'TestWebApp#1' in global web app 'fs5webedit' should be successful").isNull();
+		assertThat(installedWebAppResults.get(1).getThrowable()).describedAs("Installation of global web app component 'TestWebApp#1' in global web app 'fs5staging' should be successful").isNull();
+		assertThat(installedWebAppResults.get(2).getThrowable()).describedAs("Installation of global web app component 'TestWebApp#2' in global web app 'fs5webedit' should fail").isSameAs(customRuntimeException);
+		assertThat(installedWebAppResults.get(3).getThrowable()).describedAs("Installation of global web app component 'TestWebApp#2' in global web app 'fs5staging' should fail").isSameAs(customRuntimeException);
 	}
 
 	@Test
@@ -374,10 +374,10 @@ class ModuleInstallerTest {
 
 		// verify
 		assertThat(updatedWebAppResults).hasSize(4);
-		assertThat(updatedWebAppResults.get(0).getException()).describedAs("Update of global web app component 'TestWebApp#1' in global web app 'fs5webedit' should be successful").isNull();
-		assertThat(updatedWebAppResults.get(1).getException()).describedAs("Update of global web app component 'TestWebApp#1' in global web app 'fs5staging' should be successful").isNull();
-		assertThat(updatedWebAppResults.get(2).getException()).describedAs("Update of global web app component 'TestWebApp#2' in global web app 'fs5webedit' should fail").isSameAs(customRuntimeException);
-		assertThat(updatedWebAppResults.get(3).getException()).describedAs("Update of global web app component 'TestWebApp#2' in global web app 'fs5staging' should fail").isSameAs(customRuntimeException);
+		assertThat(updatedWebAppResults.get(0).getThrowable()).describedAs("Update of global web app component 'TestWebApp#1' in global web app 'fs5webedit' should be successful").isNull();
+		assertThat(updatedWebAppResults.get(1).getThrowable()).describedAs("Update of global web app component 'TestWebApp#1' in global web app 'fs5staging' should be successful").isNull();
+		assertThat(updatedWebAppResults.get(2).getThrowable()).describedAs("Update of global web app component 'TestWebApp#2' in global web app 'fs5webedit' should fail").isSameAs(customRuntimeException);
+		assertThat(updatedWebAppResults.get(3).getThrowable()).describedAs("Update of global web app component 'TestWebApp#2' in global web app 'fs5staging' should fail").isSameAs(customRuntimeException);
 	}
 
 	@Test
@@ -406,12 +406,12 @@ class ModuleInstallerTest {
 		// test & verify
 		final List<WebAppComponentResult> installedWebAppResults = _moduleInstaller.installWebAppComponents(_moduleDescriptor, parameters);
 		assertThat(installedWebAppResults).hasSize(2);
-		assertThat(installedWebAppResults.get(0).getException()).describedAs("Installation of global web app component 'TestWebApp#1' in global web app 'fs5webedit' should be successful").isNull();
-		assertThat(installedWebAppResults.get(1).getException()).describedAs("Installation of global web app component 'TestWebApp#1' in global web app 'fs5staging' should be successful").isNull();
+		assertThat(installedWebAppResults.get(0).getThrowable()).describedAs("Installation of global web app component 'TestWebApp#1' in global web app 'fs5webedit' should be successful").isNull();
+		assertThat(installedWebAppResults.get(1).getThrowable()).describedAs("Installation of global web app component 'TestWebApp#1' in global web app 'fs5staging' should be successful").isNull();
 
 		final List<WebAppComponentResult> updatedWebAppResults = _moduleInstaller.updateWebAppComponents(_moduleDescriptor, installedWebAppResults);
 		assertThat(updatedWebAppResults).hasSize(1);
-		assertThat(updatedWebAppResults.get(0).getException()).describedAs("Update of global web app component 'TestWebApp#2' in global web app 'fs5staging' should be successful").isNull();
+		assertThat(updatedWebAppResults.get(0).getThrowable()).describedAs("Update of global web app component 'TestWebApp#2' in global web app 'fs5staging' should be successful").isNull();
 	}
 
 	@Test
@@ -448,10 +448,10 @@ class ModuleInstallerTest {
 
 		// verify
 		assertThat(installedWebAppResults).hasSize(4);
-		assertThat(installedWebAppResults.get(0).getException()).describedAs("Installation of web app component 'TestWebApp#1' in 'webedit(TestProject#1)' should be successful").isNull();
-		assertThat(installedWebAppResults.get(1).getException()).describedAs("Installation of web app component 'TestWebApp#1' in 'staging(TestProject#1)' should fail").isSameAs(customRuntimeException);
-		assertThat(installedWebAppResults.get(2).getException()).describedAs("Installation of web app component 'TestWebApp#2' in 'webedit(TestProject#1)' should fail").isSameAs(customRuntimeException);
-		assertThat(installedWebAppResults.get(3).getException()).describedAs("Installation of web app component 'TestWebApp#2' in 'staging(TestProject#1)' should be successful").isNull();
+		assertThat(installedWebAppResults.get(0).getThrowable()).describedAs("Installation of web app component 'TestWebApp#1' in 'webedit(TestProject#1)' should be successful").isNull();
+		assertThat(installedWebAppResults.get(1).getThrowable()).describedAs("Installation of web app component 'TestWebApp#1' in 'staging(TestProject#1)' should fail").isSameAs(customRuntimeException);
+		assertThat(installedWebAppResults.get(2).getThrowable()).describedAs("Installation of web app component 'TestWebApp#2' in 'webedit(TestProject#1)' should fail").isSameAs(customRuntimeException);
+		assertThat(installedWebAppResults.get(3).getThrowable()).describedAs("Installation of web app component 'TestWebApp#2' in 'staging(TestProject#1)' should be successful").isNull();
 	}
 
 }

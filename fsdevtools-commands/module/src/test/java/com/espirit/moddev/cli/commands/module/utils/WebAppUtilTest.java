@@ -178,7 +178,7 @@ public class WebAppUtilTest {
 		final ExecutionResults results = WebAppUtil.deployWebApps(_connection, Lists.newArrayList(webAppId));
 		assertThat(results.size()).isEqualTo(1);
 		assertThat(results.get(0)).isInstanceOf(WebAppUtil.RootWebAppDeployNotAllowedResult.class);
-		assertThat(((ExecutionErrorResult<?>) results.get(0)).getException().getMessage()).isEqualTo(WebAppUtil.SOCKET_FS_5_ROOT_ERROR_MESSAGE);
+		assertThat(((ExecutionErrorResult<?>) results.get(0)).getThrowable().getMessage()).isEqualTo(WebAppUtil.SOCKET_FS_5_ROOT_ERROR_MESSAGE);
 	}
 
 	@Test
@@ -197,7 +197,7 @@ public class WebAppUtilTest {
 		assertThat(results.get(1)).isInstanceOf(WebAppUtil.WebAppDeployedResult.class);
 		assertThat(results.get(1).toString()).isEqualTo(String.format(WebAppUtil.WebAppDeployedResult.MESSAGE, WebAppUtil.getReadableWebAppName(webApp1)));
 		assertThat(results.get(2)).isInstanceOf(WebAppUtil.WebAppDeployFailedResult.class);
-		assertThat(((ExecutionErrorResult<?>) results.get(2)).getException().getMessage()).isEqualTo(String.format(WebAppUtil.WebAppDeployFailedResult.MESSAGE, WebAppUtil.getReadableWebAppName(webApp2), WebAppUtil.WebAppDeployFailedResult.ERROR_DEPLOYING));
+		assertThat(((ExecutionErrorResult<?>) results.get(2)).getThrowable().getMessage()).isEqualTo(String.format(WebAppUtil.WebAppDeployFailedResult.MESSAGE, WebAppUtil.getReadableWebAppName(webApp2), WebAppUtil.WebAppDeployFailedResult.ERROR_DEPLOYING));
 	}
 
 }

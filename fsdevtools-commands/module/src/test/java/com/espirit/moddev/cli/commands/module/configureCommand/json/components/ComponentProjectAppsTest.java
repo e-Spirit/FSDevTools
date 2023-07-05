@@ -489,7 +489,7 @@ public class ComponentProjectAppsTest {
 		final String errorMessage = "Whoops...";
 		final ModuleException moduleException = new ModuleException(errorMessage);
 		final ComponentProjectApps.ProjectAppInstallFailedResult result = new ComponentProjectApps.ProjectAppInstallFailedResult(MODULE_NAME, PROJECT_NAME_1, COMPONENT_NAME, false, moduleException);
-		final IllegalStateException exception = result.getException();
+		final IllegalStateException exception = result.getThrowable();
 		assertThat(exception.getMessage()).isEqualTo(String.format(ComponentProjectApps.ProjectAppInstallFailedResult.MESSAGE_INSTALL, MODULE_NAME, COMPONENT_NAME, PROJECT_NAME_1, ModuleException.class.getName() + ": " + errorMessage));
 	}
 
@@ -506,7 +506,7 @@ public class ComponentProjectAppsTest {
 		final String errorMessage = "Whoops...";
 		final ModuleException moduleException = new ModuleException(errorMessage);
 		final ComponentProjectApps.ProjectAppInstallFailedResult result = new ComponentProjectApps.ProjectAppInstallFailedResult(MODULE_NAME, PROJECT_NAME_1, COMPONENT_NAME, true, moduleException);
-		final IllegalStateException exception = result.getException();
+		final IllegalStateException exception = result.getThrowable();
 		assertThat(exception.getMessage()).isEqualTo(String.format(ComponentProjectApps.ProjectAppInstallFailedResult.MESSAGE_UPDATE, MODULE_NAME, COMPONENT_NAME, PROJECT_NAME_1, ModuleException.class.getName() + ": " + errorMessage));
 	}
 

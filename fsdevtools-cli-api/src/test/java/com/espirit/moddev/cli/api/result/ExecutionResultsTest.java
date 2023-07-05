@@ -73,7 +73,7 @@ public class ExecutionResultsTest {
 
 		@NotNull
 		@Override
-		public IllegalStateException getException() {
+		public IllegalStateException getThrowable() {
 			return _exception;
 		}
 
@@ -91,12 +91,12 @@ public class ExecutionResultsTest {
 			if (o == null || getClass() != o.getClass()) return false;
 			final TestErrorResult that = (TestErrorResult) o;
 			return _value == that._value &&
-					Objects.equals(getException(), that.getException());
+					Objects.equals(getThrowable(), that.getThrowable());
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(_value, getException());
+			return Objects.hash(_value, getThrowable());
 		}
 
 	}

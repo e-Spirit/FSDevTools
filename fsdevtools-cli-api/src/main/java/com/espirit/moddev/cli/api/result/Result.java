@@ -45,7 +45,7 @@ public interface Result<CUSTOM_RESULT_TYPE> {
 	 *
 	 * @return the exception that makes this a failed result
 	 */
-	Exception getError();
+	Throwable getError();
 
 	/**
 	 * Optional method for custom result logging.

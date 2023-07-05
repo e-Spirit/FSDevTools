@@ -36,7 +36,7 @@ public class ComponentNotFoundResultTest {
 	@Test
 	public void getException() {
 		final ComponentNotFoundResult result = new ComponentNotFoundResult(MODULE_NAME, TYPE, COMPONENT_NAME);
-		final IllegalStateException exception = result.getException();
+		final IllegalStateException exception = result.getThrowable();
 		assertThat(exception.getMessage()).isEqualTo(String.format(ComponentNotFoundResult.MESSAGE, COMPONENT_NAME, TYPE, MODULE_NAME));
 	}
 

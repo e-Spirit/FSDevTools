@@ -233,7 +233,7 @@ public class ComponentProjectApps implements Configurable {
 
 		@NotNull
 		@Override
-		public IllegalStateException getException() {
+		public IllegalStateException getThrowable() {
 			return _exception;
 		}
 

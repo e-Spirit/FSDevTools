@@ -52,7 +52,7 @@ public class MultipleComponentsFoundResultTest {
 		final ComponentDescriptor descriptor2 = mockDescriptor(MODULE_NAME + "#2", DISPLAY_NAME + "#2");
 		final MultipleComponentsFoundResult result = new MultipleComponentsFoundResult(MODULE_NAME, DISPLAY_NAME, TYPE, Lists.newArrayList(descriptor1, descriptor2));
 		// test
-		final IllegalStateException exception = result.getException();
+		final IllegalStateException exception = result.getThrowable();
 		// verify
 		assertThat(exception.getMessage()).isEqualTo(String.format(MultipleComponentsFoundResult.MESSAGE, TYPE, DISPLAY_NAME, MODULE_NAME, "[ testModule#1, testModule#2 ]"));
 	}

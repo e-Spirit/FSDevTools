@@ -264,7 +264,7 @@ public class ModuleConfigurationTest {
 		assertThat(configure.hasError()).isTrue();
 		assertThat(configure.get(0)).isInstanceOf(ComponentNotFoundResult.class);
 		assertThat(configure.get(1)).isInstanceOf(ModuleConfiguration.ModuleConfigurationFailedResult.class);
-		assertThat(((ExecutionErrorResult) configure.get(1)).getException()).isInstanceOf(IllegalStateException.class);
+		assertThat(((ExecutionErrorResult) configure.get(1)).getThrowable()).isInstanceOf(IllegalStateException.class);
 		assertThat(configure.get(1).toString()).isEqualTo(String.format(ModuleConfiguration.ModuleConfigurationFailedResult.MESSAGE, _moduleDescriptor.getModuleName()));
 	}
 

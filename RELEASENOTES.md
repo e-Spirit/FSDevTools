@@ -1,5 +1,11 @@
 # Release notes
 
+## Version 4.4.2
+
+* fixed java.lang.Error not getting handled in general
+* commands "*module install*" & "*module installBulk*":
+  * fixed java.lang.Error aborting the complete process
+
 ## Version 4.4.1
 
 * updated FirstSpirit compile dependency to 5.2.230409 (was 5.2.220907)

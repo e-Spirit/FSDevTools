@@ -222,13 +222,13 @@ public class WebAppUtil {
 
 		@NotNull
 		@Override
-		public final IllegalStateException getException() {
+		public final IllegalStateException getThrowable() {
 			return _exception;
 		}
 
 		@Override
 		public String toString() {
-			return getException().getMessage();
+			return getThrowable().getMessage();
 		}
 
 	}

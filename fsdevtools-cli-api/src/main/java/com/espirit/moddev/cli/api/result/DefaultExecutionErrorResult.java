@@ -24,19 +24,19 @@ package com.espirit.moddev.cli.api.result;
 
 import org.jetbrains.annotations.NotNull;
 
-public class DefaultExecutionErrorResult<T extends Exception> extends DefaultExecutionResult implements ExecutionErrorResult<T> {
+public class DefaultExecutionErrorResult<T extends Throwable> extends DefaultExecutionResult implements ExecutionErrorResult<T> {
 
-	private final T _exception;
+	private final T _throwable;
 
-	public DefaultExecutionErrorResult(@NotNull final String message, @NotNull final T exception) {
+	public DefaultExecutionErrorResult(@NotNull final String message, @NotNull final T throwable) {
 		super(message);
-		_exception = exception;
+		_throwable = throwable;
 	}
 
 	@NotNull
 	@Override
-	public T getException() {
-		return _exception;
+	public T getThrowable() {
+		return _throwable;
 	}
 
 }

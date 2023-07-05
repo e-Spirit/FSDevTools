@@ -40,43 +40,43 @@ public abstract class AbstractCommandResult implements Result<ExecutionResults> 
 	private final String _errorMessage;
 	protected final Logger _logger;
 	protected final ExecutionResults _results;
-	protected Exception _exception;
+	protected Throwable _throwable;
 
 	public AbstractCommandResult(@NotNull final String errorMessage, @NotNull final ExecutionResults results) {
 		_errorMessage = errorMessage;
 		_logger = LoggerFactory.getLogger(getClass());
 		_results = results;
 		if (results.hasError()) {
-			_exception = new MultiException(errorMessage, buildExceptions(results));
+			_throwable = new MultiException(errorMessage, buildExceptions(results));
 		} else {
-			_exception = null;
+			_throwable = null;
 		}
 	}
 
-	public AbstractCommandResult(@NotNull final Exception exception) {
-		_errorMessage = exception.getMessage();
+	public AbstractCommandResult(@NotNull final Throwable throwable) {
+		_errorMessage = throwable.getMessage();
 		_logger = LoggerFactory.getLogger(getClass());
 		_results = new ExecutionResults();
 		_results.add(new ExecutionErrorResult<>() {
 			@NotNull
 			@Override
-			public Exception getException() {
-				return exception;
+			public Throwable getThrowable() {
+				return throwable;
 			}
 
 			@Override
 			public String toString() {
-				return getException().toString();
+				return getThrowable().toString();
 			}
 		});
-		_exception = exception;
+		_throwable = throwable;
 	}
 
 	@NotNull
-	private static Collection<Exception> buildExceptions(@NotNull final ExecutionResults results) {
+	private static Collection<Throwable> buildExceptions(@NotNull final ExecutionResults results) {
 		return results.stream()
 				.filter(result -> result instanceof ExecutionErrorResult)
-				.map(result -> ((ExecutionErrorResult<?>) result).getException())
+				.map(result -> ((ExecutionErrorResult<?>) result).getThrowable())
 				.collect(Collectors.toList());
 	}
 
@@ -107,11 +107,11 @@ public abstract class AbstractCommandResult implements Result<ExecutionResults> 
 	}
 
 	@Override
-	public Exception getError() {
-		if (_exception == null && _results.hasError()) {
-			_exception = new MultiException(_errorMessage, buildExceptions(_results));
+	public Throwable getError() {
+		if (_throwable == null && _results.hasError()) {
+			_throwable = new MultiException(_errorMessage, buildExceptions(_results));
 		}
-		return _exception;
+		return _throwable;
 	}
 
 }

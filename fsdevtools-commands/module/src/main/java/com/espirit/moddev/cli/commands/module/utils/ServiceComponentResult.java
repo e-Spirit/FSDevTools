@@ -28,17 +28,17 @@ import org.jetbrains.annotations.Nullable;
 
 class ServiceComponentResult extends ComponentResult<ServiceDescriptor> {
 
-	ServiceComponentResult(@NotNull final ServiceDescriptor descriptor, @Nullable final Exception exception) {
-		super(descriptor, exception);
+	ServiceComponentResult(@NotNull final ServiceDescriptor descriptor, @Nullable final Throwable throwable) {
+		super(descriptor, throwable);
 	}
 
 	@Override
 	public String toString() {
-		final Exception exception = getException();
-		if (exception == null) {
+		final Throwable throwable = getThrowable();
+		if (throwable == null) {
 			return String.format("Service '%s:%s' (version='%s') successfully configured and started.", getDescriptor().getModuleName(), getDescriptor().getName(), getDescriptor().getVersion());
 		} else {
-			return String.format("Error configuring and starting service '%s:%s' (version='%s'): %s", getDescriptor().getModuleName(), getDescriptor().getName(), getDescriptor().getVersion(), exception.getMessage());
+			return String.format("Error configuring and starting service '%s:%s' (version='%s'): %s", getDescriptor().getModuleName(), getDescriptor().getName(), getDescriptor().getVersion(), throwable.getMessage());
 		}
 	}
 

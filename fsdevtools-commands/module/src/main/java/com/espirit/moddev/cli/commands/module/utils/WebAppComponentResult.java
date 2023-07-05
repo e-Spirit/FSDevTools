@@ -37,12 +37,12 @@ class WebAppComponentResult extends ComponentResult<WebAppDescriptor> {
 	private final WebAppIdentifier _webAppIdentifier;
 	private final String _projectName;
 
-	WebAppComponentResult(@NotNull final WebAppDescriptor descriptor, @Nullable final Exception exception, @NotNull final WebAppId webAppId) {
-		this(descriptor, exception, WebAppIdentifier.fromWebAppId(webAppId), webAppId instanceof ProjectWebAppId ? ((ProjectWebAppId) webAppId).getProject().getName() : null);
+	WebAppComponentResult(@NotNull final WebAppDescriptor descriptor, @Nullable final Throwable throwable, @NotNull final WebAppId webAppId) {
+		this(descriptor, throwable, WebAppIdentifier.fromWebAppId(webAppId), webAppId instanceof ProjectWebAppId ? ((ProjectWebAppId) webAppId).getProject().getName() : null);
 	}
 
-	WebAppComponentResult(@NotNull final WebAppDescriptor descriptor, @Nullable final Exception exception, @NotNull final WebAppIdentifier webAppIdentifier, @Nullable final String projectName) {
-		super(descriptor, exception);
+	WebAppComponentResult(@NotNull final WebAppDescriptor descriptor, @Nullable final Throwable throwable, @NotNull final WebAppIdentifier webAppIdentifier, @Nullable final String projectName) {
+		super(descriptor, throwable);
 		_webAppIdentifier = webAppIdentifier;
 		_projectName = projectName;
 	}
@@ -73,16 +73,16 @@ class WebAppComponentResult extends ComponentResult<WebAppDescriptor> {
 
 	@Override
 	public String toString() {
-		final Exception exception = getException();
+		final Throwable throwable = getThrowable();
 		String webAppName = getWebAppIdentifier().toString();
 		final String projectName = getProjectName();
 		if (projectName != null) {
 			webAppName = webAppName + '(' + projectName + ')';
 		}
-		if (exception == null) {
+		if (throwable == null) {
 			return String.format("Web app component '%s:%s' (version='%s') installed/updated in web app '%s'.", getDescriptor().getModuleName(), getDescriptor().getName(), getDescriptor().getVersion(), webAppName);
 		} else {
-			return String.format("Error installing/updating web app component '%s:%s' (version='%s') in web app '%s': %s", getDescriptor().getModuleName(), getDescriptor().getName(), getDescriptor().getVersion(), webAppName, exception.getMessage());
+			return String.format("Error installing/updating web app component '%s:%s' (version='%s') in web app '%s': %s", getDescriptor().getModuleName(), getDescriptor().getName(), getDescriptor().getVersion(), webAppName, throwable.getMessage());
 		}
 	}
 

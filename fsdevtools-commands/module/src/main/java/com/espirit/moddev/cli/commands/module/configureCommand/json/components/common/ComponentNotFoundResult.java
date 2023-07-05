@@ -44,7 +44,7 @@ public class ComponentNotFoundResult implements ExecutionErrorResult<IllegalStat
 
 	@NotNull
 	@Override
-	public IllegalStateException getException() {
+	public IllegalStateException getThrowable() {
 		return new IllegalStateException(toString());
 	}
 

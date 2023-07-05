@@ -157,8 +157,8 @@ public class ConfigureModulesCommand extends SimpleCommand<ConfigureModulesComma
 			return new ConfigureModulesCommandResult(e);
 		} catch (final IOException | AuthenticationException | MaximumNumberOfSessionsExceededException e) {
 			return new ConfigureModulesCommandResult(new IllegalStateException("Unable to connect to FirstSpirit server.", e));
-		} catch (final Exception exception) {
-			return new ConfigureModulesCommandResult(exception);
+		} catch (final Throwable throwable) {
+			return new ConfigureModulesCommandResult(throwable);
 		}
 	}
 
@@ -256,7 +256,7 @@ public class ConfigureModulesCommand extends SimpleCommand<ConfigureModulesComma
 
 		@NotNull
 		@Override
-		public IllegalStateException getException() {
+		public IllegalStateException getThrowable() {
 			return new IllegalStateException(toString());
 		}
 
@@ -285,7 +285,7 @@ public class ConfigureModulesCommand extends SimpleCommand<ConfigureModulesComma
 
 		@NotNull
 		@Override
-		public IllegalStateException getException() {
+		public IllegalStateException getThrowable() {
 			return new IllegalStateException(toString());
 		}
 

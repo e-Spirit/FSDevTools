@@ -181,7 +181,7 @@ public class ServicesTest {
 		assertThat(result).isInstanceOf(Service.ServiceStopFailedResult.class);
 		assertThat(((Service.ServiceStopFailedResult) result).getModuleName()).isEqualTo(_moduleName);
 		assertThat(((Service.ServiceStopFailedResult) result).getServiceName()).isEqualTo(_serviceName);
-		assertThat(((ExecutionErrorResult<Exception>) result).getException().getMessage()).isEqualTo(String.format(Service.ServiceStopFailedResult.MESSAGE, _moduleName, _serviceName));
+		assertThat(((ExecutionErrorResult<Exception>) result).getThrowable().getMessage()).isEqualTo(String.format(Service.ServiceStopFailedResult.MESSAGE, _moduleName, _serviceName));
 		assertThat(result.toString()).isEqualTo(String.format(Service.ServiceStopFailedResult.MESSAGE, _moduleName, _serviceName));
 		verify(_moduleAdminAgent, times(1)).stopService(_serviceName);
 		verify(_moduleAdminAgent, times(0)).isAutostart(_serviceName);    // make sure the order is kept (stop, configure, start)
@@ -205,7 +205,7 @@ public class ServicesTest {
 		assertThat(result).isInstanceOf(Service.ServiceStartFailedResult.class);
 		assertThat(((Service.ServiceStartFailedResult) result).getModuleName()).isEqualTo(_moduleName);
 		assertThat(((Service.ServiceStartFailedResult) result).getServiceName()).isEqualTo(_serviceName);
-		assertThat(((ExecutionErrorResult<Exception>) result).getException().getMessage()).isEqualTo(String.format(Service.ServiceStartFailedResult.MESSAGE, _moduleName, _serviceName));
+		assertThat(((ExecutionErrorResult<Exception>) result).getThrowable().getMessage()).isEqualTo(String.format(Service.ServiceStartFailedResult.MESSAGE, _moduleName, _serviceName));
 		assertThat(result.toString()).isEqualTo(String.format(Service.ServiceStartFailedResult.MESSAGE, _moduleName, _serviceName));
 		verify(_moduleAdminAgent, times(1)).stopService(_serviceName);
 		verify(_moduleAdminAgent, times(1)).startService(_serviceName);

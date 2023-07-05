@@ -105,8 +105,8 @@ public class InstallModuleCommand extends SimpleCommand<InstallModuleCommandResu
 			return new InstallModuleCommandResult(_fsm, e);
 		} catch (final IOException | AuthenticationException | MaximumNumberOfSessionsExceededException e) {
 			return new InstallModuleCommandResult(_fsm, new IllegalStateException("Unable to connect to FirstSpirit server.", e));
-		} catch (final Exception exception) {
-			return new InstallModuleCommandResult(_fsm, exception);
+		} catch (final Throwable throwable) {
+			return new InstallModuleCommandResult(_fsm, throwable);
 		}
 	}
 

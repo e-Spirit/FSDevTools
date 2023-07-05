@@ -122,8 +122,8 @@ public class InstallModulesCommand extends SimpleCommand<InstallModulesCommandRe
 		try (final Connection connection = ConnectionBuilder.with(this).build()) {
 			connection.connect();
 			return bulkInstall(connection);
-		} catch (final Exception exception) {
-			return new InstallModulesCommandResult(new MultiException(exception.getMessage(), Collections.singletonList(exception)));
+		} catch (final Throwable throwable) {
+			return new InstallModulesCommandResult(new MultiException(throwable.getMessage(), Collections.singletonList(throwable)));
 		}
 	}
 
@@ -137,7 +137,7 @@ public class InstallModulesCommand extends SimpleCommand<InstallModulesCommandRe
 		}
 
 		// verify the config file and build parameters for all configurations
-		final ArrayList<Exception> parameterErrorResults = verifyAndCreateParameters(connection, configurations, installationParameters);
+		final ArrayList<Throwable> parameterErrorResults = verifyAndCreateParameters(connection, configurations, installationParameters);
 
 		// we got at least one error --> return here without installing anything
 		if (!parameterErrorResults.isEmpty()) {
@@ -149,10 +149,10 @@ public class InstallModulesCommand extends SimpleCommand<InstallModulesCommandRe
 	}
 
 	@NotNull
-	private ArrayList<Exception> verifyAndCreateParameters(@NotNull final Connection connection,
+	private ArrayList<Throwable> verifyAndCreateParameters(@NotNull final Connection connection,
 														   @NotNull final List<ModuleInstallationConfiguration> configurations,
 														   @NotNull final List<ModuleInstallationParameters> installationParameters) {
-		final ArrayList<Exception> results = new ArrayList<>();
+		final ArrayList<Throwable> results = new ArrayList<>();
 		for (final ModuleInstallationConfiguration config : configurations) {
 			try {
 				// override deploy parameter for a single module, because we don't want to deploy all web apps for each
@@ -162,8 +162,8 @@ public class InstallModulesCommand extends SimpleCommand<InstallModulesCommandRe
 				config.verify(connection);
 				// create parameters object
 				installationParameters.add(ModuleInstallationParameters.forConfiguration(config));
-			} catch (final Exception exception) {
-				results.add(exception);
+			} catch (final Throwable throwable) {
+				results.add(throwable);
 			}
 		}
 		return results;
@@ -207,8 +207,8 @@ public class InstallModulesCommand extends SimpleCommand<InstallModulesCommandRe
 				} else {
 					results.add(singleInstallResult);
 				}
-			} catch (final Exception exception) {
-				results.add(new InstallModuleCommandResult(singleParameter.getFsm().getAbsolutePath(), exception));
+			} catch (final Throwable throwable) {
+				results.add(new InstallModuleCommandResult(singleParameter.getFsm().getAbsolutePath(), throwable));
 			}
 		}
 

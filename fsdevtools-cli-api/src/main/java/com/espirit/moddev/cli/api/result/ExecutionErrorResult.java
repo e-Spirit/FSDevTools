@@ -45,9 +45,9 @@ import org.jetbrains.annotations.NotNull;
  * @see JsonSerializer
  */
 @JsonSerialize(using = DefaultExecutionErrorResultSerializer.class)
-public interface ExecutionErrorResult<E extends Exception> extends ExecutionResult {
+public interface ExecutionErrorResult<E extends Throwable> extends ExecutionResult {
 
 	@NotNull
-	E getException();
+	E getThrowable();
 
 }

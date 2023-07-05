@@ -214,7 +214,7 @@ public class Service implements Configurable {
 
 		@NotNull
 		@Override
-		public IllegalStateException getException() {
+		public IllegalStateException getThrowable() {
 			return _exception;
 		}
 
@@ -235,7 +235,7 @@ public class Service implements Configurable {
 
 		@NotNull
 		@Override
-		public IllegalStateException getException() {
+		public IllegalStateException getThrowable() {
 			return _illegalStateException;
 		}
 

@@ -39,13 +39,13 @@ import java.util.List;
 @SuppressWarnings("Duplicates")
 public class MultiException extends RuntimeException {
 
-	private final List<Exception> _exceptions;
+	private final List<Throwable> _throwables;
 	private String _message;
 
-	public MultiException(@NotNull final String message, @NotNull final Collection<Exception> exceptions) {
+	public MultiException(@NotNull final String message, @NotNull final Collection<Throwable> throwables) {
 		super(message);
-		_exceptions = new ArrayList<>();
-		addExceptions(exceptions);
+		_throwables = new ArrayList<>();
+		addThrowables(throwables);
 	}
 
 	@Override
@@ -58,11 +58,11 @@ public class MultiException extends RuntimeException {
 				// summary
 				writer.print("-- SUMMARY --");
 				writer.print("\n");
-				for (int index = 0; index < _exceptions.size(); index++) {
-					final Exception exception = _exceptions.get(index);
-					final String numberSuffix = "#" + getNumberWithLeadingChar(index + 1, _exceptions.size(), '0');
-					if (exception.getMessage() != null) {
-						writer.print(numberSuffix + ": " + exception.getMessage());
+				for (int index = 0; index < _throwables.size(); index++) {
+					final Throwable throwable = _throwables.get(index);
+					final String numberSuffix = "#" + getNumberWithLeadingChar(index + 1, _throwables.size(), '0');
+					if (throwable.getMessage() != null) {
+						writer.print(numberSuffix + ": " + throwable.getMessage());
 					} else {
 						writer.print(numberSuffix + ": <Exception message is null - see stacktrace for details>");
 					}
@@ -71,11 +71,11 @@ public class MultiException extends RuntimeException {
 				writer.print("-- END OF SUMMARY --\n");
 
 				// stracktraces
-				for (int index = 0; index < _exceptions.size(); index++) {
-					final Exception exception = _exceptions.get(index);
-					final String numberSuffix = "#" + getNumberWithLeadingChar(index + 1, _exceptions.size(), '0');
+				for (int index = 0; index < _throwables.size(); index++) {
+					final Throwable throwable = _throwables.get(index);
+					final String numberSuffix = "#" + getNumberWithLeadingChar(index + 1, _throwables.size(), '0');
 					writer.print("\n\n-- " + numberSuffix + " : STACKTRACE --\n");
-					exception.printStackTrace(writer);
+					throwable.printStackTrace(writer);
 					writer.print("-- " + numberSuffix + " : END OF STACKTRACE --\n");
 				}
 			}
@@ -84,12 +84,12 @@ public class MultiException extends RuntimeException {
 		return _message;
 	}
 
-	private void addExceptions(@NotNull final Collection<Exception> exceptions) {
-		for (final Exception exception : exceptions) {
-			if (exception instanceof MultiException) {
-				addExceptions(((MultiException) exception)._exceptions);
+	private void addThrowables(@NotNull final Collection<Throwable> throwables) {
+		for (final Throwable throwable : throwables) {
+			if (throwable instanceof MultiException) {
+				addThrowables(((MultiException) throwable)._throwables);
 			} else {
-				_exceptions.add(exception);
+				_throwables.add(throwable);
 			}
 		}
 	}

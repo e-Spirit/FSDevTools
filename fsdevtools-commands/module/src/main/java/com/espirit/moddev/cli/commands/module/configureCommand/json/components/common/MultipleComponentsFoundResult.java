@@ -52,7 +52,7 @@ public class MultipleComponentsFoundResult implements ExecutionErrorResult<Illeg
 
 	@NotNull
 	@Override
-	public IllegalStateException getException() {
+	public IllegalStateException getThrowable() {
 		return new IllegalStateException(toString());
 	}
 

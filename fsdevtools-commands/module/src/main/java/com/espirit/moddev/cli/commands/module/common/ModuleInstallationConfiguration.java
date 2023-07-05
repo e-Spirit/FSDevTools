@@ -34,6 +34,7 @@ import de.espirit.firstspirit.agency.GlobalWebAppId;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
 import de.espirit.firstspirit.agency.WebAppId;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -162,9 +163,9 @@ public class ModuleInstallationConfiguration {
 		_webAppConfigurationFiles.addAll(webAppConfigurationFiles);
 	}
 
-	public void verify(final Connection connection) {
-		final ModuleAdminAgent moduleAdminAgent = connection.getBroker().requestSpecialist(ModuleAdminAgent.TYPE);
-		final List<Exception> exceptions = new ArrayList<>();
+	public void verify(@NotNull final Connection connection) {
+		final ModuleAdminAgent moduleAdminAgent = connection.getBroker().requireSpecialist(ModuleAdminAgent.TYPE);
+		final List<Throwable> exceptions = new ArrayList<>();
 		verifyFsm(exceptions);
 		verifyProject(exceptions, connection);
 		verifyScopes(moduleAdminAgent, exceptions);
@@ -176,49 +177,49 @@ public class ModuleInstallationConfiguration {
 		}
 	}
 
-	private void verifyFiles(final List<Exception> exceptions, final String description, final List<String> combinedPaths) {
+	private void verifyFiles(@NotNull final List<Throwable> throwables, @NotNull final String description, @NotNull final List<String> combinedPaths) {
 		for (final String path : combinedPaths) {
 			if (path.contains("=")) {
 				final String[] split = path.split("=");
 				if (split.length != 2) {
-					exceptions.add(new IllegalStateException(_fsm + " - Path to " + description + " '" + path + "' has illegal format."));
+					throwables.add(new IllegalStateException(_fsm + " - Path to " + description + " '" + path + "' has illegal format."));
 				}
-				verifyFile(exceptions, description, split[1]);
+				verifyFile(throwables, description, split[1]);
 			} else {
-				verifyFile(exceptions, description, path);
+				verifyFile(throwables, description, path);
 			}
 		}
 	}
 
-	private void verifyFile(final List<Exception> exceptions, final String description, final String path) {
+	private void verifyFile(@NotNull final List<Throwable> throwables, @NotNull final String description, @Nullable final String path) {
 		if (path == null) {
 			return;
 		}
 		final File file = new File(path);
 		if (!file.exists()) {
-			exceptions.add(new IllegalArgumentException(_fsm + " - " + description + " '" + path + "' does not exist!"));
+			throwables.add(new IllegalArgumentException(_fsm + " - " + description + " '" + path + "' does not exist!"));
 			return;
 		}
 		if (!file.isFile()) {
-			exceptions.add(new IllegalArgumentException(_fsm + " - " + description + " '" + path + "' is not a file!"));
+			throwables.add(new IllegalArgumentException(_fsm + " - " + description + " '" + path + "' is not a file!"));
 		}
 	}
 
-	private void verifyFsm(final List<Exception> exceptions) {
+	private void verifyFsm(@NotNull final List<Throwable> throwables) {
 		if (_fsm == null) {
-			exceptions.add(new IllegalArgumentException("Path to FSM must be defined (\"fsm\": \"path\\\\to\\\\file.fsm\")!"));
+			throwables.add(new IllegalArgumentException("Path to FSM must be defined (\"fsm\": \"path\\\\to\\\\file.fsm\")!"));
 			return;
 		}
-		verifyFile(exceptions, "FSM", _fsm);
+		verifyFile(throwables, "FSM", _fsm);
 	}
 
-	private void verifyProject(final List<Exception> exceptions, final Connection connection) {
+	private void verifyProject(@NotNull final List<Throwable> throwables, @NotNull final Connection connection) {
 		if (_moduleProjectName != null && connection.getProjectByName(_moduleProjectName) == null) {
-			exceptions.add(new IllegalArgumentException(_fsm + " - Project '" + _moduleProjectName + "' does not exist."));
+			throwables.add(new IllegalArgumentException(_fsm + " - Project '" + _moduleProjectName + "' does not exist."));
 		}
 	}
 
-	public void verifyScopes(final ModuleAdminAgent moduleAdminAgent, final List<Exception> exceptions) {
+	public void verifyScopes(@NotNull final ModuleAdminAgent moduleAdminAgent, @NotNull final List<Throwable> throwables) {
 		final Collection<String> globalWebApps = moduleAdminAgent.getGlobalWebApps(true).stream().map(GlobalWebAppId::getGlobalId).collect(Collectors.toList());
 		final WebAppIdentifierParser webAppIdentifierParser = new WebAppIdentifierParser();
 		for (final String scope : _webAppScopes) {
@@ -228,11 +229,11 @@ public class ModuleInstallationConfiguration {
 					final GlobalWebAppIdentifier globalWebAppIdentifier = (GlobalWebAppIdentifier) webAppIdentifier;
 					final GlobalWebAppId globalWebAppId = WebAppId.Factory.create(globalWebAppIdentifier.getGlobalWebAppId());
 					if (!globalWebApps.contains(globalWebAppId.getGlobalId())) {
-						exceptions.add(new IllegalArgumentException(_fsm + " - Unknown global scope '" + globalWebAppId.getGlobalId() + "'!"));
+						throwables.add(new IllegalArgumentException(_fsm + " - Unknown global scope '" + globalWebAppId.getGlobalId() + "'!"));
 					}
 				}
 			} catch (final Exception e) {
-				exceptions.add(new IllegalArgumentException(_fsm + " - Unknown scope '" + scope + "'!"));
+				throwables.add(new IllegalArgumentException(_fsm + " - Unknown scope '" + scope + "'!"));
 			}
 		}
 	}

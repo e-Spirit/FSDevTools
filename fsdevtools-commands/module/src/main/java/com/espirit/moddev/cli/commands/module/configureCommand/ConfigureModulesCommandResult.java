@@ -36,8 +36,8 @@ public class ConfigureModulesCommandResult extends AbstractCommandResult {
 		super("Error configuring modules!", results);
 	}
 
-	public ConfigureModulesCommandResult(@NotNull final Exception exception) {
-		super(exception);
+	public ConfigureModulesCommandResult(@NotNull final Throwable throwable) {
+		super(throwable);
 	}
 
 	@Override

@@ -43,8 +43,8 @@ public class InstallModuleCommandResult extends AbstractCommandResult {
 		_installationResult = installationResult;
 	}
 
-	public InstallModuleCommandResult(@NotNull final String pathToFsm, @NotNull final Exception exception) {
-		super(exception);
+	public InstallModuleCommandResult(@NotNull final String pathToFsm, @NotNull final Throwable throwable) {
+		super(throwable);
 		_pathToFsm = pathToFsm;
 		_installationResult = null;
 	}

@@ -49,7 +49,7 @@ public class DefaultExecutionErrorResultSerializer extends StdSerializer<Executi
 		generator.writeStartObject();
 		{
 			generator.writeObjectField(ATTR_MESSAGE, value.toString());
-			generator.writeObjectField(ATTR_EXCEPTION, value.getException());
+			generator.writeObjectField(ATTR_EXCEPTION, value.getThrowable());
 		}
 		generator.writeEndObject();
 	}

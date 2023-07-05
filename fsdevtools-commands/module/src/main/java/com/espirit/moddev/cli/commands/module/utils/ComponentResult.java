@@ -29,11 +29,11 @@ import org.jetbrains.annotations.Nullable;
 abstract class ComponentResult<T extends ComponentDescriptor> {
 
 	private final T _descriptor;
-	private final Exception _exception;
+	private final Throwable _throwable;
 
-	protected ComponentResult(@NotNull final T descriptor, @Nullable final Exception exception) {
+	protected ComponentResult(@NotNull final T descriptor, @Nullable final Throwable throwable) {
 		_descriptor = descriptor;
-		_exception = exception;
+		_throwable = throwable;
 	}
 
 	@NotNull
@@ -42,8 +42,8 @@ abstract class ComponentResult<T extends ComponentDescriptor> {
 	}
 
 	@Nullable
-	public final Exception getException() {
-		return _exception;
+	public final Throwable getThrowable() {
+		return _throwable;
 	}
 
 }

@@ -717,7 +717,7 @@ public class ComponentWebAppsTest {
 		final ModuleException moduleException = new ModuleException(errorMessage);
 		final WebAppId webAppId = _globalWebApp.createWebAppId(null);
 		final ComponentWebApps.WebComponentInstallFailedResult result = new ComponentWebApps.WebComponentInstallFailedResult(MODULE_NAME, COMPONENT_NAME, webAppId, false, moduleException);
-		final IllegalStateException exception = result.getException();
+		final IllegalStateException exception = result.getThrowable();
 		assertThat(exception.getMessage()).isEqualTo(String.format(ComponentWebApps.WebComponentInstallFailedResult.MESSAGE_INSTALL, MODULE_NAME, COMPONENT_NAME, WebAppUtil.getReadableWebAppName(webAppId), ModuleException.class.getName() + ": " + errorMessage));
 	}
 
@@ -736,7 +736,7 @@ public class ComponentWebAppsTest {
 		final ModuleException moduleException = new ModuleException(errorMessage);
 		final WebAppId webAppId = _globalWebApp.createWebAppId(null);
 		final ComponentWebApps.WebComponentInstallFailedResult result = new ComponentWebApps.WebComponentInstallFailedResult(MODULE_NAME, COMPONENT_NAME, webAppId, true, moduleException);
-		final IllegalStateException exception = result.getException();
+		final IllegalStateException exception = result.getThrowable();
 		assertThat(exception.getMessage()).isEqualTo(String.format(ComponentWebApps.WebComponentInstallFailedResult.MESSAGE_UPDATE, MODULE_NAME, COMPONENT_NAME, WebAppUtil.getReadableWebAppName(webAppId), ModuleException.class.getName() + ": " + errorMessage));
 	}
 

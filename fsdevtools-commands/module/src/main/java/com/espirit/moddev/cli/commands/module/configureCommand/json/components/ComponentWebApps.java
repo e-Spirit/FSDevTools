@@ -313,7 +313,7 @@ public class ComponentWebApps implements Configurable {
 
 		@NotNull
 		@Override
-		public IllegalStateException getException() {
+		public IllegalStateException getThrowable() {
 			return _exception;
 		}
 
