@@ -1,80 +1,87 @@
-# FSDevTools - User Documentation
+# FSDevTools - User Guide
 
-FSDevTools is a project to optimize the developer experience (DX) with FirstSpirit.
+Welcome to the FSDevTools User Documentation, a project dedicated to enhancing the developer experience (DX) with
+FirstSpirit.
 
-## Versioning scheme
+## Minimal FirstSpirit version & Prerequisites
 
-Since version **3.0.0**, the `FSDevTools` are using [semantic versioning 2.0.0](https://semver.org/#semantic-versioning-200) (MAJOR.MINOR.PATCH) as the version pattern.
-By using this scheme, users can now see if the `FSDevTools` has any breaking changes compared to the latest release, just by looking at the version number.
+Since version **4.4.1**, `FSDevTools` requires at least the FirstSpirit version **2023-04-09**.
 
-Changes in the different parts of the version will have different meanings
+Before using FSDevTools, several prerequisites must be met. Detailed instructions can be found in the zip or tar.gz file
+of the binary distribution. Below is a summary of the key requirements.
 
-- MAJOR: we made some incompatible changes. The major version will also if the minimal required FirstSpirit version is changed. Please be careful if you update and take a close look at the [RELEASE NOTES](RELEASENOTES.md). 
-- MINOR: we added functionality in a backwards compatible manner
-- PATCH: we made backwards compatible bug fixes
+Additionally, ensure that the `JAVA_HOME` environment variable is correctly set to a **Java 11+** installation.
 
-For the list of changes in a version, please take a look at the [RELEASE NOTES](RELEASENOTES.md).
+Upon initialization, the following configurations are sourced from your system environment using specific keys:
 
-## Prerequisites
+- **fshost**: FirstSpirit host address.
+- **fsport**: FirstSpirit port number.
+- **fsmode**: FirstSpirit connection mode (HTTP, HTTPS, or SOCKET).
+- **fsuser**: FirstSpirit user account for authentication.
+- **fspwd**: Password for the FirstSpirit user.
+- **fsservletzone**: FirstSpirit servlet zone.
+- **fsproject**: Name of the FirstSpirit project.
 
-In order to use FSDevTools various prerequisites must be considered.
-They are described in detail inside the zip or tar.gz file of the binary distribution.
-The following list is just a short overview.
+Among these properties, only the project property lacks a default value. It must be configured to avoid exceptions in
+project-specific operations. Default values are utilized for other properties when neither an environment variable nor
+an option is provided.
 
-Since version **3.0.0** `FSDevTools` requires at least FirstSpirit **2021-07**.
+All default values can be overridden by supplying command line options during execution.
 
-Furthermore a correct `JAVA_HOME` environment variable, which points to a **Java 8+** installation, must be set.
+## Versioning Scheme
 
-In first instance the following configurations are loaded from your system environment with the corresponding key.
+Starting from version **3.0.0**, the `FSDevTools` follows
+the [semantic versioning 2.0.0](https://semver.org/#semantic-versioning-200) (MAJOR.MINOR.PATCH) format for version
+numbering. This enables users to quickly determine whether there are any breaking changes compared to the previous
+release, simply by examining the version number.
 
-- **fshost** - The FirstSpirit host address
-- **fsport** - The FirstSpirit port number.
-- **fsmode** - The FirstSpirit connection mode, either `HTTP`, `HTTPS` or `SOCKET`.
-- **fsuser** - The FirstSpirit user account to authenticate the connection.
-- **fspwd** - The FirstSpirit user's password.
-- **fsservletzone** - The FirstSpirit servlet zone.
-- **fsproject** - The FirstSpirit project name.
+Here's what each part of the version number signifies:
 
-In contrast to the other properties only the project property does not have a default value.
-Due to this it has to be configured somehow to avoid exceptions with project context specific operations.
-The default values of the other properties are used if neither an environment variable nor an option is given.
+- MAJOR: Includes incompatible changes. This version also indicates if the minimum required FirstSpirit version has been
+  modified. Please exercise caution while updating and refer to the [RELEASE NOTES](RELEASENOTES.md) for details.
+- MINOR: Adds new features in a backward-compatible manner.
+- PATCH: Contains backward-compatible bug fixes.
 
-It is possible to override all default values from the environment by passing actual command line options for them.
+For a comprehensive list of changes within each version, please consult the [RELEASE NOTES](RELEASENOTES.md).
 
 ## Additional Documentation
 
-Further information about how to use the FSDevTools in combination with Git can be found in the [FirstSpirit online documentation](https://docs.e-spirit.com/odfs/edocs/sync/introduction/index.html).
+For information on using FSDevTools in conjunction with Git, refer to
+the [FirstSpirit online documentation](https://docs.e-spirit.com/odfs/edocs/sync/introduction/index.html).
 
 ## Usage
-Most of the information you need in order to use the command line tool can be found via the integrated help command `fs-cli help`.
 
-Additional information and examples are provided via the [command line interface usage page](documentation/CLI_USAGE.md).
+Most of the information required to utilize the command line tool can be accessed through the integrated `fs-cli help`
+command.
+
+For detailed insights and examples, visit the [command line interface usage page](documentation/CLI_USAGE.md).
 
 ## Logging
 
-By default no log file will be written.
-Instead every command provides a more or less detailed, printed result in the command line.
-Both, a finer logging level and the generation of a log file can be configured in the Log4J logging properties file `/conf/log4j2.xml`.
+By default, no log files are generated. Instead, each command displays varying levels of detail in the command line
+output. To configure finer logging levels and enable log file creation, refer to the Log4J logging properties file
+located at `/conf/log4j2.xml`.
 
-If you need an even more detailed error logging, you can use the global option **-e**. 
-With **-e**, you get an additional exception stacktrace in some cases.
+For more comprehensive error logging, the global option **-e** can be used. This provides additional exception stack
+traces in specific cases.
 
-For more information about the Log4J configuration please consult the [Log4J manual](https://logging.apache.org/log4j/2.x/manual/).
+For detailed guidance on Log4J configuration, consult the [Log4J manual](https://logging.apache.org/log4j/2.x/manual/).
 
 ## Developer Documentation
 
-Information about how to compile and extend this project is described in the [developer documentation](documentation/DEV_DOC.md).
+Extensive information on compiling and extending this project is available in
+the [developer documentation](documentation/DEV_DOC.md).
 
 ## Legal Notices
 
-FSDevTools is a product of [Crownpeak Technology GmbH](https://www.e-spirit.com), Dortmund, Germany.
+FSDevTools is a product of [Crownpeak Technology GmbH](https://www.e-spirit.com), based in Dortmund, Germany.
 
-Only a license agreed upon with Crownpeak Technology GmbH is valid with respect to the user for using FSDevTools.
+Usage of FSDevTools requires a valid license agreement with Crownpeak Technology GmbH.
 
 ## Disclaimer
 
-This document is provided for information purposes only.
-Crownpeak may change the contents hereof without notice. 
-This document is not warranted to be error-free, nor subject to any other warranties or conditions, whether expressed orally or implied in law, including implied warranties and conditions of merchantability or fitness for a particular purpose.
-Crownpeak specifically disclaims any liability with respect to this document and no contractual obligations are formed either directly or indirectly by this document.
-The technologies, functionality, services, and processes described herein are subject to change without notice.
+This document serves informational purposes only. Crownpeak reserves the right to modify its contents without prior
+notice. This document is not guaranteed to be free from errors and is not subject to any other warranties or conditions,
+whether implied in law or expressed orally. Crownpeak disclaims any liability associated with this document, and no
+contractual obligations are established by it, either directly or indirectly. The technologies, functionality, services,
+and processes described here are subject to change without notice.
