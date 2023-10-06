@@ -5,7 +5,7 @@ FirstSpirit.
 
 ## Minimal FirstSpirit version & Prerequisites
 
-Since version **4.4.1**, `FSDevTools` requires at least the FirstSpirit version **2023-04-09**.
+Since version **4.5.0**, `FSDevTools` requires at least the FirstSpirit version **2023-11-05**.
 
 Before using FSDevTools, several prerequisites must be met. Detailed instructions can be found in the zip or tar.gz file
 of the binary distribution. Below is a summary of the key requirements.

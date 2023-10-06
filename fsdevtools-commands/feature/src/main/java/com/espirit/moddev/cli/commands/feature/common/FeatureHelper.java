@@ -33,12 +33,14 @@ import de.espirit.firstspirit.feature.FeatureAnalyseResult;
 import de.espirit.firstspirit.feature.FeatureDescriptor;
 import de.espirit.firstspirit.feature.FeatureFile;
 import de.espirit.firstspirit.feature.FeatureInstallAgent;
+import de.espirit.firstspirit.feature.FeatureInstallOptions;
 import de.espirit.firstspirit.feature.FeatureInstallResult;
 import de.espirit.firstspirit.feature.FeatureProgress;
 import de.espirit.firstspirit.storage.Revision;
 import de.espirit.firstspirit.store.access.feature.FeatureInstallResultImpl;
 import de.espirit.firstspirit.transport.LayerMapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,9 +100,14 @@ public class FeatureHelper {
 	 * @throws Exception if server side operation fails.
 	 */
 	@NotNull
-	public FeatureInstallResultImpl getFeatureInstallResult(@NotNull final FeatureInstallAgent featureInstallAgent, @NotNull final File file, @NotNull final LayerMapper layerMapper) throws Exception {
+	public FeatureInstallResultImpl getFeatureInstallResult(@NotNull final FeatureInstallAgent featureInstallAgent, @NotNull final File file, @NotNull final LayerMapper layerMapper, final boolean includeFeatureModel) throws Exception {
 		final FeatureFile featureFile = uploadFeatureFile(featureInstallAgent, file);
-		final ServerActionHandle<? extends FeatureProgress, FeatureInstallResult> serverActionHandle = featureInstallAgent.installFeature(featureFile, layerMapper);
+		final ServerActionHandle<? extends FeatureProgress, FeatureInstallResult> serverActionHandle = getServerActionHandleForFeatureInstallation(
+				featureInstallAgent,
+				featureFile,
+				layerMapper,
+				includeFeatureModel
+		);
 		final FeatureInstallResultImpl featureInstallResult = (FeatureInstallResultImpl) serverActionHandle.getResult(true);
 		if (featureInstallResult.hasInstallException()) {
 			throw featureInstallResult.getInstallException().getKey();
@@ -255,4 +262,32 @@ public class FeatureHelper {
 		return projectBroker;
 	}
 
+	@NotNull
+	@VisibleForTesting
+	ServerActionHandle<? extends FeatureProgress, FeatureInstallResult> getServerActionHandleForFeatureInstallation(
+			@NotNull final FeatureInstallAgent featureInstallAgent,
+			@NotNull final FeatureFile featureFile,
+			@Nullable final LayerMapper layerMapper,
+			final boolean includeFeatureModel
+	) throws IOException {
+		if (!includeFeatureModel) {
+			// avoid that nasty warning message if possible
+			return featureInstallAgent.installFeature(featureFile, layerMapper);
+		}
+		try {
+			final FeatureInstallOptions featureInstallOptions = FeatureInstallOptions.Builder()
+					.withLayerMapper(layerMapper)
+					.installFeatureModel(includeFeatureModel)
+					.build(featureFile);
+			return featureInstallAgent.installFeature(featureInstallOptions);
+		} catch (final IncompatibleClassChangeError | NoClassDefFoundError error) {
+			LOGGER.warn(
+					"Falling back to old API due to an outdated version of the 'fs-isolated-runtime.jar'." +
+							" Please update the 'fs-isolated-runtime.jar' for proper functionality." +
+							" The feature model will not be installed.",
+					error
+			);
+			return featureInstallAgent.installFeature(featureFile, layerMapper);
+		}
+	}
 }

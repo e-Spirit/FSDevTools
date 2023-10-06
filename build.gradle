@@ -33,7 +33,7 @@ import java.util.regex.Pattern
 
 buildscript {
     ext {
-        fsRuntimeVersion = '5.2.230409'
+        fsRuntimeVersion = '5.2.231105'
     }
 }
 

@@ -66,6 +66,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anySet;
@@ -115,7 +116,7 @@ class FeatureInstallCommandTest {
 		when(_featureHelper.getFeatureAnalyseResult(any(), any(), any(File.class))).thenReturn(_extendedFeatureAnalyseResult);
 		when(_extendedFeatureAnalyseResult.getFeatureAnalyseResult()).thenReturn(_featureAnalyseResult);
 		when(_featureHelper.getFeatureInstallAgent(any(), any())).thenReturn(_featureInstallAgent);
-		when(_featureHelper.getFeatureInstallResult(any(), any(File.class), any())).thenReturn(_featureInstallResult);
+		when(_featureHelper.getFeatureInstallResult(any(), any(File.class), any(), anyBoolean())).thenReturn(_featureInstallResult);
 		doCallRealMethod().when(_subjectUnderTest).execute(any(), any());
 		// WHEN
 		_subjectUnderTest.execute(_connection, _project);
@@ -126,7 +127,7 @@ class FeatureInstallCommandTest {
 		verify(_subjectUnderTest).checkForErrors(_extendedFeatureAnalyseResult);
 		verify(_subjectUnderTest).getLayerMapper(_featureAnalyseResult);
 		verify(_featureHelper).getFeatureInstallAgent(_connection, _project);
-		verify(_featureHelper).getFeatureInstallResult(_featureInstallAgent, new File(PATH_TO_FEATURE_ZIP), _layerMapper);
+		verify(_featureHelper).getFeatureInstallResult(_featureInstallAgent, new File(PATH_TO_FEATURE_ZIP), _layerMapper, false);
 		verify(_subjectUnderTest).logFeatureInstallResult(_featureInstallResult);
 	}
 

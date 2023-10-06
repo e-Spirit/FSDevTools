@@ -1,5 +1,11 @@
 # Release notes
 
+## Version 4.5.0
+
+* added new parameter "*--include-feature-model*" to "*feature install*" command
+
+For more information about the new parameter, please use "*fs-cli help feature install*" or open the included documentation under *docs/index.html*.
+
 ## Version 4.4.2
 
 * fixed java.lang.Error not getting handled in general

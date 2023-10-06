@@ -33,6 +33,7 @@ import de.espirit.firstspirit.feature.FeatureAnalyseResult;
 import de.espirit.firstspirit.feature.FeatureDescriptor;
 import de.espirit.firstspirit.feature.FeatureFile;
 import de.espirit.firstspirit.feature.FeatureInstallAgent;
+import de.espirit.firstspirit.feature.FeatureInstallOptions;
 import de.espirit.firstspirit.feature.FeatureInstallResult;
 import de.espirit.firstspirit.feature.FeatureProgress;
 import de.espirit.firstspirit.storage.Revision;
@@ -43,6 +44,9 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -56,6 +60,7 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -63,6 +68,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -105,18 +111,20 @@ class FeatureHelperTest {
 	void getFeatureInstallResult_throws_when_server_returns_error() throws Exception {
 		// GIVEN
 		when(_subjectUnderTest.uploadFeatureFile(any(), any(File.class))).thenReturn(_featureFile);
-		Mockito.<ServerActionHandle<? extends FeatureProgress, FeatureInstallResult>>when(_featureInstallAgent.installFeature(any(), any(LayerMapper.class))).thenReturn(_serverActionHandleWithFeatureInstallResult);
+		Mockito.doReturn(_serverActionHandleWithFeatureInstallResult)
+				.when(_subjectUnderTest)
+				.getServerActionHandleForFeatureInstallation(any(), any(), any(), anyBoolean());
 		when(_serverActionHandleWithFeatureInstallResult.getResult(anyBoolean())).thenReturn(_featureInstallResult);
 		when(_featureInstallResult.hasInstallException()).thenReturn(true);
 		final Exception testError = new Exception("test");
 		when(_featureInstallResult.getInstallException()).thenReturn(new Pair<>(testError, null));
-		when(_subjectUnderTest.getFeatureInstallResult(any(), any(File.class), any())).thenCallRealMethod();
+		when(_subjectUnderTest.getFeatureInstallResult(any(), any(File.class), any(), anyBoolean())).thenCallRealMethod();
 		// WHEN
-		assertThatThrownBy(() -> _subjectUnderTest.getFeatureInstallResult(_featureInstallAgent, new File(PATH_TO_TEST_FEATURE_ARCHIVE), _layerMapper))
+		assertThatThrownBy(() -> _subjectUnderTest.getFeatureInstallResult(_featureInstallAgent, new File(PATH_TO_TEST_FEATURE_ARCHIVE), _layerMapper, false))
 				.isSameAs(testError);
 		// THEN
 		verify(_subjectUnderTest).uploadFeatureFile(_featureInstallAgent, new File(PATH_TO_TEST_FEATURE_ARCHIVE));
-		verify(_featureInstallAgent).installFeature(_featureFile, _layerMapper);
+		verify(_subjectUnderTest).getServerActionHandleForFeatureInstallation(_featureInstallAgent, _featureFile, _layerMapper, false);
 		verify(_serverActionHandleWithFeatureInstallResult).getResult(true);
 		verify(_featureInstallResult).hasInstallException();
 		verify(_featureInstallResult).getInstallException();
@@ -126,20 +134,112 @@ class FeatureHelperTest {
 	void getFeatureInstallResult_returns_without_exception_when_no_server_error_happened() throws Exception {
 		// GIVEN
 		when(_subjectUnderTest.uploadFeatureFile(any(), any(File.class))).thenReturn(_featureFile);
-		Mockito.<ServerActionHandle<? extends FeatureProgress, FeatureInstallResult>>when(_featureInstallAgent.installFeature(any(), any(LayerMapper.class))).thenReturn(_serverActionHandleWithFeatureInstallResult);
+		Mockito.doReturn(_serverActionHandleWithFeatureInstallResult)
+				.when(_subjectUnderTest)
+				.getServerActionHandleForFeatureInstallation(any(), any(), any(), anyBoolean());
 		when(_serverActionHandleWithFeatureInstallResult.getResult(anyBoolean())).thenReturn(_featureInstallResult);
 		when(_featureInstallResult.hasInstallException()).thenReturn(false);
-		when(_subjectUnderTest.getFeatureInstallResult(any(), any(File.class), any())).thenCallRealMethod();
+		when(_subjectUnderTest.getFeatureInstallResult(any(), any(File.class), any(), anyBoolean())).thenCallRealMethod();
 		// WHEN
-		final FeatureInstallResultImpl result = _subjectUnderTest.getFeatureInstallResult(_featureInstallAgent, new File(PATH_TO_TEST_FEATURE_ARCHIVE), _layerMapper);
+		final FeatureInstallResultImpl result = _subjectUnderTest.getFeatureInstallResult(_featureInstallAgent, new File(PATH_TO_TEST_FEATURE_ARCHIVE), _layerMapper, false);
 		// THEN
 		assertThat(result)
 				.isNotNull()
 				.isSameAs(_featureInstallResult);
 		verify(_subjectUnderTest).uploadFeatureFile(_featureInstallAgent, new File(PATH_TO_TEST_FEATURE_ARCHIVE));
-		verify(_featureInstallAgent).installFeature(_featureFile, _layerMapper);
+		verify(_subjectUnderTest).getServerActionHandleForFeatureInstallation(_featureInstallAgent, _featureFile, _layerMapper, false);
 		verify(_serverActionHandleWithFeatureInstallResult).getResult(true);
 		verify(_featureInstallResult).hasInstallException();
+	}
+
+	@Test
+	void getFeatureInstallResult_include_model() throws Exception {
+		// GIVEN
+		when(_subjectUnderTest.uploadFeatureFile(any(), any(File.class)))
+				.thenReturn(_featureFile);
+		Mockito.doReturn(_serverActionHandleWithFeatureInstallResult)
+				.when(_subjectUnderTest)
+				.getServerActionHandleForFeatureInstallation(any(), any(), any(), anyBoolean());
+		when(_serverActionHandleWithFeatureInstallResult.getResult(anyBoolean()))
+				.thenReturn(_featureInstallResult);
+		when(_featureInstallResult.hasInstallException())
+				.thenReturn(false);
+		when(_subjectUnderTest.getFeatureInstallResult(any(), any(File.class), any(), anyBoolean()))
+				.thenCallRealMethod();
+		// WHEN
+		final FeatureInstallResultImpl result = _subjectUnderTest.getFeatureInstallResult(_featureInstallAgent, new File(PATH_TO_TEST_FEATURE_ARCHIVE), _layerMapper, true);
+		// THEN
+		assertThat(result)
+				.isNotNull()
+				.isSameAs(_featureInstallResult);
+		verify(_subjectUnderTest).uploadFeatureFile(_featureInstallAgent, new File(PATH_TO_TEST_FEATURE_ARCHIVE));
+		verify(_subjectUnderTest).getServerActionHandleForFeatureInstallation(_featureInstallAgent, _featureFile, _layerMapper, true);
+		verify(_serverActionHandleWithFeatureInstallResult).getResult(true);
+		verify(_featureInstallResult).hasInstallException();
+	}
+
+	@Test
+	void getServerActionHandleForFeatureInstallation_uses_older_api_if_model_does_not_have_to_be_installed() throws Exception {
+		// GIVEN
+		Mockito.doReturn(_serverActionHandleWithFeatureInstallResult)
+				.when(_featureInstallAgent)
+				.installFeature(any(FeatureFile.class), any(LayerMapper.class));
+		when(_subjectUnderTest.getServerActionHandleForFeatureInstallation(any(), any(), any(), anyBoolean()))
+				.thenCallRealMethod();
+		// WHEN
+		final ServerActionHandle<? extends FeatureProgress, FeatureInstallResult> result = _subjectUnderTest.getServerActionHandleForFeatureInstallation(_featureInstallAgent, _featureFile, _layerMapper, false);
+		// THEN
+		assertThat(result)
+				.isNotNull()
+				.isSameAs(_serverActionHandleWithFeatureInstallResult);
+		verify(_featureInstallAgent, never()).installFeature(any());
+		verify(_featureInstallAgent).installFeature(_featureFile, _layerMapper);
+	}
+
+	@Test
+	void getServerActionHandleForFeatureInstallation_uses_newer_api_for_model_installation() throws Exception {
+		// GIVEN
+		Mockito.doReturn(_serverActionHandleWithFeatureInstallResult)
+				.when(_featureInstallAgent)
+				.installFeature(any());
+		when(_subjectUnderTest.getServerActionHandleForFeatureInstallation(any(), any(), any(), anyBoolean()))
+				.thenCallRealMethod();
+		// WHEN
+		final ServerActionHandle<? extends FeatureProgress, FeatureInstallResult> result = _subjectUnderTest.getServerActionHandleForFeatureInstallation(_featureInstallAgent, _featureFile, _layerMapper, true);
+		// THEN
+		assertThat(result)
+				.isNotNull()
+				.isSameAs(_serverActionHandleWithFeatureInstallResult);
+		verify(_featureInstallAgent).installFeature(Mockito.argThat(options -> {
+			assertThat(options).isNotNull();
+			assertThat(options.getFeatureFile()).isSameAs(_featureFile);
+			assertThat(options.getLayerMapper()).isSameAs(_layerMapper);
+			assertThat(options.installFeatureModel()).isTrue();
+			return true;
+		}));
+	}
+
+	@ParameterizedTest
+	@MethodSource("data_for_getServerActionHandleForFeatureInstallation_falls_back_to_old_api_if_new_api_not_available")
+	void getServerActionHandleForFeatureInstallation_falls_back_to_older_api_if_new_api_not_available(
+			final Class<? extends Throwable> testErrorClass
+	) throws Exception {
+		// GIVEN
+		Mockito.doThrow(testErrorClass)
+				.when(_featureInstallAgent)
+				.installFeature(any(FeatureInstallOptions.class));
+		Mockito.doReturn(_serverActionHandleWithFeatureInstallResult)
+				.when(_featureInstallAgent)
+				.installFeature(any(FeatureFile.class), any(LayerMapper.class));
+		when(_subjectUnderTest.getServerActionHandleForFeatureInstallation(any(), any(), any(), anyBoolean()))
+				.thenCallRealMethod();
+		// WHEN
+		final ServerActionHandle<? extends FeatureProgress, FeatureInstallResult> result = _subjectUnderTest.getServerActionHandleForFeatureInstallation(_featureInstallAgent, _featureFile, _layerMapper, true);
+		// THEN
+		assertThat(result)
+				.isNotNull()
+				.isSameAs(_serverActionHandleWithFeatureInstallResult);
+		verify(_featureInstallAgent).installFeature(_featureFile, _layerMapper);
 	}
 
 	@Test
@@ -390,5 +490,13 @@ class FeatureHelperTest {
 			when(featureDescriptor.getRevision()).thenReturn(revision);
 		}
 		return featureDescriptor;
+	}
+
+	@NotNull
+	private static Stream<Arguments> data_for_getServerActionHandleForFeatureInstallation_falls_back_to_old_api_if_new_api_not_available() {
+		return Stream.of(
+				Arguments.of(IncompatibleClassChangeError.class),
+				Arguments.of(NoClassDefFoundError.class)
+		);
 	}
 }

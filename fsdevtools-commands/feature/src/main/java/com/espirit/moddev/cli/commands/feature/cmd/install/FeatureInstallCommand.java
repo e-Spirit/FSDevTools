@@ -180,6 +180,19 @@ public class FeatureInstallCommand extends AbstractFeatureCommand {
 	)
 	private boolean _forceImport;
 
+	@Option(
+			type = OptionType.COMMAND,
+			arity = 0,
+			name = {"--include-feature-model"},
+			description = "Create or update feature model in the target project." +
+					" Disabled by default." +
+					" Feature model is the feature's metadata about nodes, data sources, entities, schemas etc. comprising the given feature." +
+					" If enabled, this metadata is going to be created or updated (overwritten) in the target project's feature storage." +
+					" The FirstSpirit IDs and revision is going to be adjusted to point to the elements in the target project." +
+					" This option is useful for propagating the feature's content from the target instance further to other instances e.g. DEV -> QA -> PROD."
+	)
+	private boolean _includeFeatureModel;
+
 	@VisibleForTesting
 	@NotNull
 	FeatureHelper getFeatureHelper() {
@@ -218,7 +231,7 @@ public class FeatureInstallCommand extends AbstractFeatureCommand {
 		final LayerMapper layerMapper = getLayerMapper(analyseResult.getFeatureAnalyseResult());
 		final FeatureInstallAgent featureInstallAgent = featureHelper.getFeatureInstallAgent(connection, project);
 		LOGGER.info("Installing {}...", FeatureHelper.getFeatureLoggingString(analyseResult));
-		final FeatureInstallResultImpl installResult = featureHelper.getFeatureInstallResult(featureInstallAgent, featureFile, layerMapper);
+		final FeatureInstallResultImpl installResult = featureHelper.getFeatureInstallResult(featureInstallAgent, featureFile, layerMapper, _includeFeatureModel);
 		LOGGER.info("Installation of {} has been successfully completed.", FeatureHelper.getFeatureLoggingString(analyseResult));
 		LOGGER.debug("Installation details of {}:", FeatureHelper.getFeatureLoggingString(analyseResult));
 		logFeatureInstallResult(installResult);
