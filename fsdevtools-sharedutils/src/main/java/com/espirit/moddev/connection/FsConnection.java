@@ -5,7 +5,7 @@ package com.espirit.moddev.connection;
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2022 Crownpeak Technology GmbH
+ * Copyright (C) 2024 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License"),
  * you may not use this file except in compliance with the License.

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2022 Crownpeak Technology GmbH
+ * Copyright (C) 2024 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,11 +29,15 @@ include 'fsdevtools-serverrunner'
 include 'fsdevtools-commands'
 include 'fsdevtools-docs'
 include 'fsdevtools-docs-generator'
+include 'fsdevtools-commands:feature'
 include 'fsdevtools-commands:module'
 include 'fsdevtools-commands:project'
 include 'fsdevtools-commands:schedule'
+include 'fsdevtools-commands:script'
 include 'fsdevtools-commands:server'
 include 'fsdevtools-commands:service'
 include 'fsdevtools-commands:test'
 include 'fsdevtools-commands:custom-command-example'
-include 'fsdevtools-commands:feature'
+include 'fsdevtools-scriptengines'
+include 'fsdevtools-scriptengines:Groovy'
+include 'fsdevtools-scriptengines:Javascript'

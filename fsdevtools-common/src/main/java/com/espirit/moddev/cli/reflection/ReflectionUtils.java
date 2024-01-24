@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2022 Crownpeak Technology GmbH
+ * Copyright (C) 2024 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,13 @@ package com.espirit.moddev.cli.reflection;
 
 import com.espirit.moddev.cli.api.annotations.Description;
 import com.espirit.moddev.cli.api.command.Command;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -48,8 +51,33 @@ public final class ReflectionUtils {
 	}
 
 	/**
+	 * Creates a new instance of the specified class using its default constructor.
+	 *
+	 * @param clazz The {@link Class} object representing the class for which an instance is to be created.
+	 * @param <T>   The type of the class.
+	 * @return A new instance of the specified class.
+	 * @throws NoSuchMethodException     If the default constructor of the class is not found.
+	 * @throws InvocationTargetException If the underlying constructor throws an exception.
+	 * @throws InstantiationException    If the class is abstract or an interface, or if the instantiation fails for some other reason.
+	 * @throws IllegalAccessException    If the default constructor is inaccessible.
+	 */
+	@SuppressWarnings("unchecked")
+	@NotNull
+	public static <T> T createInstance(@NotNull final Class<T> clazz) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+		final String className = clazz.getName();
+
+		// get default constructor
+		LOGGER.trace("Getting default constructor of class '{}'...", className);
+		final Constructor<?> constructor = clazz.getConstructor();
+
+		// create engine instance
+		LOGGER.trace("Creating instance '{}'...", className);
+		return (T) constructor.newInstance();
+	}
+
+	/**
 	 * Changes the value attribute of a corresponding key for the given annotation. Note, that the value is replaced in place, so the state of the
-	 * annotation is manipualted.
+	 * annotation is manipulated.
 	 *
 	 * @param annotation the annotation the new value should be set
 	 * @param key        the attribute's name, for which the new value should be set
@@ -59,7 +87,7 @@ public final class ReflectionUtils {
 	 * @throws IllegalArgumentException if the attribute isn't defined or the new value has a wrong type
 	 */
 	@SuppressWarnings("unchecked")
-	public static Object changeAnnotationValue(Annotation annotation, String key, Object newValue) {
+	public static Object changeAnnotationValue(@Nullable final Annotation annotation, @NotNull final String key, @Nullable final Object newValue) {
 		if (annotation == null) {
 			LOGGER.debug("changeAnnotationValue called with null annotation, not changing anything");
 			return null;

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2022 Crownpeak Technology GmbH
+ * Copyright (C) 2024 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@
 package com.espirit.moddev.cli.documentation.commands;
 
 import com.espirit.moddev.cli.documentation.testclasses.NonCommandClass;
+import com.github.rvesse.airline.annotations.Arguments;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;
@@ -279,6 +280,7 @@ public class CommandDocumentationGeneratorTest {
 
 		// Option
 		when(fieldInfo.getAnnotationInfo(Option.class.getName())).thenReturn(null);
+		when(fieldInfo.getAnnotationInfo(Arguments.class.getName())).thenReturn(null);
 
 		// test
 		final Optional<CommandParameterInfo> optionalCommandParameterInfo = _generator.fetchParameterInfo(new NonCommandClass(VALUE), fieldInfo);
@@ -559,7 +561,7 @@ public class CommandDocumentationGeneratorTest {
 	@Test
 	public void getDocumentationInfos() {
 		final Collection<CommandDocumentationInfo> documentationInfos = _generator.getDocumentationInfos();
-		assertThat(documentationInfos).hasSize(26); // currently: 26 commands
+		assertThat(documentationInfos).hasSize(28); // currently: 28 commands
 	}
 
 	@NotNull

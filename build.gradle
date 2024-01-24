@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2022 Crownpeak Technology GmbH
+ * Copyright (C) 2024 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -490,15 +490,36 @@ assemble.dependsOn(assembleTarGz, assembleZip)
 // setup the githubRelease plugin
 ///////////////////////////////////////////////////////
 
+def assets = [assembleTarGz.outputs.files, assembleZip.outputs.files]
+for (final def project in project.project(":fsdevtools-scriptengines").subprojects) {
+    def name = project.name
+    def task = tasks.create(name, org.gradle.jvm.tasks.Jar.class)
+    task.group = "script-engines"
+    task.archiveFileName.set("fs-cli-scriptengine-${name}-${project.version}.jar")
+    task.dependsOn("fsdevtools-scriptengines:${name}:build")
+    task.dependsOn("fsdevtools-scriptengines:${name}:shadowJar")
+    task.from(zipTree("${project.buildDir}/shadowJAR/${name}-${project.version}.jar"))
+    task.destinationDirectory.set(file("$buildDir/distributions"))
+    assets.add(task.outputs.files)
+    tasks.findByName("build").dependsOn(task)
+    tasks.findByName("githubRelease").dependsOn(task)
+}
+
+def releaseText = """
+The zip and the tar.gz files are our windows and linux/mac distributions. This binary release does **not** contain FirstSpirit api jars (*fs-isolated-runtime.jar*). You must add it to the *"lib"* directory. 
+
+For further information about the prerequisites, please take a look at the [README](https://github.com/e-Spirit/FSDevTools/blob/master/README.md#prerequisites). 
+"""
+
 if (project.hasProperty('github_fsdevtools_api_token')) {
     githubRelease {
         token github_fsdevtools_api_token
         owner "e-Spirit"
         tagName "${project.version}"
         repo "FSDevTools"
-        body "The zip and the tar.gz files are our windows and linux/mac distributions. This binary release does not contain FirstSpirit api jars (fs-isolated-runtime.jar). Please add either of them to lib directory. For further information about the prerequisites, please take a look at the [README](https://github.com/e-Spirit/FSDevTools/blob/master/README.md#prerequisites). The fsdevtools-cli-x.x.xxx.jar file can be used to compile against (Keep in mind that you should rather clone this repo and install all submodules to your local Maven repo)."
+        body releaseText
         releaseName "Release " + project.version
-        releaseAssets assembleTarGz.outputs.files, assembleZip.outputs.files
+        releaseAssets assets
     }
 }
 

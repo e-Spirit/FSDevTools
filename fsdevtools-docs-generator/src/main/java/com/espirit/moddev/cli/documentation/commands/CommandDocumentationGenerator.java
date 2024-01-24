@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2022 Crownpeak Technology GmbH
+ * Copyright (C) 2024 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import com.espirit.moddev.cli.documentation.utils.ScanUtils;
 import com.espirit.moddev.shared.annotation.VisibleForTesting;
 import com.espirit.moddev.util.JacksonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.rvesse.airline.annotations.Arguments;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;
@@ -276,6 +277,17 @@ public class CommandDocumentationGenerator implements DocumentationGenerator<Com
 		}
 		final AnnotationInfo optionInfo = fieldInfo.getAnnotationInfo(Option.class.getName());
 		if (optionInfo == null) {
+			// try fallback to Arguments-Annotation
+			final AnnotationInfo argumentsInfo = fieldInfo.getAnnotationInfo(Arguments.class.getName());
+			if (argumentsInfo != null) {
+				final Optional<String> description = ScanUtils.getValueAsString(argumentsInfo, ARG_DESCRIPTION);
+				final List<ExamplesInfo> examples = fetchExamples(fieldInfo.getAnnotationInfo(ParameterExamples.class.getName()));
+				final CommandParameterInfo commandParameterInfo = new CommandParameterInfo(optionalField.get().getType(), List.of("--"), false, examples, description.orElse(""), fieldInfo.getAnnotationInfo(Required.class.getName()) != null);
+				commandParameterInfo.setDefaultValue(ScanUtils.getFieldValueAsString(commandInstance, fieldInfo.getName()));
+				final Optional<String> parameterType = fetchParameterType(fieldInfo.getAnnotationInfo(ParameterType.class.getName()));
+				parameterType.ifPresent(commandParameterInfo::setClassName);
+				return Optional.of(commandParameterInfo);
+			}
 			return Optional.empty();
 		}
 		final AnnotationEnumValue annotationEnumValue = (AnnotationEnumValue) optionInfo.getParameterValues().getValue(ARG_TYPE);

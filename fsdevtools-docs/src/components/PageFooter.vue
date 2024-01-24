@@ -5,7 +5,7 @@
             <div class="info-button info-icon" @click="toggleArtifactInfo"></div>
         </div>
         <div>
-            <span>© 2005 - 2022 Crownpeak Technology GmbH</span>
+            <span>© 2005 - 2024 Crownpeak Technology GmbH</span>
             <span>Alle Rechte vorbehalten</span>
             <span><a href="https://www.e-spirit.com/de/datenschutzerklaerung/">Datenschutz</a></span>
             <span><a href="https://www.e-spirit.com/de/impressum/">Impressum</a></span>

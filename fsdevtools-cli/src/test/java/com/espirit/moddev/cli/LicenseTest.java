@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2022 Crownpeak Technology GmbH
+ * Copyright (C) 2024 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ public class LicenseTest {
 	private static final String[] DIRS_TO_IGNORE = new String[]{".idea", ".git", ".gradle", "build", "gradle", "out"};
 	private static final String[] FILES_TO_IGNORE = new String[]{"/gradle.properties"};
 
-	private static final String LICENSE_YEAR = "2022";
+	private static final String LICENSE_YEAR = "2024";
 	private static final String LICENSE_VENDOR = "Crownpeak Technology GmbH";
 
 	@Test

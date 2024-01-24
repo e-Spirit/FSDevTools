@@ -1,16 +1,26 @@
 # Release notes
 
+## Version 4.6.0
+
+* new commands for executing external scripts (beanshell by default):
+    * "*script run*": executes an external script
+    * "*script parse*": parses an external script, but does not execute it
+
+For more information about the new commands, please use "*fs-cli help script*" or open the included documentation under
+*docs/index.html*.
+
 ## Version 4.5.0
 
 * added new parameter "*--include-feature-model*" to "*feature install*" command
 
-For more information about the new parameter, please use "*fs-cli help feature install*" or open the included documentation under *docs/index.html*.
+For more information about the new parameter, please use "*fs-cli help feature install*" or open the included
+documentation under *docs/index.html*.
 
 ## Version 4.4.2
 
 * fixed java.lang.Error not getting handled in general
 * commands "*module install*" & "*module installBulk*":
-  * fixed java.lang.Error aborting the complete process
+    * fixed java.lang.Error aborting the complete process
 
 ## Version 4.4.1
 
@@ -24,18 +34,19 @@ For more information about the new parameter, please use "*fs-cli help feature i
 ## Version 4.3.0
 
 * new command for Content Transport:
-  * "*feature revision*": updates the revision of the specified feature 
-  
-For more information about the new command, please use "*fs-cli help feature revision*" or open the included documentation under *docs/index.html*.
+    * "*feature revision*": updates the revision of the specified feature
+
+For more information about the new command, please use "*fs-cli help feature revision*" or open the included
+documentation under *docs/index.html*.
 
 ## Version 4.2.0
 
 * updated default *log4J2.xml* to reduce the default logging for some packages, this was a regression of v4.0.0
 * fixed exceptions being logged twice under some circumstances
 * commands "*module install*" & "*module installBulk*":
-  * project app components will now be updated by the CLI instead of the FirstSpirit server
-  * web app components will now be updated by the CLI instead of the FirstSpirit server
-  * fixed parameter "*--deployWebApps/-dwa*" not working properly
+    * project app components will now be updated by the CLI instead of the FirstSpirit server
+    * web app components will now be updated by the CLI instead of the FirstSpirit server
+    * fixed parameter "*--deployWebApps/-dwa*" not working properly
 
 ## Version 4.1.0
 
@@ -45,7 +56,8 @@ For more information about the new command, please use "*fs-cli help feature rev
     * "*feature analyze*": analyzes the specified feature in the project and logs the result
     * "*feature install*": analyzes & installs the specified feature in the project
 
-For more information about the new commands, please use "*fs-cli help feature*" or open the included documentation under *docs/index.html*.
+For more information about the new commands, please use "*fs-cli help feature*" or open the included documentation under
+*docs/index.html*.
 
 ## Version 4.0.2
 
@@ -72,14 +84,16 @@ For more information about the new commands, please use "*fs-cli help feature*" 
 
 ## Version 3.0.1
 
-* command "*import*": clarified error messages if project exists and is deactivated or maximum projects on server are exceeded
+* command "*import*": clarified error messages if project exists and is deactivated or maximum projects on server are
+  exceeded
 
 ## Version 3.0.0
 
 * switched to [semantic versioning 2.0.0](https://semver.org/#semantic-versioning-200)
 * updated minimal required FirstSpirit version to 5.2.210710 (was 5.2.200807)
 * command "*export*": added support for permission transport (new parameter: *--permissionMode*)
-* command "*import*": added support for permission transport (new parameters: *--permissionMode*, *--updateExistingPermissions*)
+* command "*import*": added support for permission transport (new parameters: *--permissionMode*,
+  *--updateExistingPermissions*)
 * added RELEASENOTES.md
 
 ## Version 2.6.10

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2022 Crownpeak Technology GmbH
+ * Copyright (C) 2024 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,8 @@ public class Main {
 		try {
 			Cli.main(args);
 		} catch (NoClassDefFoundError e) {
-			if (e.getMessage().contains("de/espirit/common/base/Logger")) {
+			final String message = e.getMessage();
+			if (message.contains("de/espirit/common/base/Logger") || message.contains("de/espirit/firstspirit/access/")) {
 				LOGGER.error("Couldn't find FirstSpirit classes - have you placed your FirstSpirit api jar (fs-isolated-runtime) into the fs-cli lib folder?");
 				LOGGER.debug("", e);
 				System.exit(1);
