@@ -277,7 +277,7 @@ public class FeatureInstallCommand extends AbstractFeatureCommand {
 
 	/**
 	 * For consistency mimic the logic of
-	 * {@link com.espirit.moddev.cli.commands.ImportCommand#configureLayerMapper()}}
+	 * {@code com.espirit.moddev.cli.commands.ImportCommand#configureLayerMapper()}
 	 * which returns a layer mapper backed by an empty map.
 	 *
 	 * @return {@link LayerMapper.LayerNameBasedLayerMapper} backed by an empty map.

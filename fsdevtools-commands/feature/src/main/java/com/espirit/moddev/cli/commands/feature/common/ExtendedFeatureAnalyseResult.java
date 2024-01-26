@@ -28,9 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * Extends {@link FeatureAnalyseResult}
- * with additional information
- * such as e.g. feature name.
+ * Extends {@link FeatureAnalyseResult} with additional information such as e.g. feature name.
  */
 public class ExtendedFeatureAnalyseResult {
 	@NotNull

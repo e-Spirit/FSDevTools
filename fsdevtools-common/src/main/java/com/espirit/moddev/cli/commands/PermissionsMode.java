@@ -20,21 +20,38 @@
  *
  */
 
-package com.espirit.moddev.cli.commands.extsync;
+package com.espirit.moddev.cli.commands;
 
 import de.espirit.firstspirit.transport.PermissionMode;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
+/**
+ * Modes for transporting FirstSpirit permissions. The values from this enum
+ * control which types of permissions are exported and imported when executing
+ * ExternalSync or Content Transport commands.
+ */
 public enum PermissionsMode {
 
+	/**
+	 * Do not export or import any permissions.
+	 */
 	NONE(PermissionMode.NO_PERMISSIONS),
 
+	/**
+	 * Export or import StoreElement and workflow permissions.
+	 */
 	ALL(PermissionMode.ALL_PERMISSIONS),
 
+	/**
+	 * Export or import StoreElement permissions only.
+	 */
 	STORE_ELEMENT(PermissionMode.STORE_ELEMENT_PERMISSIONS),
 
+	/**
+	 * Export or import Workflow permissions only.
+	 */
 	WORKFLOW(PermissionMode.WORKFLOW_PERMISSIONS);
 
 	private final PermissionMode _permissionMode;

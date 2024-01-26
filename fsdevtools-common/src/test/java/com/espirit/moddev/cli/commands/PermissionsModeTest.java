@@ -20,7 +20,7 @@
  *
  */
 
-package com.espirit.moddev.cli.commands.extsync;
+package com.espirit.moddev.cli.commands;
 
 import org.junit.jupiter.api.Test;
 

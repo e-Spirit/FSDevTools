@@ -22,7 +22,7 @@
 
 package com.espirit.moddev.cli.documentation.commands;
 
-import com.espirit.moddev.cli.commands.extsync.PermissionsMode;
+import com.espirit.moddev.cli.commands.PermissionsMode;
 import com.espirit.moddev.cli.documentation.pojos.JsonElement;
 import com.espirit.moddev.shared.StringUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;

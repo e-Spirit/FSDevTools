@@ -23,6 +23,7 @@
 package com.espirit.moddev.cli.commands.feature.cmd.download;
 
 import com.espirit.moddev.cli.api.annotations.ParameterExamples;
+import com.espirit.moddev.cli.commands.PermissionsMode;
 import com.espirit.moddev.cli.commands.feature.FeatureCommandGroup;
 import com.espirit.moddev.cli.commands.feature.FeatureCommandNames;
 import com.espirit.moddev.cli.commands.feature.common.AbstractFeatureCommand;
@@ -41,6 +42,7 @@ import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.feature.FeatureAgent;
 import de.espirit.firstspirit.feature.FeatureDescriptor;
 import de.espirit.firstspirit.feature.FeatureFile;
+import de.espirit.firstspirit.feature.FeatureModel;
 import de.espirit.firstspirit.feature.FeatureProgress;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -133,6 +135,23 @@ public class FeatureDownloadCommand extends AbstractFeatureCommand {
 
 	@Option(
 			type = OptionType.COMMAND,
+			arity = 1,
+			name = "--permissionMode",
+			description = "Set the permission mode for the downloaded feature archive (default = NONE). Possible values are [NONE, ALL, STORE_ELEMENT, WORKFLOW]."
+	)
+	@NotNull
+	private PermissionsMode _permissionMode = PermissionsMode.NONE;
+
+	@Option(
+			type = OptionType.COMMAND,
+			arity = 1,
+			name = "--updateExistingPermissions",
+			description = "Configures the downloaded feature to overwrite existing FirstSpirit permissions during install (default = false). This setting is stored within the downloaded feature archive."
+	)
+	private boolean _updateExistingPermissions;
+
+	@Option(
+			type = OptionType.COMMAND,
 			name = {"--useLatestRevision"},
 			description = "Use the latest revision for the specified feature before creating the feature archive. If this option is not specified, the revision from the feature settings will be used."
 	)
@@ -190,6 +209,12 @@ public class FeatureDownloadCommand extends AbstractFeatureCommand {
 	}
 
 	@VisibleForTesting
+	@NotNull
+	PermissionsMode getPermissionMode() {
+		return _permissionMode;
+	}
+
+	@VisibleForTesting
 	Boolean useLatestRevision() {
 		return _useLatestRevision;
 	}
@@ -214,6 +239,9 @@ public class FeatureDownloadCommand extends AbstractFeatureCommand {
 			LOGGER.info("Original feature parameters:\n{}", fsObjectsLoggingFormatHelper.formatFeatureDescriptor(originalFeatureDescriptor));
 			LOGGER.info("Adjusted feature parameters:\n{}", fsObjectsLoggingFormatHelper.formatFeatureDescriptor(featureDescriptor));
 		}
+		final FeatureModel featureModel = featureAgent.createFeatureModel(featureDescriptor);
+		featureModel.configurePermissionTransport().setPermissionTransport(getPermissionMode().getFirstSpiritPermissionMode());
+		featureModel.configurePermissionTransport().setUpdateExistingPermissions(_updateExistingPermissions);
 		downloadFeature(outputFile, featureAgent, featureDescriptor);
 	}
 

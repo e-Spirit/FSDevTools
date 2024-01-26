@@ -48,11 +48,8 @@ public abstract class AbstractFeatureCommand extends SimpleCommand<SimpleResult<
 	}
 
 	/**
-	 * Contains boilerplate logic
-	 * for instantiating a connection,
-	 * retrieving a project
-	 * and then delegates to
-	 * {@link #execute(Connection, Project)}.
+	 * Contains boilerplate logic for instantiating a connection,
+	 * retrieving a project and then delegates to {@link #execute(Connection, Project)}.
 	 *
 	 * @return {@link SimpleResult} wrapping {@link Boolean#TRUE} in case of a success
 	 * and {@link SimpleResult} wrapping an {@link Exception} in case of an error.

@@ -23,6 +23,7 @@
 dependencies {
     implementation(project(":fsdevtools-cli"))
     implementation(project(":fsdevtools-cli-api"))
+    implementation(project(":fsdevtools-common"))
     implementation("de.espirit.firstspirit:fs-isolated-runtime:${project.properties["fsRuntimeVersion"]}")
     implementation("com.fasterxml.jackson.core:jackson-databind:${project.properties["jacksonDatabindVersion"]}")
     implementation("io.github.classgraph:classgraph:${project.properties["classGraphVersion"]}")

@@ -24,7 +24,6 @@ package com.espirit.moddev.cli.commands;
 
 import com.espirit.moddev.cli.CliConstants;
 import com.espirit.moddev.cli.api.configuration.ImportConfig;
-import com.espirit.moddev.cli.commands.extsync.PermissionsMode;
 import com.espirit.moddev.cli.common.StringPropertiesMap;
 import com.espirit.moddev.cli.results.ImportResult;
 import com.espirit.moddev.cli.schema.SchemaUidToNameBasedLayerMapper;

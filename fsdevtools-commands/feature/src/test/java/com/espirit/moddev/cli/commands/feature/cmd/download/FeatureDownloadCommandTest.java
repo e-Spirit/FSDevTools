@@ -22,6 +22,7 @@
 
 package com.espirit.moddev.cli.commands.feature.cmd.download;
 
+import com.espirit.moddev.cli.commands.PermissionsMode;
 import com.espirit.moddev.cli.commands.feature.common.FeatureHelper;
 import com.espirit.moddev.cli.commands.feature.common.FsObjectsLoggingFormatHelper;
 import de.espirit.firstspirit.access.Connection;
@@ -30,7 +31,9 @@ import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.feature.FeatureAgent;
 import de.espirit.firstspirit.feature.FeatureDescriptor;
 import de.espirit.firstspirit.feature.FeatureFile;
+import de.espirit.firstspirit.feature.FeatureModel;
 import de.espirit.firstspirit.feature.FeatureProgress;
+import de.espirit.firstspirit.transport.ImportPermissionTransportOptions;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -75,6 +78,10 @@ class FeatureDownloadCommandTest {
 	@Mock
 	private FeatureHelper _featureHelper;
 	@Mock
+	private FeatureModel _featureModel;
+	@Mock
+	private ImportPermissionTransportOptions _permissionTransportOptions;
+	@Mock
 	private FsObjectsLoggingFormatHelper _fsObjectsLoggingFormatHelper;
 	@Mock
 	private FeatureDescriptor _originalFeatureDescriptor;
@@ -91,11 +98,15 @@ class FeatureDownloadCommandTest {
 	void execute_delegates_to_sibling_methods() throws Exception {
 		// GIVEN
 		final String featureName = "myFeature";
+		final PermissionsMode permissionsMode = PermissionsMode.NONE;
 		when(_subjectUnderTest.getFeatureName()).thenReturn(featureName);
+		when(_subjectUnderTest.getPermissionMode()).thenReturn(permissionsMode);
 		when(_subjectUnderTest.ensureOutputFileExists()).thenReturn(_file);
 		when(_subjectUnderTest.getFeatureAgent(any(), any())).thenReturn(_featureAgent);
 		when(_subjectUnderTest.getFeatureHelper()).thenReturn(_featureHelper);
 		when(_featureHelper.getFeatureDescriptor(_featureAgent, featureName)).thenReturn(_originalFeatureDescriptor);
+		when(_featureAgent.createFeatureModel(_featureDescriptor)).thenReturn(_featureModel);
+		when(_featureModel.configurePermissionTransport()).thenReturn(_permissionTransportOptions);
 		when(_subjectUnderTest.getFsObjectsLoggingFormatHelper()).thenReturn(_fsObjectsLoggingFormatHelper);
 		when(_subjectUnderTest.getFeatureDescriptor(any(), any())).thenReturn(_featureDescriptor);
 		doCallRealMethod().when(_subjectUnderTest).execute(any(), any());

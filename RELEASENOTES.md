@@ -1,5 +1,11 @@
 # Release notes
 
+## Version 4.7.0
+
+* added new parameters "*--permissionMode*" and "*--updateExistingPermissions*" to "*feature download*" command
+
+For more information about the new parameters, please use "*fs-cli help feature download*" or open the included documentation under *docs/index.html*.
+
 ## Version 4.6.0
 
 * new commands for executing external scripts (beanshell by default):
