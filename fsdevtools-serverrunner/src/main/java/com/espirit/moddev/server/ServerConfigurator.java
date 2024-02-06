@@ -276,7 +276,7 @@ public class ServerConfigurator {
 			if (currentValue == null) {
 				LOGGER.info("Setting '" + propertyName + "' to '" + newValue + "'...");
 			} else {
-				LOGGER.info("Setting '" + propertyName + "' to '" + newValue + "' (previous: '" + currentValue.toString() + "')...");
+				LOGGER.info("Setting '" + propertyName + "' to '" + newValue + "' (previous: '" + currentValue + "')...");
 			}
 			properties.setProperty(propertyName, newValue);
 		}
@@ -309,20 +309,24 @@ public class ServerConfigurator {
 		{
 			// fs-wrapper.conf
 			final Path wrapperConf = confDir.resolve(FILE_FS_WRAPPER_CONF);
-			updateWrapperConfFile(wrapperConf, config);
+			if (wrapperConf.toFile().exists()) {
+				updateWrapperConfFile(wrapperConf, config);
+			} else {
+				LOGGER.info("File '" + wrapperConf + "' does not exist. Continuing.");
+			}
 		}
 		{
 			// fs-wrapper.isolated.conf
 			final Path isolatedWrapperConf = confDir.resolve(FILE_FS_WRAPPER_ISOLATED_CONF);
+			if (!isolatedWrapperConf.toFile().exists()) {
+				throw new FileNotFoundException("File '" + isolatedWrapperConf.toAbsolutePath() + "' does not exist!");
+			}
 			updateWrapperConfFile(isolatedWrapperConf, config);
 		}
 	}
 
 	@VisibleForTesting
 	static void updateWrapperConfFile(@NotNull final Path wrapperConfFile, @NotNull final Map<String, String> arguments) throws IOException {
-		if (!wrapperConfFile.toFile().exists()) {
-			throw new FileNotFoundException("File '" + wrapperConfFile.toAbsolutePath() + "' does not exist!");
-		}
 		// read original file
 		final List<String> inputLines = Files.readAllLines(wrapperConfFile);
 		// replace existing lines

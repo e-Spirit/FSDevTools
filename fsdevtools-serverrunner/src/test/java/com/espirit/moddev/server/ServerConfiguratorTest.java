@@ -32,7 +32,6 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -55,6 +54,7 @@ import static com.espirit.moddev.util.FsUtil.FILE_FS_WRAPPER_ISOLATED_CONF;
 import static com.espirit.moddev.util.FsUtil.FILE_JETTY_PROPERTIES;
 import static com.espirit.moddev.util.FsUtil.FILE_SERVER_JAR_ISOLATED;
 import static com.espirit.moddev.util.FsUtil.FILE_SERVER_JAR_LEGACY;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -111,13 +111,13 @@ public class ServerConfiguratorTest {
 			// fs-license.conf
 			final Path targetLicenseFile = confDir.resolve(FILE_FS_LICENSE_CONF);
 			assertTrue(targetLicenseFile.toFile().exists(), "fs-license.conf does not exist");
-			assertEquals(licenseContent, new String(Files.readAllBytes(targetLicenseFile), StandardCharsets.UTF_8), "contentMismatch");
+			assertEquals(licenseContent, Files.readString(targetLicenseFile), "contentMismatch");
 		}
 		{
 			// fs-logging.conf
 			final Path targetLoggingConf = confDir.resolve(FILE_FS_LOGGING_CONF);
 			assertTrue(targetLoggingConf.toFile().exists(), "fs-logging.conf does not exist");
-			final String content = new String(Files.readAllBytes(targetLoggingConf), StandardCharsets.UTF_8);
+			final String content = Files.readString(targetLoggingConf);
 			assertTrue(content.contains("log4j.rootCategory=CHANGED_LEVEL"), "content mismatch");
 			assertTrue(content.contains("additionalLoggingConfValue=customLoggingValue"), "content mismatch");
 		}
@@ -125,7 +125,7 @@ public class ServerConfiguratorTest {
 			// fs-server.conf
 			final Path targetServerConf = confDir.resolve(FILE_FS_SERVER_CONF);
 			assertTrue(targetServerConf.toFile().exists(), "fs-server.conf does not exist");
-			final String content = new String(Files.readAllBytes(targetServerConf), StandardCharsets.UTF_8);
+			final String content = Files.readString(targetServerConf);
 			assertTrue(content.contains("additionalServerConfValue=customConfValue"), "content mismatch");
 			assertTrue(content.contains("HOST=myHost"), "content mismatch");
 			assertTrue(content.contains("HTTP_PORT=9999"), "content mismatch");
@@ -137,8 +137,8 @@ public class ServerConfiguratorTest {
 			final Path targetIsolatedWrapperConf = confDir.resolve(FILE_FS_WRAPPER_ISOLATED_CONF);
 			assertTrue(targetWrapperConf.toFile().exists(), "fs-wrapper.conf does not exist");
 			assertTrue(targetIsolatedWrapperConf.toFile().exists(), "fs-wrapper.isolated.conf does not exist");
-			final String content = new String(Files.readAllBytes(targetWrapperConf), StandardCharsets.UTF_8);
-			final String isolatedContent = new String(Files.readAllBytes(targetIsolatedWrapperConf), StandardCharsets.UTF_8);
+			final String content = Files.readString(targetWrapperConf);
+			final String isolatedContent = Files.readString(targetIsolatedWrapperConf);
 			assertTrue(content.contains("wrapper.java.initmemory=42"), "content mismatch");
 			assertTrue(isolatedContent.contains("wrapper.java.initmemory=42"), "content mismatch");
 			assertTrue(content.contains("wrapper.java.maxmemory=1337"), "content mismatch");
@@ -194,13 +194,13 @@ public class ServerConfiguratorTest {
 			// fs-license.conf
 			final Path targetLicenseFile = confDir.resolve(FILE_FS_LICENSE_CONF);
 			assertTrue(targetLicenseFile.toFile().exists(), "fs-license.conf does not exist");
-			assertEquals(licenseContent, new String(Files.readAllBytes(targetLicenseFile), StandardCharsets.UTF_8));
+			assertEquals(licenseContent, Files.readString(targetLicenseFile));
 		}
 		{
 			// fs-logging.conf
 			final Path targetLoggingConf = confDir.resolve(FILE_FS_LOGGING_CONF);
 			assertTrue(targetLoggingConf.toFile().exists(), "fs-logging.conf does not exist");
-			final String content = new String(Files.readAllBytes(targetLoggingConf), StandardCharsets.UTF_8);
+			final String content = Files.readString(targetLoggingConf);
 			assertTrue(content.contains("log4j.rootCategory=CHANGED_LEVEL"), "content mismatch");
 			assertTrue(content.contains("additionalLoggingConfValue=customLoggingValue"), "content mismatch");
 		}
@@ -208,7 +208,7 @@ public class ServerConfiguratorTest {
 			// fs-server.conf
 			final Path targetServerConf = confDir.resolve(FILE_FS_SERVER_CONF);
 			assertTrue(targetServerConf.toFile().exists(), "fs-server.conf does not exist");
-			final String content = new String(Files.readAllBytes(targetServerConf), StandardCharsets.UTF_8);
+			final String content = Files.readString(targetServerConf);
 			assertTrue(content.contains("additionalServerConfValue=customConfValue"), "content mismatch");
 			assertTrue(content.contains("HOST=myHost"), "content mismatch");
 			assertTrue(content.contains("HTTP_PORT=9999"), "content mismatch");
@@ -220,8 +220,8 @@ public class ServerConfiguratorTest {
 			final Path targetIsolatedWrapperConf = confDir.resolve(FILE_FS_WRAPPER_ISOLATED_CONF);
 			assertTrue(targetWrapperConf.toFile().exists(), "fs-wrapper.conf does not exist");
 			assertTrue(targetIsolatedWrapperConf.toFile().exists(), "fs-wrapper.isolated.conf does not exist");
-			final String content = new String(Files.readAllBytes(targetWrapperConf), StandardCharsets.UTF_8);
-			final String isolatedContent = new String(Files.readAllBytes(targetIsolatedWrapperConf), StandardCharsets.UTF_8);
+			final String content = Files.readString(targetWrapperConf);
+			final String isolatedContent = Files.readString(targetIsolatedWrapperConf);
 			assertTrue(content.contains("wrapper.java.initmemory=42"), "content mismatch");
 			assertTrue(isolatedContent.contains("wrapper.java.initmemory=42"), "content mismatch");
 			assertTrue(content.contains("wrapper.java.maxmemory=1337"), "content mismatch");
@@ -255,7 +255,7 @@ public class ServerConfiguratorTest {
 		ServerConfigurator.updateConfFile(targetFile, map);
 
 		// verify
-		final String content = new String(Files.readAllBytes(targetFile), StandardCharsets.UTF_8);
+		final String content = Files.readString(targetFile);
 		// unchanged values
 		assertTrue(content.contains("HOST=myHost"), "content mismatch");
 		assertTrue(content.contains("SOCKET_PORT=4567"), "content mismatch");
@@ -300,7 +300,7 @@ public class ServerConfiguratorTest {
 		ServerConfigurator.updateServerConf(fs5Dir, map);
 
 		// verify
-		final String content = new String(Files.readAllBytes(targetFile), StandardCharsets.UTF_8);
+		final String content = Files.readString(targetFile);
 		// unchanged values
 		assertTrue(content.contains("HOST=myHost"), "content mismatch");
 		assertTrue(content.contains("SOCKET_PORT=4567"), "content mismatch");
@@ -335,7 +335,7 @@ public class ServerConfiguratorTest {
 
 		// verify
 		final Path loggingConf = workingDir.resolve(DIR_CONF).resolve(FILE_FS_LOGGING_CONF);
-		final String content = new String(Files.readAllBytes(loggingConf), StandardCharsets.UTF_8);
+		final String content = Files.readString(loggingConf);
 		assertTrue(content.contains("log4j.rootCategory=CHANGED_LEVEL"), "content mismatch");
 		assertTrue(content.contains("anotherProperty=customValue"), "content mismatch");
 	}
@@ -359,7 +359,7 @@ public class ServerConfiguratorTest {
 		ServerConfigurator.updateLoggingConf(workingDir, serverJar, arguments);
 
 		// verify
-		final String content = new String(Files.readAllBytes(loggingConf), StandardCharsets.UTF_8);
+		final String content = Files.readString(loggingConf);
 		assertTrue(content.contains("log4j.rootCategory=CHANGED_LEVEL"), "content mismatch");
 		assertTrue(content.contains("anotherProperty=customValue"), "content mismatch");
 	}
@@ -390,7 +390,7 @@ public class ServerConfiguratorTest {
 		// test
 		ServerConfigurator.updateJettyConf(workingDir);
 		// verify
-		final String content = new String(Files.readAllBytes(jettyConf), StandardCharsets.UTF_8);
+		final String content = Files.readString(jettyConf);
 		assertTrue(content.contains("property=myValue"), "content mismatch");
 		assertTrue(content.contains("PORT=" + FsConnectionType.HTTP.getDefaultPort()), "content mismatch");
 	}
@@ -416,7 +416,7 @@ public class ServerConfiguratorTest {
 		// test
 		ServerConfigurator.updateJettyConf(workingDir);
 		// verify
-		final String content = new String(Files.readAllBytes(jettyConf), StandardCharsets.UTF_8);
+		final String content = Files.readString(jettyConf);
 		assertTrue(content.contains("property=myValue"), "content mismatch");
 		assertTrue(content.contains("PORT=1234"), "content mismatch");
 	}
@@ -446,9 +446,9 @@ public class ServerConfiguratorTest {
 		assertTrue(isolatedConf.toFile().exists(), "file should exist");
 
 		// test
-		Assertions.assertThrows(FileNotFoundException.class, () -> {
+		assertThatCode(() -> {
 			ServerConfigurator.updateWrapperConfFiles(fs5Dir, 42, 1337, 50, false, new ArrayList<>());
-		});
+		}).doesNotThrowAnyException();
 	}
 
 	@Test
@@ -458,7 +458,7 @@ public class ServerConfiguratorTest {
 		final Path installerTar = new File(getClass().getResource(TEST_INSTALLER_TAR_GZ).getFile()).toPath();
 		ServerInstaller.decompressInstaller(workingDir, installerTar);
 
-		// delete the legacy file
+		// delete the conf file
 		final Path fs5Dir = workingDir.resolve(DIR_FIRSTSPIRIT_5);
 		final Path legacyConf = fs5Dir.resolve(DIR_CONF).resolve(FILE_FS_WRAPPER_CONF);
 		final Path isolatedConf = fs5Dir.resolve(DIR_CONF).resolve(FILE_FS_WRAPPER_ISOLATED_CONF);
@@ -496,7 +496,7 @@ public class ServerConfiguratorTest {
 		// verify
 		{
 			// check legacy file
-			final String content = new String(Files.readAllBytes(legacyConf), StandardCharsets.UTF_8);
+			final String content = Files.readString(legacyConf);
 			assertTrue(content.contains("wrapper.java.initmemory=42"), "content mismatch");
 			assertTrue(content.contains("wrapper.java.maxmemory=1337"), "content mismatch");
 			assertTrue(content.contains("wrapper.startup.timeout=50"), "content mismatch");
@@ -508,7 +508,7 @@ public class ServerConfiguratorTest {
 		}
 		{
 			// check isolated file
-			final String content = new String(Files.readAllBytes(legacyConf), StandardCharsets.UTF_8);
+			final String content = Files.readString(legacyConf);
 			assertTrue(content.contains("wrapper.java.initmemory=42"), "content mismatch");
 			assertTrue(content.contains("wrapper.java.maxmemory=1337"), "content mismatch");
 			assertTrue(content.contains("wrapper.startup.timeout=50"), "content mismatch");
@@ -517,20 +517,6 @@ public class ServerConfiguratorTest {
 			assertTrue(content.contains("wrapper.java.additional.81=mySecondExtraVMArg"), "content mismatch");
 			assertTrue(content.contains("#include myLicenseFile.txt"), "content mismatch");
 		}
-	}
-
-	@Test
-	public void updateWrapperConfFile_fileDoesNotExist() {
-		// setup
-		final Path workingDir = _temp.toPath().resolve("workingDir");
-		final Path fs5Dir = workingDir.resolve(DIR_FIRSTSPIRIT_5);
-		final Path configFile = fs5Dir.resolve(DIR_CONF).resolve(FILE_FS_WRAPPER_CONF);
-		assertFalse(configFile.toFile().exists(), "file should not exist");
-
-		// test
-		Assertions.assertThrows(FileNotFoundException.class, () -> {
-			ServerConfigurator.updateWrapperConfFile(configFile, new HashMap<>());
-		});
 	}
 
 	@Test
@@ -552,7 +538,7 @@ public class ServerConfiguratorTest {
 		ServerConfigurator.updateWrapperConfFile(configFile, map);
 
 		// verify
-		final String content = new String(Files.readAllBytes(configFile), StandardCharsets.UTF_8);
+		final String content = Files.readString(configFile);
 		assertTrue(content.contains("wrapper.java.initmemory=42"), "content mismatch");
 		assertTrue(content.contains("wrapper.java.maxmemory=1024"), "content mismatch");
 		assertTrue(content.contains("wrapper.java.additional.79=anArgument"), "content mismatch");
@@ -590,7 +576,7 @@ public class ServerConfiguratorTest {
 		// verify
 		final Path targetLicenseFile = workingDir.resolve(DIR_CONF).resolve(FILE_FS_LICENSE_CONF);
 		assertTrue(targetLicenseFile.toFile().exists(), "target file should exist");
-		assertEquals(licenseContent, new String(Files.readAllBytes(targetLicenseFile), StandardCharsets.UTF_8), "contentMismatch");
+		assertEquals(licenseContent, Files.readString(targetLicenseFile), "contentMismatch");
 	}
 
 }
