@@ -21,7 +21,6 @@
  */
 
 dependencies {
-    api project(":fsdevtools-sharedutils")
-    api "com.github.rvesse:airline:${airlineVersion}"
-    api "com.fasterxml.jackson.core:jackson-databind:${jacksonDatabindVersion}"
+    implementation(project(":fsdevtools-cli-api"))
+    implementation(project(":fsdevtools-common"))
 }

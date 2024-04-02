@@ -21,5 +21,10 @@
  */
 
 dependencies {
-    implementation "org.apache.commons:commons-compress:${commonsCompressVersion}"
+    implementation(project(":fsdevtools-sharedutils"))
+
+    implementation(libs.log4j.slf4j)
+    implementation(libs.hamcrest)
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
 }

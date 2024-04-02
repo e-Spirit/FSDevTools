@@ -20,37 +20,35 @@
  *
  */
 
-import com.espirit.moddev.build.BuildUtils
-
 plugins {
-    id 'idea'
+    idea
 }
 
-processResources {
+tasks.processResources {
     outputs.upToDateWhen { false }
     expand(project.properties)
 }
 
 project.afterEvaluate {
-    BuildUtils.disablePublishing(project);
+    disablePublishing()
 }
 
 dependencies {
-    implementation project(":fsdevtools-cli-api")
-    implementation project(":fsdevtools-common")
-    implementation project(":fsdevtools-commands")
-    implementation project(":fsdevtools-serverrunner")
-    implementation project(":fsdevtools-sharedutils")
+    implementation(project(":fsdevtools-cli-api"))
+    implementation(project(":fsdevtools-common"))
+    implementation(project(":fsdevtools-commands"))
+    implementation(project(":fsdevtools-serverrunner"))
+    implementation(project(":fsdevtools-sharedutils"))
 
-    implementation "io.github.classgraph:classgraph:${classGraphVersion}"
+    implementation(libs.classgraph)
 
     // logging
-    implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
-    implementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
+    implementation(libs.log4j.core)
+    implementation(libs.log4j.slf4j)
 
-    testImplementation project(":fsdevtools-commands:custom-command-example")
+    testImplementation(project(":fsdevtools-commands:custom-command-example"))
 }
 
-test {
+tasks.test {
     jvmArgs("--add-opens=java.base/sun.reflect.annotation=ALL-UNNAMED", "--add-opens=java.base/java.util=ALL-UNNAMED")
 }

@@ -21,17 +21,17 @@
  */
 
 plugins {
-    id 'com.github.johnrengelman.shadow'
+    id("com.github.johnrengelman.shadow")
 }
 
-group "com.espirit.moddev.fsdevtools.script-engines"
+group = "com.espirit.moddev.fsdevtools.script-engines"
 
 dependencies {
     compileOnly(project(":fsdevtools-cli-api"))
-    implementation('org.openjdk.nashorn:nashorn-core:15.4')
+    implementation("org.openjdk.nashorn:nashorn-core:15.4")
 }
 
-shadowJar {
+tasks.shadowJar {
     archiveFileName.set("${project.name}-${project.version}.jar")
-    destinationDirectory.set(file("$buildDir/shadowJAR"))
+    destinationDirectory.set(layout.buildDirectory.dir("shadowJAR"))
 }

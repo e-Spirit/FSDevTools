@@ -10,7 +10,7 @@ Since version **4.5.0**, `FSDevTools` requires at least the FirstSpirit version 
 Before using FSDevTools, several prerequisites must be met. Detailed instructions can be found in the zip or tar.gz file
 of the binary distribution. Below is a summary of the key requirements.
 
-Additionally, ensure that the `JAVA_HOME` environment variable is correctly set to a **Java 11+** installation.
+Additionally, ensure that the `JAVA_HOME` environment variable is correctly set to a **Java 17+** installation.
 
 Upon initialization, the following configurations are sourced from your system environment using specific keys:
 

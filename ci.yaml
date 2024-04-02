@@ -1,11 +1,18 @@
 team: core-platform
-responsible:
-  - reinartz
-  - kafmann
 artifacts:
   - name: CLI Artifacts
     location: "build/distributions"
     pattern: "*.*"
 docker:
   images:
-    - docker.artifactory.e-spirit.de/cxt/base:jdk-lts
+    - &ltsDockerImage docker.artifactory.e-spirit.de/cxt/base:jdk-lts
+plans:
+  - name: Build with FirstSpirit EAP (DAILY)
+    triggers:
+      - cron(0 10 2 * * ? *)
+    jobs:
+      - name: Build
+        task: build -PuseLatestFirstSpiritBuild
+        docker:
+          images:
+            - *ltsDockerImage

@@ -20,19 +20,7 @@
  *
  */
 
-import com.espirit.moddev.build.BuildUtils
-
-project.afterEvaluate {
-    BuildUtils.disablePublishing(project);
-}
-
 dependencies {
-    api project(":fsdevtools-commands:module")
-    api project(":fsdevtools-commands:project")
-    api project(":fsdevtools-commands:schedule")
-    api project(":fsdevtools-commands:script")
-    api project(":fsdevtools-commands:server")
-    api project(":fsdevtools-commands:service")
-    api project(":fsdevtools-commands:test")
-    api project(":fsdevtools-commands:feature")
+    implementation(project(":fsdevtools-cli-api"))
+    implementation(project(":fsdevtools-common"))
 }

@@ -37,6 +37,7 @@ hs_err_pid*
 .idea/modules
 .idea/.name
 .idea/.gitignore
+.idea/sonarlint
 
 
 ## File-based project format:

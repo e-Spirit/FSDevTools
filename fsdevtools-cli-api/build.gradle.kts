@@ -21,6 +21,7 @@
  */
 
 dependencies {
-    implementation project(":fsdevtools-cli-api")
-    implementation project(":fsdevtools-common")
+    api(project(":fsdevtools-sharedutils"))
+    api(libs.airline)
+    api(libs.jackson.databind)
 }

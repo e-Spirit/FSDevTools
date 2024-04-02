@@ -20,20 +20,18 @@
  *
  */
 
-import com.espirit.moddev.build.BuildUtils
-
-project.afterEvaluate {
-    BuildUtils.disablePublishing(project);
+plugins {
+    id("com.github.johnrengelman.shadow")
 }
 
+group = "com.espirit.moddev.fsdevtools.script-engines"
+
 dependencies {
-    implementation project(":fsdevtools-cli-api")
+    compileOnly(project(":fsdevtools-cli-api"))
+    implementation("org.apache.groovy:groovy-jsr223:4.0.17")
+}
 
-    api "com.google.guava:guava:${guavaVersion}"
-    api "org.apache.commons:commons-lang3:${apacheCommonsVersion}"
-    api "org.apache.commons:commons-compress:${commonsCompressVersion}"
-    api "com.fasterxml.jackson.core:jackson-databind:${jacksonDatabindVersion}"
-
-    testImplementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
-    testImplementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
+tasks.shadowJar {
+    archiveFileName.set("${project.name}-${project.version}.jar")
+    destinationDirectory.set(layout.buildDirectory.dir("shadowJAR"))
 }

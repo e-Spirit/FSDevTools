@@ -20,11 +20,18 @@
  *
  */
 
-dependencies {
-    implementation project(":fsdevtools-cli-api")
-    implementation project(":fsdevtools-common")
-    implementation("com.github.pejobo:beanshell2:2.1.9")
-    implementation("io.github.classgraph:classgraph:${classGraphVersion}")
+project.afterEvaluate {
+    disablePublishing()
+}
 
-    testImplementation "org.assertj:assertj-core:${assertJVersion}"
+dependencies {
+    implementation(project(":fsdevtools-cli-api"))
+
+    api(libs.guava)
+    api(libs.commons.lang3)
+    api(libs.commons.compress)
+    api(libs.jackson.databind)
+
+    testImplementation(libs.log4j.core)
+    testImplementation(libs.log4j.slf4j)
 }

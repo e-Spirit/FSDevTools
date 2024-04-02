@@ -1,5 +1,11 @@
 # Release notes
 
+## Version 4.8.0
+
+* updated Gradle to 8.7
+* build-scripts migrated from Groovy to Kotlin, use version catalogues for dependencies
+* artifacts now generated with Java 17
+
 ## Version 4.7.1
 
 * handle missing configuration file in FirstSpirit server install (used for external integration scenarios)

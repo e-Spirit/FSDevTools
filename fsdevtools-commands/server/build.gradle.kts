@@ -21,13 +21,8 @@
  */
 
 dependencies {
-    implementation project(":fsdevtools-sharedutils")
-
-    implementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
-    implementation "org.hamcrest:java-hamcrest:${hamcrestJavaVersion}"
-    compileOnly "org.projectlombok:lombok:${lombokVersion}"
-    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-
-    // tests only
-    testImplementation 'org.mockito:mockito-core:2.4.0'
+    implementation(project(":fsdevtools-cli-api"))
+    implementation(project(":fsdevtools-common"))
+    implementation(libs.log4j.core)
+    testImplementation(libs.log4j.slf4j)
 }

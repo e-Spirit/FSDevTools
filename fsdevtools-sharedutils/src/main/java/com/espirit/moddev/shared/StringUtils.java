@@ -35,9 +35,9 @@ public class StringUtils {
 	/**
 	 * Converts the given input text to a plural respecting string by adding a "s" to it, if needed. The "s" will only be added in the following cases:
 	 * <ul>
-	 *     <li>amount < -1</li>
+	 *     <li>amount &lt; -1</li>
 	 *     <li>amount == 0</li>
-	 *     <li>amount > 1</li>
+	 *     <li>amount &gt; 1</li>
 	 * </ul>
 	 * <p>
 	 * In all other cases, the unmodified input will be returned.

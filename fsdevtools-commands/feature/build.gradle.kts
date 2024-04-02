@@ -21,6 +21,7 @@
  */
 
 dependencies {
-    implementation project(":fsdevtools-cli-api")
-    implementation project(":fsdevtools-common")
+    implementation(project(":fsdevtools-cli-api"))
+    implementation(project(":fsdevtools-common"))
+    testImplementation(libs.log4j.slf4j)
 }

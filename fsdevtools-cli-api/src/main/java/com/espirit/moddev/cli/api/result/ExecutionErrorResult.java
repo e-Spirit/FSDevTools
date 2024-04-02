@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
  * Interface representing a single result if an error during a {@link Command} occurs.
  * <br/><br/>
  * This interface can be used if you want to have simple json support. Each instance will be serialized
- * (using a mapper from {@link JacksonUtil#createOutputMapper()}) with the information gathered from the {@link #toString()} method.
+ * (using a mapper from {@link JacksonUtil#createOutputMapper()}) with the information gathered from the {@code #toString()} method.
  * <p>
  * If complex json objects are needed, you can use default JACKSON mechanics like the {@link JsonProperty}-annotation or
  * custom {@link JsonSerializer serializers} (in combination with {@link JsonSerialize}-annotation).

@@ -21,6 +21,5 @@
  */
 
 dependencies {
-    implementation project(":fsdevtools-cli-api")
-    implementation project(":fsdevtools-common")
+    implementation(libs.commons.compress)
 }

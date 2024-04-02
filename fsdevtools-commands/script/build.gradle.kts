@@ -20,24 +20,11 @@
  *
  */
 
-rootProject.name = 'fs-cli'
-include 'fsdevtools-cli'
-include 'fsdevtools-cli-api'
-include 'fsdevtools-common'
-include 'fsdevtools-sharedutils'
-include 'fsdevtools-serverrunner'
-include 'fsdevtools-commands'
-include 'fsdevtools-docs'
-include 'fsdevtools-docs-generator'
-include 'fsdevtools-commands:feature'
-include 'fsdevtools-commands:module'
-include 'fsdevtools-commands:project'
-include 'fsdevtools-commands:schedule'
-include 'fsdevtools-commands:script'
-include 'fsdevtools-commands:server'
-include 'fsdevtools-commands:service'
-include 'fsdevtools-commands:test'
-include 'fsdevtools-commands:custom-command-example'
-include 'fsdevtools-scriptengines'
-include 'fsdevtools-scriptengines:Groovy'
-include 'fsdevtools-scriptengines:Javascript'
+dependencies {
+    implementation(project(":fsdevtools-cli-api"))
+    implementation(project(":fsdevtools-common"))
+    implementation(libs.beanshell)
+    implementation(libs.classgraph)
+
+    testImplementation(testlibs.assertj)
+}

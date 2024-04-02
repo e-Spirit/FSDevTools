@@ -26,7 +26,7 @@ import com.espirit.moddev.cli.commands.server.startCommand.ServerStartCommand;
 import com.github.rvesse.airline.annotations.Group;
 
 /**
- * {@link com.github.rvesse.airline.annotations.Group} that contains commands to handle the start & stop of a FirstSpirit server.
+ * {@link com.github.rvesse.airline.annotations.Group} that contains commands to handle the start &amp; stop of a FirstSpirit server.
  */
 @Group(name = ServerCommandGroup.NAME, description = "Starts or stops a FirstSpirit server.", defaultCommand = ServerStartCommand.class)
 public class ServerCommandGroup {

@@ -20,18 +20,17 @@
  *
  */
 
-plugins {
-    id 'com.github.johnrengelman.shadow'
+project.afterEvaluate {
+    disablePublishing();
 }
-
-group "com.espirit.moddev.fsdevtools.script-engines"
 
 dependencies {
-    compileOnly(project(":fsdevtools-cli-api"))
-    implementation("org.apache.groovy:groovy-jsr223:4.0.17")
-}
-
-shadowJar {
-    archiveFileName.set("${project.name}-${project.version}.jar")
-    destinationDirectory.set(file("$buildDir/shadowJAR"))
+    api(project(":fsdevtools-commands:module"))
+    api(project(":fsdevtools-commands:project"))
+    api(project(":fsdevtools-commands:schedule"))
+    api(project(":fsdevtools-commands:script"))
+    api(project(":fsdevtools-commands:server"))
+    api(project(":fsdevtools-commands:service"))
+    api(project(":fsdevtools-commands:test"))
+    api(project(":fsdevtools-commands:feature"))
 }

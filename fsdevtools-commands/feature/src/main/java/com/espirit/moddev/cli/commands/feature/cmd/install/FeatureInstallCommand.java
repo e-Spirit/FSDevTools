@@ -44,6 +44,7 @@ import de.espirit.firstspirit.access.store.BasicElementInfo;
 import de.espirit.firstspirit.access.store.Store;
 import de.espirit.firstspirit.feature.FeatureAnalyseResult;
 import de.espirit.firstspirit.feature.FeatureInstallAgent;
+import de.espirit.firstspirit.feature.FeatureInstallResult;
 import de.espirit.firstspirit.store.access.feature.ElementReference;
 import de.espirit.firstspirit.store.access.feature.FeatureInstallResultImpl;
 import de.espirit.firstspirit.transport.LayerMapper;

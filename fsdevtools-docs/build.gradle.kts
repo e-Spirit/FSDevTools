@@ -1,4 +1,3 @@
-import com.espirit.moddev.build.BuildUtils
 import com.moowork.gradle.node.npm.NpmTask
 
 
@@ -42,7 +41,7 @@ node {
 }
 
 project.afterEvaluate {
-    BuildUtils.disablePublishing(project);
+    disablePublishing()
 }
 
 dependencies {
