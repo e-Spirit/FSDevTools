@@ -24,7 +24,7 @@ package com.espirit.moddev.cli.commands.module.configureCommand.json.components;
 
 import com.espirit.moddev.cli.api.result.ExecutionResults;
 import com.espirit.moddev.shared.StringUtils;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
 import org.jetbrains.annotations.NotNull;

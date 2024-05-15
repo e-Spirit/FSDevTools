@@ -28,7 +28,7 @@ import com.espirit.moddev.cli.api.result.ExecutionResults;
 import com.espirit.moddev.cli.commands.module.common.ModuleInstallationParameters;
 import com.espirit.moddev.cli.commands.module.installCommand.InstallModuleCommandResult;
 import com.espirit.moddev.shared.StringUtils;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ServiceNotFoundException;

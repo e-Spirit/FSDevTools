@@ -32,7 +32,7 @@ import com.espirit.moddev.cli.commands.module.configureCommand.json.components.c
 import com.espirit.moddev.cli.commands.module.utils.FileSystemUtil;
 import com.espirit.moddev.cli.commands.module.utils.ModuleUtil;
 import com.espirit.moddev.shared.StringUtils;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import com.espirit.moddev.util.Preconditions;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.espirit.firstspirit.access.Connection;

@@ -28,7 +28,7 @@ import com.espirit.moddev.cli.commands.project.ProjectCommandGroup;
 import com.espirit.moddev.cli.commands.project.ProjectCommandNames;
 import com.espirit.moddev.cli.common.StringPropertiesMap;
 import com.espirit.moddev.cli.results.SimpleResult;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;

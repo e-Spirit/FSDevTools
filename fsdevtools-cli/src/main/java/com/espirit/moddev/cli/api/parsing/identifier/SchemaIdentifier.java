@@ -23,7 +23,7 @@
 package com.espirit.moddev.cli.api.parsing.identifier;
 
 import com.espirit.moddev.shared.StringUtils;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import de.espirit.firstspirit.access.store.Store;
 import de.espirit.firstspirit.access.store.templatestore.Schema;
 import de.espirit.firstspirit.access.store.templatestore.TemplateStoreRoot;

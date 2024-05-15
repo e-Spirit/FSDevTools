@@ -26,7 +26,6 @@ import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.api.validation.DefaultConnectionConfigValidator;
 import com.espirit.moddev.cli.api.validation.Violation;
 import com.espirit.moddev.connection.FsConnectionType;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ConnectionManager;
 import de.espirit.firstspirit.access.ExceptionHandler;
@@ -42,6 +41,7 @@ import de.espirit.firstspirit.agency.SpecialistsBroker;
 import de.espirit.firstspirit.common.MaximumNumberOfSessionsExceededException;
 import de.espirit.firstspirit.server.authentication.AuthenticationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

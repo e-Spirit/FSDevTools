@@ -22,7 +22,7 @@
 
 package com.espirit.moddev.cli.documentation.utils;
 
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import io.github.classgraph.AnnotationInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

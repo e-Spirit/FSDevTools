@@ -26,7 +26,7 @@ import com.espirit.moddev.cli.api.annotations.ParameterExamples;
 import com.espirit.moddev.cli.api.annotations.ParameterType;
 import com.espirit.moddev.cli.commands.SimpleCommand;
 import com.espirit.moddev.cli.utils.ServiceUtils;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;
 import de.espirit.firstspirit.access.ServiceNotFoundException;

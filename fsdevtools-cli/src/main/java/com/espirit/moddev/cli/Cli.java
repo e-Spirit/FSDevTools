@@ -32,7 +32,7 @@ import com.espirit.moddev.cli.exception.FsLoggingBridge;
 import com.espirit.moddev.cli.exception.SystemExitHandler;
 import com.espirit.moddev.cli.reflection.CommandUtils;
 import com.espirit.moddev.cli.reflection.GroupUtils;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import com.espirit.moddev.util.JacksonUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;

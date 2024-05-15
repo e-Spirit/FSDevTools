@@ -33,7 +33,7 @@ import com.espirit.moddev.cli.commands.module.utils.FileSystemUtil;
 import com.espirit.moddev.cli.commands.module.utils.ModuleUtil;
 import com.espirit.moddev.cli.commands.module.utils.WebAppUtil;
 import com.espirit.moddev.shared.StringUtils;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 import com.espirit.moddev.shared.webapp.WebAppIdentifierParser;
 import com.espirit.moddev.util.Preconditions;

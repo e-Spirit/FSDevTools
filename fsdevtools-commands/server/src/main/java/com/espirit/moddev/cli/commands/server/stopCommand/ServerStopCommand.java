@@ -28,7 +28,7 @@ import com.espirit.moddev.cli.commands.server.common.AbstractServerCommand;
 import com.espirit.moddev.cli.commands.server.utils.ServerRunner;
 import com.espirit.moddev.cli.results.SimpleResult;
 import com.espirit.moddev.connection.FsConnectionConfig;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import com.espirit.moddev.util.FsUtil;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;

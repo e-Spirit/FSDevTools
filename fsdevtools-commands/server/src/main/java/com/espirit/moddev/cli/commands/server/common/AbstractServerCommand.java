@@ -24,7 +24,7 @@ package com.espirit.moddev.cli.commands.server.common;
 
 import com.espirit.moddev.cli.CliConstants;
 import com.espirit.moddev.connection.FsConnectionType;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;
 import com.github.rvesse.airline.annotations.restrictions.AllowedRawValues;

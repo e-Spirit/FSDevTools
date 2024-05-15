@@ -22,7 +22,7 @@
 
 package com.espirit.moddev.server;
 
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import com.espirit.moddev.util.ArchiveUtil;
 import com.espirit.moddev.util.FileUtil;
 import com.espirit.moddev.util.FsUtil;

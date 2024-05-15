@@ -29,7 +29,7 @@ import com.espirit.moddev.cli.commands.feature.FeatureCommandNames;
 import com.espirit.moddev.cli.commands.feature.common.AbstractFeatureCommand;
 import com.espirit.moddev.cli.commands.feature.common.FeatureHelper;
 import com.espirit.moddev.cli.commands.feature.common.FsObjectsLoggingFormatHelper;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import com.espirit.moddev.util.FileUtil;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;

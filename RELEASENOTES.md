@@ -1,5 +1,9 @@
 # Release notes
 
+## Version 4.8.1
+
+* fixed log level configuration
+
 ## Version 4.8.0
 
 * updated Gradle to 8.7

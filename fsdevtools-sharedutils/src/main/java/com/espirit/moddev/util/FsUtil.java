@@ -44,6 +44,7 @@ public enum FsUtil {
 	public static final String FILE_SERVER_JAR_LEGACY = "fs-server.jar";
 	public static final String FILE_FS_SERVER_CONF = "fs-server.conf";
 	public static final String FILE_FS_LOGGING_CONF = "fs-logging.conf";
+	public static final String FILE_FS_LOGGING_XML = "fs-logging.xml";
 	public static final String FILE_FS_LICENSE_CONF = "fs-license.conf";
 	public static final String FILE_FS_WRAPPER_CONF = "fs-wrapper.conf";
 	public static final String FILE_WRAPPER_EXECUTABLE = "fs5";

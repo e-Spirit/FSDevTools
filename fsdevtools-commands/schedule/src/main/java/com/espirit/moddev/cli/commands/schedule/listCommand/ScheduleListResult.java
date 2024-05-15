@@ -23,7 +23,7 @@
 package com.espirit.moddev.cli.commands.schedule.listCommand;
 
 import com.espirit.moddev.cli.results.SimpleResult;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import de.espirit.firstspirit.access.schedule.ScheduleEntry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

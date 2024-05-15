@@ -27,7 +27,7 @@ import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.commands.SimpleCommand;
 import com.espirit.moddev.cli.results.SimpleResult;
 import com.espirit.moddev.shared.StringUtils;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.project.Project;
 import org.jetbrains.annotations.NotNull;

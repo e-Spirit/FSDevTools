@@ -23,7 +23,7 @@
 package com.espirit.moddev.shared.webapp;
 
 import com.espirit.moddev.shared.StringUtils;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import de.espirit.firstspirit.module.WebEnvironment.WebScope;
 import org.slf4j.LoggerFactory;
 

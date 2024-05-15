@@ -310,19 +310,19 @@ public class ServerConfiguratorTest {
 	}
 
 	@Test
-	public void updateServerConf_fileDoesNotExistInJar() {
+	public void updateServerConf_fileDoesNotExistInJar_Log4J1() {
 		// setup
 		final Path workingDir = _temp.toPath().resolve("workingDir");
 		final Path incompleteServerJar = new File(getClass().getResource(SERVER_JAR_WITHOUT_LOGGING_CONF).getFile()).toPath();
 
 		// test
-		Assertions.assertThrows(FileNotFoundException.class, () -> {
-			ServerConfigurator.updateLoggingConf(workingDir, incompleteServerJar, new HashMap<>());
+		Assertions.assertDoesNotThrow(() -> {
+			ServerConfigurator.updateLoggingConf_Log4J1(workingDir, incompleteServerJar, new HashMap<>());
 		});
 	}
 
 	@Test
-	public void updateLoggingConf() throws IOException {
+	public void updateLoggingConf_Log4J1() throws IOException {
 		// setup
 		final Path workingDir = _temp.toPath().resolve("workingDir");
 		final Path serverJar = new File(getClass().getResource(SERVER_JAR).getFile()).toPath();
@@ -331,7 +331,7 @@ public class ServerConfiguratorTest {
 		final HashMap<String, String> arguments = new HashMap<>();
 		arguments.put("log4j.rootCategory", "CHANGED_LEVEL");
 		arguments.put("anotherProperty", "customValue");
-		ServerConfigurator.updateLoggingConf(workingDir, serverJar, arguments);
+		ServerConfigurator.updateLoggingConf_Log4J1(workingDir, serverJar, arguments);
 
 		// verify
 		final Path loggingConf = workingDir.resolve(DIR_CONF).resolve(FILE_FS_LOGGING_CONF);
@@ -341,7 +341,7 @@ public class ServerConfiguratorTest {
 	}
 
 	@Test
-	public void updateLoggingConf_fileAlreadyExists() throws IOException {
+	public void updateLoggingConf_Log4J1_fileAlreadyExists() throws IOException {
 		// setup
 		final Path workingDir = _temp.toPath().resolve("workingDir");
 		final Path serverJar = new File(getClass().getResource(SERVER_JAR).getFile()).toPath();
@@ -356,7 +356,7 @@ public class ServerConfiguratorTest {
 		final HashMap<String, String> arguments = new HashMap<>();
 		arguments.put("log4j.rootCategory", "CHANGED_LEVEL");
 		arguments.put("anotherProperty", "customValue");
-		ServerConfigurator.updateLoggingConf(workingDir, serverJar, arguments);
+		ServerConfigurator.updateLoggingConf_Log4J1(workingDir, serverJar, arguments);
 
 		// verify
 		final String content = Files.readString(loggingConf);

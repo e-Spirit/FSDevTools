@@ -25,7 +25,7 @@ package com.espirit.moddev.cli.commands.module.utils;
 import com.espirit.moddev.cli.api.result.ExecutionErrorResult;
 import com.espirit.moddev.cli.api.result.ExecutionResult;
 import com.espirit.moddev.cli.api.result.ExecutionResults;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.io.FileSystem;
 import org.jetbrains.annotations.NotNull;

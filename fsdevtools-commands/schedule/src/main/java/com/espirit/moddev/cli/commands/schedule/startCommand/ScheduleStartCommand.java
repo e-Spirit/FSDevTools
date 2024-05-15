@@ -26,7 +26,7 @@ import com.espirit.moddev.cli.ConnectionBuilder;
 import com.espirit.moddev.cli.commands.SimpleCommand;
 import com.espirit.moddev.cli.commands.schedule.ScheduleCommandGroup;
 import com.espirit.moddev.cli.commands.schedule.ScheduleCommandNames;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;

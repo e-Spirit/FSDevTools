@@ -26,7 +26,7 @@ import com.espirit.moddev.cli.api.result.ExecutionErrorResult;
 import com.espirit.moddev.cli.api.result.ExecutionResult;
 import com.espirit.moddev.cli.api.result.ExecutionResults;
 import com.espirit.moddev.shared.StringUtils;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import com.espirit.moddev.shared.webapp.GlobalWebAppIdentifier;
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 import de.espirit.firstspirit.access.Connection;

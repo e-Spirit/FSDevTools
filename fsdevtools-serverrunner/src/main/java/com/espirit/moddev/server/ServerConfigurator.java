@@ -23,13 +23,13 @@
 package com.espirit.moddev.server;
 
 import com.espirit.moddev.connection.FsConnectionType;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
 import com.espirit.moddev.util.ArchiveUtil;
 import com.espirit.moddev.util.FileUtil;
 import com.espirit.moddev.util.FsUtil;
 import com.espirit.moddev.util.OsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +60,7 @@ import static com.espirit.moddev.util.FsUtil.DIR_MODULES;
 import static com.espirit.moddev.util.FsUtil.DIR_SERVER;
 import static com.espirit.moddev.util.FsUtil.FILE_FS_LICENSE_CONF;
 import static com.espirit.moddev.util.FsUtil.FILE_FS_LOGGING_CONF;
+import static com.espirit.moddev.util.FsUtil.FILE_FS_LOGGING_XML;
 import static com.espirit.moddev.util.FsUtil.FILE_FS_SERVER_CONF;
 import static com.espirit.moddev.util.FsUtil.FILE_FS_WRAPPER_CONF;
 import static com.espirit.moddev.util.FsUtil.FILE_FS_WRAPPER_ISOLATED_CONF;
@@ -67,6 +68,50 @@ import static com.espirit.moddev.util.FsUtil.FILE_JETTY_PROPERTIES;
 import static com.espirit.moddev.util.FsUtil.getPortFromConfig;
 
 public class ServerConfigurator {
+
+	/**
+	 * Represents the various levels of logging severity.
+	 * The logging levels, in order of increasing severity, are:
+	 * <ul>
+	 *     <li>{@link #TRACE} - Finest-grained informational events. Typically used for detailed debugging.</li>
+	 *     <li>{@link #DEBUG} - Informational events useful for debugging the application.</li>
+	 *     <li>{@link #INFO} - Informational messages that highlight the progress of the application at a coarse-grained level.</li>
+	 *     <li>{@link #WARN} - Potentially harmful situations of interest to end users or system managers that indicate potential problems.</li>
+	 *     <li>{@link #ERROR} - Error events that might still allow the application to continue running.</li>
+	 *     <li>{@link #FATAL} - Very severe error events that will presumably lead the application to abort.</li>
+	 * </ul>
+	 */
+	public enum LogLevel {
+		/**
+		 * Finest-grained informational events. Typically used for detailed debugging.
+		 */
+		TRACE,
+
+		/**
+		 * Informational events useful for debugging the application.
+		 */
+		DEBUG,
+
+		/**
+		 * Informational messages that highlight the progress of the application at a coarse-grained level.
+		 */
+		INFO,
+
+		/**
+		 * Potentially harmful situations of interest to end users or system managers that indicate potential problems.
+		 */
+		WARN,
+
+		/**
+		 * Error events that might still allow the application to continue running.
+		 */
+		ERROR,
+
+		/**
+		 * Very severe error events that will presumably lead the application to abort.
+		 */
+		FATAL
+	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ServerConfigurator.class);
 
@@ -84,6 +129,9 @@ public class ServerConfigurator {
 	private int _xmx;
 	private long _wrapperTimeout;
 	private boolean _enableServerRestartOnFailure;
+
+	private LogLevel _logLevel = LogLevel.INFO;
+	private boolean _logToConsole = false;
 
 	public ServerConfigurator(@NotNull final Path serverDir) {
 		_serverDir = serverDir.toAbsolutePath();
@@ -120,14 +168,56 @@ public class ServerConfigurator {
 	}
 
 	/**
+	 * Sets the log level for the FirstSpirit server (default = {@link LogLevel#INFO}).
+	 *
+	 * @param logLevel the log level to use
+	 * @return the current instance of this {@link ServerConfigurator configurator}
+	 */
+	@NotNull
+	public ServerConfigurator logLevel(@NotNull final LogLevel logLevel) {
+		_logLevel = logLevel;
+		return this;
+	}
+
+	/**
+	 * Sets whether to log the FirstSpirit server logging to the console (default = {@code false}).
+	 *
+	 * @param logToConsole whether to log to the console.
+	 * @return the current instance of this {@link ServerConfigurator configurator}
+	 */
+	@NotNull
+	public ServerConfigurator logToConsole(final boolean logToConsole) {
+		_logToConsole = logToConsole;
+		return this;
+	}
+
+	/**
 	 * Sets a key/value-pair for the fs-logging.conf.
 	 *
 	 * @param name  the name of the property
 	 * @param value the value for the property
 	 * @return the current instance of this {@link ServerConfigurator configurator}
+	 * @deprecated This method will be removed in the future. Use {@link #logLevel(LogLevel)} and {@link #logToConsole(boolean)} to configure the logging.
 	 */
+	@Deprecated
 	@NotNull
 	public ServerConfigurator addLoggingConfValue(@NotNull final String name, @NotNull final String value) {
+		// DEVEX-654: add support for log level and log-to-console for the FirstSpirit Gradle Plugin
+		if (name.equalsIgnoreCase("log4j.rootCategory")) {
+			String levelValue = value.toLowerCase();
+			final int lastIndex = value.lastIndexOf(", fs");
+			if (lastIndex != -1) {
+				levelValue = value.substring(0, lastIndex);
+			}
+			try {
+				logLevel(LogLevel.valueOf(levelValue.toUpperCase()));
+			} catch (IllegalArgumentException e) {
+				LOGGER.warn(String.format("Unsupported loglevel '%s'. Using INFO logging...", levelValue));
+				logLevel(LogLevel.INFO);
+			}
+		} else if (name.equalsIgnoreCase("log4j.appender.fs.consoleLogging")) {
+			logToConsole(Boolean.parseBoolean(value));
+		}
 		_loggingConf.put(name, value);
 		return this;
 	}
@@ -185,7 +275,7 @@ public class ServerConfigurator {
 		final Path serverJar = getServerJar(_serverDir);
 		// update fs-server.conf, fs-logging.conf, fs-wrapper.conf and extract license file
 		updateServerConf(_serverDir, _serverConf);
-		updateLoggingConf(_serverDir, serverJar, _loggingConf);
+		updateLoggingConf(_serverDir, serverJar, _loggingConf, _logLevel, _logToConsole);
 		updateJettyConf(_serverDir);
 		updateWrapperConfFiles(_serverDir, _xms, _xmx, _wrapperTimeout, _enableServerRestartOnFailure, _additionalVMArgs);
 		copyLicenseFile(_serverDir, _licenseFile);
@@ -222,14 +312,55 @@ public class ServerConfigurator {
 	}
 
 	@VisibleForTesting
-	static void updateLoggingConf(@NotNull final Path serverDir, @NotNull final Path serverJar, @NotNull final Map<String, String> config) throws IOException {
-		final Path confDir = serverDir.resolve(DIR_CONF);
-		FileUtil.mkDirs(confDir);
+	static void updateLoggingConf(@NotNull final Path serverDir, @NotNull final Path serverJar, @NotNull final Map<String, String> config, @NotNull final LogLevel logLevel, final boolean logToConsole) {
+		updateLoggingConf_Log4J1(serverDir, serverJar, config);
+		updateLoggingConf_Log4J2(serverDir, serverJar, logLevel, logToConsole);
+	}
 
-		// decompress & update the fs-logging.conf
-		final Path loggingConf = confDir.resolve(FILE_FS_LOGGING_CONF);
-		ArchiveUtil.decompressJarEntry(serverJar, FILE_FS_LOGGING_CONF, loggingConf);
-		updateConfFile(loggingConf, config);
+	@VisibleForTesting
+	static void updateLoggingConf_Log4J1(@NotNull final Path serverDir, @NotNull final Path serverJar, @NotNull final Map<String, String> config) {
+		try {
+			final Path confDir = serverDir.resolve(DIR_CONF);
+			FileUtil.mkDirs(confDir);
+
+			// decompress & update the fs-logging.conf
+			final Path loggingConf = confDir.resolve(FILE_FS_LOGGING_CONF);
+			ArchiveUtil.decompressJarEntry(serverJar, FILE_FS_LOGGING_CONF, loggingConf);
+			updateConfFile(loggingConf, config);
+		} catch (final IOException ignore) {
+			// simply ignore
+			LOGGER.debug(FILE_FS_LOGGING_CONF + " not found. Ignoring...");
+		} catch (final Exception e) {
+			LOGGER.warn("Error updating " + FILE_FS_LOGGING_CONF, e);
+			throw e;
+		}
+	}
+
+	@VisibleForTesting
+	static void updateLoggingConf_Log4J2(@NotNull final Path serverDir, @NotNull final Path serverJar, @NotNull final LogLevel logLevel, final boolean logToConsole) {
+		try {
+			final Path confDir = serverDir.resolve(DIR_CONF);
+			FileUtil.mkDirs(confDir);
+
+			// decompress & update the fs-logging.xml
+			final Path loggingConf = confDir.resolve(FILE_FS_LOGGING_XML);
+			ArchiveUtil.decompressJarEntry(serverJar, FILE_FS_LOGGING_XML, loggingConf);
+			// update fs-logging.xml
+			final List<String> input = Files.readAllLines(loggingConf);
+			final List<String> output = new ArrayList<>();
+			input.forEach(line -> {
+				String replacedLine = line.replaceAll("consoleLogging=\"false\"", "consoleLogging=\"" + logToConsole + "\"");
+				replacedLine = replacedLine.replaceAll("Root level=\"INFO\"", "Root level=\"" + logLevel.name() + "\"");
+				output.add(replacedLine);
+			});
+			Files.write(loggingConf, output);
+		} catch (final IOException ignore) {
+			// simply ignore
+			LOGGER.debug(FILE_FS_LOGGING_XML + " not found. Ignoring...");
+		} catch (final Exception e) {
+			LOGGER.warn("Error updating " + FILE_FS_LOGGING_XML, e);
+			throw e;
+		}
 	}
 
 	@VisibleForTesting

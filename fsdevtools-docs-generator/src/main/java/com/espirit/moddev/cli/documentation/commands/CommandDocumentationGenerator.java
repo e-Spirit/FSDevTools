@@ -32,7 +32,7 @@ import com.espirit.moddev.cli.documentation.pojos.JsonElement;
 import com.espirit.moddev.cli.documentation.pojos.JsonElementHolder;
 import com.espirit.moddev.cli.documentation.utils.ArgumentUtils;
 import com.espirit.moddev.cli.documentation.utils.ScanUtils;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import com.espirit.moddev.util.JacksonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.rvesse.airline.annotations.Arguments;

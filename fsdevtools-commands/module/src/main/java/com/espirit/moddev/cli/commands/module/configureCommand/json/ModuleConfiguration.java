@@ -28,7 +28,7 @@ import com.espirit.moddev.cli.api.result.ExecutionResults;
 import com.espirit.moddev.cli.commands.module.configureCommand.json.components.Components;
 import com.espirit.moddev.cli.commands.module.configureCommand.json.components.Configurable;
 import com.espirit.moddev.cli.commands.module.configureCommand.json.components.ConfigurationContext;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import com.espirit.moddev.util.JacksonUtil;
 import com.espirit.moddev.util.Preconditions;
 import com.fasterxml.jackson.annotation.JsonProperty;

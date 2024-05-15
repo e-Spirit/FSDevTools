@@ -29,7 +29,7 @@ import com.espirit.moddev.cli.commands.module.ModuleCommandNames;
 import com.espirit.moddev.cli.commands.module.common.ModuleInstallationConfiguration;
 import com.espirit.moddev.cli.commands.module.common.ModuleInstallationParameters;
 import com.espirit.moddev.cli.commands.module.utils.ModuleInstaller;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;

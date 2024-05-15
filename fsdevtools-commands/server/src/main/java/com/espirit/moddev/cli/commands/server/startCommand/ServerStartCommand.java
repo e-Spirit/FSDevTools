@@ -29,7 +29,7 @@ import com.espirit.moddev.cli.commands.server.ServerCommandNames;
 import com.espirit.moddev.cli.commands.server.common.AbstractServerCommand;
 import com.espirit.moddev.cli.commands.server.utils.ServerRunner;
 import com.espirit.moddev.cli.results.SimpleResult;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.help.Examples;

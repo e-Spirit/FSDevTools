@@ -23,7 +23,7 @@
 package com.espirit.moddev.cli.commands.module.common;
 
 import com.espirit.moddev.shared.StringUtils;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 import com.espirit.moddev.shared.webapp.WebAppIdentifierParser;
 import org.jetbrains.annotations.NotNull;

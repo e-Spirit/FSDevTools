@@ -22,7 +22,7 @@
 
 package com.espirit.moddev.cli.commands.feature.common;
 
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ServerActionHandle;
 import de.espirit.firstspirit.access.project.Project;

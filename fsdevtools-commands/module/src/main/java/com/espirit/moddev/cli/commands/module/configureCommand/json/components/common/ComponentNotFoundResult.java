@@ -23,7 +23,7 @@
 package com.espirit.moddev.cli.commands.module.configureCommand.json.components.common;
 
 import com.espirit.moddev.cli.api.result.ExecutionErrorResult;
-import com.espirit.moddev.shared.annotation.VisibleForTesting;
+import org.jetbrains.annotations.VisibleForTesting;
 import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
 import org.jetbrains.annotations.NotNull;
 
