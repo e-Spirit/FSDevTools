@@ -533,7 +533,7 @@ release {
     }
 }
 
-subprojects {
+allprojects {
     rootProject.tasks.afterReleaseBuild {
         dependsOn(tasks.publish)
     }
