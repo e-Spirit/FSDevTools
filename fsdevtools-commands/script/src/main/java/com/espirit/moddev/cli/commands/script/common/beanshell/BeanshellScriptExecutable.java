@@ -23,6 +23,7 @@
 package com.espirit.moddev.cli.commands.script.common.beanshell;
 
 import bsh.EvalError;
+import bsh.ParseException;
 import bsh.PreparsedScript;
 import bsh.Primitive;
 import bsh.TargetError;
@@ -75,7 +76,11 @@ class BeanshellScriptExecutable implements ScriptExecutable {
 		} catch (final TargetError e) {
 			throw new ScriptExecutionException(e.getMessage(), e.getTarget(), e.getErrorLineNumber(), -1);
 		} catch (final EvalError e) {
-			throw new ScriptExecutionException(e.getMessage(), e, e.getErrorLineNumber(), -1);
+			if (!(e instanceof final ParseException parseException) || parseException.currentToken != null) {
+				throw new ScriptExecutionException(e.getMessage(), e, e.getErrorLineNumber(), -1);
+			} else {
+				throw new ScriptExecutionException(e);
+			}
 		} catch (final Exception | Error e) {
 			throw new ScriptExecutionException(e);
 		}
