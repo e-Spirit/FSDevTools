@@ -22,18 +22,82 @@
 
 package com.espirit.moddev.cli.results.logging;
 
+import de.espirit.firstspirit.io.FileHandle;
+import de.espirit.firstspirit.io.FileType;
 import de.espirit.firstspirit.store.access.nexport.ExportInfo;
-import de.espirit.firstspirit.store.access.nexport.io.ExportInfoFileHandleImpl;
+import de.espirit.firstspirit.store.access.nexport.io.ExportInfoFileHandle;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class MockedFileHandle extends ExportInfoFileHandleImpl {
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
 
+public class MockedFileHandle implements ExportInfoFileHandle {
+
+	private final ExportInfo _exportInfo;
 	private final String _path;
 	private final String _fileName;
 
 	MockedFileHandle(final ExportInfo exportInfo, final String path, final String fileName) {
-		super(null, exportInfo);
+		_exportInfo = exportInfo;
 		_path = path;
 		_fileName = fileName;
+	}
+
+	@Override
+	public boolean exists() {
+		return false;
+	}
+
+	@Override
+	public @NotNull FileType getType() {
+		return FileType.UNKNOWN;
+	}
+
+	@Override
+	public boolean isFile() {
+		return false;
+	}
+
+	@Override
+	public boolean isDirectory() {
+		return false;
+	}
+
+	@Override
+	public @NotNull List<FileHandle> listFiles() {
+		return List.of();
+	}
+
+	@Override
+	public void mkDirs() {
+
+	}
+
+	@Override
+	public @NotNull InputStream load() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void save(final InputStream inputStream) {
+
+	}
+
+	@Override
+	public void append(final InputStream inputStream) {
+
+	}
+
+	@Override
+	public @NotNull OutputStream getOutputStream() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public @NotNull OutputStream getOutputStream(final boolean b) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -44,5 +108,65 @@ public class MockedFileHandle extends ExportInfoFileHandleImpl {
 	@Override
 	public String getPath() {
 		return _path;
+	}
+
+	@Override
+	public long getSize() {
+		return 0;
+	}
+
+	@Override
+	public boolean hasCrc() {
+		return false;
+	}
+
+	@Override
+	public long getCrc() {
+		return 0;
+	}
+
+	@Override
+	public void delete() {
+
+	}
+
+	@Override
+	public void rename(final String s) {
+
+	}
+
+	@Override
+	public void swapWith(final String s) {
+
+	}
+
+	@Override
+	public long getLastModified() {
+		return 0;
+	}
+
+	@Override
+	public void setLastModified(final long l) {
+
+	}
+
+	@Override
+	public @Nullable FileHandle getParent() {
+		return null;
+	}
+
+	@Override
+	public FileHandle getChild(final String s) {
+		return null;
+	}
+
+	@Override
+	public ExportInfo getExportInfo() {
+		return _exportInfo;
+	}
+
+	@Override
+	public int compareTo(@NotNull final FileHandle o) {
+		return 0;
 	}
 }
