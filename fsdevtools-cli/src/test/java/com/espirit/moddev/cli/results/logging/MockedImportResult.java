@@ -25,13 +25,18 @@ package com.espirit.moddev.cli.results.logging;
 import de.espirit.firstspirit.access.database.BasicEntityInfo;
 import de.espirit.firstspirit.access.database.BasicEntityInfoImpl;
 import de.espirit.firstspirit.access.store.BasicElementInfo;
+import de.espirit.firstspirit.access.store.IDProvider;
 import de.espirit.firstspirit.access.store.Store;
 import de.espirit.firstspirit.agency.StoreAgent;
 import de.espirit.firstspirit.store.access.BasicElementInfoImpl;
 import de.espirit.firstspirit.store.access.nexport.operations.ImportOperation;
 import de.espirit.firstspirit.transport.PropertiesTransportOptions;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class MockedImportResult implements ImportOperation.Result {
 
@@ -102,7 +107,7 @@ public class MockedImportResult implements ImportOperation.Result {
 	private ImportOperation.Problem createProblem(final Store.Type storeType, final long nodeId, final String message) {
 		return new ImportOperation.Problem() {
 			@Override
-			public Store.Type getStoreType() {
+			public Store.@NotNull Type getStoreType() {
 				return storeType;
 			}
 
@@ -112,7 +117,7 @@ public class MockedImportResult implements ImportOperation.Result {
 			}
 
 			@Override
-			public String getMessage() {
+			public @NotNull String getMessage() {
 				return message;
 			}
 		};
@@ -137,11 +142,11 @@ public class MockedImportResult implements ImportOperation.Result {
 		set.add(createElementInfo(7, Store.Type.TEMPLATESTORE, TagNames.FORMATTEMPLATE.getName(), description));
 	}
 
-	private BasicElementInfoImpl createElementInfo(final int id, final Store.Type storeType, final String nodeTag, final String description) {
+	private BasicElementInfo createElementInfo(final int id, final Store.Type storeType, final String nodeTag, final String description) {
 		return new BasicElementInfoImpl(storeType, nodeTag, id, description + "_" + nodeTag + "_" + id, -1);
 	}
 
-	private BasicEntityInfoImpl createEntityInfo(final int id, final String entityType, final String schemaUid, final String description) {
+	private BasicEntityInfo createEntityInfo(final int id, final String entityType, final String schemaUid, final String description) {
 		return new BasicEntityInfoImpl(UUID.nameUUIDFromBytes((description + "_" + entityType + "_" + schemaUid + "_" + id).getBytes()), description + "_" + entityType, schemaUid);
 	}
 
@@ -191,12 +196,27 @@ public class MockedImportResult implements ImportOperation.Result {
 	}
 
 	StoreAgent getStoreAgent() {
-		final MockedStoreAgent storeAgent = new MockedStoreAgent();
+		final var storeAgent = mock(StoreAgent.class);
+
 		final List<ImportOperation.Problem> problems = getProblems();
 		for (final ImportOperation.Problem problem : problems) {
-			final MockedStore store = (MockedStore) storeAgent.getStore(problem.getStoreType());
-			store.getOrCreateElement(problem.getNodeId());
+			//noinspection ConstantValue
+			if (storeAgent.getStore(problem.getStoreType()) == null) {
+				when(storeAgent.getStore(problem.getStoreType())).thenReturn(mock(Store.class));
+			}
+
+			final var element = mock(IDProvider.class);
+			when(element.getId()).thenReturn(problem.getNodeId());
+			when(element.getName()).thenReturn(problem.getStoreType().getName() + "_name_" + problem.getNodeId());
+			if (problem.getStoreType() != Store.Type.TEMPLATESTORE) {
+				when(element.hasUid()).thenReturn(true);
+				when(element.getUid()).thenReturn(problem.getStoreType().getName() + "_uid_" + problem.getNodeId());
+			}
+
+			final var store = storeAgent.getStore(problem.getStoreType());
+			when(store.getStoreElement(problem.getNodeId())).thenReturn(element);
 		}
+
 		return storeAgent;
 	}
 }
