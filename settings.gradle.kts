@@ -25,34 +25,28 @@ rootProject.name = "fs-cli"
 dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
-            library("jetbrains-annotations", "org.jetbrains:annotations:24.0.1")
+            library("jetbrains-annotations", "org.jetbrains:annotations:26.0.2")
 
-            version("log4j", "2.17.2")
+            version("log4j", "2.24.3")
             library("log4j-core", "org.apache.logging.log4j", "log4j-core").versionRef("log4j")
-            library("log4j-slf4j", "org.apache.logging.log4j", "log4j-slf4j-impl").versionRef("log4j")
+            library("log4j-slf4j", "org.apache.logging.log4j", "log4j-slf4j2-impl").versionRef("log4j")
 
             version("airline", "2.8.5")
             library("airline", "com.github.rvesse", "airline").versionRef("airline")
             library("airline-help-markdown", "com.github.rvesse", "airline-help-markdown").versionRef("airline")
             library("beanshell", "com.github.pejobo:beanshell2:2.1.9")
-            library("classgraph", "io.github.classgraph:classgraph:4.8.143")
-            library("commons-lang3", "org.apache.commons:commons-lang3:3.12.0")
-            library("commons-compress", "org.apache.commons:commons-compress:1.21")
-            library("guava", "com.google.guava:guava:31.1-jre")
-            library("hamcrest", "org.hamcrest:java-hamcrest:2.0.0.0")
-            library("jackson-databind", "com.fasterxml.jackson.core:jackson-databind:2.13.2.2")
-            library("lombok", "org.projectlombok:lombok:1.18.22")
-            library("slf4j-api", "org.slf4j:slf4j-api:1.7.36")
+            library("classgraph", "io.github.classgraph:classgraph:4.8.179")
+            library("commons-lang3", "org.apache.commons:commons-lang3:3.17.0")
+            library("commons-compress", "org.apache.commons:commons-compress:1.27.1")
+            library("guava", "com.google.guava:guava:33.4.7-jre")
+            library("hamcrest", "org.hamcrest:hamcrest:3.0")
+            library("jackson-databind", "com.fasterxml.jackson.core:jackson-databind:2.18.3")
+            library("slf4j-api", "org.slf4j:slf4j-api:2.0.17")
         }
         create("testlibs") {
-            version("junit-jupiter", "5.8.2")
-            library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").versionRef("junit-jupiter")
-            library("junit-jupiter-engine", "org.junit.jupiter", "junit-jupiter-engine").versionRef("junit-jupiter")
-            library("junit-vintage-engine", "org.junit.vintage", "junit-vintage-engine").versionRef("junit-jupiter")
-            library("junit-jupiter-params", "org.junit.jupiter", "junit-jupiter-params").versionRef("junit-jupiter")
-            library("assertj", "org.assertj:assertj-core:3.22.0")
+            library("assertj", "org.assertj:assertj-core:3.27.3")
             library("mockito", "org.mockito:mockito-junit-jupiter:4.4.0")
-            library("archunit", "com.tngtech.archunit:archunit-junit5:1.2.1")
+            library("archunit", "com.tngtech.archunit:archunit-junit5:1.4.0")
         }
     }
 }

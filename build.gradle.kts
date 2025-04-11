@@ -34,11 +34,11 @@ var firstSpiritVersion = "5.2.231105"
 
 plugins {
     application
-    id("com.github.johnrengelman.shadow") version("7.0.0")
-    id("org.ajoberstar.grgit") version("5.0.0")
+    id("com.gradleup.shadow") version("8.3.6")
+    id("org.ajoberstar.grgit") version("5.3.0")
     `maven-publish`
     id("com.github.breadmoirai.github-release") version("2.5.2")
-    id("net.researchgate.release") version("3.0.2")
+    id("net.researchgate.release") version("3.1.0")
     idea
 }
 
@@ -47,7 +47,7 @@ plugins {
 ///////////////////////////////////////////////////////
 
 tasks.wrapper {
-    gradleVersion = "8.7"
+    gradleVersion = "8.13"
     distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -205,9 +205,11 @@ subprojects {
         compileOnly(group = "de.espirit.firstspirit", name = "fs-isolated-runtime", version = firstSpiritVersion)
         implementation(rootProject.libs.slf4j.api)
 
-        testRuntimeOnly(rootProject.testlibs.junit.jupiter.engine)
-        testImplementation(rootProject.testlibs.junit.jupiter.api)
-        testImplementation(rootProject.testlibs.junit.jupiter.params)
+        testImplementation(platform("org.junit:junit-bom:5.12.1"))
+        testImplementation(group = "org.junit.jupiter", name = "junit-jupiter")
+        testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-params")
+        testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine")
+        testRuntimeOnly(group = "org.junit.platform", name = "junit-platform-launcher")
         testImplementation(rootProject.libs.hamcrest)
         testImplementation(rootProject.testlibs.mockito)
         testImplementation(rootProject.testlibs.assertj)
@@ -302,7 +304,7 @@ fun getJsonSchemas(project : Project) : List<File> {
     return files
 }
 
-val createDocumentationJson by tasks.creating(JavaExec::class) {
+val createDocumentationJson by tasks.registering(JavaExec::class) {
     dependsOn(tasks.classes, "writeArtifactInfo")
     group = "documentation"
     description = "Run the main class with JavaExecTask"
@@ -311,7 +313,7 @@ val createDocumentationJson by tasks.creating(JavaExec::class) {
     args = listOf("--file", "${project(":fsdevtools-docs").projectDir}/build/assets/data.json")
 }
 
-val writeArtifactInfo: Task by tasks.creating {
+val writeArtifactInfo by tasks.registering {
     group = "documentation"
     doLast {
         val branchName = grgit.branch.current().name
@@ -341,7 +343,7 @@ tokens.setProperty("javaVersion", javaVersion.toString())
 // assembles the tar.gz file
 ///////////////////////////////////////////////////////
 
-val assembleTarGz by tasks.creating(Tar::class) {
+val assembleTarGz by tasks.registering(Tar::class) {
     dependsOn(tasks.shadowJar, "fsdevtools-docs:buildVueApp")
 
     group = "build"
@@ -363,13 +365,13 @@ val assembleTarGz by tasks.creating(Tar::class) {
     // copy fs-cli.sh with execution rights & lf
     from("${project.projectDir}/archive/bin/fs-cli.sh") {
         into("fs-cli/bin")
-        fileMode = "755".toInt(8)
+        filePermissions { unix("rwxr-xr-x") }
         filter<FixCrLfFilter>("eol" to FixCrLfFilter.CrLf.newInstance("lf"))
     }
     // copy fs-cli.cmd with execution rights & crlf
     from("${project.projectDir}/archive/bin/fs-cli.cmd") {
         into("fs-cli/bin")
-        fileMode = "755".toInt(8)
+        filePermissions { unix("rwxr-xr-x") }
         filter<FixCrLfFilter>("eol" to FixCrLfFilter.CrLf.newInstance("crlf"))
     }
     // copy fat jar
@@ -390,7 +392,7 @@ val assembleTarGz by tasks.creating(Tar::class) {
 // assembles the zip file
 ///////////////////////////////////////////////////////
 
-val assembleZip by tasks.creating(Zip::class) {
+val assembleZip by tasks.registering(Zip::class) {
     dependsOn(tasks.shadowJar, "fsdevtools-docs:buildVueApp")
 
     group = "build"
@@ -411,13 +413,13 @@ val assembleZip by tasks.creating(Zip::class) {
     // copy fs-cli.sh with execution rights & lf
     from("${project.projectDir}/archive/bin/fs-cli.sh") {
         into("fs-cli/bin")
-        fileMode = "755".toInt(8)
+        filePermissions { unix("rwxr-xr-x") }
         filter<FixCrLfFilter>("eol" to FixCrLfFilter.CrLf.newInstance("lf"))
     }
     // copy fs-cli.cmd with execution rights & crlf
     from("${project.projectDir}/archive/bin/fs-cli.cmd") {
         into("fs-cli/bin")
-        fileMode = "755".toInt(8)
+        filePermissions { unix("rwxr-xr-x") }
         filter<FixCrLfFilter>("eol" to FixCrLfFilter.CrLf.newInstance("crlf"))
     }
     // copy fat jar
@@ -450,17 +452,18 @@ tasks.assemble {
 // setup the githubRelease plugin
 ///////////////////////////////////////////////////////
 
-val assets = mutableListOf(assembleTarGz.outputs.files, assembleZip.outputs.files)
+val assets = mutableListOf(assembleTarGz.get().outputs.files, assembleZip.get().outputs.files)
 for (project in project.project(":fsdevtools-scriptengines").subprojects) {
     val name = project.name
-    val task = tasks.create(name, org.gradle.jvm.tasks.Jar::class)
-    task.group = "script-engines"
-    task.archiveFileName.set("fs-cli-scriptengine-${name}-${project.version}.jar")
-    task.dependsOn("fsdevtools-scriptengines:${name}:build")
-    task.dependsOn("fsdevtools-scriptengines:${name}:shadowJar")
-    task.from(zipTree(project.layout.buildDirectory.file("shadowJAR/${name}-${project.version}.jar")))
-    task.destinationDirectory.set(layout.buildDirectory.dir("distributions"))
-    assets.add(task.outputs.files)
+    val task = tasks.register(name, org.gradle.jvm.tasks.Jar::class) {
+        group = "script-engines"
+        archiveFileName.set("fs-cli-scriptengine-${name}-${project.version}.jar")
+        dependsOn("fsdevtools-scriptengines:${name}:build")
+        dependsOn("fsdevtools-scriptengines:${name}:shadowJar")
+        from(zipTree(project.layout.buildDirectory.file("shadowJAR/${name}-${project.version}.jar")))
+        destinationDirectory.set(layout.buildDirectory.dir("distributions"))
+    }
+    assets.add(task.get().outputs.files)
     tasks.build.get().dependsOn(task)
     tasks.githubRelease.get().dependsOn(task)
 }

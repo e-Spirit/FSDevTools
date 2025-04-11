@@ -25,6 +25,4 @@ dependencies {
 
     implementation(libs.log4j.slf4j)
     implementation(libs.hamcrest)
-    compileOnly(libs.lombok)
-    annotationProcessor(libs.lombok)
 }

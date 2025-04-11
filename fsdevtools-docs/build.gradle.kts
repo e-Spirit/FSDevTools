@@ -78,7 +78,7 @@ tasks {
     }
 }
 
-tasks.create<NpmTask>("buildVueApp") {
+tasks.register<NpmTask>("buildVueApp") {
     group = "build"
     dependsOn(project.tasks["npmInstall"], rootProject.tasks["createDocumentationJson"])
     setArgs(listOf("run", "build"))
@@ -87,7 +87,7 @@ tasks.create<NpmTask>("buildVueApp") {
     inputs.dir(fileTree("node_modules").exclude(".cache"))
 }
 
-tasks.create<NpmTask>("serveVueApp") {
+tasks.register<NpmTask>("serveVueApp") {
     group = "application"
     dependsOn(project.tasks["npmInstall"])
     setArgs(listOf("run", "serve"))

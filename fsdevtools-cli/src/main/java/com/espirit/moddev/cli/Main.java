@@ -24,9 +24,23 @@ package com.espirit.moddev.cli;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.Reporter;
 
 public class Main {
-	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+	private static final Logger LOGGER;
+
+	static {
+		try {
+			Class.forName("de.espirit.firstspirit.logging.ServiceProvider");
+			// fs-isolated-runtime.jar contains SLF4J provider, select one explicitly
+			System.setProperty(LoggerFactory.PROVIDER_PROPERTY_KEY, "org.apache.logging.slf4j.SLF4JServiceProvider");
+			System.setProperty(Reporter.SLF4J_INTERNAL_VERBOSITY_KEY, "WARN");
+		} catch (final ClassNotFoundException e) {
+			// Nothing to do
+		}
+
+		LOGGER = LoggerFactory.getLogger(Main.class);
+	}
 
 	public static void main(final String[] args) {
 		try {

@@ -33,5 +33,5 @@ dependencies {
     api(libs.jackson.databind)
 
     testImplementation(libs.log4j.core)
-    testImplementation(libs.log4j.slf4j)
+    testRuntimeOnly(libs.log4j.slf4j)
 }

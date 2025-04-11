@@ -24,5 +24,5 @@ dependencies {
     implementation(project(":fsdevtools-cli-api"))
     implementation(project(":fsdevtools-common"))
     implementation(libs.log4j.core)
-    testImplementation(libs.log4j.slf4j)
+    testRuntimeOnly(libs.log4j.slf4j)
 }

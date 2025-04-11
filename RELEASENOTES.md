@@ -1,5 +1,14 @@
 # Release notes
 
+## Version 4.8.5
+
+* updated Gradle to 8.13
+* fixed logging with newer FirstSpirit versions
+
+## Version 4.8.3
+
+* provide more context for script parsing errors
+
 ## Version 4.8.1
 
 * fixed log level configuration

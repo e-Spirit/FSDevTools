@@ -21,7 +21,7 @@
  */
 
 plugins {
-    id("com.github.johnrengelman.shadow")
+    id("com.gradleup.shadow")
 }
 
 group = "com.espirit.moddev.fsdevtools.script-engines"
