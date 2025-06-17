@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2024 Crownpeak Technology GmbH
+ * Copyright (C) 2025 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,25 +51,6 @@ public abstract class AbstractCommandResult implements Result<ExecutionResults> 
 		} else {
 			_throwable = null;
 		}
-	}
-
-	public AbstractCommandResult(@NotNull final Throwable throwable) {
-		_errorMessage = throwable.getMessage();
-		_logger = LoggerFactory.getLogger(getClass());
-		_results = new ExecutionResults();
-		_results.add(new ExecutionErrorResult<>() {
-			@NotNull
-			@Override
-			public Throwable getThrowable() {
-				return throwable;
-			}
-
-			@Override
-			public String toString() {
-				return getThrowable().toString();
-			}
-		});
-		_throwable = throwable;
 	}
 
 	@NotNull

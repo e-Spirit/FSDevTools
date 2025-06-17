@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2024 Crownpeak Technology GmbH
+ * Copyright (C) 2025 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,8 @@ dependencies {
     implementation(libs.log4j.slf4j)
 
     testImplementation(project(":fsdevtools-commands:custom-command-example"))
+
+    runtimeOnly(files("/home/windmueller/Projects/FirstSpirit/firstspirit/fs/build/libs/fs-isolated-runtime.jar"))
 }
 
 tasks.test {

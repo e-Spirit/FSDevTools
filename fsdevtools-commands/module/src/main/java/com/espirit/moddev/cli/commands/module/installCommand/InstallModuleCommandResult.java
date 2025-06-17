@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2024 Crownpeak Technology GmbH
+ * Copyright (C) 2025 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
 
 package com.espirit.moddev.cli.commands.module.installCommand;
 
-import com.espirit.moddev.cli.api.result.AbstractCommandResult;
+import com.espirit.moddev.cli.api.result.AbstractModuleCommandResult;
 import com.espirit.moddev.cli.api.result.ExecutionResults;
 import com.espirit.moddev.cli.api.result.Result;
 import com.espirit.moddev.cli.commands.module.utils.ModuleInstallationResult;
@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Implementation of a {@link Result} for the {@link InstallModuleCommand}.
  */
-public class InstallModuleCommandResult extends AbstractCommandResult {
+public class InstallModuleCommandResult extends AbstractModuleCommandResult {
 
 	private final String _pathToFsm;
 	private final ModuleInstallationResult _installationResult;
@@ -44,7 +44,7 @@ public class InstallModuleCommandResult extends AbstractCommandResult {
 	}
 
 	public InstallModuleCommandResult(@NotNull final String pathToFsm, @NotNull final Throwable throwable) {
-		super(throwable);
+		super(throwable, pathToFsm);
 		_pathToFsm = pathToFsm;
 		_installationResult = null;
 	}

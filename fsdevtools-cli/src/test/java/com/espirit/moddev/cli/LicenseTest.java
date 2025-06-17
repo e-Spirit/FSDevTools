@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2024 Crownpeak Technology GmbH
+ * Copyright (C) 2025 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,17 +39,17 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
-public class LicenseTest {
+class LicenseTest {
 
 	private static final String[] EXTENSIONS_TO_CHECK = new String[]{".java", ".gradle", ".groovy", ".properties"};
 	private static final String[] DIRS_TO_IGNORE = new String[]{".idea", ".git", ".gradle", "build", "gradle", "out"};
 	private static final String[] FILES_TO_IGNORE = new String[]{"/gradle.properties"};
 
-	private static final String LICENSE_YEAR = "2024";
+	private static final String LICENSE_YEAR = "2025";
 	private static final String LICENSE_VENDOR = "Crownpeak Technology GmbH";
 
 	@Test
-	public void testLicenses() throws IOException {
+	void testLicenses() throws IOException {
 		final ExecutionResults executionResults = testPath(Paths.get("").resolve("../"));
 		if (!executionResults.isEmpty()) {
 			final ArrayList<String> errors = new ArrayList<>();
@@ -94,7 +94,7 @@ public class LicenseTest {
 				if (file.isDirectory()) {
 					results.add(testPath(file.toPath()));
 				} else if (file.isFile()) {
-					final String fileContent = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+					final String fileContent = Files.readString(file.toPath());
 					if (!fileContent.contains("Copyright (C) " + LICENSE_YEAR + " " + LICENSE_VENDOR) || !fileContent.contains("http://www.apache.org/licenses/LICENSE-2.0")) {
 						results.add(new ExecutionResult() {
 							@Override

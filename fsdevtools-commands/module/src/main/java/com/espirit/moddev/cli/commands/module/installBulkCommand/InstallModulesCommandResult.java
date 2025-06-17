@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2024 Crownpeak Technology GmbH
+ * Copyright (C) 2025 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
 
 package com.espirit.moddev.cli.commands.module.installBulkCommand;
 
-import com.espirit.moddev.cli.api.result.AbstractCommandResult;
+import com.espirit.moddev.cli.api.result.AbstractModuleCommandResult;
 import com.espirit.moddev.cli.api.result.ExecutionResults;
 import com.espirit.moddev.cli.api.result.Result;
 import org.jetbrains.annotations.NotNull;
@@ -30,14 +30,14 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Implementation of a {@link Result} for the {@link InstallModulesCommand}.
  */
-public class InstallModulesCommandResult extends AbstractCommandResult {
+public class InstallModulesCommandResult extends AbstractModuleCommandResult {
 
 	public InstallModulesCommandResult(@NotNull final ExecutionResults results) {
 		super("There was at least one error during the installation of the modules!", results);
 	}
 
 	public InstallModulesCommandResult(@NotNull final Exception exception) {
-		super(exception);
+		super(exception, null);
 	}
 
 	@Override
