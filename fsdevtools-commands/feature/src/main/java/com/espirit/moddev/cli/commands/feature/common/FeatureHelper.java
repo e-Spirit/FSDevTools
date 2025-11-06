@@ -73,8 +73,8 @@ public class FeatureHelper {
 	/**
 	 * Returns a log string for the given parameters.
 	 *
-	 * @param featureName the name of the {@link de.espirit.firstspirit.store.access.feature.Feature}.
-	 * @param filePath    the path to the {@link File feature file}.
+	 * @param featureName the name of the feature.
+	 * @param filePath    the path to the {@link FeatureFile feature file}.
 	 * @param projectName the name of the {@link Project}.
 	 * @return a log string for the given parameter.
 	 */
