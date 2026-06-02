@@ -30,9 +30,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static com.espirit.moddev.cli.commands.service.common.ServiceInfo.ServiceStatus.STOPPED;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ServiceProcessCommandTest extends ServiceProcessCommandBaseTest<AbstractServiceCommand> {
@@ -57,7 +55,7 @@ public class ServiceProcessCommandTest extends ServiceProcessCommandBaseTest<Abs
 
 	@Test
 	public void defaultConstructorDoesntFail() {
-		assertThat("Expect not null", testling, is(notNullValue()));
+		assertThat(testling).as("Expect not null").isNotNull();
 	}
 
 	@Test
@@ -65,9 +63,9 @@ public class ServiceProcessCommandTest extends ServiceProcessCommandBaseTest<Abs
 
 		ServiceProcessResult result = testling.call();
 
-		assertThat(result.get().get(0).getServiceName(), is("RunningTestService"));
-		assertThat(result.get().get(1).getServiceName(), is("StoppedTestService"));
-		assertThat(result.get().get(2).getServiceName(), is("StoppedTestService2"));
+		assertThat(result.get().get(0).getServiceName()).isEqualTo("RunningTestService");
+		assertThat(result.get().get(1).getServiceName()).isEqualTo("StoppedTestService");
+		assertThat(result.get().get(2).getServiceName()).isEqualTo("StoppedTestService2");
 	}
 
 	@Test
@@ -93,7 +91,7 @@ public class ServiceProcessCommandTest extends ServiceProcessCommandBaseTest<Abs
 		testling.setServiceNames("TestService");
 		ServiceProcessResult result = testling.call();
 
-		assertThat(result.get().get(0).getServiceName(), is("TestService"));
+		assertThat(result.get().get(0).getServiceName()).isEqualTo("TestService");
 	}
 
 	@Test
@@ -111,8 +109,7 @@ public class ServiceProcessCommandTest extends ServiceProcessCommandBaseTest<Abs
 		testling.setServiceNames("TestService, TestService3");
 		ServiceProcessResult result = testling.call();
 
-		assertThat(result.get().get(0).getServiceName(), is("TestService"));
-		assertThat(result.get().get(1).getServiceName(), is("TestService3"));
+		assertThat(result.get().get(0).getServiceName()).isEqualTo("TestService");
+		assertThat(result.get().get(1).getServiceName()).isEqualTo("TestService3");
 	}
 }
-

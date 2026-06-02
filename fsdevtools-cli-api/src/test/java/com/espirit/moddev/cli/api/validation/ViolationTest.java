@@ -25,9 +25,7 @@ package com.espirit.moddev.cli.api.validation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ViolationTest {
 
@@ -43,14 +41,14 @@ public class ViolationTest {
 		Violation copy = new Violation("field", "is wrong!");
 		Violation newOne = new Violation("field", "is blank!");
 
-		assertThat("Expect identity", _testling, is(_testling));
-		assertThat("Expect identity", _testling, is(copy));
-		assertThat("Expect non-identity", _testling, is(not(newOne)));
+		assertThat(_testling).as("Expect identity").isEqualTo(_testling);
+		assertThat(_testling).as("Expect identity").isEqualTo(copy);
+		assertThat(_testling).as("Expect non-identity").isNotEqualTo(newOne);
 	}
 
 	@Test
 	public void testToString() throws Exception {
-		assertThat(_testling.toString(), is("field is wrong!"));
+		assertThat(_testling.toString()).isEqualTo("field is wrong!");
 	}
 
 }

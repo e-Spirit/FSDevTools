@@ -28,9 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.EnumSet;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ProjectPropertiesIdentifierTest {
 
@@ -55,7 +53,7 @@ public class ProjectPropertiesIdentifierTest {
 		enumSet.add(PropertiesTransportOptions.ProjectPropertyType.LANGUAGES);
 		ProjectPropertiesIdentifier notEqualIdentifier = new ProjectPropertiesIdentifier(enumSet);
 
-		assertThat("Expected two equal project properties identifier", identifier, equalTo(equalIdentifier));
-		assertThat("Expected two different project properties identifier", identifier, not(equalTo(notEqualIdentifier)));
+		assertThat(identifier).as("Expected two equal project properties identifier").isEqualTo(equalIdentifier);
+		assertThat(identifier).as("Expected two different project properties identifier").isNotEqualTo(notEqualIdentifier);
 	}
 }

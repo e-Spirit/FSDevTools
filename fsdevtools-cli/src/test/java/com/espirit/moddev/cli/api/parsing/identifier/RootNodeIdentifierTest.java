@@ -26,9 +26,7 @@ import de.espirit.firstspirit.access.store.IDProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class RootNodeIdentifierTest {
 
@@ -44,8 +42,8 @@ public class RootNodeIdentifierTest {
 
 		RootNodeIdentifier anUnequalIdentifier = new RootNodeIdentifier(IDProvider.UidType.CONTENTSTORE);
 
-		assertThat("Expected two equal root node identifiers for equal uidType", identifier, equalTo(equalIdentifier));
-		assertThat("Expected two different root node identifiers to not be equal", identifier, not(equalTo(anUnequalIdentifier)));
+		assertThat(identifier).as("Expected two equal root node identifiers for equal uidType").isEqualTo(equalIdentifier);
+		assertThat(identifier).as("Expected two different root node identifiers to not be equal").isNotEqualTo(anUnequalIdentifier);
 	}
 
 	@Test

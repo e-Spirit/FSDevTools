@@ -37,8 +37,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CliErrorTest {
 
@@ -47,13 +46,13 @@ public class CliErrorTest {
 
 	@Test
 	public void testToString() throws Exception {
-		assertThat("Expecting a specific value", CliError.AUTHENTICATION.toString(), containsString("code " + CliError.AUTHENTICATION.getErrorCode()));
+		assertThat(CliError.AUTHENTICATION.toString()).as("Expecting a specific value").contains("code " + CliError.AUTHENTICATION.getErrorCode());
 	}
 
 	@ParameterizedTest
 	@EnumSource(CliError.class)
 	public void testGetMessageNullConfig(CliError testCase) {
-		assertThat("Expect non-null value", testCase.getMessage(null), is(notNullValue()));
+		assertThat(testCase.getMessage(null)).as("Expect non-null value").isNotNull();
 	}
 
 	@ParameterizedTest
@@ -128,8 +127,8 @@ public class CliErrorTest {
 
 		};
 		final Object[] args = {config.getHost(), config.getPort(), config.getConnectionMode(), config.getUser(), config.getPassword()};
-		assertThat("Expect non-null value", testCase.getMessage(config),
-				is(testCase.toString() + ": " + MessageFormat.format(bundle.getString(testCase.name()), args)));
+		assertThat(testCase.getMessage(config)).as("Expect non-null value")
+				.isEqualTo(testCase.toString() + ": " + MessageFormat.format(bundle.getString(testCase.name()), args));
 	}
 
 }

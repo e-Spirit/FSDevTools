@@ -22,11 +22,14 @@
 
 package com.espirit.moddev.cli.api.configuration;
 
+import com.espirit.moddev.connection.FsConnectionCompression;
+import com.espirit.moddev.connection.FsConnectionEncryption;
 import com.espirit.moddev.connection.FsConnectionType;
 import de.espirit.firstspirit.access.project.ProjectScriptContext;
 import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.io.FileSystem;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Interface that defines means to access the configuration values.
@@ -88,6 +91,28 @@ public interface Config {
 	 * @return the password used to authenticate against the FirstSpirit server.
 	 */
 	String getPassword();
+
+	/**
+	 * Get the encryption mode for the FirstSpirit connection.
+	 * When {@code null}, FirstSpirit's per-mode default encryption is used.
+	 *
+	 * @return the {@link FsConnectionEncryption} to use, or {@code null} to use the FirstSpirit default
+	 */
+	@Nullable
+	default FsConnectionEncryption getConnectionEncryption() {
+		return null;
+	}
+
+	/**
+	 * Get the compression mode for the FirstSpirit connection.
+	 * When {@code null}, FirstSpirit's per-mode default compression is used.
+	 *
+	 * @return the {@link FsConnectionCompression} to use, or {@code null} to use the FirstSpirit default
+	 */
+	@Nullable
+	default FsConnectionCompression getConnectionCompression() {
+		return null;
+	}
 
 	/**
 	 * Get the path to the result file.

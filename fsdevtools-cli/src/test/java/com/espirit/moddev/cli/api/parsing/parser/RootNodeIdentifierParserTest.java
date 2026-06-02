@@ -35,9 +35,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.isA;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -72,14 +70,14 @@ public class RootNodeIdentifierParserTest {
 	@Test
 	public void testParseStoreRootRequestWithExistingStore() {
 		final List<RootNodeIdentifier> list = testling.parse(Arrays.asList("root:templatestore"));
-		assertThat(list.contains(new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE)), equalTo(true));
+		assertThat(list).contains(new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE));
 	}
 
 	@ParameterizedTest
 	@ValueSource(strings = {"ROOT : contentstore", "contentstore", "globalstore", "templatestore", "pagestore", "sitestore"})
 	public void testParseNakedStoreRoot(@NotNull final String uid) {
 		final List<RootNodeIdentifier> list = testling.parse(Collections.singletonList(uid));
-		assertThat(list.size(), equalTo(1));
-		assertThat(list.get(0), isA(RootNodeIdentifier.class));
+		assertThat(list).hasSize(1);
+		assertThat(list.get(0)).isInstanceOf(RootNodeIdentifier.class);
 	}
 }

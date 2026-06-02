@@ -39,7 +39,6 @@ dependencyResolutionManagement {
             library("commons-lang3", "org.apache.commons:commons-lang3:3.17.0")
             library("commons-compress", "org.apache.commons:commons-compress:1.27.1")
             library("guava", "com.google.guava:guava:33.4.7-jre")
-            library("hamcrest", "org.hamcrest:hamcrest:3.0")
             library("jackson-databind", "com.fasterxml.jackson.core:jackson-databind:2.18.3")
             library("slf4j-api", "org.slf4j:slf4j-api:2.0.17")
         }

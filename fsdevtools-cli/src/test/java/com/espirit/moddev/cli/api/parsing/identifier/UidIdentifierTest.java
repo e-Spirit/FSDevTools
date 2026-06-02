@@ -37,9 +37,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -71,9 +69,9 @@ public class UidIdentifierTest {
 		UidIdentifier anUnequalUid = new UidIdentifier(UidMapping.PAGEREF, "another_reference_name");
 		UidIdentifier anotherUnequalUid = new UidIdentifier(UidMapping.FORMATTEMPLATE, "reference_name");
 
-		assertThat("Expected two equal full qualified uids for equal template store and uid", uid, equalTo(anEqualUid));
-		assertThat("Expected two different full qualified uids for non equal uid", uid, not(equalTo(anUnequalUid)));
-		assertThat("Expected two different full qualified uids for non equal template store and same uid", uid, not(equalTo(anotherUnequalUid)));
+		assertThat(uid).as("Expected two equal full qualified uids for equal template store and uid").isEqualTo(anEqualUid);
+		assertThat(uid).as("Expected two different full qualified uids for non equal uid").isNotEqualTo(anUnequalUid);
+		assertThat(uid).as("Expected two different full qualified uids for non equal template store and same uid").isNotEqualTo(anotherUnequalUid);
 	}
 
 

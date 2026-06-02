@@ -45,7 +45,7 @@ import java.io.IOException;
 /**
  * Default builder for FirstSpirit {@link Connection}s.
  */
-public class FsConnection implements Connection {
+public class FsConnection {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FsConnection.class);
 
@@ -138,13 +138,11 @@ public class FsConnection implements Connection {
 	}
 
 	@NotNull
-	@Override
 	public <T> T getService(@NotNull final Class<T> serviceClass) throws ServiceNotFoundException {
 		verifyConnection();
 		return _connection.getService(serviceClass);
 	}
 
-	@Override
 	public void close() throws IOException {
 		if (_connection != null) {
 			_connection.close();

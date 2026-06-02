@@ -36,8 +36,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -66,13 +65,13 @@ public class CliExceptionTest {
 	@MethodSource("provideParameters")
 	public void testToString(final CliError error) throws Exception {
 		testling = new CliException(error, config, cause);
-		assertThat("Expected a specific value", testling.toString(), is(error.getMessage(config)));
+		assertThat(testling.toString()).as("Expected a specific value").isEqualTo(error.getMessage(config));
 	}
 
 	@Test
 	public void testToStringWithException() throws Exception {
 		testling = new CliException(cause);
-		assertThat("Expected a specific value", testling.toString(), is("JUnit"));
+		assertThat(testling.toString()).as("Expected a specific value").isEqualTo("JUnit");
 	}
 
 }

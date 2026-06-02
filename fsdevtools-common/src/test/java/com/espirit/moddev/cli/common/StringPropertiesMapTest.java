@@ -22,7 +22,6 @@
 
 package com.espirit.moddev.cli.common;
 
-import org.hamcrest.Matchers;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,7 +32,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class StringPropertiesMapTest {
 
@@ -50,31 +49,31 @@ public class StringPropertiesMapTest {
 		StringPropertiesMap constructed = new StringPropertiesMap(property);
 
 		final Collection<String> values = constructed.values();
-		assertThat("Wrong count of parsed entries: " + property, values, Matchers.hasSize(2));
-		assertThat("Wrong parsed values " + values + " for " + property, values, Matchers.containsInAnyOrder("123", "456"));
+		assertThat(values).as("Wrong count of parsed entries: " + property).hasSize(2);
+		assertThat(values).as("Wrong parsed values " + values + " for " + property).containsExactlyInAnyOrder("123", "456");
 
 		final Set<String> keys = constructed.keySet();
-		assertThat("Wrong parsed keys:  " + keys + " for " + property, keys, Matchers.containsInAnyOrder("abc", "def"));
+		assertThat(keys).as("Wrong parsed keys:  " + keys + " for " + property).containsExactlyInAnyOrder("abc", "def");
 	}
 
 	@ParameterizedTest
 	@ValueSource(strings = {"abc=123;def=456", "abc=123 def=456"})
 	public void testInvalidStringConstructor(@NotNull final String property) {
 		StringPropertiesMap constructed = new StringPropertiesMap(property);
-		assertThat("Wrong count of parsed entries!", constructed.values(), Matchers.hasSize(1));
+		assertThat(constructed.values()).as("Wrong count of parsed entries!").hasSize(1);
 	}
 
 	@Test
 	public void testParameterlessConstructor() {
 		StringPropertiesMap map = new StringPropertiesMap();
-		assertThat("Parameterless constructor should create empty map!", map.values(), Matchers.is(Matchers.empty()));
+		assertThat(map.values()).as("Parameterless constructor should create empty map!").isEmpty();
 	}
 
 	@ParameterizedTest
 	@ValueSource(strings = {"", " ", "\t"})
 	public void testConstructorWithIllegalArgument(@NotNull final String source) {
 		StringPropertiesMap constructed = new StringPropertiesMap(source);
-		assertThat("Illegal constructor parameter should create empty map!", constructed.values(), Matchers.is(Matchers.empty()));
+		assertThat(constructed.values()).as("Illegal constructor parameter should create empty map!").isEmpty();
 	}
 
 }

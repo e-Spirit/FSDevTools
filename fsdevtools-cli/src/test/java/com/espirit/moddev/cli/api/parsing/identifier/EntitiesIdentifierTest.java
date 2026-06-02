@@ -25,9 +25,7 @@ package com.espirit.moddev.cli.api.parsing.identifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class EntitiesIdentifierTest {
 
@@ -43,8 +41,8 @@ public class EntitiesIdentifierTest {
 
 		EntitiesIdentifier anUnequalIdentifier = new EntitiesIdentifier("news");
 
-		assertThat("Expected an entities identifier to be equal to itself", identifier, equalTo(identifier));
-		assertThat("Expected two equal entities identifiers for equal uidType", identifier, equalTo(equalIdentifier));
-		assertThat("Expected two different entities identifiers to not be equal", identifier, not(equalTo(anUnequalIdentifier)));
+		assertThat(identifier).as("Expected an entities identifier to be equal to itself").isEqualTo(identifier);
+		assertThat(identifier).as("Expected two equal entities identifiers for equal uidType").isEqualTo(equalIdentifier);
+		assertThat(identifier).as("Expected two different entities identifiers to not be equal").isNotEqualTo(anUnequalIdentifier);
 	}
 }

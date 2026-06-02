@@ -210,7 +210,6 @@ subprojects {
         testImplementation(group = "org.junit.jupiter", name = "junit-jupiter-params")
         testRuntimeOnly(group = "org.junit.jupiter", name = "junit-jupiter-engine")
         testRuntimeOnly(group = "org.junit.platform", name = "junit-platform-launcher")
-        testImplementation(rootProject.libs.hamcrest)
         testImplementation(rootProject.testlibs.mockito)
         testImplementation(rootProject.testlibs.assertj)
         testImplementation(rootProject.libs.jetbrains.annotations)

@@ -31,9 +31,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
@@ -60,10 +58,10 @@ public class SchemaIdentifierTest {
 		final SchemaIdentifier anUnequalIdentifier = new SchemaIdentifier("news", optionsMap);
 		final SchemaIdentifier anotherUnequalIdentifier = new SchemaIdentifier("products", optionsMap2);
 
-		assertThat("Expected a schema identifier to be equal to itself", identifier, equalTo(identifier));
-		assertThat("Expected two equal schema identifiers for equal uidType", identifier, equalTo(equalIdentifier));
-		assertThat("Expected two different schema identifiers to not be equal", identifier, not(equalTo(anUnequalIdentifier)));
-		assertThat("Expected schema identifiers with different options to not be equal", identifier, not(equalTo(anotherUnequalIdentifier)));
+		assertThat(identifier).as("Expected a schema identifier to be equal to itself").isEqualTo(identifier);
+		assertThat(identifier).as("Expected two equal schema identifiers for equal uidType").isEqualTo(equalIdentifier);
+		assertThat(identifier).as("Expected two different schema identifiers to not be equal").isNotEqualTo(anUnequalIdentifier);
+		assertThat(identifier).as("Expected schema identifiers with different options to not be equal").isNotEqualTo(anotherUnequalIdentifier);
 	}
 
 

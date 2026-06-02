@@ -33,8 +33,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RegistryBasedParserTest {
@@ -96,10 +95,10 @@ public class RegistryBasedParserTest {
 		List<String> testIdentifiers = Arrays.asList("root:templatestore", "mediafolder:layout", "entities:news", "schema:products");
 		final List<Identifier> list = testling.parse(testIdentifiers);
 		assertEquals(testIdentifiers.size(), list.size(), "List should contain " + testIdentifiers.size() + " elements.");
-		assertThat(list.contains(new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE)), equalTo(true));
-		assertThat(list.contains(new UidIdentifier(UidMapping.MEDIAFOLDER, "layout")), equalTo(true));
-		assertThat(list.contains(new EntitiesIdentifier("news")), equalTo(true));
-		assertThat(list.contains(new SchemaIdentifier("products", Collections.emptyMap())), equalTo(true));
+		assertThat(list).contains(new RootNodeIdentifier(IDProvider.UidType.TEMPLATESTORE));
+		assertThat(list).contains(new UidIdentifier(UidMapping.MEDIAFOLDER, "layout"));
+		assertThat(list).contains(new EntitiesIdentifier("news"));
+		assertThat(list).contains(new SchemaIdentifier("products", Collections.emptyMap()));
 	}
 
 	@Test

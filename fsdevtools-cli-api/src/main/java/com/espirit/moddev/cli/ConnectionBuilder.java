@@ -25,6 +25,8 @@ package com.espirit.moddev.cli;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.api.validation.DefaultConnectionConfigValidator;
 import com.espirit.moddev.cli.api.validation.Violation;
+import com.espirit.moddev.connection.FsConnectionCompression;
+import com.espirit.moddev.connection.FsConnectionEncryption;
 import com.espirit.moddev.connection.FsConnectionType;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ConnectionManager;
@@ -103,6 +105,16 @@ public class ConnectionBuilder {
 			ConnectionManager.setUseHttps(false);
 		}
 
+		// apply encryption / compression overrides only when explicitly configured
+		final FsConnectionEncryption encryption = _config.getConnectionEncryption();
+		if (encryption != null) {
+			ConnectionManager.setEncryption(encryption.getEncryptionValue());
+		}
+		final FsConnectionCompression compression = _config.getConnectionCompression();
+		if (compression != null) {
+			ConnectionManager.setCompression(compression.getCompressionValue());
+		}
+
 		// if set: use proxy for http / https
 		if (!_config.getHttpProxyHost().isEmpty()) {
 			if (_config.getConnectionMode() == FsConnectionType.HTTP || _config.getConnectionMode() == FsConnectionType.HTTPS) {
@@ -118,8 +130,7 @@ public class ConnectionBuilder {
 		final String servletZone = _config.getServletZone();
 
 		// logging
-		final Object[] args = {host, port, user};
-		LOGGER.debug("Create connection for FirstSpirit server at '{}:{}' with user '{}'...", args);
+		LOGGER.debug("Create connection for FirstSpirit server at '{}:{}' with user '{}'...", host, port, user);
 
 		// create connection
 		final Connection connection = ConnectionManager.getConnection(host, port, connectionMode.getFsMode(), servletZone, user, _config.getPassword());

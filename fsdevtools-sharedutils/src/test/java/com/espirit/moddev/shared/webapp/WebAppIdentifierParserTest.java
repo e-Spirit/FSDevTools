@@ -31,8 +31,7 @@ import java.util.List;
 import static com.espirit.moddev.shared.webapp.WebAppIdentifier.forGlobalWebApp;
 import static com.espirit.moddev.shared.webapp.WebAppIdentifier.forScope;
 import static de.espirit.firstspirit.module.WebEnvironment.WebScope.PREVIEW;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -71,6 +70,6 @@ public class WebAppIdentifierParserTest {
 	public void testExtractWebScopes() throws Exception {
 		String testWebAppScopes = "preview,staging";
 		List<WebAppIdentifier> extractedScopes = parser.extractWebScopes(testWebAppScopes);
-		assertThat(extractedScopes, contains(WebAppIdentifier.PREVIEW, WebAppIdentifier.STAGING));
+		assertThat(extractedScopes).containsExactly(WebAppIdentifier.PREVIEW, WebAppIdentifier.STAGING);
 	}
 }

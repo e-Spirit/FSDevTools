@@ -30,10 +30,7 @@ import org.junit.jupiter.api.Test;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 
@@ -55,8 +52,8 @@ public class TestProjectCommandTest {
 	public void testCall() throws Exception {
 		final Result result = testling.call();
 
-		assertThat("Expect normal execution", result.isError(), is(FALSE));
-		assertThat("Expect null value", result.getError(), is(nullValue()));
+		assertThat(result.isError()).as("Expect normal execution").isEqualTo(FALSE);
+		assertThat(result.getError()).as("Expect null value").isNull();
 	}
 
 	@Test
@@ -70,19 +67,18 @@ public class TestProjectCommandTest {
 
 		final Result result = testling.call();
 
-		assertThat("Expect abnormal execution", result.isError(), is(TRUE));
-		assertThat("Expect non-null value", result.getError(), is(notNullValue()));
+		assertThat(result.isError()).as("Expect abnormal execution").isEqualTo(TRUE);
+		assertThat(result.getError()).as("Expect non-null value").isNotNull();
 	}
 
 	@Test
 	public void testNeedsContext() throws Exception {
-		assertThat("This command creates his own context to initialize connection therefore doesn't need a context from outside",
-				testling.needsContext(), is(FALSE));
+		assertThat(testling.needsContext()).as("This command creates his own context to initialize connection therefore doesn't need a context from outside").isEqualTo(FALSE);
 	}
 
 	@Test
 	public void testCreatingProjectIfMissing() throws Exception {
-		assertThat("Should not create missing projects", testling.isCreatingProjectIfMissing(), is(FALSE));
+		assertThat(testling.isCreatingProjectIfMissing()).as("Should not create missing projects").isEqualTo(FALSE);
 	}
 
 }

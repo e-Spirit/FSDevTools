@@ -41,10 +41,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -119,7 +116,7 @@ public class CliContextImplTest {
 		try (TestContext context = new TestContext(clientConfig)) {
 			firstSpiritConnection = context.getConnection();
 		}
-		assertThat("Expect a non-null value", firstSpiritConnection, is(notNullValue()));
+		assertThat(firstSpiritConnection).as("Expect a non-null value").isNotNull();
 		verify(firstSpiritConnection, times(2)).connect();
 		verify(firstSpiritConnection, times(1)).close();
 	}
@@ -127,19 +124,19 @@ public class CliContextImplTest {
 	@ParameterizedTest
 	@EnumSource(value = BaseContext.Env.class, names = {"PREVIEW", "WEBEDIT", "DROP", "FS_BUTTON"})
 	public void testIsRest(final BaseContext.Env environment) throws Exception {
-		assertThat("Expected false", testling.is(environment), is(Boolean.FALSE));
+		assertThat(testling.is(environment)).as("Expected false").isEqualTo(Boolean.FALSE);
 	}
 
 	@Test
 	public void testIsHeadless() throws Exception {
-		assertThat("Expected true", testling.is(BaseContext.Env.HEADLESS), is(Boolean.TRUE));
+		assertThat(testling.is(BaseContext.Env.HEADLESS)).as("Expected true").isEqualTo(Boolean.TRUE);
 	}
 
 	@Test
 	public void testRequireSpecialist() {
 		when(testling.getSpecialistsBroker()).thenReturn(specialistsBroker);
 		final LanguageAgent languageAgent = testling.requireSpecialist(LanguageAgent.TYPE);
-		assertThat("Expected a non-null value", languageAgent, is(notNullValue()));
+		assertThat(languageAgent).as("Expected a non-null value").isNotNull();
 		verify(specialistsBroker, times(1)).requireSpecialist(LanguageAgent.TYPE);
 	}
 
@@ -149,7 +146,7 @@ public class CliContextImplTest {
 			testling = spy(new TestContext(clientConfig));
 			when(testling.getSpecialistsBroker()).thenReturn(null);
 			final LanguageAgent languageAgent = testling.requireSpecialist(LanguageAgent.TYPE);
-			assertThat("Expected a null value for a null specialistBroker", languageAgent, is(nullValue()));
+			assertThat(languageAgent).as("Expected a null value for a null specialistBroker").isNull();
 		});
 	}
 

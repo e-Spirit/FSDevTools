@@ -25,11 +25,14 @@ package com.espirit.moddev.cli.configuration;
 import com.espirit.moddev.cli.CliConstants;
 import com.espirit.moddev.cli.api.configuration.Config;
 import com.espirit.moddev.cli.extsync.SyncDirectoryFactory;
+import com.espirit.moddev.connection.FsConnectionCompression;
+import com.espirit.moddev.connection.FsConnectionEncryption;
 import com.espirit.moddev.connection.FsConnectionType;
 import com.espirit.moddev.util.FsUtil;
 import com.github.rvesse.airline.annotations.Option;
 import com.github.rvesse.airline.annotations.OptionType;
 import com.github.rvesse.airline.annotations.restrictions.AllowedRawValues;
+import org.jetbrains.annotations.Nullable;
 import de.espirit.firstspirit.access.project.ProjectScriptContext;
 import de.espirit.firstspirit.io.FileHandle;
 import de.espirit.firstspirit.io.FileSystem;
@@ -67,6 +70,14 @@ public class GlobalConfig implements Config {
 	@Option(type = OptionType.GLOBAL, name = {"-c", "--conn-mode"}, description = "FirstSpirit connection mode. Default is HTTP.", title = "mode")
 	@AllowedRawValues(allowedValues = {"HTTP", "HTTPS", "SOCKET"})
 	private FsConnectionType _fsMode;
+
+	@Option(type = OptionType.GLOBAL, name = {"--conn-encryption"}, description = "Encryption mode for the FirstSpirit connection (NONE, TLS, CHACHA20). Default is the FirstSpirit per-mode default.", title = "encryption")
+	@AllowedRawValues(allowedValues = {"NONE", "TLS", "CHACHA20"})
+	private FsConnectionEncryption _connectionEncryption;
+
+	@Option(type = OptionType.GLOBAL, name = {"--conn-compression"}, description = "Compression mode for the FirstSpirit connection (NONE, DEFLATE, DEFLATE_SPEED, DEFLATE_BEST, ZSTD). Default is the FirstSpirit per-mode default.", title = "compression")
+	@AllowedRawValues(allowedValues = {"NONE", "DEFLATE", "DEFLATE_SPEED", "DEFLATE_BEST", "ZSTD"})
+	private FsConnectionCompression _connectionCompression;
 
 	@Option(type = OptionType.GLOBAL, name = {"-port"}, description = "FirstSpirit host's port. Default is 8000.", title = "port")
 	private Integer _port;
@@ -209,6 +220,30 @@ public class GlobalConfig implements Config {
 	}
 
 	@Override
+	@Nullable
+	public FsConnectionEncryption getConnectionEncryption() {
+		if (_connectionEncryption == null) {
+			if (getEnvironment().containsKey(CliConstants.KEY_FS_ENCRYPTION.value())) {
+				return FsConnectionEncryption.valueOf(getEnvironment().get(CliConstants.KEY_FS_ENCRYPTION.value()).trim().toUpperCase(Locale.ROOT));
+			}
+			return null;
+		}
+		return _connectionEncryption;
+	}
+
+	@Override
+	@Nullable
+	public FsConnectionCompression getConnectionCompression() {
+		if (_connectionCompression == null) {
+			if (getEnvironment().containsKey(CliConstants.KEY_FS_COMPRESSION.value())) {
+				return FsConnectionCompression.valueOf(getEnvironment().get(CliConstants.KEY_FS_COMPRESSION.value()).trim().toUpperCase(Locale.ROOT));
+			}
+			return null;
+		}
+		return _connectionCompression;
+	}
+
+	@Override
 	public String getUser() {
 		if (_user == null || _user.isEmpty()) {
 			boolean environmentContainsUser = getEnvironment().containsKey(CliConstants.KEY_FS_USER.value());
@@ -327,6 +362,24 @@ public class GlobalConfig implements Config {
 	 */
 	public void setFsMode(FsConnectionType fsMode) {
 		_fsMode = fsMode;
+	}
+
+	/**
+	 * Set the encryption mode for the FirstSpirit connection.
+	 *
+	 * @param connectionEncryption the {@link FsConnectionEncryption} to use, or {@code null} to use the FirstSpirit default
+	 */
+	public void setConnectionEncryption(@Nullable final FsConnectionEncryption connectionEncryption) {
+		_connectionEncryption = connectionEncryption;
+	}
+
+	/**
+	 * Set the compression mode for the FirstSpirit connection.
+	 *
+	 * @param connectionCompression the {@link FsConnectionCompression} to use, or {@code null} to use the FirstSpirit default
+	 */
+	public void setConnectionCompression(@Nullable final FsConnectionCompression connectionCompression) {
+		_connectionCompression = connectionCompression;
 	}
 
 	/**

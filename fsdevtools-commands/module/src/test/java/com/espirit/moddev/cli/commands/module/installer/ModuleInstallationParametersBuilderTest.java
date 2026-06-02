@@ -31,8 +31,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -49,8 +48,8 @@ public class ModuleInstallationParametersBuilderTest {
 	@Test
 	public void getWebScopeFileMap() throws Exception {
 		String testWebAppConfigurationFiles = "staging=temp/myConfig.ini,preview=temp/myConfig2.ini";
-		assertThat(builder.getWebScopeFileMap(testWebAppConfigurationFiles).get(WebAppIdentifier.STAGING), is(new File("temp/myConfig.ini")));
-		assertThat(builder.getWebScopeFileMap(testWebAppConfigurationFiles).get(WebAppIdentifier.PREVIEW), is(new File("temp/myConfig2.ini")));
+		assertThat(builder.getWebScopeFileMap(testWebAppConfigurationFiles).get(WebAppIdentifier.STAGING)).isEqualTo(new File("temp/myConfig.ini"));
+		assertThat(builder.getWebScopeFileMap(testWebAppConfigurationFiles).get(WebAppIdentifier.PREVIEW)).isEqualTo(new File("temp/myConfig2.ini"));
 	}
 
 	@Test
@@ -70,8 +69,8 @@ public class ModuleInstallationParametersBuilderTest {
 	@Test
 	public void getStringFilesMap() throws Exception {
 		Map<String, File> stringFilesMap = builder.getStringFilesMap("staging=temp/myConfig.ini,preview=temp/myConfig2.ini");
-		assertThat(stringFilesMap.get("staging"), is(new File("temp/myConfig.ini")));
-		assertThat(stringFilesMap.get("preview"), is(new File("temp/myConfig2.ini")));
+		assertThat(stringFilesMap.get("staging")).isEqualTo(new File("temp/myConfig.ini"));
+		assertThat(stringFilesMap.get("preview")).isEqualTo(new File("temp/myConfig2.ini"));
 	}
 
 	@Test

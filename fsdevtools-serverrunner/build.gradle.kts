@@ -24,5 +24,4 @@ dependencies {
     implementation(project(":fsdevtools-sharedutils"))
 
     implementation(libs.log4j.slf4j)
-    implementation(libs.hamcrest)
 }

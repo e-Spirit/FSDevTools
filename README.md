@@ -126,7 +126,6 @@ This is especially the case for the following classes/libraries:
 - [org.apache.commons:commons-lang3](https://github.com/apache/commons-lang)
 - [org.apache.logging.log4j:log4j-core](https://github.com/apache/logging-log4j2)
 - [org.apache.logging.log4j:log4j-slf4j-impl](https://github.com/apache/logging-log4j2)
-- [org.hamcrest:java-hamcrest](https://github.com/hamcrest/JavaHamcrest)
 - [com.github.rvesse:airline](https://github.com/rvesse/airline)
 
 ## Legal Notices

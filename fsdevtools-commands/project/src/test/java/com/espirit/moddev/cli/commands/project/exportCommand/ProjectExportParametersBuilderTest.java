@@ -26,9 +26,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for ProjectExportParametersBuilder.
@@ -47,7 +45,7 @@ public class ProjectExportParametersBuilderTest {
 	 */
 	@Test
 	public void testDefaultConstructor() {
-		assertThat("Expect not null.", testling, is(notNullValue()));
+		assertThat(testling).as("Expect not null.").isNotNull();
 	}
 
 	/**
@@ -73,6 +71,6 @@ public class ProjectExportParametersBuilderTest {
 		ProjectExportParameters parameters = testling.build();
 
 		// Act
-		assertThat("Expect not null.", parameters, is(notNullValue()));
+		assertThat(parameters).as("Expect not null.").isNotNull();
 	}
 }

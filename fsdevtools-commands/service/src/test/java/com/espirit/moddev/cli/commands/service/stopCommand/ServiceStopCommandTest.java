@@ -31,8 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.espirit.moddev.cli.commands.service.common.ServiceInfo.ServiceStatus.RUNNING;
 import static com.espirit.moddev.cli.commands.service.common.ServiceInfo.ServiceStatus.STOPPED;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -58,8 +57,8 @@ public class ServiceStopCommandTest extends ServiceProcessCommandBaseTest<Servic
 
 	@Test
 	public void allStoppedServicesAreReturned() {
-		assertThat(result.get(), hasItem(new ServiceInfo("StoppedTestService", STOPPED, STOPPED)));
-		assertThat(result.get(), hasItem(new ServiceInfo("StoppedTestService2", STOPPED, STOPPED)));
+		assertThat(result.get()).contains(new ServiceInfo("StoppedTestService", STOPPED, STOPPED));
+		assertThat(result.get()).contains(new ServiceInfo("StoppedTestService2", STOPPED, STOPPED));
 	}
 
 	@Test
@@ -69,7 +68,7 @@ public class ServiceStopCommandTest extends ServiceProcessCommandBaseTest<Servic
 
 	@Test
 	public void allRunningServicesAreReturned() {
-		assertThat(result.get(), hasItem(new ServiceInfo("RunningTestService", RUNNING, STOPPED)));
+		assertThat(result.get()).contains(new ServiceInfo("RunningTestService", RUNNING, STOPPED));
 	}
 
 	@Test
@@ -90,4 +89,3 @@ public class ServiceStopCommandTest extends ServiceProcessCommandBaseTest<Servic
 		assertEquals(result.getError().getClass(), ServiceNotFoundException.class);
 	}
 }
-

@@ -26,7 +26,6 @@ import com.espirit.moddev.cli.exception.LayerMappingException;
 import de.espirit.firstspirit.access.store.templatestore.Schema;
 import de.espirit.firstspirit.transport.LayerMapper;
 import de.espirit.firstspirit.transport.LayerMapper.MappingContext;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,7 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 public class SchemaUidToNameBasedLayerMapperTest {
@@ -83,11 +82,11 @@ public class SchemaUidToNameBasedLayerMapperTest {
 
 		final LayerMapper testling = SchemaUidToNameBasedLayerMapper.from(map);
 
-		assertThat(testling, Matchers.is(Matchers.notNullValue()));
+		assertThat(testling).isNotNull();
 		if (SchemaUidToNameBasedLayerMapper.CREATE_NEW.equals(targetLayer)) {
-			assertThat(testling.getLayer(context), Matchers.is(LayerMapper.CREATE_NEW_DEFAULT_LAYER));
+			assertThat(testling.getLayer(context)).isEqualTo(LayerMapper.CREATE_NEW_DEFAULT_LAYER);
 		} else {
-			assertThat(testling.getLayer(context), Matchers.is(targetLayer));
+			assertThat(testling.getLayer(context)).isEqualTo(targetLayer);
 		}
 	}
 
@@ -97,7 +96,7 @@ public class SchemaUidToNameBasedLayerMapperTest {
 			Mockito.when(schema.getUid()).thenReturn("my_chema");
 
 			final LayerMapper testling = SchemaUidToNameBasedLayerMapper.empty();
-			assertThat(testling, Matchers.is(Matchers.notNullValue()));
+			assertThat(testling).isNotNull();
 
 			// if no mapping is provided it will raise an exception to signal mis-configuration
 			testling.getLayer(context);

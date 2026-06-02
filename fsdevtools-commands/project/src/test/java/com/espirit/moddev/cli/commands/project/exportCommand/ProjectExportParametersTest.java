@@ -26,10 +26,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static com.espirit.moddev.cli.commands.project.exportCommand.ProjectExportParameters.UNLIMITED_REVISIONS;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for ProjectExportParameters.
@@ -48,7 +45,7 @@ public class ProjectExportParametersTest {
 
 		testling = new ProjectExportParameters(validProjectName, validProjectExportPath, true, false, UNLIMITED_REVISIONS, true);
 
-		assertThat("Expect equal.", testling, is(notNullValue()));
+		assertThat(testling).as("Expect equal.").isNotNull();
 	}
 
 	/**
@@ -116,7 +113,7 @@ public class ProjectExportParametersTest {
 
 		testling = new ProjectExportParameters(validProjectName, validProjectExportPath, true, false, UNLIMITED_REVISIONS, true);
 
-		assertThat("Expect equal.", testling.getProjectName(), equalTo(validProjectName));
+		assertThat(testling.getProjectName()).as("Expect equal.").isEqualTo(validProjectName);
 	}
 
 	/**
@@ -129,7 +126,7 @@ public class ProjectExportParametersTest {
 
 		testling = new ProjectExportParameters(validProjectName, validProjectExportPath, true, false, UNLIMITED_REVISIONS, true);
 
-		assertThat("Expect equal.", testling.getProjectExportPath(), equalTo(validProjectExportPath));
+		assertThat(testling.getProjectExportPath()).as("Expect equal.").isEqualTo(validProjectExportPath);
 	}
 
 	/**
@@ -142,7 +139,7 @@ public class ProjectExportParametersTest {
 
 		testling = new ProjectExportParameters(validProjectName, validProjectExportPath, true, false, UNLIMITED_REVISIONS, true);
 
-		assertThat("Expect equal.", testling.isFsForceProjectActivation(), is(true));
+		assertThat(testling.isFsForceProjectActivation()).as("Expect equal.").isTrue();
 	}
 
 	/**
@@ -155,7 +152,7 @@ public class ProjectExportParametersTest {
 
 		testling = new ProjectExportParameters(validProjectName, validProjectExportPath, true, false, 1L, true);
 
-		assertThat("Expect equal.", testling.getMaxRevisionCount(), is(1L));
+		assertThat(testling.getMaxRevisionCount()).as("Expect equal.").isEqualTo(1L);
 	}
 
 	/**
@@ -168,7 +165,7 @@ public class ProjectExportParametersTest {
 
 		testling = new ProjectExportParameters(validProjectName, validProjectExportPath, true, false, UNLIMITED_REVISIONS, true);
 
-		assertThat("Expect equal.", testling.isExportDeletedElements(), is(true));
+		assertThat(testling.isExportDeletedElements()).as("Expect equal.").isTrue();
 	}
 
 }

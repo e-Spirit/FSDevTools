@@ -38,11 +38,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
@@ -68,7 +64,7 @@ public class ProjectExporterTest {
 	 */
 	@Test
 	public void testDefaultConstructor() {
-		assertThat("Expect not null.", testling, is(notNullValue()));
+		assertThat(testling).as("Expect not null.").isNotNull();
 	}
 
 	/**
@@ -120,7 +116,7 @@ public class ProjectExporterTest {
 		final boolean projectExists = testling.projectExistsOnServer(mockConnection, mockProjectExportParameters);
 
 		// Assert
-		assertThat("Expected equal.", projectExists, equalTo(true));
+		assertThat(projectExists).as("Expected equal.").isTrue();
 	}
 
 	/**
@@ -139,7 +135,7 @@ public class ProjectExporterTest {
 		final boolean projectExists = testling.projectExistsOnServer(mockConnection, mockProjectExportParameters);
 
 		// Assert
-		assertThat("Expected equal.", projectExists, equalTo(false));
+		assertThat(projectExists).as("Expected equal.").isFalse();
 	}
 
 	/**
@@ -157,7 +153,7 @@ public class ProjectExporterTest {
 		final boolean exported = testling.performExport(mockConnection, mockProjectExportParameters);
 
 		// Assert
-		assertThat("Expect equals.", exported, is(false));
+		assertThat(exported).as("Expect equals.").isFalse();
 	}
 
 	/**
@@ -179,7 +175,7 @@ public class ProjectExporterTest {
 		final boolean exported = testling.performExport(mockConnection, mockProjectExportParameters);
 
 		// Assert
-		assertThat("Expect equals", exported, is(false));
+		assertThat(exported).as("Expect equals").isFalse();
 	}
 
 	/**
@@ -204,7 +200,7 @@ public class ProjectExporterTest {
 		final boolean exported = spyProjectExporter.performExport(mockConnection, mockProjectExportParameters);
 
 		// Assert
-		assertThat("Expect equals", exported, is(false));
+		assertThat(exported).as("Expect equals").isFalse();
 	}
 
 	/**
@@ -228,7 +224,7 @@ public class ProjectExporterTest {
 
 		// Assert
 		verify(spyProjectExporter).performExport(mockConnection, mockProjectExportParameters);
-		assertThat("Expect equals.", exported, is(true));
+		assertThat(exported).as("Expect equals.").isTrue();
 	}
 
 	/**
@@ -309,7 +305,7 @@ public class ProjectExporterTest {
 		final List<ExportFile> exportFiles = testling.waitUntilExportFinished(mockExportHandle);
 
 		// Assert
-		assertThat("Expect equals", exportFiles, equalTo(mockExportFiles));
+		assertThat(exportFiles).as("Expect equals").isEqualTo(mockExportFiles);
 	}
 
 	/**
@@ -327,7 +323,7 @@ public class ProjectExporterTest {
 		final boolean downloaded = testling.downloadExportFilesToFileSystem(projectExportPath, projectStorage, mockExportFiles);
 
 		// Assert
-		assertThat("Expect equals", downloaded, is(false));
+		assertThat(downloaded).as("Expect equals").isFalse();
 	}
 
 	/**
@@ -340,6 +336,6 @@ public class ProjectExporterTest {
 
 		List<ExportFile> exportFiles = testling.triggerExport(mockProjectStorage, null);
 
-		assertThat("Expected an empty list", exportFiles, hasSize(0));
+		assertThat(exportFiles).as("Expected an empty list").isEmpty();
 	}
 }

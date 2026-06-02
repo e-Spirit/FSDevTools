@@ -32,10 +32,7 @@ import java.io.IOException;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -61,8 +58,8 @@ public class TestConnectionCommandTest {
 	public void testCall() throws Exception {
 		final Result result = testling.call();
 
-		assertThat("Expect normal execution", result.isError(), is(FALSE));
-		assertThat("Expect null value", result.getError(), is(nullValue()));
+		assertThat(result.isError()).as("Expect normal execution").isEqualTo(FALSE);
+		assertThat(result.getError()).as("Expect null value").isNull();
 
 		verify(connection, times(1)).connect();
 	}
@@ -73,8 +70,8 @@ public class TestConnectionCommandTest {
 
 		final Result result = testling.call();
 
-		assertThat("Expect normal execution", result.isError(), is(TRUE));
-		assertThat("Expect non-null value", result.getError(), is(notNullValue()));
+		assertThat(result.isError()).as("Expect normal execution").isTrue();
+		assertThat(result.getError()).as("Expect non-null value").isNotNull();
 
 		verify(connection, times(1)).connect();
 	}
@@ -85,14 +82,13 @@ public class TestConnectionCommandTest {
 
 		final Result result = testling.call();
 
-		assertThat("Expect normal execution", result.isError(), is(TRUE));
-		assertThat("Expect non-null value", result.getError(), is(notNullValue()));
+		assertThat(result.isError()).as("Expect normal execution").isEqualTo(TRUE);
+		assertThat(result.getError()).as("Expect non-null value").isNotNull();
 	}
 
 	@Test
 	public void testNeedsContext() throws Exception {
-		assertThat("This command creates his own FS connection therefore doesn't need one from outside",
-				testling.needsContext(), is(FALSE));
+		assertThat(testling.needsContext()).as("This command creates his own FS connection therefore doesn't need one from outside").isEqualTo(FALSE);
 	}
 
 }

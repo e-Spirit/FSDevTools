@@ -1,0 +1,52 @@
+/*
+ *
+ * *********************************************************************
+ * fsdevtools
+ * %%
+ * Copyright (C) 2025 Crownpeak Technology GmbH
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * *********************************************************************
+ *
+ */
+
+package com.espirit.moddev.connection;
+
+import de.espirit.firstspirit.access.ConnectionManager;
+
+/**
+ * Encryption modes for the FirstSpirit connection, mapping CLI names to {@link ConnectionManager} byte constants.
+ * Mirrors the pattern of {@link FsConnectionType}.
+ */
+public enum FsConnectionEncryption {
+
+	NONE(ConnectionManager.ENCRYPTION_NONE),
+	TLS(ConnectionManager.ENCRYPTION_TLS),
+	CHACHA20(ConnectionManager.ENCRYPTION_CHACHA20);
+
+	private final byte _encryptionValue;
+
+	FsConnectionEncryption(final byte encryptionValue) {
+		_encryptionValue = encryptionValue;
+	}
+
+	/**
+	 * Returns the {@link ConnectionManager} byte constant for this encryption mode.
+	 *
+	 * @return the encryption byte constant
+	 */
+	public byte getEncryptionValue() {
+		return _encryptionValue;
+	}
+
+}

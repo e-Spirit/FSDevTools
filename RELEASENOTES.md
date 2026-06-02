@@ -1,5 +1,11 @@
 # Release notes
 
+## Version 4.8.8
+
+* added new global parameters "*--conn-encryption*" and "*--conn-compression*" to configure the encryption and compression of the FirstSpirit connection
+
+For more information about the new parameters, please use "*fs-cli help*" or open the included documentation under *docs/index.html*.
+
 ## Version 4.8.5
 
 * updated Gradle to 8.13

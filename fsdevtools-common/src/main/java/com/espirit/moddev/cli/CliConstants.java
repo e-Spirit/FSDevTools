@@ -100,6 +100,16 @@ public enum CliConstants {
 	KEY_FS_MODE("fsmode"),
 
 	/**
+	 * Key fs encryption cli constant.
+	 */
+	KEY_FS_ENCRYPTION("fsencryption"),
+
+	/**
+	 * Key fs compression cli constant.
+	 */
+	KEY_FS_COMPRESSION("fscompression"),
+
+	/**
 	 * Key fs user cli constant.
 	 */
 	KEY_FS_USER("fsuser"),

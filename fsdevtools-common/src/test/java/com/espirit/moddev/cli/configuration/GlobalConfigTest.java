@@ -23,10 +23,13 @@
 package com.espirit.moddev.cli.configuration;
 
 import com.espirit.moddev.cli.CliConstants;
+import com.espirit.moddev.connection.FsConnectionCompression;
+import com.espirit.moddev.connection.FsConnectionEncryption;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GlobalConfigTest {
 
@@ -104,6 +107,78 @@ public class GlobalConfigTest {
 		final GlobalConfig config = new GlobalConfig();
 		config.setServletZone(customServletZone);
 		assertEquals(customServletZone, config.getServletZone());
+	}
+
+	@Test
+	public void encryptionIsNotFetchedFromEnvironmentIfConfigured() {
+		final GlobalConfig config = new GlobalConfig();
+		config.setConnectionEncryption(FsConnectionEncryption.TLS);
+		config.getEnvironment().clear();
+		config.getEnvironment().put(CliConstants.KEY_FS_ENCRYPTION.value(), "NONE");
+
+		assertEquals(FsConnectionEncryption.TLS, config.getConnectionEncryption());
+	}
+
+	@Test
+	public void encryptionIsFetchedFromEnvironmentIfNotConfigured() {
+		final GlobalConfig config = new GlobalConfig();
+		config.getEnvironment().clear();
+		config.getEnvironment().put(CliConstants.KEY_FS_ENCRYPTION.value(), "tls");
+
+		assertEquals(FsConnectionEncryption.TLS, config.getConnectionEncryption());
+	}
+
+	@Test
+	public void nullEncryptionIsReturnedIfNothingIsConfigured() {
+		final GlobalConfig config = new GlobalConfig();
+		config.getEnvironment().clear();
+
+		assertNull(config.getConnectionEncryption());
+	}
+
+	@Test
+	public void invalidEncryptionEnvValueThrowsIllegalArgumentException() {
+		final GlobalConfig config = new GlobalConfig();
+		config.getEnvironment().clear();
+		config.getEnvironment().put(CliConstants.KEY_FS_ENCRYPTION.value(), "BOGUS");
+
+		assertThrows(IllegalArgumentException.class, config::getConnectionEncryption);
+	}
+
+	@Test
+	public void compressionIsNotFetchedFromEnvironmentIfConfigured() {
+		final GlobalConfig config = new GlobalConfig();
+		config.setConnectionCompression(FsConnectionCompression.ZSTD);
+		config.getEnvironment().clear();
+		config.getEnvironment().put(CliConstants.KEY_FS_COMPRESSION.value(), "NONE");
+
+		assertEquals(FsConnectionCompression.ZSTD, config.getConnectionCompression());
+	}
+
+	@Test
+	public void compressionIsFetchedFromEnvironmentIfNotConfigured() {
+		final GlobalConfig config = new GlobalConfig();
+		config.getEnvironment().clear();
+		config.getEnvironment().put(CliConstants.KEY_FS_COMPRESSION.value(), "deflate");
+
+		assertEquals(FsConnectionCompression.DEFLATE, config.getConnectionCompression());
+	}
+
+	@Test
+	public void nullCompressionIsReturnedIfNothingIsConfigured() {
+		final GlobalConfig config = new GlobalConfig();
+		config.getEnvironment().clear();
+
+		assertNull(config.getConnectionCompression());
+	}
+
+	@Test
+	public void invalidCompressionEnvValueThrowsIllegalArgumentException() {
+		final GlobalConfig config = new GlobalConfig();
+		config.getEnvironment().clear();
+		config.getEnvironment().put(CliConstants.KEY_FS_COMPRESSION.value(), "BOGUS");
+
+		assertThrows(IllegalArgumentException.class, config::getConnectionCompression);
 	}
 
 }

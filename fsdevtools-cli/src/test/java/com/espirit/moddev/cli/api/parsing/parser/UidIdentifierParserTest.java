@@ -25,7 +25,6 @@ package com.espirit.moddev.cli.api.parsing.parser;
 import com.espirit.moddev.cli.api.parsing.exceptions.UnregisteredPrefixException;
 import com.espirit.moddev.cli.api.parsing.identifier.UidIdentifier;
 import com.espirit.moddev.cli.api.parsing.identifier.UidMapping;
-import org.hamcrest.Matchers;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,8 +35,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UidIdentifierParserTest {
@@ -65,8 +63,8 @@ public class UidIdentifierParserTest {
 	@MethodSource("parameterSet")
 	public void testParse(@NotNull final List<String> uids) {
 		final List<UidIdentifier> list = testling.parse(uids);
-		assertThat("Expected PAGE but got: " + uids, list.get(0).getUidMapping(), Matchers.is(UidMapping.PAGE));
-		assertThat("Expected 'myuid' but got: " + uids, list.get(0).getUid(), is("myuid"));
+		assertThat(list.get(0).getUidMapping()).as("Expected PAGE but got: " + uids).isEqualTo(UidMapping.PAGE);
+		assertThat(list.get(0).getUid()).as("Expected 'myuid' but got: " + uids).isEqualTo("myuid");
 	}
 
 	@BeforeEach

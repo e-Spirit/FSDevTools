@@ -57,6 +57,18 @@ public class DefaultConnectionConfigValidator implements Validator<Config> {
 			violations.add(new Violation("port", MESSAGE_NULL));
 		}
 
+		try {
+			config.getConnectionEncryption();
+		} catch (final IllegalArgumentException e) {
+			violations.add(new Violation("encryption", String.format("'%s' is not a valid value", e.getMessage())));
+		}
+
+		try {
+			config.getConnectionCompression();
+		} catch (final IllegalArgumentException e) {
+			violations.add(new Violation("compression", String.format("'%s' is not a valid value", e.getMessage())));
+		}
+
 		return violations;
 	}
 }

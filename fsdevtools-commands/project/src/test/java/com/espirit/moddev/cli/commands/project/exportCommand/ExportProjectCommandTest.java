@@ -27,11 +27,7 @@ import de.espirit.firstspirit.access.Connection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -56,7 +52,7 @@ public class ExportProjectCommandTest {
 	 */
 	@Test
 	public void testDefaultConstructor() {
-		assertThat("Expect not null", testling, is(notNullValue()));
+		assertThat(testling).as("Expect not null").isNotNull();
 	}
 
 	/**
@@ -72,7 +68,7 @@ public class ExportProjectCommandTest {
 		final SimpleResult<Boolean> simpleResult = spyTestling.call();
 
 		// verify
-		assertThat("Expected instance of Exception", simpleResult.getError(), instanceOf(IllegalArgumentException.class));
+		assertThat(simpleResult.getError()).as("Expected instance of Exception").isInstanceOf(IllegalArgumentException.class);
 	}
 
 	/**
@@ -95,7 +91,7 @@ public class ExportProjectCommandTest {
 		final SimpleResult<Boolean> simpleResult = spyTestling.call();
 
 		// verify
-		assertThat("Expected equal.", simpleResult.get(), equalTo(Boolean.TRUE));
+		assertThat(simpleResult.get()).as("Expected equal.").isEqualTo(Boolean.TRUE);
 	}
 
 	/**
@@ -118,8 +114,8 @@ public class ExportProjectCommandTest {
 		final SimpleResult simpleResult = spyTestling.call();
 
 		// verify
-		assertThat("Expected instance of IllegalStateException.", simpleResult.get(), instanceOf(IllegalStateException.class));
-		assertThat("Expected equal.", ((Exception) simpleResult.get()).getMessage(), equalTo("Export was not successful"));
+		assertThat(simpleResult.get()).as("Expected instance of IllegalStateException.").isInstanceOf(IllegalStateException.class);
+		assertThat(((Exception) simpleResult.get()).getMessage()).as("Expected equal.").isEqualTo("Export was not successful");
 	}
 
 	/**
@@ -131,7 +127,7 @@ public class ExportProjectCommandTest {
 		final Connection connection = testling.createConnection();
 
 		// test & verify
-		assertThat("Expect instance of Connection.class", connection, instanceOf(Connection.class));
+		assertThat(connection).as("Expect instance of Connection.class").isInstanceOf(Connection.class);
 	}
 
 	/**
@@ -149,7 +145,7 @@ public class ExportProjectCommandTest {
 
 		// verify
 		verify(mockProjectExportParametersBuilder).build();
-		assertThat("Expect equal", projectExportParameters, is(mockProjectExportParameters));
+		assertThat(projectExportParameters).as("Expect equal").isEqualTo(mockProjectExportParameters);
 	}
 
 	/**
@@ -171,6 +167,6 @@ public class ExportProjectCommandTest {
 	 */
 	@Test
 	public void testNeedsContextReturnsFalse() {
-		assertThat("Expected equal", testling.needsContext(), equalTo(false));
+		assertThat(testling.needsContext()).as("Expected equal").isFalse();
 	}
 }

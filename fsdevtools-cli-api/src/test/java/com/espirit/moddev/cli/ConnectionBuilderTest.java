@@ -23,17 +23,20 @@ package com.espirit.moddev.cli;
  */
 
 import com.espirit.moddev.cli.api.configuration.Config;
+import com.espirit.moddev.connection.FsConnectionCompression;
+import com.espirit.moddev.connection.FsConnectionEncryption;
 import com.espirit.moddev.connection.FsConnectionType;
 import com.espirit.moddev.util.FsUtil;
 import de.espirit.firstspirit.access.Connection;
+import de.espirit.firstspirit.access.ConnectionManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -44,8 +47,16 @@ public class ConnectionBuilderTest {
 
 	@BeforeEach
 	public void setUp() throws Exception {
+		ConnectionManager.resetEncryption();
+		ConnectionManager.resetCompression();
 		config = mock(Config.class);
 		testling = ConnectionBuilder.with(config);
+	}
+
+	@AfterEach
+	public void tearDown() {
+		ConnectionManager.resetEncryption();
+		ConnectionManager.resetCompression();
 	}
 
 	@ParameterizedTest
@@ -59,14 +70,87 @@ public class ConnectionBuilderTest {
 		when(config.getConnectionMode()).thenReturn(mode);
 		when(config.getUser()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
 		when(config.getPassword()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
-		when(config.getPassword()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
 		when(config.getServletZone()).thenReturn(customServletZone);
 
 		final Connection connection = testling.build();
 
-		assertThat(connection.getHost(), is(FsUtil.VALUE_DEFAULT_HOST));
-		assertThat(connection.getPort(), is(mode.getDefaultPort()));
-		assertThat(connection.getServletZone(), is(customServletZone));
+		assertThat(connection.getHost()).isEqualTo(FsUtil.VALUE_DEFAULT_HOST);
+		assertThat(connection.getPort()).isEqualTo(mode.getDefaultPort());
+		assertThat(connection.getServletZone()).isEqualTo(customServletZone);
+	}
+
+	@ParameterizedTest
+	@EnumSource(FsConnectionType.class)
+	public void testBuild_withEncryptionSet_appliesEncryptionBeforeConnect(final FsConnectionType mode) {
+		when(config.getHost()).thenReturn(FsUtil.VALUE_DEFAULT_HOST);
+		when(config.getHttpProxyHost()).thenReturn("");
+		when(config.getPort()).thenReturn(mode.getDefaultPort());
+		when(config.getHttpProxyPort()).thenReturn(8080);
+		when(config.getConnectionMode()).thenReturn(mode);
+		when(config.getUser()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+		when(config.getPassword()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+		when(config.getServletZone()).thenReturn(null);
+		when(config.getConnectionEncryption()).thenReturn(FsConnectionEncryption.NONE);
+
+		testling.build();
+
+		assertThat(ConnectionManager.getEncryption(mode.getFsMode())).isEqualTo(ConnectionManager.ENCRYPTION_NONE);
+	}
+
+	@ParameterizedTest
+	@EnumSource(FsConnectionType.class)
+	public void testBuild_withCompressionSet_appliesCompressionBeforeConnect(final FsConnectionType mode) {
+		when(config.getHost()).thenReturn(FsUtil.VALUE_DEFAULT_HOST);
+		when(config.getHttpProxyHost()).thenReturn("");
+		when(config.getPort()).thenReturn(mode.getDefaultPort());
+		when(config.getHttpProxyPort()).thenReturn(8080);
+		when(config.getConnectionMode()).thenReturn(mode);
+		when(config.getUser()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+		when(config.getPassword()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+		when(config.getServletZone()).thenReturn(null);
+		when(config.getConnectionCompression()).thenReturn(FsConnectionCompression.DEFLATE);
+
+		testling.build();
+
+		assertThat(ConnectionManager.getCompression(mode.getFsMode())).isEqualTo(ConnectionManager.COMPRESSION_DEFLATE);
+	}
+
+	@ParameterizedTest
+	@EnumSource(FsConnectionType.class)
+	public void testBuild_withNullEncryption_leavesConnectionManagerDefaultUntouched(final FsConnectionType mode) {
+		final byte defaultEncryption = ConnectionManager.getEncryption(mode.getFsMode());
+		when(config.getHost()).thenReturn(FsUtil.VALUE_DEFAULT_HOST);
+		when(config.getHttpProxyHost()).thenReturn("");
+		when(config.getPort()).thenReturn(mode.getDefaultPort());
+		when(config.getHttpProxyPort()).thenReturn(8080);
+		when(config.getConnectionMode()).thenReturn(mode);
+		when(config.getUser()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+		when(config.getPassword()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+		when(config.getServletZone()).thenReturn(null);
+		when(config.getConnectionEncryption()).thenReturn(null);
+
+		testling.build();
+
+		assertThat(ConnectionManager.getEncryption(mode.getFsMode())).isEqualTo(defaultEncryption);
+	}
+
+	@ParameterizedTest
+	@EnumSource(FsConnectionType.class)
+	public void testBuild_withNullCompression_leavesConnectionManagerDefaultUntouched(final FsConnectionType mode) {
+		final byte defaultCompression = ConnectionManager.getCompression(mode.getFsMode());
+		when(config.getHost()).thenReturn(FsUtil.VALUE_DEFAULT_HOST);
+		when(config.getHttpProxyHost()).thenReturn("");
+		when(config.getPort()).thenReturn(mode.getDefaultPort());
+		when(config.getHttpProxyPort()).thenReturn(8080);
+		when(config.getConnectionMode()).thenReturn(mode);
+		when(config.getUser()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+		when(config.getPassword()).thenReturn(FsUtil.VALUE_DEFAULT_USER);
+		when(config.getServletZone()).thenReturn(null);
+		when(config.getConnectionCompression()).thenReturn(null);
+
+		testling.build();
+
+		assertThat(ConnectionManager.getCompression(mode.getFsMode())).isEqualTo(defaultCompression);
 	}
 
 	@Test
