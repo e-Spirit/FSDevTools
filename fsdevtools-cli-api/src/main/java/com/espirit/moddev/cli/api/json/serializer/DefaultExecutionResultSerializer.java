@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2025 Crownpeak Technology GmbH
+ * Copyright (C) 2026 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,11 @@
 package com.espirit.moddev.cli.api.json.serializer;
 
 import com.espirit.moddev.cli.api.result.ExecutionResult;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ser.std.StdSerializer;
 
 import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_MESSAGE;
 
@@ -44,10 +42,10 @@ public class DefaultExecutionResultSerializer extends StdSerializer<ExecutionRes
 	}
 
 	@Override
-	public void serialize(@NotNull final ExecutionResult value, @NotNull final JsonGenerator generator, @NotNull final SerializerProvider provider) throws IOException {
+	public void serialize(@NotNull final ExecutionResult value, @NotNull final JsonGenerator generator, @NotNull final SerializationContext ctxt) {
 		generator.writeStartObject();
 		{
-			generator.writeObjectField(ATTR_MESSAGE, value.toString());
+			generator.writeStringProperty(ATTR_MESSAGE, value.toString());
 		}
 		generator.writeEndObject();
 	}

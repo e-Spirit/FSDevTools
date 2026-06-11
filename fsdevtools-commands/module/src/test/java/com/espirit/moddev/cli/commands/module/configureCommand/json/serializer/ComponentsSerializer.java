@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2025 Crownpeak Technology GmbH
+ * Copyright (C) 2026 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,10 @@
 package com.espirit.moddev.cli.commands.module.configureCommand.json.serializer;
 
 import com.espirit.moddev.cli.commands.module.configureCommand.json.components.Components;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ser.std.StdSerializer;
 
 import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_PROJECT_COMPONENTS;
 import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_SERVICES;
@@ -45,11 +43,11 @@ public class ComponentsSerializer extends StdSerializer<Components> {
 	}
 
 	@Override
-	public void serialize(@NotNull final Components value, @NotNull final JsonGenerator generator, @NotNull final SerializerProvider provider) throws IOException {
+	public void serialize(@NotNull final Components value, @NotNull final JsonGenerator generator, @NotNull final SerializationContext ctxt) {
 		generator.writeStartObject();
-		generator.writeObjectField(ATTR_WEB_COMPONENTS, value.getWebComponents());
-		generator.writeObjectField(ATTR_PROJECT_COMPONENTS, value.getProjectComponents());
-		generator.writeObjectField(ATTR_SERVICES, value.getServices());
+		generator.writePOJOProperty(ATTR_WEB_COMPONENTS, value.getWebComponents());
+		generator.writePOJOProperty(ATTR_PROJECT_COMPONENTS, value.getProjectComponents());
+		generator.writePOJOProperty(ATTR_SERVICES, value.getServices());
 		generator.writeEndObject();
 	}
 

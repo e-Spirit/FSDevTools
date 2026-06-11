@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2025 Crownpeak Technology GmbH
+ * Copyright (C) 2026 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ package com.espirit.moddev.cli.commands.module.configureCommand.json.components;
 import com.espirit.moddev.cli.commands.module.configureCommand.json.JsonTestUtil;
 import com.espirit.moddev.cli.commands.module.utils.WebAppUtil;
 import com.espirit.moddev.cli.configuration.GlobalConfig;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import com.google.common.collect.Lists;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
@@ -53,14 +53,14 @@ public class ComponentsTest {
 
 	private static final String MODULE_NAME = "testModule";
 
-	private ObjectMapper _objectMapper;
+	private JsonMapper _jsonMapper;
 	private ModuleDescriptor _moduleDescriptor;
 	private Connection _connection;
 	private ConfigurationContext _context;
 
 	@BeforeEach
 	public void setup() {
-		_objectMapper = JsonTestUtil.createMapper();
+		_jsonMapper = JsonTestUtil.createMapper();
 		_moduleDescriptor = mock(ModuleDescriptor.class);
 		when(_moduleDescriptor.getModuleName()).thenReturn(MODULE_NAME);
 		_connection = mock(Connection.class);
@@ -97,7 +97,7 @@ public class ComponentsTest {
 		);
 
 		// test
-		final Components deserialized = _objectMapper.readValue(json, Components.class);
+		final Components deserialized = _jsonMapper.readValue(json, Components.class);
 
 		// verify
 		assertThat(deserialized._webComponents).isNotNull();
@@ -125,7 +125,7 @@ public class ComponentsTest {
 		);
 
 		// test
-		final Components deserialized = _objectMapper.readValue(json, Components.class);
+		final Components deserialized = _jsonMapper.readValue(json, Components.class);
 
 		// verify
 		assertThat(deserialized._webComponents).isNull();
@@ -145,7 +145,7 @@ public class ComponentsTest {
 		);
 
 		// test
-		final Components deserialized = _objectMapper.readValue(json, Components.class);
+		final Components deserialized = _jsonMapper.readValue(json, Components.class);
 
 		// verify
 		assertThat(deserialized._webComponents).isNotNull();

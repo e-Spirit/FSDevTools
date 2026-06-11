@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2025 Crownpeak Technology GmbH
+ * Copyright (C) 2026 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,9 +34,9 @@ import com.espirit.moddev.cli.commands.module.utils.WebAppUtil;
 import com.espirit.moddev.cli.configuration.GlobalConfig;
 import com.espirit.moddev.shared.webapp.GlobalWebAppIdentifier;
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.exc.MismatchedInputException;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
@@ -89,7 +89,7 @@ public class ComponentWebAppsTest {
 	private static final List<ComponentWebApps.WebApp> GLOBAL_APPS_AMOUNT_1 = Lists.newArrayList(new ComponentWebApps.WebApp("global(first-global-web-app)"));
 	private static final List<ComponentWebApps.WebApp> PROJECT_APPS_AMOUNT_1 = Lists.newArrayList(new ComponentWebApps.WebApp("webedit"));
 
-	private ObjectMapper _objectMapper;
+	private JsonMapper _jsonMapper;
 
 	private MemoryFileSystem _fileSystem;
 	private ModuleAdminAgent _moduleAdminAgent;
@@ -103,7 +103,7 @@ public class ComponentWebAppsTest {
 
 	@BeforeEach
 	public void setup() {
-		_objectMapper = JsonTestUtil.createMapper();
+		_jsonMapper = JsonTestUtil.createMapper();
 
 		// integrative tests
 		_fileSystem = new MemoryFileSystem();
@@ -141,7 +141,7 @@ public class ComponentWebAppsTest {
 
 		// test
 		org.junit.jupiter.api.Assertions.assertThrows(MismatchedInputException.class, () -> {
-			_objectMapper.readValue(json, ComponentWebApps.class);
+			_jsonMapper.readValue(json, ComponentWebApps.class);
 		});
 	}
 
@@ -152,9 +152,9 @@ public class ComponentWebAppsTest {
 
 		// test
 		try {
-			_objectMapper.readValue(json, ComponentWebApps.class);
-			failBecauseExceptionWasNotThrown(JsonMappingException.class);
-		} catch (final JsonMappingException e) {
+			_jsonMapper.readValue(json, ComponentWebApps.class);
+			failBecauseExceptionWasNotThrown(JacksonException.class);
+		} catch (final JacksonException e) {
 			Assertions.assertThat(e.getCause()).isExactlyInstanceOf(NullPointerException.class);
 		}
 	}
@@ -166,9 +166,9 @@ public class ComponentWebAppsTest {
 
 		// test
 		try {
-			_objectMapper.readValue(json, ComponentWebApps.class);
-			failBecauseExceptionWasNotThrown(JsonMappingException.class);
-		} catch (final JsonMappingException e) {
+			_jsonMapper.readValue(json, ComponentWebApps.class);
+			failBecauseExceptionWasNotThrown(JacksonException.class);
+		} catch (final JacksonException e) {
 			Assertions.assertThat(e.getCause()).isExactlyInstanceOf(IllegalArgumentException.class);
 		}
 	}
@@ -180,9 +180,9 @@ public class ComponentWebAppsTest {
 
 		// test
 		try {
-			_objectMapper.readValue(json, ComponentWebApps.class);
-			failBecauseExceptionWasNotThrown(JsonMappingException.class);
-		} catch (final JsonMappingException e) {
+			_jsonMapper.readValue(json, ComponentWebApps.class);
+			failBecauseExceptionWasNotThrown(JacksonException.class);
+		} catch (final JacksonException e) {
 			Assertions.assertThat(e.getCause()).isExactlyInstanceOf(IllegalArgumentException.class);
 		}
 	}
@@ -194,7 +194,7 @@ public class ComponentWebAppsTest {
 
 		// test
 		org.junit.jupiter.api.Assertions.assertThrows(MismatchedInputException.class, () -> {
-			_objectMapper.readValue(json, ComponentWebApps.class);
+			_jsonMapper.readValue(json, ComponentWebApps.class);
 		});
 	}
 
@@ -205,9 +205,9 @@ public class ComponentWebAppsTest {
 
 		// test
 		try {
-			_objectMapper.readValue(json, ComponentWebApps.class);
-			failBecauseExceptionWasNotThrown(JsonMappingException.class);
-		} catch (final JsonMappingException e) {
+			_jsonMapper.readValue(json, ComponentWebApps.class);
+			failBecauseExceptionWasNotThrown(JacksonException.class);
+		} catch (final JacksonException e) {
 			Assertions.assertThat(e.getCause()).isExactlyInstanceOf(IllegalArgumentException.class);
 		}
 	}
@@ -226,7 +226,7 @@ public class ComponentWebAppsTest {
 		final String json = JsonTestUtil.toJsonObject(JsonTestUtil.createMap(JsonTestUtil.createEntry(ATTR_COMPONENT_NAME, COMPONENT_NAME), JsonTestUtil.createEntry(ATTR_WEB_APPS, webApps)));
 
 		// test
-		final ComponentWebApps deserialized = _objectMapper.readValue(json, ComponentWebApps.class);
+		final ComponentWebApps deserialized = _jsonMapper.readValue(json, ComponentWebApps.class);
 
 		// verify
 		assertThat(deserialized.getComponentName()).isEqualTo(COMPONENT_NAME);
@@ -255,7 +255,7 @@ public class ComponentWebAppsTest {
 
 		// test
 		org.junit.jupiter.api.Assertions.assertThrows(MismatchedInputException.class, () -> {
-			_objectMapper.readValue(json, ComponentWebApps.WebApp.class);
+			_jsonMapper.readValue(json, ComponentWebApps.WebApp.class);
 		});
 	}
 
@@ -266,7 +266,7 @@ public class ComponentWebAppsTest {
 
 		// test
 		org.junit.jupiter.api.Assertions.assertThrows(MismatchedInputException.class, () -> {
-			_objectMapper.readValue(json, ComponentWebApps.WebApp.class);
+			_jsonMapper.readValue(json, ComponentWebApps.WebApp.class);
 		});
 	}
 
@@ -277,9 +277,9 @@ public class ComponentWebAppsTest {
 
 		// test
 		try {
-			_objectMapper.readValue(json, ComponentWebApps.WebApp.class);
-			failBecauseExceptionWasNotThrown(JsonMappingException.class);
-		} catch (final JsonMappingException e) {
+			_jsonMapper.readValue(json, ComponentWebApps.WebApp.class);
+			failBecauseExceptionWasNotThrown(JacksonException.class);
+		} catch (final JacksonException e) {
 			Assertions.assertThat(e.getCause()).isExactlyInstanceOf(NullPointerException.class);
 		}
 	}
@@ -291,9 +291,9 @@ public class ComponentWebAppsTest {
 
 		// test
 		try {
-			_objectMapper.readValue(json, ComponentWebApps.WebApp.class);
-			failBecauseExceptionWasNotThrown(JsonMappingException.class);
-		} catch (final JsonMappingException e) {
+			_jsonMapper.readValue(json, ComponentWebApps.WebApp.class);
+			failBecauseExceptionWasNotThrown(JacksonException.class);
+		} catch (final JacksonException e) {
 			Assertions.assertThat(e.getCause()).isExactlyInstanceOf(IllegalArgumentException.class);
 		}
 	}

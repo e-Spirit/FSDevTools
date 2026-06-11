@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2025 Crownpeak Technology GmbH
+ * Copyright (C) 2026 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +35,8 @@ import com.espirit.moddev.cli.reflection.GroupUtils;
 import org.jetbrains.annotations.VisibleForTesting;
 import com.espirit.moddev.util.JacksonUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.annotation.JsonSerialize;
 import com.github.rvesse.airline.builder.CliBuilder;
 import de.espirit.common.VersionManager;
 import de.espirit.common.base.Logging;
@@ -266,7 +266,7 @@ public final class Cli {
 			LOGGER.info("ResultObject is null. Result file will not be written.");
 			return false;
 		}
-		if (!resultObject.getClass().isAnnotationPresent(JsonSerialize.class)) {
+		if (!JacksonUtil.hasJsonSerializeAnnotation(resultObject.getClass())) {
 			LOGGER.debug("ResultObject is not annotated with JsonSerialize. Result file will not be written.");
 			return false;
 		}
@@ -293,8 +293,8 @@ public final class Cli {
 			}
 
 			LOGGER.debug(String.format("Writing result file '%s'...", file));
-			final ObjectMapper objectMapper = JacksonUtil.createOutputMapper();
-			final String jsonString = objectMapper.writeValueAsString(object);
+			final JsonMapper jsonMapper = JacksonUtil.createOutputMapper();
+			final String jsonString = jsonMapper.writeValueAsString(object);
 			try (final FileOutputStream outputStream = new FileOutputStream(file)) {
 				outputStream.write(jsonString.getBytes(StandardCharsets.UTF_8));
 			}

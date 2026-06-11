@@ -10,14 +10,15 @@
 
 ## Plugin classloader (parent-first)
 
-The CLI loads each JAR from `plugins/` through a **parent-first classloader** — the plugin sees the CLI's copies of shared libraries first. Plugin JARs **cannot override** any of the following (always inherited from the CLI):
+The CLI loads each JAR from `plugins/` through a **parent-first classloader**. Most CLI libraries
+are **shaded** under `com.espirit.moddev.cli.shaded.*` and are therefore invisible to plugins —
+plugins may safely bundle their own Jackson, Guava, Airline, or Commons without conflict.
+
+The following are **not** shaded and are shared via the parent classloader:
 
 - All CLI classes and `fs-isolated-runtime` classes
-- `com.fasterxml.jackson.core:jackson-databind`
-- `org.slf4j:slf4j-api`
-- `com.google.guava:guava`
-- `org.apache.commons:commons-compress` / `commons-lang3`
+- `org.slf4j:slf4j-api` (logging bridge — must be shared for log routing to work)
 - `org.apache.logging.log4j:log4j-core` / `log4j-slf4j2-impl`
-- `com.github.rvesse:airline`
 
-**Consequence:** Script engine plugins and custom command plugins must bundle **only** their own implementation classes and unique transitive dependencies not already in that list.
+**Consequence:** Plugin JARs only need to avoid bundling `slf4j-api` and Log4j — everything else
+can be bundled freely.

@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2025 Crownpeak Technology GmbH
+ * Copyright (C) 2026 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ import com.espirit.moddev.shared.exception.MultiException;
 import com.espirit.moddev.shared.webapp.GlobalWebAppIdentifier;
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
 import com.espirit.moddev.shared.webapp.WebAppIdentifierParser;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.agency.GlobalWebAppId;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
@@ -67,9 +67,10 @@ public class ModuleInstallationConfiguration {
 			throw new IllegalArgumentException("File '" + pathToFile + "' does not exist.");
 		}
 
-		final ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		final ModuleInstallationConfiguration[] configurations = objectMapper.readValue(Files.readAllBytes(path), ModuleInstallationConfiguration[].class);
+		final JsonMapper jsonMapper = JsonMapper.builder()
+				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+				.build();
+		final ModuleInstallationConfiguration[] configurations = jsonMapper.readValue(Files.readAllBytes(path), ModuleInstallationConfiguration[].class);
 		return Arrays.asList(configurations);
 	}
 

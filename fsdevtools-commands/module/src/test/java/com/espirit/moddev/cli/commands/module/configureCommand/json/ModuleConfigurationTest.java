@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2025 Crownpeak Technology GmbH
+ * Copyright (C) 2026 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,9 @@ import com.espirit.moddev.cli.commands.module.configureCommand.json.components.C
 import com.espirit.moddev.cli.commands.module.configureCommand.json.components.ConfigurationContext;
 import com.espirit.moddev.cli.commands.module.configureCommand.json.components.common.ComponentNotFoundResult;
 import com.espirit.moddev.cli.configuration.GlobalConfig;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.exc.MismatchedInputException;
 import com.google.common.collect.Lists;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.module.descriptor.ComponentDescriptor;
@@ -67,14 +67,14 @@ public class ModuleConfigurationTest {
 	@TempDir
 	public File _temporaryFolder;
 
-	private ObjectMapper _objectMapper;
+	private JsonMapper _jsonMapper;
 	private ModuleDescriptor _moduleDescriptor;
 	private Connection _connection;
 	private ConfigurationContext _context;
 
 	@BeforeEach
 	public void setup() {
-		_objectMapper = JsonTestUtil.createMapper();
+		_jsonMapper = JsonTestUtil.createMapper();
 		_moduleDescriptor = mock(ModuleDescriptor.class);
 		when(_moduleDescriptor.getModuleName()).thenReturn(MODULE_NAME);
 		_connection = mock(Connection.class);
@@ -92,7 +92,7 @@ public class ModuleConfigurationTest {
 
 		// test
 		Assertions.assertThrows(MismatchedInputException.class, () -> {
-			_objectMapper.readValue(json, ModuleConfiguration.class);
+			_jsonMapper.readValue(json, ModuleConfiguration.class);
 		});
 	}
 
@@ -108,9 +108,9 @@ public class ModuleConfigurationTest {
 
 		// test
 		try {
-			_objectMapper.readValue(json, ModuleConfiguration.class);
-			failBecauseExceptionWasNotThrown(JsonMappingException.class);
-		} catch (final JsonMappingException e) {
+			_jsonMapper.readValue(json, ModuleConfiguration.class);
+			failBecauseExceptionWasNotThrown(JacksonException.class);
+		} catch (final JacksonException e) {
 			assertThat(e.getCause()).isExactlyInstanceOf(NullPointerException.class);
 		}
 	}
@@ -127,9 +127,9 @@ public class ModuleConfigurationTest {
 
 		// test
 		try {
-			_objectMapper.readValue(json, ModuleConfiguration.class);
-			failBecauseExceptionWasNotThrown(JsonMappingException.class);
-		} catch (final JsonMappingException e) {
+			_jsonMapper.readValue(json, ModuleConfiguration.class);
+			failBecauseExceptionWasNotThrown(JacksonException.class);
+		} catch (final JacksonException e) {
 			assertThat(e.getCause()).isExactlyInstanceOf(IllegalArgumentException.class);
 		}
 	}
@@ -145,7 +145,7 @@ public class ModuleConfigurationTest {
 
 		// test
 		Assertions.assertThrows(MismatchedInputException.class, () -> {
-			_objectMapper.readValue(json, ModuleConfiguration.class);
+			_jsonMapper.readValue(json, ModuleConfiguration.class);
 		});
 	}
 
@@ -161,9 +161,9 @@ public class ModuleConfigurationTest {
 
 		// test
 		try {
-			_objectMapper.readValue(json, ModuleConfiguration.class);
-			failBecauseExceptionWasNotThrown(JsonMappingException.class);
-		} catch (final JsonMappingException e) {
+			_jsonMapper.readValue(json, ModuleConfiguration.class);
+			failBecauseExceptionWasNotThrown(JacksonException.class);
+		} catch (final JacksonException e) {
 			assertThat(e.getCause()).isExactlyInstanceOf(NullPointerException.class);
 		}
 	}
@@ -180,7 +180,7 @@ public class ModuleConfigurationTest {
 		);
 
 		// test
-		final ModuleConfiguration deserialized = _objectMapper.readValue(json, ModuleConfiguration.class);
+		final ModuleConfiguration deserialized = _jsonMapper.readValue(json, ModuleConfiguration.class);
 
 		// verify
 		assertThat(deserialized.getModuleName()).isEqualTo(MODULE_NAME);
@@ -192,7 +192,7 @@ public class ModuleConfigurationTest {
 		// setup
 		final String moduleName1 = "module1";
 		final String moduleName2 = "module2";
-		final String json = _objectMapper.writeValueAsString(Lists.newArrayList(new ModuleConfiguration(moduleName1, new Components()), new ModuleConfiguration(moduleName2, new Components())));
+		final String json = _jsonMapper.writeValueAsString(Lists.newArrayList(new ModuleConfiguration(moduleName1, new Components()), new ModuleConfiguration(moduleName2, new Components())));
 
 		// test
 		final Collection<ModuleConfiguration> deserialized = ModuleConfiguration.fromBytes(json.getBytes());
@@ -208,7 +208,7 @@ public class ModuleConfigurationTest {
 		// setup
 		final String moduleName1 = "module1";
 		final String moduleName2 = "module2";
-		final String json = _objectMapper.writeValueAsString(Lists.newArrayList(new ModuleConfiguration(moduleName1, new Components()), new ModuleConfiguration(moduleName2, new Components())));
+		final String json = _jsonMapper.writeValueAsString(Lists.newArrayList(new ModuleConfiguration(moduleName1, new Components()), new ModuleConfiguration(moduleName2, new Components())));
 		final File file = _temporaryFolder.toPath().resolve("testFile.json").toFile();
 		final FileOutputStream fileOutputStream = new FileOutputStream(file, true);
 		fileOutputStream.write(json.getBytes());

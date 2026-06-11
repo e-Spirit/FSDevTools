@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2025 Crownpeak Technology GmbH
+ * Copyright (C) 2026 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,10 @@
 package com.espirit.moddev.cli.commands.module.configureCommand.json.serializer;
 
 import com.espirit.moddev.cli.commands.module.configureCommand.json.components.ComponentWebApps;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ser.std.StdSerializer;
 
 import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_COMPONENT_NAME;
 import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_DEPLOY;
@@ -48,10 +46,10 @@ public class ComponentWebAppsSerializer extends StdSerializer<ComponentWebApps> 
 	}
 
 	@Override
-	public void serialize(@NotNull final ComponentWebApps value, @NotNull final JsonGenerator generator, @NotNull final SerializerProvider provider) throws IOException {
+	public void serialize(@NotNull final ComponentWebApps value, @NotNull final JsonGenerator generator, @NotNull final SerializationContext ctxt) {
 		generator.writeStartObject();
-		generator.writeStringField(ATTR_COMPONENT_NAME, value.getComponentName());
-		generator.writeObjectField(ATTR_WEB_APPS, value.getWebApps());
+		generator.writeStringProperty(ATTR_COMPONENT_NAME, value.getComponentName());
+		generator.writePOJOProperty(ATTR_WEB_APPS, value.getWebApps());
 		generator.writeEndObject();
 	}
 
@@ -66,16 +64,16 @@ public class ComponentWebAppsSerializer extends StdSerializer<ComponentWebApps> 
 		}
 
 		@Override
-		public void serialize(@NotNull final ComponentWebApps.WebApp value, @NotNull final JsonGenerator generator, @NotNull final SerializerProvider provider) throws IOException {
+		public void serialize(@NotNull final ComponentWebApps.WebApp value, @NotNull final JsonGenerator generator, @NotNull final SerializationContext ctxt) {
 			generator.writeStartObject();
-			generator.writeStringField(ATTR_WEB_APP_NAME, value.getWebAppName().toString());
+			generator.writeStringProperty(ATTR_WEB_APP_NAME, value.getWebAppName().toString());
 			if (value.getRawProjectName() != null) {
-				generator.writeStringField(ATTR_PROJECT_NAME, value.getRawProjectName());
+				generator.writeStringProperty(ATTR_PROJECT_NAME, value.getRawProjectName());
 			}
 			if (!value.getDeploy()) {
-				generator.writeBooleanField(ATTR_DEPLOY, value.getDeploy());
+				generator.writeBooleanProperty(ATTR_DEPLOY, value.getDeploy());
 			}
-			generator.writeObjectField(ATTR_FILES, value.getFiles());
+			generator.writePOJOProperty(ATTR_FILES, value.getFiles());
 			generator.writeEndObject();
 		}
 

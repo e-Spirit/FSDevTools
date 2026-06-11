@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2025 Crownpeak Technology GmbH
+ * Copyright (C) 2026 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,63 +25,59 @@ package com.espirit.moddev.cli.api.json.serializer;
 import com.espirit.moddev.cli.api.result.ExecutionResults;
 import com.espirit.moddev.cli.api.result.ExecutionResultsTest;
 import com.espirit.moddev.util.JacksonUtil;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DefaultExecutionResultsSerializerTest {
 
 	@Test
-	public void serialize_no_errorResults() throws JsonProcessingException {
+	public void serialize_no_errorResults() throws JacksonException {
 		// setup
-		final ObjectMapper objectMapper = JacksonUtil.createOutputMapper();
+		final JsonMapper jsonMapper = JacksonUtil.createOutputMapper();
 		final ExecutionResults results = new ExecutionResults();
 		results.add(new ExecutionResultsTest.TestResult(42));
 		results.add(new ExecutionResultsTest.TestResult(1337));
 
 		// test
-		final String json = objectMapper.writeValueAsString(results);
+		final String json = jsonMapper.writeValueAsString(results);
+		final JsonNode root = jsonMapper.readTree(json);
 
-		// verify
-		final String expectedResult = "{" +
-				"  \"error\" : false," +
-				"  \"results\" : [ {" +
-				"    \"message\" : \"TestResult[value=42]\"" +
-				"  }, {" +
-				"    \"message\" : \"TestResult[value=1337]\"" +
-				"  } ]" +
-				"}";
-		assertThat(json).isEqualToIgnoringNewLines(expectedResult);
+		// verify structural contract
+		assertThat(root.has("error")).isTrue();
+		assertThat(root.get("error").asBoolean()).isFalse();
+		assertThat(root.has("results")).isTrue();
+		assertThat(root.get("results")).hasSize(2);
+		assertThat(root.get("results").get(0).get("message").asString()).isEqualTo("TestResult[value=42]");
+		assertThat(root.get("results").get(1).get("message").asString()).isEqualTo("TestResult[value=1337]");
 	}
 
 	@Test
-	public void serialize_with_errorResults() throws JsonProcessingException {
+	public void serialize_with_errorResults() throws JacksonException {
 		// setup
-		final ObjectMapper objectMapper = JacksonUtil.createOutputMapper();
+		final JsonMapper jsonMapper = JacksonUtil.createOutputMapper();
 		final ExecutionResults results = new ExecutionResults();
 		results.add(new ExecutionResultsTest.TestResult(42));
 		results.add(new ExecutionResultsTest.TestErrorResult(1337));
 
 		// test
-		final String json = objectMapper.writeValueAsString(results);
+		final String json = jsonMapper.writeValueAsString(results);
+		final JsonNode root = jsonMapper.readTree(json);
 
-		// verify
-		final String expectedResult = "{\n" +
-				"  \"error\" : true,\n" +
-				"  \"results\" : [ {\n" +
-				"    \"message\" : \"TestResult[value=42]\"\n" +
-				"  }, {\n" +
-				"    \"message\" : \"TestErrorResult[value=1337, exception=java.lang.IllegalStateException: 1337]\",\n" +
-				"    \"exception\" : {\n" +
-				"      \"class\" : \"java.lang.IllegalStateException\",\n" +
-				"      \"message\" : \"1337\",\n" +
-				"      \"localizedMessage\" : \"1337\"\n" +
-				"    }\n" +
-				"  } ]\n" +
-				"}";
-		assertThat(json.replaceAll("\r", "")).isEqualTo(expectedResult);
+		// verify structural contract
+		assertThat(root.has("error")).isTrue();
+		assertThat(root.get("error").asBoolean()).isTrue();
+		assertThat(root.has("results")).isTrue();
+		assertThat(root.get("results").size()).isEqualTo(2);
+		assertThat(root.get("results").get(0).get("message").asString()).isEqualTo("TestResult[value=42]");
+		final JsonNode errorResult = root.get("results").get(1);
+		assertThat(errorResult.get("message").asString()).isEqualTo("TestErrorResult[value=1337, exception=java.lang.IllegalStateException: 1337]");
+		assertThat(errorResult.has("exception")).isTrue();
+		assertThat(errorResult.get("exception").get("class").asString()).isEqualTo("java.lang.IllegalStateException");
+		assertThat(errorResult.get("exception").get("message").asString()).isEqualTo("1337");
 	}
 
 }

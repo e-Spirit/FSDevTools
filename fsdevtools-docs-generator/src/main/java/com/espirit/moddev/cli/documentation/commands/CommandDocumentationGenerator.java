@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2025 Crownpeak Technology GmbH
+ * Copyright (C) 2026 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import com.espirit.moddev.cli.documentation.utils.ArgumentUtils;
 import com.espirit.moddev.cli.documentation.utils.ScanUtils;
 import org.jetbrains.annotations.VisibleForTesting;
 import com.espirit.moddev.util.JacksonUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import com.github.rvesse.airline.annotations.Arguments;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
@@ -357,7 +357,7 @@ public class CommandDocumentationGenerator implements DocumentationGenerator<Com
 				throw new IOException(String.format("Directory '%s' does not exist! Directory creation failed.", parent.toAbsolutePath()));
 			}
 		}
-		final ObjectMapper outputMapper = JacksonUtil.createOutputMapper();
+		final JsonMapper outputMapper = JacksonUtil.createOutputMapper();
 		final File outputFile = outputFilePath.toFile();
 		if (outputFile.exists()) {
 			if (!outputFilePath.toFile().delete()) {

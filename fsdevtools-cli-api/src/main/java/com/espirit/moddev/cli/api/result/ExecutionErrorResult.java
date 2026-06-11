@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2025 Crownpeak Technology GmbH
+ * Copyright (C) 2026 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import com.espirit.moddev.cli.api.command.Command;
 import com.espirit.moddev.cli.api.json.serializer.DefaultExecutionErrorResultSerializer;
 import com.espirit.moddev.util.JacksonUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.annotation.JsonSerialize;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -37,12 +37,12 @@ import org.jetbrains.annotations.NotNull;
  * (using a mapper from {@link JacksonUtil#createOutputMapper()}) with the information gathered from the {@code #toString()} method.
  * <p>
  * If complex json objects are needed, you can use default JACKSON mechanics like the {@link JsonProperty}-annotation or
- * custom {@link JsonSerializer serializers} (in combination with {@link JsonSerialize}-annotation).
+ * custom {@link ValueSerializer serializers} (in combination with {@link JsonSerialize}-annotation).
  *
  * @see JacksonUtil#createOutputMapper()
  * @see JsonProperty
  * @see JsonSerialize
- * @see JsonSerializer
+ * @see ValueSerializer
  */
 @JsonSerialize(using = DefaultExecutionErrorResultSerializer.class)
 public interface ExecutionErrorResult<E extends Throwable> extends ExecutionResult {

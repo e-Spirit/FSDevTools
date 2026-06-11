@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2025 Crownpeak Technology GmbH
+ * Copyright (C) 2026 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,15 +28,16 @@ import com.espirit.moddev.cli.api.result.ExecutionResults;
 import com.espirit.moddev.cli.commands.module.configureCommand.json.components.Components;
 import com.espirit.moddev.cli.commands.module.configureCommand.json.components.Configurable;
 import com.espirit.moddev.cli.commands.module.configureCommand.json.components.ConfigurationContext;
-import org.jetbrains.annotations.VisibleForTesting;
 import com.espirit.moddev.util.JacksonUtil;
 import com.espirit.moddev.util.Preconditions;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.espirit.firstspirit.module.descriptor.ModuleDescriptor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -61,10 +62,11 @@ public class ModuleConfiguration implements Configurable {
 	 *
 	 * @param pathToFile the path of the configuration file
 	 * @return a {@link Collection} of configurations
-	 * @throws IOException thrown if the file at the given path could not be de-serialized properly
+	 * @throws IOException      thrown if the file does not exist at the given path
+	 * @throws JacksonException thrown if the file at the given path could not be de-serialized properly
 	 */
 	@NotNull
-	public static Collection<ModuleConfiguration> fromPath(@NotNull final String pathToFile) throws IOException {
+	public static Collection<ModuleConfiguration> fromPath(@NotNull final String pathToFile) throws IOException, JacksonException {
 		LOGGER.info("Loading module configurations from file '{}'...", pathToFile);
 		final Path path = Paths.get(pathToFile);
 		if (!path.toFile().exists()) {
@@ -78,12 +80,12 @@ public class ModuleConfiguration implements Configurable {
 	 *
 	 * @param bytes the byte array
 	 * @return a {@link Collection} of configurations
-	 * @throws IOException thrown if the file at the given path could not be de-serialized properly
+	 * @throws JacksonException thrown if the file at the given path could not be de-serialized properly
 	 */
 	@NotNull
-	public static Collection<ModuleConfiguration> fromBytes(@NotNull final byte[] bytes) throws IOException {
-		final ObjectMapper objectMapper = JacksonUtil.createInputMapper();
-		final ModuleConfiguration[] configurations = objectMapper.readValue(bytes, ModuleConfiguration[].class);
+	public static Collection<ModuleConfiguration> fromBytes(@NotNull final byte[] bytes) throws JacksonException {
+		final JsonMapper jsonMapper = JacksonUtil.createInputMapper();
+		final ModuleConfiguration[] configurations = jsonMapper.readValue(bytes, ModuleConfiguration[].class);
 		return Arrays.asList(configurations);
 	}
 

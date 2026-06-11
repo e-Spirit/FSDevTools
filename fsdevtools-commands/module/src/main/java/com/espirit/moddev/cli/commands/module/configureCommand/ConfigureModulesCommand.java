@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2025 Crownpeak Technology GmbH
+ * Copyright (C) 2026 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,7 @@ import de.espirit.firstspirit.server.authentication.AuthenticationException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -153,7 +154,7 @@ public class ConfigureModulesCommand extends SimpleCommand<ConfigureModulesComma
 		try (final Connection connection = ConnectionBuilder.with(this).build()) {
 			connection.connect();
 			return new ConfigureModulesCommandResult(execute(new ConfigurationContext(connection, this), ModuleConfiguration.fromPath(_configFile)));
-		} catch (final FileNotFoundException e) {
+		} catch (final JacksonException | FileNotFoundException e) {
 			return new ConfigureModulesCommandResult(e);
 		} catch (final IOException | AuthenticationException | MaximumNumberOfSessionsExceededException e) {
 			return new ConfigureModulesCommandResult(new IllegalStateException("Unable to connect to FirstSpirit server.", e));

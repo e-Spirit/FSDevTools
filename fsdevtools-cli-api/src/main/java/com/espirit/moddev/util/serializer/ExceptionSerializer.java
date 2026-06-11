@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2025 Crownpeak Technology GmbH
+ * Copyright (C) 2026 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,11 @@
 
 package com.espirit.moddev.util.serializer;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ser.std.StdSerializer;
 
 import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_CAUSE;
 import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_CLASS;
@@ -37,7 +34,7 @@ import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_LOCALIZ
 import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_MESSAGE;
 
 /**
- * Simple custom {@link JsonSerializer serializer} for {@link Exception exceptions}.<br/>
+ * Simple custom serializer for {@link Exception exceptions}.<br/>
  * <br/>
  * The following attributes will be written:<br/>
  * <ul>
@@ -58,20 +55,20 @@ public class ExceptionSerializer extends StdSerializer<Exception> {
 	}
 
 	@Override
-	public void serialize(@NotNull final Exception value, @NotNull final JsonGenerator generator, @NotNull final SerializerProvider provider) throws IOException {
+	public void serialize(@NotNull final Exception value, @NotNull final JsonGenerator generator, @NotNull final SerializationContext ctxt) {
 		generator.writeStartObject();
-		generator.writeStringField(ATTR_CLASS, value.getClass().getName());
+		generator.writeStringProperty(ATTR_CLASS, value.getClass().getName());
 		final String message = value.getMessage();
 		if (message != null) {
-			generator.writeStringField(ATTR_MESSAGE, message);
+			generator.writeStringProperty(ATTR_MESSAGE, message);
 		}
 		final String localizedMessage = value.getLocalizedMessage();
 		if (localizedMessage != null) {
-			generator.writeStringField(ATTR_LOCALIZED_MESSAGE, localizedMessage);
+			generator.writeStringProperty(ATTR_LOCALIZED_MESSAGE, localizedMessage);
 		}
 		final Throwable cause = value.getCause();
 		if (cause != null) {
-			generator.writeObjectField(ATTR_CAUSE, cause);
+			generator.writePOJOProperty(ATTR_CAUSE, cause);
 		}
 		generator.writeEndObject();
 	}

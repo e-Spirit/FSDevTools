@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2025 Crownpeak Technology GmbH
+ * Copyright (C) 2026 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,20 +33,20 @@ import com.espirit.moddev.cli.commands.module.configureCommand.json.serializer.M
 import com.espirit.moddev.cli.commands.module.configureCommand.json.serializer.ServiceSerializer;
 import com.espirit.moddev.cli.commands.module.configureCommand.json.serializer.WebAppIdentifierSerializer;
 import com.espirit.moddev.shared.webapp.WebAppIdentifier;
-import com.espirit.moddev.util.JacksonUtil;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class JsonTestUtil {
 
-	protected static final ObjectMapper OBJECT_MAPPER = createMapper();
+	protected static final JsonMapper OBJECT_MAPPER = createMapper();
 
 	@NotNull
 	public static Map.Entry<String, Object> createEntry(@NotNull final String key, @Nullable final Object value) {
@@ -88,15 +88,13 @@ public class JsonTestUtil {
 	public static String toJsonObject(@NotNull final Object object) {
 		try {
 			return OBJECT_MAPPER.writeValueAsString(object);
-		} catch (final JsonProcessingException e) {
+		} catch (final JacksonException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@NotNull
-	public static ObjectMapper createMapper() {
-		final ObjectMapper objectMapper = JacksonUtil.createInputMapper();
-		// register custom serializers for tests
+	public static JsonMapper createMapper() {
 		final SimpleModule module = new SimpleModule();
 		module.addSerializer(WebAppIdentifier.class, new WebAppIdentifierSerializer());
 		module.addSerializer(ModuleConfiguration.class, new ModuleConfigurationSerializer());
@@ -106,11 +104,13 @@ public class JsonTestUtil {
 		module.addSerializer(ComponentProjectApps.class, new ComponentProjectAppsSerializer());
 		module.addSerializer(ComponentProjectApps.ProjectApp.class, new ComponentProjectAppsSerializer.ProjectAppSerializer());
 		module.addSerializer(Service.class, new ServiceSerializer());
-		objectMapper.registerModule(module);
-		// configure serialization
-		objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-		objectMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
-		return objectMapper;
+		return JsonMapper.builder()
+				.enable(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
+				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+				.addModule(module)
+				.enable(SerializationFeature.INDENT_OUTPUT)
+				.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
+				.build();
 	}
 
 }

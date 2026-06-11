@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2025 Crownpeak Technology GmbH
+ * Copyright (C) 2026 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -261,6 +261,38 @@ tasks.jar {
 tasks.shadowJar {
     archiveFileName.set("fsdevtools-cli-${project.version}.jar")
     destinationDirectory.set(layout.buildDirectory.dir("shadowJAR"))
+
+    val shadedPrefix = "com.espirit.moddev.cli.shaded"
+
+    // Jackson 3 databind/core (tools.jackson.*) — the CLI's own serialization stack
+    relocate("tools.jackson", "$shadedPrefix.jackson")
+
+    // Residual jackson-annotations 2.x that arrives transitively (com.fasterxml.jackson.*)
+    relocate("com.fasterxml.jackson", "$shadedPrefix.jackson.v2")
+
+    // Airline CLI parser
+    relocate("com.github.rvesse", "$shadedPrefix.airline")
+
+    // Guava
+    relocate("com.google.common", "$shadedPrefix.guava")
+    relocate("com.google.thirdparty", "$shadedPrefix.guava.thirdparty")
+
+    // Apache Commons (compress + its transitive deps codec and io; lang3 from airline)
+    relocate("org.apache.commons.compress", "$shadedPrefix.commons.compress")
+    relocate("org.apache.commons.codec", "$shadedPrefix.commons.codec")
+    relocate("org.apache.commons.io", "$shadedPrefix.commons.io")
+    relocate("org.apache.commons.lang3", "$shadedPrefix.commons.lang3")
+    relocate("org.apache.commons.collections4", "$shadedPrefix.commons.collections4")
+
+    // ClassGraph (command discovery — verified by V4 runtime check)
+    relocate("io.github.classgraph", "$shadedPrefix.classgraph")
+    relocate("nonapi.io.github.classgraph", "$shadedPrefix.classgraph.nonapi")
+
+    // NOT relocated: org.slf4j, org.apache.logging.log4j, de.espirit.*, de.firstspirit.*
+    // Logging frameworks must stay on the shared namespace for the SLF4J→Log4j binding.
+    // Annotation-only transitive deps (jspecify, errorprone, j2objc, javax.inject) are not
+    // relocated — they carry no runtime behaviour and cannot cause binary incompatibility.
+    // fs-isolated-runtime is compileOnly and resolves from the host at runtime.
 }
 
 ///////////////////////////////////////////////////////

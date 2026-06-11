@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2025 Crownpeak Technology GmbH
+ * Copyright (C) 2026 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,8 @@ import com.espirit.moddev.cli.commands.module.configureCommand.json.components.c
 import com.espirit.moddev.cli.commands.module.utils.FileSystemUtil;
 import com.espirit.moddev.cli.configuration.GlobalConfig;
 import com.espirit.moddev.util.JacksonUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.exc.MismatchedInputException;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.ServiceNotFoundException;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
@@ -67,7 +67,7 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class ServicesTest {
 
-	private ObjectMapper _objectMapper;
+	private JsonMapper _jsonMapper;
 
 	private final String _moduleName = "testModule";
 	private final String _serviceName = "testService";
@@ -81,7 +81,7 @@ public class ServicesTest {
 
 	@BeforeEach
 	public void setup() {
-		_objectMapper = JacksonUtil.createInputMapper();
+		_jsonMapper = JacksonUtil.createInputMapper();
 
 		// integrative tests
 		_moduleDescriptor = mock(ModuleDescriptor.class);
@@ -104,10 +104,10 @@ public class ServicesTest {
 	public void deserialize_defaultValues() throws IOException {
 		// setup
 		final String serviceName = "myServiceName";
-		final String json = _objectMapper.writeValueAsString(new Service(serviceName));
+		final String json = _jsonMapper.writeValueAsString(new Service(serviceName));
 
 		// test
-		final Service service = _objectMapper.readValue(json, Service.class);
+		final Service service = _jsonMapper.readValue(json, Service.class);
 
 		// verify
 		assertThat(service.getServiceName()).isEqualTo(serviceName);
@@ -123,7 +123,7 @@ public class ServicesTest {
 
 		// test
 		Assertions.assertThrows(MismatchedInputException.class, () -> {
-			_objectMapper.readValue(json, Service.class);
+			_jsonMapper.readValue(json, Service.class);
 		});
 	}
 
@@ -139,7 +139,7 @@ public class ServicesTest {
 		));
 
 		// test
-		final Service deserialized = _objectMapper.readValue(json, Service.class);
+		final Service deserialized = _jsonMapper.readValue(json, Service.class);
 
 		// verify
 		assertThat(deserialized.getServiceName()).isEqualTo(serviceName);

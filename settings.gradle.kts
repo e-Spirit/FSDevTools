@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2025 Crownpeak Technology GmbH
+ * Copyright (C) 2026 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ dependencyResolutionManagement {
             library("commons-lang3", "org.apache.commons:commons-lang3:3.17.0")
             library("commons-compress", "org.apache.commons:commons-compress:1.27.1")
             library("guava", "com.google.guava:guava:33.4.7-jre")
-            library("jackson-databind", "com.fasterxml.jackson.core:jackson-databind:2.18.3")
+            library("jackson-databind", "tools.jackson.core:jackson-databind:3.2.0")
             library("slf4j-api", "org.slf4j:slf4j-api:2.0.17")
         }
         create("testlibs") {

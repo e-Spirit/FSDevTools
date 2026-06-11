@@ -1,5 +1,13 @@
 # Release notes
 
+## Version 4.8.9
+
+* upgraded bundled Jackson from 2.18.3 to **3.2.0** (`tools.jackson.core:jackson-databind`)
+* all CLI-bundled third-party libraries are now package-relocated in the uber JAR under
+  `com.espirit.moddev.cli.shaded.*` — this eliminates `NoSuchFieldError`/`NoSuchMethodError`
+  classloading conflicts that occurred when client-side module UploadHooks (e.g. image-recognition)
+  bundled their own newer version of `jackson-annotations` alongside the CLI
+
 ## Version 4.8.8
 
 * added new global parameters "*--conn-encryption*" and "*--conn-compression*" to configure the encryption and compression of the FirstSpirit connection

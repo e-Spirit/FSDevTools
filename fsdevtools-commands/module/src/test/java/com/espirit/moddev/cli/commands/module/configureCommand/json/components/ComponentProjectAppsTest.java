@@ -3,7 +3,7 @@
  * *********************************************************************
  * fsdevtools
  * %%
- * Copyright (C) 2025 Crownpeak Technology GmbH
+ * Copyright (C) 2026 Crownpeak Technology GmbH
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,9 @@ import com.espirit.moddev.cli.commands.module.configureCommand.json.components.c
 import com.espirit.moddev.cli.commands.module.configureCommand.json.components.common.ProjectNotFoundResult;
 import com.espirit.moddev.cli.commands.module.utils.FileSystemUtil;
 import com.espirit.moddev.cli.configuration.GlobalConfig;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.exc.MismatchedInputException;
 import de.espirit.firstspirit.access.Connection;
 import de.espirit.firstspirit.access.project.Project;
 import de.espirit.firstspirit.agency.ModuleAdminAgent;
@@ -95,11 +95,11 @@ public class ComponentProjectAppsTest {
 	private Project _project1;
 	private Project _project2;
 
-	private ObjectMapper _objectMapper;
+	private JsonMapper _jsonMapper;
 
 	@BeforeEach
 	public void setup() {
-		_objectMapper = JsonTestUtil.createMapper();
+		_jsonMapper = JsonTestUtil.createMapper();
 
 		// integrative tests
 		_fileSystem = new MemoryFileSystem();
@@ -131,7 +131,7 @@ public class ComponentProjectAppsTest {
 		final String json = JsonTestUtil.toJsonObject(JsonTestUtil.createMap(JsonTestUtil.createEntry(ATTR_PROJECT_APPS, APP_AMOUNT_1)));
 
 		// test
-		org.junit.jupiter.api.Assertions.assertThrows(MismatchedInputException.class, () -> _objectMapper.readValue(json, ComponentProjectApps.class));
+		org.junit.jupiter.api.Assertions.assertThrows(MismatchedInputException.class, () -> _jsonMapper.readValue(json, ComponentProjectApps.class));
 	}
 
 	@Test
@@ -141,9 +141,9 @@ public class ComponentProjectAppsTest {
 
 		// test
 		try {
-			_objectMapper.readValue(json, ComponentProjectApps.class);
-			failBecauseExceptionWasNotThrown(JsonMappingException.class);
-		} catch (final JsonMappingException e) {
+			_jsonMapper.readValue(json, ComponentProjectApps.class);
+			failBecauseExceptionWasNotThrown(JacksonException.class);
+		} catch (final JacksonException e) {
 			Assertions.assertThat(e.getCause()).isExactlyInstanceOf(NullPointerException.class);
 		}
 	}
@@ -155,9 +155,9 @@ public class ComponentProjectAppsTest {
 
 		// test
 		try {
-			_objectMapper.readValue(json, ComponentProjectApps.class);
-			failBecauseExceptionWasNotThrown(JsonMappingException.class);
-		} catch (final JsonMappingException e) {
+			_jsonMapper.readValue(json, ComponentProjectApps.class);
+			failBecauseExceptionWasNotThrown(JacksonException.class);
+		} catch (final JacksonException e) {
 			Assertions.assertThat(e.getCause()).isExactlyInstanceOf(IllegalArgumentException.class);
 		}
 	}
@@ -169,9 +169,9 @@ public class ComponentProjectAppsTest {
 
 		// test
 		try {
-			_objectMapper.readValue(json, ComponentProjectApps.class);
-			failBecauseExceptionWasNotThrown(JsonMappingException.class);
-		} catch (final JsonMappingException e) {
+			_jsonMapper.readValue(json, ComponentProjectApps.class);
+			failBecauseExceptionWasNotThrown(JacksonException.class);
+		} catch (final JacksonException e) {
 			Assertions.assertThat(e.getCause()).isExactlyInstanceOf(IllegalArgumentException.class);
 		}
 	}
@@ -182,7 +182,7 @@ public class ComponentProjectAppsTest {
 		final String json = JsonTestUtil.toJsonObject(JsonTestUtil.createMap(JsonTestUtil.createEntry(ATTR_COMPONENT_NAME, "myProjectComponent")));
 
 		// test
-		org.junit.jupiter.api.Assertions.assertThrows(MismatchedInputException.class, () -> _objectMapper.readValue(json, ComponentProjectApps.class));
+		org.junit.jupiter.api.Assertions.assertThrows(MismatchedInputException.class, () -> _jsonMapper.readValue(json, ComponentProjectApps.class));
 	}
 
 	@Test
@@ -192,9 +192,9 @@ public class ComponentProjectAppsTest {
 
 		// test
 		try {
-			_objectMapper.readValue(json, ComponentProjectApps.class);
-			failBecauseExceptionWasNotThrown(JsonMappingException.class);
-		} catch (final JsonMappingException e) {
+			_jsonMapper.readValue(json, ComponentProjectApps.class);
+			failBecauseExceptionWasNotThrown(JacksonException.class);
+		} catch (final JacksonException e) {
 			Assertions.assertThat(e.getCause()).isExactlyInstanceOf(IllegalArgumentException.class);
 		}
 	}
@@ -212,7 +212,7 @@ public class ComponentProjectAppsTest {
 		final String json = JsonTestUtil.toJsonObject(JsonTestUtil.createMap(JsonTestUtil.createEntry(ATTR_COMPONENT_NAME, COMPONENT_NAME), JsonTestUtil.createEntry(ATTR_PROJECT_APPS, projectApps)));
 
 		// test
-		final ComponentProjectApps deserialized = _objectMapper.readValue(json, ComponentProjectApps.class);
+		final ComponentProjectApps deserialized = _jsonMapper.readValue(json, ComponentProjectApps.class);
 
 		// verify
 		assertThat(deserialized.getComponentName()).isEqualTo(COMPONENT_NAME);
@@ -238,7 +238,7 @@ public class ComponentProjectAppsTest {
 		final String json = JsonTestUtil.toJsonObject(JsonTestUtil.createMap(JsonTestUtil.createEntry(ATTR_FILES, new String[0])));
 
 		// test
-		final ComponentProjectApps.ProjectApp result = _objectMapper.readValue(json, ComponentProjectApps.ProjectApp.class);
+		final ComponentProjectApps.ProjectApp result = _jsonMapper.readValue(json, ComponentProjectApps.ProjectApp.class);
 
 		// verify
 		assertThat(result.getRawProjectName()).isNull();
@@ -250,7 +250,7 @@ public class ComponentProjectAppsTest {
 		final String json = JsonTestUtil.toJsonObject(JsonTestUtil.createMap(JsonTestUtil.createEntry(ATTR_PROJECT_NAME, null)));
 
 		// test
-		final ComponentProjectApps.ProjectApp result = _objectMapper.readValue(json, ComponentProjectApps.ProjectApp.class);
+		final ComponentProjectApps.ProjectApp result = _jsonMapper.readValue(json, ComponentProjectApps.ProjectApp.class);
 
 		// verify
 		assertThat(result.getRawProjectName()).isNull();
@@ -262,7 +262,7 @@ public class ComponentProjectAppsTest {
 		final String json = JsonTestUtil.toJsonObject(JsonTestUtil.createMap(JsonTestUtil.createEntry(ATTR_PROJECT_NAME, "")));
 
 		// test
-		final ComponentProjectApps.ProjectApp result = _objectMapper.readValue(json, ComponentProjectApps.ProjectApp.class);
+		final ComponentProjectApps.ProjectApp result = _jsonMapper.readValue(json, ComponentProjectApps.ProjectApp.class);
 
 		// verify
 		assertThat(result.getRawProjectName()).isNull();
@@ -274,7 +274,7 @@ public class ComponentProjectAppsTest {
 		final String json = JsonTestUtil.toJsonObject(JsonTestUtil.createMap(JsonTestUtil.createEntry(ATTR_FILES, new String[0])));
 
 		// test
-		final ComponentProjectApps.ProjectApp result = _objectMapper.readValue(json, ComponentProjectApps.ProjectApp.class);
+		final ComponentProjectApps.ProjectApp result = _jsonMapper.readValue(json, ComponentProjectApps.ProjectApp.class);
 
 		// verify
 		assertThat(result.getRawProjectName()).isNull();
