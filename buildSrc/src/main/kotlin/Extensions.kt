@@ -25,12 +25,17 @@ fun Project.getArtifactory(snapshotRepository: String, releaseRepository: String
 }
 
 fun Project.disablePublishing() {
-    tasks.getByName("generatePomFileForMavenPublication").enabled = false
-    tasks.getByName("publish").enabled = false
-    tasks.getByName("publishToMavenLocal").enabled = false
-    tasks.getByName("publishMavenPublicationToMavenRepository").enabled = false
-    tasks.getByName("publishMavenPublicationToMavenLocal").enabled = false
-    tasks.getByName("publishAllPublicationsToMavenRepository").enabled = false
+    // some of these tasks only exist if a publishing repository is configured (e.g. when building with artifactory credentials) --> disable them only if present
+    listOf(
+        "generatePomFileForMavenPublication",
+        "publish",
+        "publishToMavenLocal",
+        "publishMavenPublicationToMavenRepository",
+        "publishMavenPublicationToMavenLocal",
+        "publishAllPublicationsToMavenRepository"
+    ).forEach { taskName ->
+        tasks.findByName(taskName)?.enabled = false
+    }
 }
 
 /**

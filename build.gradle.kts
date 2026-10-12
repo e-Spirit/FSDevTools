@@ -500,7 +500,7 @@ for (project in project.project(":fsdevtools-scriptengines").subprojects) {
 }
 
 val releaseText = """
-The zip and the tar.gz files are our windows and linux/mac distributions. This binary release does **not** contain FirstSpirit api jars (*fs-isolated-runtime.jar*). You must add it to the *"lib"* directory. 
+The zip and the tar.gz files are our windows and linux/mac distributions. This binary release does **not** contain FirstSpirit api jars (*fs-isolated-runtime.jar*). You must add it to the *"lib"* directory, for example with *fs-cli download [&lt;url&gt;] [&lt;user&gt;] [&lt;password&gt;]* (needs curl; see the README).
 
 For further information about the prerequisites, please take a look at the [README](https://github.com/e-Spirit/FSDevTools/blob/master/README.md#prerequisites). 
 """

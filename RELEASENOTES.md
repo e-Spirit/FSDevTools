@@ -1,5 +1,13 @@
 # Release notes
 
+## Version 4.9.0
+
+* added the `download` mode to `fs-cli.sh` and `fs-cli.cmd`: `fs-cli download [<url>] [<user>] [<password>] [--force]` fetches
+  the matching `fs-isolated-runtime.jar` from a FirstSpirit server into `lib/` (saved as `fs-isolated-runtime-<version>.jar`).
+  Url, user and password fall back to the environment variables `fsurl` (`http://` is prepended if it has no scheme), `fsuser` and `fspwd`.
+  It requires `curl` and does not need `JAVA_HOME`. A different runtime version in `lib/` is replaced automatically;
+  `--force` downloads even if the jar of the server version is already present.
+
 ## Version 4.8.9
 
 * upgraded bundled Jackson from 2.18.3 to **3.2.0** (`tools.jackson.core:jackson-databind`)

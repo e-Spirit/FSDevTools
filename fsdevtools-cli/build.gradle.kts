@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.log4j.slf4j)
 
     testImplementation(project(":fsdevtools-commands:custom-command-example"))
+    testImplementation(testlibs.mockwebserver)
 
     runtimeOnly(files("/home/windmueller/Projects/FirstSpirit/firstspirit/fs/build/libs/fs-isolated-runtime.jar"))
 }

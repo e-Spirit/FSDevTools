@@ -46,6 +46,7 @@ dependencyResolutionManagement {
             library("assertj", "org.assertj:assertj-core:3.27.3")
             library("mockito", "org.mockito:mockito-junit-jupiter:4.4.0")
             library("archunit", "com.tngtech.archunit:archunit-junit5:1.4.0")
+            library("mockwebserver", "com.squareup.okhttp3:mockwebserver:4.12.0")
         }
     }
 }

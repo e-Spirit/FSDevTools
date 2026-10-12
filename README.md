@@ -12,8 +12,24 @@ of the binary distribution. Below is a summary of the key requirements.
 
 Additionally, ensure that the `JAVA_HOME` environment variable is correctly set to a **Java 17+** installation.
 
+The binary distribution does not contain the FirstSpirit runtime (`fs-isolated-runtime.jar`), which must match your
+server version. Download it from the server into the `lib` directory with the `download` mode of the start script:
+
+```
+fs-cli.sh  download [<url>] [<user>] [<password>] [--force]
+fs-cli.cmd download [<url>] [<user>] [<password>] [--force]
+```
+
+The jar is saved as `lib/fs-isolated-runtime-<server version>.jar`. If the url, user or password is omitted, the `fsurl`, `fsuser` and `fspwd` environment
+variables are used, which is the safer choice because arguments are visible in the process list. Unlike every other
+command, `download` needs neither `JAVA_HOME` nor a runtime jar, but it requires `curl`. If `lib` already contains the
+jar of the server's version nothing is downloaded, unless `--force` is given, which always downloads. If the version differs,
+the jar is downloaded and every other `fs-isolated-runtime*.jar` is replaced. On Windows, quote passwords with special characters (`& ^ % !`) and do not
+start `fs-cli.cmd` with `call`.
+
 Upon initialization, the following configurations are sourced from your system environment using specific keys:
 
+- **fsurl**: FirstSpirit server base URL. Only used by the `download` mode of the start scripts (`http://` is prepended if the value has no scheme).
 - **fshost**: FirstSpirit host address.
 - **fsport**: FirstSpirit port number.
 - **fsmode**: FirstSpirit connection mode (HTTP, HTTPS, or SOCKET).
