@@ -12,7 +12,7 @@ fs-cli/
   lib/
     fsdevtools-cli-<version>.jar        ← Uber JAR
     fs-isolated-runtime[-<version>].jar ← ⚠ NOT included — fetch with `fs-cli download` or place manually
-  plugins/             ← Drop script engine JARs or custom command JARs here
+  plugins/             ← Drop script engine JARs here. Custom command JARs go into lib/ (commands are found on the classpath)
   docs/
     json-schema/       ← JSON schemas for command inputs
     (Vue.js UI)        ← Interactive command documentation

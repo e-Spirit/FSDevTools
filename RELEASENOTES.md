@@ -1,5 +1,18 @@
 # Release notes
 
+## Version 5.0.0
+
+**Breaking changes**
+
+* custom commands no longer get a JSON result file (`-rf`) from Jackson annotations (`@JsonSerialize`, `@JsonProperty`) on their result classes. Jackson stays relocated and invisible to commands, so the annotations have no effect; the CLI logs a warning naming the class. Result files of the built-in commands are unchanged.
+* Airline is **no longer relocated**: the CLI and custom commands share it again, as in 4.8.8. A plugin's own copy of Airline is ignored (parent-first classloader), so commands must be built against the Airline version of the CLI. Workaround service files named `com.espirit.moddev.cli.shaded.airline...` in extension JARs are no longer used and can be deleted.
+* custom command JARs belong into `lib/`; `plugins/` is only scanned for script engines.
+
+**Fixes**
+
+* fixed `fs-cli help <command>` printing no EXAMPLES section since 4.8.9 (GitHub issue #64), and option restrictions (required, allowed values, ranges, paths) and custom commands not working. Airline's `META-INF/services` files were not renamed with the relocated classes.
+* the `META-INF/services` files of the libraries that stay relocated (Jackson) are now renamed and rewritten with them.
+
 ## Version 4.9.0
 
 * added the `download` mode to `fs-cli.sh` and `fs-cli.cmd`: `fs-cli download [<url>] [<user>] [<password>] [--force]` fetches

@@ -28,6 +28,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.jetbrains.annotations.NotNull;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.annotation.JsonSerialize;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.module.SimpleModule;
 
@@ -97,30 +98,18 @@ public class JacksonUtil {
 	}
 
 	/**
-	 * Returns {@code true} if the given class carries an annotation whose fully-qualified type name ends with
-	 * {@code ".jackson.databind.annotation.JsonSerialize"}.
+	 * Returns {@code true} if the given class carries the {@link JsonSerialize} annotation of <em>this</em> Jackson,
+	 * i.e. the one the output mapper of this class uses (after shading: the relocated one).
 	 *
-	 * <p>Matching by FQN suffix rather than by class identity makes the check relocation-robust: Shadow rewrites the
-	 * {@code JsonSerialize.class} literal to the shaded type, so a plain {@code isAnnotationPresent(JsonSerialize.class)}
-	 * call would miss externally-built command JARs (compiled against the non-shaded cli-api) after relocation. The
-	 * string suffix is not rewritten by Shadow and therefore matches all three variants:
-	 * <ul>
-	 *   <li>{@code tools.jackson.databind.annotation.JsonSerialize} (post-upgrade, pre-shade)</li>
-	 *   <li>{@code com.fasterxml.jackson.databind.annotation.JsonSerialize} (legacy, pre-upgrade)</li>
-	 *   <li>{@code com.espirit.moddev.cli.shaded.jackson.annotation.JsonSerialize} (post-shade)</li>
-	 * </ul>
+	 * <p>The check is by class identity on purpose: a Jackson annotation brought along by a custom command (same or
+	 * different package, same suffix) is a different type, is not understood by the shaded output mapper and must
+	 * therefore not count as serializable.
 	 *
 	 * @param clazz the class to inspect; must not be {@code null}
-	 * @return {@code true} if any present annotation's type name ends with
-	 *         {@code ".jackson.databind.annotation.JsonSerialize"}, {@code false} otherwise
+	 * @return {@code true} if the class is annotated with this Jackson's {@link JsonSerialize}
 	 */
 	public static boolean hasJsonSerializeAnnotation(@NotNull final Class<?> clazz) {
-		for (final java.lang.annotation.Annotation annotation : clazz.getAnnotations()) {
-			if (annotation.annotationType().getName().endsWith(".jackson.databind.annotation.JsonSerialize")) {
-				return true;
-			}
-		}
-		return false;
+		return clazz.isAnnotationPresent(JsonSerialize.class);
 	}
 
 }

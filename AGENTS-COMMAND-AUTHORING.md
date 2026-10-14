@@ -13,7 +13,7 @@ No manual registration is needed. Making the module reachable from `fsdevtools-c
 1. **Group class** — annotate with `@Group(name = "mygroup")` (one per group; skip if adding to an existing group)
 2. **Command class** — implement `Command<MyResult>`, annotate with `@com.github.rvesse.airline.annotations.Command(name = "mycommand", groupNames = {"mygroup"})`
 3. **Config** — implement `Config` if the command needs a FirstSpirit connection; the CLI then establishes the connection before `call()`. Omit for connection-free commands.
-4. **Result** — implement `Result<T>`; annotate the result payload with `@JsonSerialize` to enable the JSON result file that `Cli.executeCommand()` writes automatically.
+4. **Result** — implement `Result<T>`; annotate the result payload with `@JsonSerialize` to enable the JSON result file that `Cli.executeCommand()` writes automatically. This only works for commands inside the CLI build: in a custom command JAR the annotation is not loadable (Jackson is shaded), so no result file is written and the CLI logs a warning (see `AGENTS-CLASSLOADING.md`).
 5. **Module wiring** — add the module as a dependency of `fsdevtools-commands` (or directly of `fsdevtools-cli`); register in `settings.gradle.kts`.
 
 ## Command execution flow

@@ -19,7 +19,7 @@ To create your own command extension:
    - One or more classes implementing `Command<R>` annotated with `@com.github.rvesse.airline.annotations.Command`
    - Optionally implement `Config` if the command needs a FirstSpirit connection
 5. Build a **fat JAR** (uber JAR) including your classes and all runtime dependencies
-6. Drop the fat JAR into the `plugins/` directory of the fs-cli installation
+6. Drop the fat JAR into the `lib/` directory of the fs-cli installation (commands are found on the classpath; `plugins/` is only scanned for script engines)
 
 The CLI discovers commands via ClassGraph scanning at startup — no registration needed.
 

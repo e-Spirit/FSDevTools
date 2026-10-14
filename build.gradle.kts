@@ -24,6 +24,7 @@
 import org.apache.tools.ant.filters.FixCrLfFilter
 import org.apache.tools.ant.filters.ReplaceTokens
 import java.util.*
+import java.util.zip.ZipFile
 
 var firstSpiritVersion = "5.2.231105"
 
@@ -258,41 +259,100 @@ tasks.jar {
     }
 }
 
+// source package -> shaded package; single source of truth for relocate(...) and verifyShadowJar
+val shadedPrefix = "com.espirit.moddev.cli.shaded"
+val relocations = linkedMapOf(
+    // Jackson 3 databind/core (tools.jackson.*) — the CLI's own serialization stack
+    "tools.jackson" to "$shadedPrefix.jackson",
+    // Residual jackson-annotations 2.x that arrives transitively (com.fasterxml.jackson.*)
+    "com.fasterxml.jackson" to "$shadedPrefix.jackson.v2",
+    // Guava
+    "com.google.common" to "$shadedPrefix.guava",
+    "com.google.thirdparty" to "$shadedPrefix.guava.thirdparty",
+    // Apache Commons (compress + its transitive deps codec and io; lang3 and collections4 from airline)
+    "org.apache.commons.compress" to "$shadedPrefix.commons.compress",
+    "org.apache.commons.codec" to "$shadedPrefix.commons.codec",
+    "org.apache.commons.io" to "$shadedPrefix.commons.io",
+    "org.apache.commons.lang3" to "$shadedPrefix.commons.lang3",
+    "org.apache.commons.collections4" to "$shadedPrefix.commons.collections4",
+    // ClassGraph (command discovery — verified by V4 runtime check)
+    "io.github.classgraph" to "$shadedPrefix.classgraph",
+    "nonapi.io.github.classgraph" to "$shadedPrefix.classgraph.nonapi",
+)
+
 tasks.shadowJar {
     archiveFileName.set("fsdevtools-cli-${project.version}.jar")
     destinationDirectory.set(layout.buildDirectory.dir("shadowJAR"))
 
-    val shadedPrefix = "com.espirit.moddev.cli.shaded"
+    relocations.forEach { (from, to) -> relocate(from, to) }
 
-    // Jackson 3 databind/core (tools.jackson.*) — the CLI's own serialization stack
-    relocate("tools.jackson", "$shadedPrefix.jackson")
-
-    // Residual jackson-annotations 2.x that arrives transitively (com.fasterxml.jackson.*)
-    relocate("com.fasterxml.jackson", "$shadedPrefix.jackson.v2")
-
-    // Airline CLI parser
-    relocate("com.github.rvesse", "$shadedPrefix.airline")
-
-    // Guava
-    relocate("com.google.common", "$shadedPrefix.guava")
-    relocate("com.google.thirdparty", "$shadedPrefix.guava.thirdparty")
-
-    // Apache Commons (compress + its transitive deps codec and io; lang3 from airline)
-    relocate("org.apache.commons.compress", "$shadedPrefix.commons.compress")
-    relocate("org.apache.commons.codec", "$shadedPrefix.commons.codec")
-    relocate("org.apache.commons.io", "$shadedPrefix.commons.io")
-    relocate("org.apache.commons.lang3", "$shadedPrefix.commons.lang3")
-    relocate("org.apache.commons.collections4", "$shadedPrefix.commons.collections4")
-
-    // ClassGraph (command discovery — verified by V4 runtime check)
-    relocate("io.github.classgraph", "$shadedPrefix.classgraph")
-    relocate("nonapi.io.github.classgraph", "$shadedPrefix.classgraph.nonapi")
+    // relocated libraries ship META-INF/services files (Jackson): rename them and rewrite their provider lines
+    mergeServiceFiles()
 
     // NOT relocated: org.slf4j, org.apache.logging.log4j, de.espirit.*, de.firstspirit.*
     // Logging frameworks must stay on the shared namespace for the SLF4J→Log4j binding.
+    // com.github.rvesse (Airline): plugin commands are annotated with its classes, so the CLI and
+    // the plugins must share them. Its META-INF/services files stay valid as well.
     // Annotation-only transitive deps (jspecify, errorprone, j2objc, javax.inject) are not
     // relocated — they carry no runtime behaviour and cannot cause binary incompatibility.
     // fs-isolated-runtime is compileOnly and resolves from the host at runtime.
+}
+
+///////////////////////////////////////////////////////
+// guards the shadow jar: every service file must agree with the classes in the jar
+///////////////////////////////////////////////////////
+val verifyShadowJar by tasks.registering {
+    group = "verification"
+    description = "Fails if the shadow jar still holds classes of a relocated package, or a META-INF/services file is named after or lists a relocated or missing class"
+
+    val jarFile = tasks.shadowJar.flatMap { it.archiveFile }
+    val relocatedPackages = relocations.keys.toList()
+    // "<service> -> <provider>" pairs that the host supplies instead of the jar, each with the reason
+    val externalProviders = emptyMap<String, String>()
+
+    inputs.file(jarFile)
+
+    doLast {
+        val servicesDir = "META-INF/services/"
+        val problems = mutableListOf<String>()
+        val file = jarFile.get().asFile
+        ZipFile(file).use { zip ->
+            val entries = zip.entries().asSequence().map { it.name }.toSet()
+            // the shared classpath must stay free of the relocated libraries (Jackson in particular): every class
+            // of them lives under the shaded prefix, none under its original package
+            relocatedPackages.forEach { pkg ->
+                val leaked = entries.filter { it.endsWith(".class") && it.startsWith(pkg.replace('.', '/') + "/") }
+                if (leaked.isNotEmpty()) {
+                    problems += "${leaked.size} classes of the relocated package $pkg are still in the jar, e.g. ${leaked.first()}"
+                }
+            }
+            val serviceFiles = entries.filter { it.startsWith(servicesDir) && it.length > servicesDir.length }.sorted()
+            serviceFiles.forEach { entry ->
+                val service = entry.removePrefix(servicesDir)
+                if (relocatedPackages.any { service.startsWith("$it.") }) {
+                    problems += "$entry is named after a relocated package, but the relocated interface has a different name"
+                }
+                val providers = zip.getInputStream(zip.getEntry(entry)).bufferedReader(Charsets.UTF_8).readLines()
+                    .map { it.substringBefore('#').trim() }
+                    .filter { it.isNotEmpty() }
+                providers.forEach { provider ->
+                    if (relocatedPackages.any { provider.startsWith("$it.") }) {
+                        problems += "$entry lists '$provider', which is in a relocated package"
+                    } else if (!entries.contains(provider.replace('.', '/') + ".class") && !externalProviders.containsKey("$service -> $provider")) {
+                        problems += "$entry lists '$provider', which is not a class in the jar"
+                    }
+                }
+            }
+            logger.lifecycle("verifyShadowJar: checked ${serviceFiles.size} service files in ${file.name}")
+        }
+        if (problems.isNotEmpty()) {
+            throw GradleException("Problems in ${file.name}:\n" + problems.joinToString("\n") { " - $it" })
+        }
+    }
+}
+
+tasks.check {
+    dependsOn(verifyShadowJar)
 }
 
 ///////////////////////////////////////////////////////
@@ -375,7 +435,7 @@ tokens.setProperty("javaVersion", javaVersion.toString())
 ///////////////////////////////////////////////////////
 
 val assembleTarGz by tasks.registering(Tar::class) {
-    dependsOn(tasks.shadowJar, "fsdevtools-docs:buildVueApp")
+    dependsOn(tasks.shadowJar, verifyShadowJar, "fsdevtools-docs:buildVueApp")
 
     group = "build"
     archiveBaseName = "fs-cli"
@@ -424,7 +484,7 @@ val assembleTarGz by tasks.registering(Tar::class) {
 ///////////////////////////////////////////////////////
 
 val assembleZip by tasks.registering(Zip::class) {
-    dependsOn(tasks.shadowJar, "fsdevtools-docs:buildVueApp")
+    dependsOn(tasks.shadowJar, verifyShadowJar, "fsdevtools-docs:buildVueApp")
 
     group = "build"
 

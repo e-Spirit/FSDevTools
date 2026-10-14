@@ -13,6 +13,9 @@
 # Run a single test class
 ./gradlew :fsdevtools-commands:project:test --tests "com.espirit.moddev.cli.commands.project.ProjectExportCommandTest"
 
+# Run the classloading tests (real JVMs against the shaded jar; also part of `check`)
+./gradlew :fsdevtools-classloading-tests:classloadingTest
+
 # Build the uber JAR only
 ./gradlew shadowJar
 # → build/shadowJAR/fsdevtools-cli-<version>.jar

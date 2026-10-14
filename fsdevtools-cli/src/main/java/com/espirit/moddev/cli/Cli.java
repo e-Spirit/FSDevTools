@@ -32,19 +32,19 @@ import com.espirit.moddev.cli.exception.FsLoggingBridge;
 import com.espirit.moddev.cli.exception.SystemExitHandler;
 import com.espirit.moddev.cli.reflection.CommandUtils;
 import com.espirit.moddev.cli.reflection.GroupUtils;
-import org.jetbrains.annotations.VisibleForTesting;
 import com.espirit.moddev.util.JacksonUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.databind.annotation.JsonSerialize;
 import com.github.rvesse.airline.builder.CliBuilder;
 import de.espirit.common.VersionManager;
 import de.espirit.common.base.Logging;
 import org.apache.commons.lang3.time.StopWatch;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -58,7 +58,10 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static com.espirit.moddev.cli.api.json.common.AttributeNames.*;
+import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_COMMAND;
+import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_ERROR;
+import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_EXCEPTION;
+import static com.espirit.moddev.cli.api.json.common.AttributeNames.ATTR_RESULT;
 
 /**
  * Class to represent a command line interface. Is meant to be used from the command line
@@ -74,6 +77,10 @@ public final class Cli {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Cli.class);
 	private static final Set<Class<? extends Command>> commandClasses = CommandUtils.scanForCommandClasses();
 	private static final Set<Class<?>> groupClasses = GroupUtils.scanForGroupClasses();
+
+	// Built at runtime on purpose: the shadow plugin rewrites string literals that name relocated packages, which would make the check search for the shaded names.
+	private static final String JACKSON_ANNOTATIONS_2 = String.join("/", "com", "fasterxml", "jackson", "annotation") + "/";
+	private static final String JACKSON_ANNOTATIONS_3 = String.join("/", "tools", "jackson", "databind", "annotation") + "/";
 
 	public static Throwable COMMAND_EXECUTION_EXCEPTION = null;
 
@@ -267,12 +274,34 @@ public final class Cli {
 			return false;
 		}
 		if (!JacksonUtil.hasJsonSerializeAnnotation(resultObject.getClass())) {
-			LOGGER.debug("ResultObject is not annotated with JsonSerialize. Result file will not be written.");
+			if (referencesJacksonAnnotations(resultObject.getClass())) {
+				LOGGER.error("Result class {} uses Jackson annotations, which are not supported for custom commands (Jackson is shaded and the annotation is ignored) anymore. No result file will be written.", resultObject.getClass().getName());
+			} else {
+				LOGGER.debug("ResultObject is not annotated with JsonSerialize. Result file will not be written.");
+			}
 			return false;
 		}
 		// finally write the result to file
 		writeObjectToResultFile(getResultFile(command), new WrappedCommandResult(getCommandIdentifier(command), hasError, resultObject));
 		return true;
+	}
+
+	/**
+	 * Checks the class file (without loading any annotation class) for references to the unshaded Jackson annotations.
+	 * Reflection cannot be used: the JVM drops annotations whose classes are not loadable.
+	 */
+	@VisibleForTesting
+	static boolean referencesJacksonAnnotations(@NotNull final Class<?> clazz) {
+		try (final InputStream stream = clazz.getResourceAsStream('/' + clazz.getName().replace('.', '/') + ".class")) {
+			if (stream == null) {
+				return false;
+			}
+			final String constants = new String(stream.readAllBytes(), StandardCharsets.ISO_8859_1);
+			return constants.contains(JACKSON_ANNOTATIONS_2) || constants.contains(JACKSON_ANNOTATIONS_3);
+		} catch (final IOException e) {
+			LOGGER.debug("Could not inspect class {}", clazz.getName(), e);
+			return false;
+		}
 	}
 
 	private static void writeObjectToResultFile(@Nullable final File file, @NotNull final Object object) throws IOException {

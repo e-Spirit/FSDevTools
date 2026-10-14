@@ -1,6 +1,6 @@
 # fsdevtools-commands:custom-command-example — Custom Command Template
 
-Reference implementation and template for building plugin commands that extend the CLI via the `plugins/` directory. Also used in `fsdevtools-cli` tests to verify ClassGraph-based command discovery.
+Reference implementation and template for building plugin commands that extend the CLI by dropping a JAR into `lib/`. Also used in `fsdevtools-cli` tests to verify ClassGraph-based command discovery.
 
 ## Reference Files
 

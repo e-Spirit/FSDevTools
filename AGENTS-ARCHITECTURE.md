@@ -24,6 +24,8 @@
 | `fsdevtools-scriptengines` | Aggregator for optional script engine plugin fat JARs | → `fsdevtools-scriptengines/AGENTS.md` |
 | `fsdevtools-scriptengines:Groovy` | Apache Groovy JSR-223 engine plugin | → `fsdevtools-scriptengines/Groovy/AGENTS.md` |
 | `fsdevtools-scriptengines:Javascript` | OpenJDK Nashorn engine plugin | → `fsdevtools-scriptengines/Javascript/AGENTS.md` |
+| `fsdevtools-classloading-tests` | Runs the shaded distribution in real JVMs (classloading, service files, plugins); not published | → `AGENTS-CLASSLOADING.md` |
+| `fsdevtools-classloading-tests:probe-engine` | Fixture plugins for these tests (script engine + command) | → `AGENTS-CLASSLOADING.md` |
 
 ## Dependency Graph
 
