@@ -519,23 +519,23 @@ if (project.hasProperty("github_fsdevtools_api_token")) {
 }
 
 // release is only allowed for master branch & no snapshots
-if (!isSnapshotVersion()) {
-    tasks.githubRelease {
-        dependsOn(tasks.assemble)
-    }
-    tasks.publish {
-        dependsOn(tasks.githubRelease)
-    }
-} else {
-    // disable githubRelease for non-master-branches/non-snapshots
+//if (!isSnapshotVersion()) {
+//    tasks.githubRelease {
+//        dependsOn(tasks.assemble)
+//    }
+//    tasks.publish {
+//        dependsOn(tasks.githubRelease)
+//    }
+//} else {
+    // disable githubRelease for now
     tasks.githubRelease {
         enabled = false
         doLast {
             // github release is not allowed for snapshots
-            logger.error("GitHub Release is only allowed on master branch!")
+//            logger.error("GitHub Release is only allowed on master branch!")
         }
     }
-}
+//}
 
 
 /**
