@@ -565,9 +565,12 @@ The zip and the tar.gz files are our windows and linux/mac distributions. This b
 For further information about the prerequisites, please take a look at the [README](https://github.com/e-Spirit/FSDevTools/blob/master/README.md#prerequisites). 
 """
 
-if (project.hasProperty("github_fsdevtools_api_token")) {
+// the GitHub release requires a non-blank api token
+val githubToken: String? = findProperty("github_fsdevtools_api_token")?.toString()?.takeIf { it.isNotBlank() }
+
+if (githubToken != null) {
     githubRelease {
-        token(property("github_fsdevtools_api_token") as String)
+        token(githubToken)
         owner = "e-Spirit"
         tagName = "${project.version}"
         targetCommitish = "master"
@@ -578,24 +581,31 @@ if (project.hasProperty("github_fsdevtools_api_token")) {
     }
 }
 
-// release is only allowed for master branch & no snapshots
-//if (!isSnapshotVersion()) {
-//    tasks.githubRelease {
-//        dependsOn(tasks.assemble)
-//    }
-//    tasks.publish {
-//        dependsOn(tasks.githubRelease)
-//    }
-//} else {
-    // disable githubRelease for now
+// release is only allowed for master branch & no snapshots & with a configured token
+if (githubToken == null) {
+    tasks.githubRelease {
+        enabled = false
+        doLast {
+            logger.error("GitHub Release is disabled: property 'github_fsdevtools_api_token' is empty or not set!")
+        }
+    }
+} else if (!isSnapshotVersion()) {
+    tasks.githubRelease {
+        dependsOn(tasks.assemble)
+    }
+    tasks.publish {
+        dependsOn(tasks.githubRelease)
+    }
+} else {
+    // disable githubRelease for non-master-branches/non-snapshots
     tasks.githubRelease {
         enabled = false
         doLast {
             // github release is not allowed for snapshots
-//            logger.error("GitHub Release is only allowed on master branch!")
+            logger.error("GitHub Release is only allowed on master branch!")
         }
     }
-//}
+}
 
 
 /**
