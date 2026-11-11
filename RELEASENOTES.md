@@ -1,5 +1,14 @@
 # Release notes
 
+## Next version
+
+* the CLI now updates its FirstSpirit runtime jar automatically: if the version of the connected
+  server differs from the bundled `fs-isolated-runtime.jar`, the matching jar is downloaded from
+  the server into the `api-lib` directory of the installation and the CLI restarts itself with it
+  (opt-out via `-Dfs-cli.autoUpdate=false` or the environment variable `FS_CLI_AUTO_UPDATE=false`).
+  Servers since FirstSpirit 2026.11 are downloaded from via the same `/jar/fs-isolated-runtime.jar`
+  endpoint the `download` mode of the start scripts uses; older servers via the FirstSpirit protocol
+
 ## Version 5.0.0
 
 **Breaking changes**

@@ -32,6 +32,7 @@ import com.espirit.moddev.cli.exception.FsLoggingBridge;
 import com.espirit.moddev.cli.exception.SystemExitHandler;
 import com.espirit.moddev.cli.reflection.CommandUtils;
 import com.espirit.moddev.cli.reflection.GroupUtils;
+import com.espirit.moddev.cli.update.RuntimeJarAutoUpdate;
 import com.espirit.moddev.util.JacksonUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.rvesse.airline.builder.CliBuilder;
@@ -122,7 +123,25 @@ public final class Cli {
 			new Cli().execute(args);
 			cliEventHandler.afterTermination();
 		} catch (Throwable throwable) {
+			// if the throwable indicates a FirstSpirit version mismatch, this call downloads the
+			// matching runtime jar and relaunches the cli (and does not return in that case)
+			attemptRuntimeAutoUpdate(throwable, args);
 			cliEventHandler.afterExceptionalTermination(throwable);
+		}
+	}
+
+	private static void attemptRuntimeAutoUpdate(final Throwable throwable, final String[] args) {
+		try {
+			if (!RuntimeJarAutoUpdate.isVersionMismatch(throwable)) {
+				return;
+			}
+			// re-parse the command line to get the connection configuration of the executed command
+			final Command command = parseCommandLine(args, getDefaultCliBuilder());
+			if (command instanceof Config) {
+				RuntimeJarAutoUpdate.handleVersionMismatch(throwable, (Config) command, args);
+			}
+		} catch (final Exception | LinkageError exception) {
+			LOGGER.debug("Automatic runtime update failed.", exception);
 		}
 	}
 
@@ -143,6 +162,11 @@ public final class Cli {
 
 		final CliBuilder<Command> builder = getDefaultCliBuilder();
 		final Command command = parseCommandLine(args, builder);
+		if (command instanceof Config) {
+			// check the server version (version.txt) BEFORE connecting: if the runtime jar does not
+			// match, this call relaunches the cli with the matching jar (and does not return then)
+			RuntimeJarAutoUpdate.preSelectRuntimeJar((Config) command, args);
+		}
 		StopWatch stopwatch = StopWatch.createStarted();
 		try {
 			executeCommand(command);
